@@ -1,0 +1,21 @@
+<div class="main-container">
+    <header class="header header-7" app-header></header>
+    <div class="content-container">
+        <div class="content-area">
+            <router-outlet></router-outlet>
+        </div>
+        <nav class="sidenav">
+            <section class="sidenav-content">
+                <a href="javascript://" [routerLink]="['events']" class="nav-link" [routerLinkActive]="'active'">
+                    Scheduled Events
+                </a>
+                <a href="javascript://" [routerLink]="['scenarios']" class="nav-link" [routerLinkActive]="'active'">
+                    Scenarios
+                </a>
+                <a href="javascript://" [routerLink]="['templates']" class="nav-link" [routerLinkActive]="'active'">
+                    Virtual Machine Templates
+                </a>
+            </section>
+        </nav>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="branding">
+    <a class="logo-and-title">
+        <clr-icon shape="rancher"></clr-icon>
+        <span class="title">HobbyFarm Administration</span>
+    </a>
+</div>
+
+<div class="header-nav">
+    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/home']" [routerLinkActive]="'active'">Home</a>
+    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/configuration']"
+        [routerLinkActive]="'active'">Configuration</a>
+    <a href="javascript://" class="nav-link nav-text" [routerLinkActive]="'active'">User Management</a>
+</div>
+
+<div class="header-actions">
+    <clr-dropdown clrMenuPosition="bottom-right">
+        <button class="nav-text" clrDropdownToggle>
+            eamon@eamonbauman.com
+            <clr-icon shape="caret down"></clr-icon>
+        </button>
+        <clr-dropdown-menu>
+            <a (click)="about()" clrDropdownItem>About</a>
+            <a (click)="logout()" clrDropdownItem>Logout</a>
+        </clr-dropdown-menu>
+    </clr-dropdown>
+</div>
+
+
+<clr-modal #logoutmodal [(clrModalOpen)]="logoutModalOpened">
+    <h3 class="modal-title">Are you sure you want to logout?</h3>
+    <div class="modal-body">
+        <p>
+            Are you sure you want to logout?
+        </p>
+        <p>
+            Doing so will clear any progress in any scenarios you have started, and will destroy the resources
+            allocated for the scenarios.
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="logoutModalOpened = false">Cancel</button>
+        <button type="button" class="btn btn-danger-outline" (click)="doLogout()">Logout</button>
+    </div>
+</clr-modal>
+
+<clr-modal #aboutmodal [(clrModalOpen)]="aboutModalOpened">
+    <h3 class="modal-title">About HobbyFarm</h3>
+    <div class="modal-body">
+        <p>
+            HobbyFarm was lovingly crafted by @ebauman and @Oats87 from @RancherLabs
+        </p>
+        <p>
+            <i>UI Version: {{version}}</i>
+        </p>
+    </div>
+</clr-modal>

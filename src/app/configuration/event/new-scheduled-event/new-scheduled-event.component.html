@@ -1,0 +1,175 @@
+<clr-wizard #wizard [(clrWizardOpen)]="wzOpen" clrWizardSize="xl" (clrWizardOnFinish)="save()">
+  <clr-wizard-title>New Scheduled Event</clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Previous</clr-wizard-button>
+  <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Event Details</ng-template>
+    <form clrForm>
+      <clr-input-container>
+        <label>Name</label>
+        <input clrInput type="text" [(ngModel)]="se.event_name" name="event_name" required />
+      </clr-input-container>
+      <clr-input-container>
+        <label>Description</label>
+        <input clrInput type="text" [(ngModel)]="se.description" name="description" />
+      </clr-input-container>
+      <clr-input-container>
+        <label>Access Code</label>
+        <input clrInput type="text" [(ngModel)]="se.access_code" name="access_code" />
+      </clr-input-container>
+    </form>
+  </clr-wizard-page>
+
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Event Times</ng-template>
+    <form clrForm>
+      <clr-date-container>
+        <label>Start Date</label>
+        <input type="date" clrDate name="start_date" [ngModel]="startDate" (ngModelChange)="setStartDate($event)" />
+      </clr-date-container>
+      <clr-select-container>
+        <label>Start Time</label>
+        <select clrSelect name="start_time" [ngModel]="startTime" (ngModelChange)="setStartTime($event)"
+          [disabled]="se.start_time == undefined">
+          <option *ngFor="let t of times" [ngValue]="t">
+            <ng-container *ngIf="t.substring(0, 2) > 12">
+              {{ t }} {{ '(' + (t.substring(0,2)-12) + ':' + t.substring(3, 5) + ' PM)'}}
+            </ng-container>
+            <ng-container *ngIf="t.substring(0, 2) <= 12">
+              {{ t }}
+            </ng-container>
+          </option>
+        </select>
+      </clr-select-container>
+      <clr-date-container>
+        <label>End Date</label>
+        <input type="date" clrDate name="end_date" [ngModel]="endDate" (ngModelChange)="setEndDate($event)" />
+      </clr-date-container>
+      <clr-select-container>
+        <label>End Time</label>
+        <select clrSelect name="end_time" [ngModel]="endTime" (ngModelChange)="setEndTime($event)"
+          [disabled]="se.end_time == undefined">
+          <option *ngFor="let t of times" [ngValue]="t">
+            <ng-container *ngIf="t.substring(0, 2) > 12">
+              {{ t }} {{ '(' + (t.substring(0,2)-12) + ':' + t.substring(3, 5) + ' PM)'}}
+            </ng-container>
+            <ng-container *ngIf="t.substring(0, 2) <= 12">
+              {{ t }}
+            </ng-container>
+          </option>
+        </select>
+      </clr-select-container>
+    </form>
+
+    <p>
+      <i>
+        All times are in {{ tz }} (browser detected)
+      </i>
+    </p>
+  </clr-wizard-page>
+
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Select Scenario(s)</ng-template>
+    <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)">
+      <clr-dg-column>Id</clr-dg-column>
+      <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-column>Description</clr-dg-column>
+
+      <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
+        <clr-dg-cell>{{ s.id }}</clr-dg-cell>
+        <clr-dg-cell>{{ s.name | atob }}</clr-dg-cell>
+        <clr-dg-cell>{{ s.description | atob }}</clr-dg-cell>
+      </clr-dg-row>
+    </clr-datagrid>
+  </clr-wizard-page>
+
+  <clr-wizard-page (clrWizardPageOnLoad)="checkEnvironments()">
+    <ng-template clrPageTitle>Select Environment(s)</ng-template>
+    <ng-container *ngIf="checkingEnvironments">
+      <span class="spinner">
+        Please wait...
+      </span>
+    </ng-container>
+    <ng-container *ngIf="!checkingEnvironments">
+      <clr-datagrid [(clrDgSelected)]="selectedEnvironments">
+        <clr-dg-column>
+          <clr-icon shape="building"></clr-icon> Environment
+        </clr-dg-column>
+        <clr-dg-column>
+          <clr-icon shape="resource-pool"></clr-icon> Mode
+        </clr-dg-column>
+        <clr-dg-column>
+          <clr-icon shape="host"></clr-icon> Count
+        </clr-dg-column>
+        <clr-dg-column>
+          <clr-icon shape="cpu"></clr-icon> CPU
+        </clr-dg-column>
+        <clr-dg-column>
+          <clr-icon shape="memory"></clr-icon> Memory
+        </clr-dg-column>
+        <clr-dg-column>
+          <clr-icon shape="hard-drive"></clr-icon> Storage
+        </clr-dg-column>
+
+        <clr-dg-row *clrDgItems="let ea of availableEnvironments" [clrDgItem]="ea">
+          <clr-dg-cell>{{ ea.environment }}</clr-dg-cell>
+          <clr-dg-cell>{{ ea.capacity_mode }}</clr-dg-cell>
+          <clr-dg-cell>
+            <ng-container *ngIf="ea.capacity_mode == 'count'">
+              <span class="label">ubuntu1604-docker1 <span class="badge badge-success">67</span></span><br />
+              <span class="label">ubuntu1604-docker1 <span class="badge badge-success">67</span></span><br />
+              <span class="label">ubuntu1604-docker1 <span class="badge badge-success">67</span></span><br />
+              <span class="label">ubuntu1604-docker1 <span class="badge badge-success">67</span></span>
+            </ng-container>
+            <ng-container *ngIf="ea.capacity_mode == 'raw'"><i>n/a</i></ng-container>
+          </clr-dg-cell>
+          <clr-dg-cell>
+            {{ ea.available_capacity.cpu }} CPU
+          </clr-dg-cell>
+          <clr-dg-cell>
+            {{ ea.available_capacity.memory }} MB
+          </clr-dg-cell>
+          <clr-dg-cell>
+            {{ ea.available_capacity.storage }} GB
+          </clr-dg-cell>
+        </clr-dg-row>
+      </clr-datagrid>
+    </ng-container>
+  </clr-wizard-page>
+
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Select Virtual Machines</ng-template>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>Environment</th>
+          <th>VM Template</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let ea of selectedEnvironments">
+          <ng-container *ngFor="let t of getTemplates(ea.environment)">
+            <tr>
+              <td>{{ ea.environment }}</td>
+              <td>{{ t }}</td>
+              <td><input type="number" name="count" ngModel (ngModelChange)="setVMCount(ea.environment, t, $event)">
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+  </clr-wizard-page>
+
+  <clr-wizard-page (clrWizardPageOnLoad)="logse()">
+    <ng-template clrPageTitle>Finalize</ng-template>
+    <p>
+      This is the finalize details page, where you confirm
+    </p>
+  </clr-wizard-page>
+</clr-wizard>

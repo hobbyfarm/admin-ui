@@ -1,15 +1,19 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ClarityIcons } from '@clr/icons';
+import { ClrModal } from '@clr/angular';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: '[app-header]',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss']
 })
-export class AppComponent {
-
-
+export class HeaderComponent implements OnInit {
+  public title = "Rancher's Hobby Farm";
+  public logoutModalOpened: boolean = false;
+  public aboutModalOpened: boolean = false;
+  public version = environment.version;
   constructor(
     public router: Router
   ) {
@@ -18,4 +22,23 @@ export class AppComponent {
     })
   }
 
+  ngOnInit() {
+  }
+
+
+  @ViewChild("logoutmodal") logoutModal: ClrModal;
+  @ViewChild("aboutmodal") aboutModal: ClrModal;
+
+  public logout() {
+    this.logoutModal.open();
+  }
+
+  public about() {
+    this.aboutModal.open();
+  }
+
+  public doLogout() {
+    localStorage.removeItem("hobbyfarm_admin_token");
+    this.router.navigateByUrl("/login");
+  }
 }
