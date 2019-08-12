@@ -11,6 +11,7 @@ import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { forEach } from '@angular/router/src/utils/collection';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'new-scheduled-event',
@@ -48,6 +49,22 @@ export class NewScheduledEventComponent implements OnInit {
     public ses: ScheduledeventService,
     public es: EnvironmentService
   ) { }
+
+  public eventDetails: FormGroup = new FormGroup({
+    'event_name': new FormControl(this.se.event_name, [
+      Validators.required,
+      Validators.minLength(4)
+    ]),
+    'description': new FormControl(this.se.description, [
+      Validators.required,
+      Validators.minLength(4)
+    ]),
+    'access_code': new FormControl(this.se.access_code, [
+      Validators.required,
+      Validators.minLength(5),
+      Validators.pattern(/^[a-zA-Z0-9]*$/)
+    ])
+  })
 
   @ViewChild("wizard") wizard: ClrWizard;
 

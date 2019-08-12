@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
 import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewScheduledEventComponent } from './configuration/event/new-scheduled-event/new-scheduled-event.component';
 import { AtobPipe } from './atob.pipe';
 import { ScenarioService } from './data/scenario.service';
@@ -40,6 +40,7 @@ export function tokenGetter() {
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     ClarityModule,
     HttpClientModule,
     JwtModule.forRoot({
