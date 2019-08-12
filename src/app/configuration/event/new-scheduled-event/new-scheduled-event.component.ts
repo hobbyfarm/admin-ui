@@ -164,7 +164,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.start_time = new Date();
     this.se.start_time.setFullYear(+d.split("/")[2]);
     this.se.start_time.setMonth(+d.split("/")[0] - 1); // because JS is stupid
-    this.se.start_time.setDate(+d.split("/")[0]);
+    this.se.start_time.setDate(+d.split("/")[1]);
     console.log(this.se.start_time);
   }
 
@@ -172,7 +172,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.end_time = new Date();
     this.se.end_time.setFullYear(+d.split("/")[2]);
     this.se.end_time.setMonth(+d.split("/")[0] - 1); // because JS is stupid
-    this.se.end_time.setDate(+d.split("/")[0]);
+    this.se.end_time.setDate(+d.split("/")[1]);
   }
 
   public setStartTime(s: string) {
