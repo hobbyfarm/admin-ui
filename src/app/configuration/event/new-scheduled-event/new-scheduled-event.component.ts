@@ -10,7 +10,7 @@ import { from, of } from 'rxjs';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
+import { DlDateTimePickerChange } from 'clr-angular-bootstrap-datetimepicker';
 
 @Component({
   selector: 'new-scheduled-event',

@@ -25,6 +25,7 @@
     "@clr/ui": "1.2.0",
     "@webcomponents/custom-elements": "^1.0.0",
     "angular-bootstrap-datetimepicker": "^3.0.0",
+    "clr-angular-bootstrap-datetimepicker": "0.0.4",
     "core-js": "^2.5.4",
     "moment": "^2.24.0",
     "rxjs": "~6.3.3",
