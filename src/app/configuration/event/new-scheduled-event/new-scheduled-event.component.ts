@@ -1,17 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ClrWizard } from '@clr/angular';
+import { ClrWizard, ClrSignpost, ClrSignpostContent } from '@clr/angular';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { Scenario } from 'src/app/data/scenario';
 import { ScenarioService } from 'src/app/data/scenario.service';
 import { EnvironmentService } from 'src/app/data/environment.service';
-import { switchMap, combineAll, concatMap, tap, map, filter } from 'rxjs/operators';
+import { combineAll, concatMap, map, filter } from 'rxjs/operators';
 import { Environment } from 'src/app/data/environment';
 import { from, of } from 'rxjs';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
-import { forEach } from '@angular/router/src/utils/collection';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 
 @Component({
   selector: 'new-scheduled-event',
@@ -40,6 +39,8 @@ export class NewScheduledEventComponent implements OnInit {
   public startTime: string;
   public endTime: string;
 
+  public validTimes: boolean = false;
+
   public vmtotals: Map<string, number> = new Map();
 
   public selectedscenarios: Scenario[] = [];
@@ -66,7 +67,15 @@ export class NewScheduledEventComponent implements OnInit {
     ])
   })
 
+  public copyEventDetails() {
+    this.se.event_name = this.eventDetails.get('event_name').value;
+    this.se.description = this.eventDetails.get('description').value;
+    this.se.access_code = this.eventDetails.get('access_code').value;
+  }
+
   @ViewChild("wizard") wizard: ClrWizard;
+  @ViewChild("startTimeSignpost") startTimeSignpost: ClrSignpostContent;
+  @ViewChild("endTimeSignpost") endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
     this.se.scenarios = [];
@@ -177,36 +186,21 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
 
-  public setStartDate(d: string) {
-    this.se.start_time = new Date();
-    this.se.start_time.setFullYear(+d.split("/")[2]);
-    this.se.start_time.setMonth(+d.split("/")[0] - 1); // because JS is stupid
-    this.se.start_time.setDate(+d.split("/")[1]);
-    console.log(this.se.start_time);
+  public setStartTime(d: DlDateTimePickerChange<Date>) {
+    this.se.start_time = d.value;
+    this.startTimeSignpost.close();
   }
 
-  public setEndDate(d: string) {
-    this.se.end_time = new Date();
-    this.se.end_time.setFullYear(+d.split("/")[2]);
-    this.se.end_time.setMonth(+d.split("/")[0] - 1); // because JS is stupid
-    this.se.end_time.setDate(+d.split("/")[1]);
-  }
-
-  public setStartTime(s: string) {
-    this.se.start_time.setHours(+s.split(":")[0]);
-    this.se.start_time.setMinutes(+s.split(":")[1]);
-    this.se.start_time.setSeconds(0);
-    console.log(this.se.start_time);
-  }
-
-  public setEndTime(s: string) {
-    this.se.end_time.setHours(+s.split(":")[0]);
-    this.se.end_time.setMinutes(+s.split(":")[1]);
-    this.se.end_time.setSeconds(0);
+  public setEndTime(d: DlDateTimePickerChange<Date>) {
+    this.se.end_time = d.value;
+    this.endTimeSignpost.close();
   }
 
   public open() {
+    console.log(this.se);
+    this.validTimes = false;
     this.se = new ScheduledEvent();
+    this.eventDetails.reset();
     this.se.required_vms = new Map();
     this.selectedEnvironments = [];
     this.selectedscenarios = [];

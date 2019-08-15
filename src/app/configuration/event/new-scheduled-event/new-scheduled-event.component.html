@@ -6,7 +6,7 @@
   <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
   <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="!eventDetails.valid">
+  <clr-wizard-page [clrWizardPageNextDisabled]="!eventDetails.valid" (clrWizardPageOnCommit)="copyEventDetails()">
     <ng-template clrPageTitle>Event Details</ng-template>
     <form clrForm [formGroup]="eventDetails">
       <clr-input-container>
@@ -19,67 +19,65 @@
         <label>Description</label>
         <input clrInput type="text" name="description" formControlName="description" required />
         <clr-control-error *clrIfError="'required'">Event description is required</clr-control-error>
-        <clr-control-error *clrIfError="'minlength'">Event description must be longer than 4 characters</clr-control-error>
+        <clr-control-error *clrIfError="'minlength'">Event description must be longer than 4 characters
+        </clr-control-error>
       </clr-input-container>
       <clr-input-container>
         <label>Access Code</label>
         <input clrInput type="text" name="access_code" formControlName="access_code" required />
         <clr-control-error *clrIfError="'required'">Access code is required</clr-control-error>
         <clr-control-error *clrIfError="'minlength'">Access code must be longer than 5 characters</clr-control-error>
-        <clr-control-error *clrIfError="'pattern'">Access code must be alphanumeric characters only. Pattern: /^[a-zA-Z0-9]*$/</clr-control-error>
+        <clr-control-error *clrIfError="'pattern'">Access code must be alphanumeric characters only. Pattern:
+          /^[a-zA-Z0-9]*$/</clr-control-error>
       </clr-input-container>
     </form>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page [clrWizardPageNextDisabled]="(se.start_time >= se.end_time) || !se.start_time || !se.end_time">
     <ng-template clrPageTitle>Event Times</ng-template>
-    <form clrForm>
-      <clr-date-container>
-        <label>Start Date</label>
-        <input type="date" clrDate name="start_date" [ngModel]="startDate" (ngModelChange)="setStartDate($event)" />
-      </clr-date-container>
-      <clr-select-container>
-        <label>Start Time</label>
-        <select clrSelect name="start_time" [ngModel]="startTime" (ngModelChange)="setStartTime($event)"
-          [disabled]="se.start_time == undefined">
-          <option *ngFor="let t of times" [ngValue]="t">
-            <ng-container *ngIf="t.substring(0, 2) > 12">
-              {{ t }} {{ '(' + (t.substring(0,2)-12) + ':' + t.substring(3, 5) + ' PM)'}}
-            </ng-container>
-            <ng-container *ngIf="t.substring(0, 2) <= 12">
-              {{ t }}
-            </ng-container>
-          </option>
-        </select>
-      </clr-select-container>
-      <clr-date-container>
-        <label>End Date</label>
-        <input type="date" clrDate name="end_date" [ngModel]="endDate" (ngModelChange)="setEndDate($event)" />
-      </clr-date-container>
-      <clr-select-container>
-        <label>End Time</label>
-        <select clrSelect name="end_time" [ngModel]="endTime" (ngModelChange)="setEndTime($event)"
-          [disabled]="se.end_time == undefined">
-          <option *ngFor="let t of times" [ngValue]="t">
-            <ng-container *ngIf="t.substring(0, 2) > 12">
-              {{ t }} {{ '(' + (t.substring(0,2)-12) + ':' + t.substring(3, 5) + ' PM)'}}
-            </ng-container>
-            <ng-container *ngIf="t.substring(0, 2) <= 12">
-              {{ t }}
-            </ng-container>
-          </option>
-        </select>
-      </clr-select-container>
-    </form>
+    <div class="clr-row">
+      <div class="clr-col">
+        Start Time: {{ se.start_time | date:'long' }} <br />
+        <clr-signpost>
+          <button class="btn btn-link" clrSignpostTrigger>Set Start Time</button>
+          <clr-signpost-content *clrIfOpen #startTimeSignpost>
+            <dl-date-time-picker (change)="setStartTime($event)" startView="day" maxView="year" minView="minute"
+              minuteStep="30"></dl-date-time-picker>
+          </clr-signpost-content>
+        </clr-signpost>
+      </div>
+    </div>
+
+    <div class="clr-row">
+      <div class="clr-col">
+        End Time: {{ se.end_time | date:'long' }} <br />
+        <clr-signpost>
+          <button class="btn btn-link" clrSignpostTrigger>Set End Time</button>
+          <clr-signpost-content *clrIfOpen #endTimeSignpost>
+            <dl-date-time-picker (change)="setEndTime($event)" startView="day" maxView="year" minView="minute"
+              minuteStep="30"></dl-date-time-picker>
+          </clr-signpost-content>
+        </clr-signpost>
+      </div>
+    </div>
 
     <p>
       <i>
         All times are in {{ tz }} (browser detected)
       </i>
     </p>
+    <ng-container *ngIf="se.start_time >= se.end_time">
+      <clr-alert [clrAlertSizeSmall]="true" [clrAlertType]="'danger'" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            Start time must occur before end time!
+          </span>
+        </clr-alert-item>
+      </clr-alert>
+    </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page [clrWizardPageNextDisabled]="selectedscenarios.length == 0">
     <ng-template clrPageTitle>Select Scenario(s)</ng-template>
     <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)">
       <clr-dg-column>Id</clr-dg-column>
@@ -94,7 +92,7 @@
     </clr-datagrid>
   </clr-wizard-page>
 
-  <clr-wizard-page (clrWizardPageOnLoad)="checkEnvironments()">
+  <clr-wizard-page (clrWizardPageOnLoad)="checkEnvironments()" [clrWizardPageNextDisabled]="selectedEnvironments.length == 0">
     <ng-template clrPageTitle>Select Environment(s)</ng-template>
     <ng-container *ngIf="checkingEnvironments">
       <span class="spinner">
@@ -127,10 +125,9 @@
           <clr-dg-cell>{{ ea.capacity_mode }}</clr-dg-cell>
           <clr-dg-cell>
             <ng-container *ngIf="ea.capacity_mode == 'count'">
-              <span class="label">ubuntu1604-docker1 <span class="badge badge-success">67</span></span><br />
-              <span class="label">ubuntu1604-docker1 <span class="badge badge-success">67</span></span><br />
-              <span class="label">ubuntu1604-docker1 <span class="badge badge-success">67</span></span><br />
-              <span class="label">ubuntu1604-docker1 <span class="badge badge-success">67</span></span>
+              <ng-container *ngFor="let item of ea.available_count | keyvalue">
+                <span class="label">{{ item.key }} <span class="badge badge-success">{{ item.value }}</span></span>
+              </ng-container>
             </ng-container>
             <ng-container *ngIf="ea.capacity_mode == 'raw'"><i>n/a</i></ng-container>
           </clr-dg-cell>
@@ -176,7 +173,57 @@
   <clr-wizard-page (clrWizardPageOnLoad)="logse()">
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>
-      This is the finalize details page, where you confirm
+      Confirm the following details before finishing:
     </p>
+    <h4>Basic Information</h4>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Name</td>
+          <td>{{ se.event_name }}</td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>{{ se.description }}</td>
+        </tr>
+        <tr>
+          <td>Start Time</td>
+          <td>{{ se.start_time | date:'long' }}</td>
+        </tr>
+        <tr>
+          <td>End Time</td>
+          <td>{{ se.end_time | date:'long' }}</td>
+        </tr>
+        <tr>
+          <td>Scenarios</td>
+          <td>
+            <span *ngFor="let s of se.scenarios" class="label">{{s}}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h4>VM Information</h4>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>Environment</th>
+          <th>Virtual Machines</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of se.required_vms | keyvalue">
+          <td>{{ i.key }}</td>
+          <td>
+            <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span class="badge badge-success">{{ q.value }}</span></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </clr-wizard-page>
 </clr-wizard>

@@ -19,6 +19,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewScheduledEventComponent } from './configuration/event/new-scheduled-event/new-scheduled-event.component';
 import { AtobPipe } from './atob.pipe';
 import { ScenarioService } from './data/scenario.service';
+import { DlDateTimeDateModule, DlDateTimePickerModule} from 'angular-bootstrap-datetimepicker';
 
 export function tokenGetter() {
   return localStorage.getItem("hobbyfarm_admin_token");
@@ -41,6 +42,8 @@ export function tokenGetter() {
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    DlDateTimeDateModule,
+    DlDateTimePickerModule,
     ClarityModule,
     HttpClientModule,
     JwtModule.forRoot({
