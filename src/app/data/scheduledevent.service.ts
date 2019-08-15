@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { ScheduledEvent } from './scheduledevent';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { map, switchMap, concatAll, combineAll } from 'rxjs/operators';
+import { map, switchMap, combineAll } from 'rxjs/operators';
 import { from, of } from 'rxjs';
 import { formatDate } from '@angular/common';
 
