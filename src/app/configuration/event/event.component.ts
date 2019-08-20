@@ -40,7 +40,7 @@ export class EventComponent implements OnInit {
   }
 
   public doDelete()  {
-    //  prepped for deleting.
+    // prepped for delete, waiting on endpoints
   }
 
   public openNew() {
