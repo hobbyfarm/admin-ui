@@ -1,0 +1,55 @@
+<div class="main-container">
+  <header class="header header-7" app-header></header>
+  <div class="content-container">
+    <div class="content-area">
+      <h3>Scheduled Events</h3>
+      <div class="clr-row">
+        <div class="clr-col">
+          <button class="btn btn-success" (click)="openNew()">
+            <clr-icon shape="plus"></clr-icon> New
+          </button>
+        </div>
+      </div>
+      <div class="clr-row">
+        <div class="clr-col">
+          <clr-datagrid>
+            <clr-dg-column>Name</clr-dg-column>
+            <clr-dg-column>Start</clr-dg-column>
+            <clr-dg-column>End</clr-dg-column>
+            <clr-dg-column>Scenarios</clr-dg-column>
+
+            <clr-dg-row *ngFor="let se of events">
+              <clr-dg-action-overflow>
+                <button class="action-item">Delete</button>
+              </clr-dg-action-overflow>
+              <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
+              <clr-dg-cell>{{ se.start_time | date:'long' }}</clr-dg-cell>
+              <clr-dg-cell>{{ se.end_time | date:'long' }}</clr-dg-cell>
+              <clr-dg-cell>
+                <span class="label" *ngFor="let s of se.scenarios">{{ s }}</span>
+              </clr-dg-cell>
+            </clr-dg-row>
+          </clr-datagrid>
+        </div>
+      </div>
+
+      <new-scheduled-event #wizard></new-scheduled-event>
+
+      <clr-modal #deletemodal [(clrModalOpen)]="deleteopen">
+        <h3 class="modal-title">Confirm Delete</h3>
+        <div class="modal-body">
+          <p>
+            Are you sure you want to delete this scheduled event?
+          </p>
+          <p>
+            Doing so will clear any access codes and VM registrations.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" (click)="deleteopen = false">Cancel</button>
+          <button type="button" class="btn btn-danger-outline" (click)="doDelete()">Delete</button>
+        </div>
+      </clr-modal>
+    </div>
+  </div>
+</div>

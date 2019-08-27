@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { ConfigurationComponent } from './configuration/configuration.component';
-import { EventComponent } from './configuration/event/event.component';
+import { EventComponent } from './event/event.component';
 import { AuthGuard } from './auth.guard';
 import { LoginComponent } from './login/login.component';
+import { ScenarioComponent } from './scenario/scenario.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -17,16 +17,17 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'configuration',
-    component: ConfigurationComponent,
+    path: 'events',
+    component: EventComponent,
     canActivate: [
       AuthGuard
-    ],
-    children: [
-      {
-        path: 'events',
-        component: EventComponent
-      }
+    ]
+  },
+  {
+    path: 'scenarios',
+    component: ScenarioComponent,
+    canActivate: [
+      AuthGuard
     ]
   }
 ];

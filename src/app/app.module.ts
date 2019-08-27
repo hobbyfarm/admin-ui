@@ -8,18 +8,19 @@ import { ClarityModule } from '@clr/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RootComponent } from './root/root.component';
 import { HomeComponent } from './home/home.component';
-import { ConfigurationComponent } from './configuration/configuration.component';
 import { HeaderComponent } from './header/header.component';
-import { EventComponent } from './configuration/event/event.component';
+import { EventComponent } from './event/event.component';
 import { HttpClientModule } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
 import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NewScheduledEventComponent } from './configuration/event/new-scheduled-event/new-scheduled-event.component';
+import { NewScheduledEventComponent } from './event/new-scheduled-event/new-scheduled-event.component';
 import { AtobPipe } from './atob.pipe';
 import { ScenarioService } from './data/scenario.service';
 import { DlDateTimeDateModule, DlDateTimePickerModule} from 'clr-angular-bootstrap-datetimepicker';
+import { ScenarioComponent } from './scenario/scenario.component';
+import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 
 export function tokenGetter() {
   return localStorage.getItem("hobbyfarm_admin_token");
@@ -30,19 +31,21 @@ export function tokenGetter() {
     AppComponent,
     RootComponent,
     HomeComponent,
-    ConfigurationComponent,
     HeaderComponent,
     EventComponent,
     LoginComponent,
     NewScheduledEventComponent,
-    AtobPipe
+    AtobPipe,
+    ScenarioComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     DlDateTimeDateModule,
+    LMarkdownEditorModule,
     DlDateTimePickerModule,
     ClarityModule,
     HttpClientModule,

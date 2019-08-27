@@ -1,0 +1,90 @@
+<div class="main-container">
+  <header class="header header-7" app-header></header>
+  <div class="content-container">
+    <div class="content-area">
+      <clr-alert [clrAlertType]="'danger'" [(clrAlertClosed)]="dangerAlertClosed" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            {{ dangerAlertText }}
+          </span>
+        </clr-alert-item>
+      </clr-alert>
+      <clr-alert [clrAlertType]="'success'" [(clrAlertClosed)]="successAlertClosed" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            {{ successAlertText }}
+          </span>
+        </clr-alert-item>
+      </clr-alert>
+      <h3>Scenarios</h3>
+      <div class="clr-row">
+        <div class="clr-col">
+          <button class="btn btn-success" (click)="openNew()">
+            <clr-icon shape="plus"></clr-icon> New Scenario
+          </button>
+        </div>
+      </div>
+      <div class="clr-row">
+        <div class="clr-col-4">
+          <clr-datagrid [clrDgSingleSelected]="unusedSelectedScenario"
+            (clrDgSingleSelectedChange)="getscenario($event)">
+            <clr-dg-column>Name</clr-dg-column>
+
+            <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
+              <clr-dg-cell>{{ s.name | atob }}</clr-dg-cell>
+            </clr-dg-row>
+          </clr-datagrid>
+        </div>
+
+        <div class="clr-col-8">
+          <ng-container *ngIf="selectedscenario">
+            <h4>{{ selectedscenario.name | atob }}</h4>
+            <div class="clr-row">
+              <div class="clr-col" *ngIf="selectedscenario.description">
+                Description: {{ selectedscenario.description | atob }}<button class="btn btn-sm btn-link">Edit</button>
+              </div>
+            </div>
+            <div class="clr-row">
+              <div class="clr-col">
+                <button class="btn btn-success">
+                  <clr-icon shape="plus"></clr-icon> New Step
+                </button>
+              </div>
+            </div>
+            <div class="clr-row">
+              <div class="clr-col">
+                <clr-datagrid>
+                  <clr-dg-column>Index</clr-dg-column>
+                  <clr-dg-column>Title</clr-dg-column>
+
+                  <clr-dg-row *clrDgItems="let s of selectedscenario.steps; let i = index">
+                    <clr-dg-action-overflow>
+                      <button class="action-item">Move Up</button>
+                      <button class="action-item">Move Down</button>
+                      <button class="action-item" (click)="openEdit(s, i)">Edit</button>
+                      <button class="action-item">Delete</button>
+                    </clr-dg-action-overflow>
+
+                    <clr-dg-cell>{{ i+1 }}</clr-dg-cell>
+                    <clr-dg-cell>{{ s.title | atob }}</clr-dg-cell>
+                  </clr-dg-row>
+                </clr-datagrid>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <clr-modal #editmodal [(clrModalOpen)]="editOpen" [clrModalSize]="'xl'">
+        <h3 class="modal-title">Edit Step</h3>
+        <div class="modal-body">
+          <md-editor name="Content" [(ngModel)]="editingStep" required>
+          </md-editor>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger-outline" (click)="cancelEdit()">Cancel</button>
+          <button class="btn btn-success" (click)="saveStep()">Save</button>
+        </div>
+      </clr-modal>
+    </div>
+  </div>
+</div>
