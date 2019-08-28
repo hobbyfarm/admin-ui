@@ -15,23 +15,26 @@ export class ScenarioComponent implements OnInit {
 
   public scenarios: Scenario[] = [];
   public selectedscenario: Scenario;
-  public editingStep: string = "";
+  public editingStep: Step = new Step();
   public editingIndex: number = 0;
 
-  public dangerAlertClosed: boolean = true;
-  public successAlertClosed: boolean = true;
+  public editDangerClosed: boolean = true;
+  public editSuccessClosed: boolean = true;
 
-  public dangerAlertText: string = "";
-  public successAlertText: string = "";
+  public editDangerAlert: string = "";
+  public editSuccessAlert: string = "";
+
+  public deletingVMSetIndex: number = 0;
 
   constructor(
     public scenarioService: ScenarioService
   ) { }
 
   @ViewChild("editmodal") editModal: ClrModal;
+  @ViewChild("deletevmsetmodal") deleteVMSetModal: ClrModal;
 
   openEdit(s: Step, i: number) {
-    this.editingStep = atob(s.content);
+    this.editingStep = s;
     this.editingIndex = i;
     this.editModal.open();
   }
@@ -41,22 +44,42 @@ export class ScenarioComponent implements OnInit {
   }
 
   saveStep() {
-    this.selectedscenario.steps[this.editingIndex].content = btoa(this.editingStep);
+    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
     this.scenarioService.update(this.selectedscenario)
-    .subscribe(
-      (s: ServerResponse) => {
-        if (s.type == "updated") {
-          this.editModal.close();
-          this.successAlertText = "Step successfully updated";
-          this.successAlertClosed = false;
-          setTimeout(() => this.successAlertClosed = true, 3000);
-        } else {
-
+      .subscribe(
+        (s: ServerResponse) => {
+          if (s.type == "updated") {
+            this.editSuccessAlert = "Step successfully updated";
+            this.editSuccessClosed = false;
+            setTimeout(() => {
+              this.editSuccessClosed = true;
+              this.editModal.close();
+            }, 1000);
+          } else {
+            this.editDangerAlert = "Unable to update step: " + s.message;
+            this.editDangerClosed = false;
+            setTimeout(() => {
+              this.editDangerClosed = true;
+            }, 1000);
+          }
         }
-      }
-    )
+      )
   }
 
+  addVMSet() {
+    this.selectedscenario.virtualmachines.push(new Map());
+  }
+
+  deleteVMSet(i: number) {
+    console.log(i);
+    this.deletingVMSetIndex = i;
+    this.deleteVMSetModal.open();
+  }
+
+  doDeleteVMSet() {
+    this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
+    this.deleteVMSetModal.close();
+  }
 
   ngOnInit() {
     this.scenarioService.list()
@@ -70,7 +93,9 @@ export class ScenarioComponent implements OnInit {
       // this is only a partial scenario, we need to get the full
       this.scenarioService.get(s.id)
         .subscribe(
-          (s: Scenario) => this.selectedscenario = s
+          (s: Scenario) => {
+            this.selectedscenario = s;
+          }
         )
     }
   }

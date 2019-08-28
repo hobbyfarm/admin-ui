@@ -1,0 +1,23 @@
+<clr-modal #newscenariomodal [(clrModalOpen)]="open">
+  <h3 class="modal-title">Create New Scenario</h3>
+  <div class="modal-body">
+    <form clrForm [formGroup]="scenarioDetails">
+      <clr-input-container>
+        <label>Name</label>
+        <input clrInput type="text" formControlName="scenario_name" required>
+        <clr-control-error *clrIfError="'required'">Scenario name is required</clr-control-error>
+        <clr-control-error *clrIfError="'minlength'">Scenario name must be longer than 4 characters</clr-control-error>
+      </clr-input-container>
+      <clr-input-container>
+        <label>Description</label>
+        <input clrInput type="text" formControlName="scenario_description" required>
+        <clr-control-error *clrIfError="'required'">Scenario description is required</clr-control-error>
+        <clr-control-error *clrIfError="'minlength'">Scenario description must be longer than 4 characters</clr-control-error>
+      </clr-input-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-danger-outline">Cancel</button>
+    <button class="btn btn-success">Save</button>
+  </div>
+</clr-modal>

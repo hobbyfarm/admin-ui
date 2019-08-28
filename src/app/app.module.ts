@@ -21,6 +21,7 @@ import { ScenarioService } from './data/scenario.service';
 import { DlDateTimeDateModule, DlDateTimePickerModule} from 'clr-angular-bootstrap-datetimepicker';
 import { ScenarioComponent } from './scenario/scenario.component';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
+import { NewScenarioComponent } from './scenario/new-scenario/new-scenario.component';
 
 export function tokenGetter() {
   return localStorage.getItem("hobbyfarm_admin_token");
@@ -36,7 +37,8 @@ export function tokenGetter() {
     LoginComponent,
     NewScheduledEventComponent,
     AtobPipe,
-    ScenarioComponent
+    ScenarioComponent,
+    NewScenarioComponent
   ],
   imports: [
     BrowserModule,
