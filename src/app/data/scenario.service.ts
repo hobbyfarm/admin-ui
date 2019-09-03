@@ -75,4 +75,12 @@ export class ScenarioService {
 
     return this.http.put("https://" + environment.server + "/a/scenario/" + s.id, params)
   }
+
+  public create(s: Scenario) {
+    var params = new HttpParams()
+    .set("name", btoa(s.name))
+    .set("description", btoa(s.description));
+
+    return this.http.post("https://" + environment.server + "/a/scenario/new", params)
+  }
 }

@@ -101,16 +101,41 @@ export class ScenarioComponent implements OnInit {
     this.savescenario();
   }
 
+  private _displayAlert(alert: string, success: boolean, duration?: number) {
+    if (success) {
+      this.scenarioSuccessAlert = alert;
+      this.scenarioSuccessClosed = false;
+      setTimeout(() => {
+        this.scenarioSuccessClosed = true;
+      }, duration || 1000);
+    } else {
+      this.scenarioDangerAlert = alert;
+      this.scenarioDangerClosed = false;
+      setTimeout(() => {
+        this.scenarioDangerClosed = true;
+      }, duration || 1000);
+    }
+  }
+
   public addNewScenario() {
     this.newScenario.name = this.scenarioDetails.get("scenario_name").value;
     this.newScenario.description = this.scenarioDetails.get("scenario_description").value;
-    this.newScenario.virtualmachines = [];
-    this.newScenario.steps = [];
+    // should be able to save at this point
+    this.scenarioService.create(this.newScenario)
+    .subscribe(
+      (s: string) => {
+        this._displayAlert(s, true);
+      },
+      (s: string) => {
+        this._displayAlert(s, false);
+      }
+    )
 
-    this.scenarios.push(this.newScenario);
-    this.scenarioTainted = true;
-    // switch selected to the new scenario
-    this.selectedscenario = this.newScenario;
+    this.scenarioService.list()
+    .subscribe(
+      (s: Scenario[]) => this.scenarios = s
+    )
+    
     this.newScenarioModal.close();
   }
 
@@ -203,7 +228,7 @@ export class ScenarioComponent implements OnInit {
 
   addVMSet() {
     this.scenarioTainted = true;
-    this.selectedscenario.virtualmachines.push(new Map());
+    this.selectedscenario.virtualmachines.push({});
   }
 
   deleteVMSet(i: number) {
