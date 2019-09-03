@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { ClrWizard, ClrSignpostContent } from '@clr/angular';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { Scenario } from 'src/app/data/scenario';
@@ -18,6 +18,8 @@ import { DlDateTimePickerChange } from 'clr-angular-bootstrap-datetimepicker';
   styleUrls: ['./new-scheduled-event.component.scss']
 })
 export class NewScheduledEventComponent implements OnInit {
+  @Output()
+  public updated: EventEmitter<boolean> = new EventEmitter(false);
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
   public scenarios: Scenario[] = [];
@@ -214,7 +216,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.ses.create(this.se)
     .subscribe(
       (reply: string) => {
-        console.log(reply);
+        this.updated.next(true);
       },
       (err: any) => {
         // something went wrong

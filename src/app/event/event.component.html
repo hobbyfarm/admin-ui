@@ -2,6 +2,20 @@
   <header class="header header-7" app-header></header>
   <div class="content-container">
     <div class="content-area">
+      <clr-alert [clrAlertType]="'danger'" [(clrAlertClosed)]="seDangerClosed" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            {{ seDangerAlert }}
+          </span>
+        </clr-alert-item>
+      </clr-alert>
+      <clr-alert [clrAlertType]="'success'" [(clrAlertClosed)]="seSuccessClosed" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            {{ seSuccessAlert }}
+          </span>
+        </clr-alert-item>
+      </clr-alert>
       <h3>Scheduled Events</h3>
       <div class="clr-row">
         <div class="clr-col">
@@ -20,7 +34,7 @@
 
             <clr-dg-row *ngFor="let se of events">
               <clr-dg-action-overflow>
-                <button class="action-item">Delete</button>
+                <button class="action-item" (click)="openDelete(se)">Delete</button>
               </clr-dg-action-overflow>
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
               <clr-dg-cell>{{ se.start_time | date:'long' }}</clr-dg-cell>
@@ -33,7 +47,7 @@
         </div>
       </div>
 
-      <new-scheduled-event #wizard></new-scheduled-event>
+      <new-scheduled-event #wizard (updated)="refresh($event)"></new-scheduled-event>
 
       <clr-modal #deletemodal [(clrModalOpen)]="deleteopen">
         <h3 class="modal-title">Confirm Delete</h3>

@@ -61,4 +61,13 @@ export class ScheduledeventService {
       })
     )
   }
+
+  public delete(se: ScheduledEvent) {
+    return this.http.delete("https://" + environment.server + "/a/scheduledevent/delete/" + se.id)
+    .pipe(
+      switchMap((s: ServerResponse) => {
+        return from(JSON.parse(atob(s.message)))
+      })
+    )
+  }
 }
