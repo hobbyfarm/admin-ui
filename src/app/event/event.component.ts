@@ -64,7 +64,6 @@ export class EventComponent implements OnInit {
   }
 
   public refresh() {
-    console.log("calling refresh");
     this.seService.list()
     .subscribe(
       (se: ScheduledEvent[]) => {

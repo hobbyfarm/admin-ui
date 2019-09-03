@@ -99,10 +99,6 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.required_vms.set(env, new Map().set(template, count));
   }
 
-  public logse() {
-    console.log(this.se);
-  }
-
   ngOnInit() {
     this.se = new ScheduledEvent();
     this.se.required_vms = new Map();
@@ -199,7 +195,6 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   public open() {
-    console.log(this.se);
     this.validTimes = false;
     this.se = new ScheduledEvent();
     this.eventDetails.reset();
