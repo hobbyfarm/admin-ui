@@ -4,6 +4,10 @@ import { ScenarioService } from '../data/scenario.service';
 import { ClrModal } from '@clr/angular';
 import { Step } from '../data/step';
 import { ServerResponse } from '../data/serverresponse';
+import { deepCopy } from '../deepcopy';
+import { VmtemplateService } from '../data/vmtemplate.service';
+import { VMTemplate } from '../data/vmtemplate';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-scenario',
@@ -14,29 +18,100 @@ export class ScenarioComponent implements OnInit {
   public unusedSelectedScenario: any = {}; // only exists to satisfy a datagrid requirement
 
   public scenarios: Scenario[] = [];
+  public vmtemplates: VMTemplate[] = [];
   public selectedscenario: Scenario;
   public editingStep: Step = new Step();
   public editingIndex: number = 0;
 
+  public scenarioTainted: boolean = false;
+
   public editDangerClosed: boolean = true;
   public editSuccessClosed: boolean = true;
+  public scenarioDangerClosed: boolean = true;
+  public scenarioSuccessClosed: boolean = true;
 
   public editDangerAlert: string = "";
   public editSuccessAlert: string = "";
+  public scenarioDangerAlert: string = "";
+  public scenarioSuccessAlert: string = "";
+  public newvmindex: number = 0;
 
   public deletingVMSetIndex: number = 0;
+  public deletingStepIndex: number = 0;
+
+  public newScenario: Scenario = new Scenario();
 
   constructor(
-    public scenarioService: ScenarioService
+    public scenarioService: ScenarioService,
+    public vmTemplateService: VmtemplateService
   ) { }
+
+  public vmform: FormGroup = new FormGroup({
+    'vm_name': new FormControl(null, [
+      Validators.required,
+      Validators.minLength(4)
+    ]),
+    'vm_template': new FormControl(null, [
+      Validators.required,
+    ])
+  })
+
+  public scenarioDetails: FormGroup = new FormGroup({
+    'scenario_name': new FormControl(null, [
+      Validators.required,
+      Validators.minLength(4)
+    ]),
+    'scenario_description': new FormControl(null, [
+      Validators.required,
+      Validators.minLength(4)
+    ])
+  })
 
   @ViewChild("editmodal") editModal: ClrModal;
   @ViewChild("deletevmsetmodal") deleteVMSetModal: ClrModal;
+  @ViewChild("createvmmodal") createVMModal: ClrModal;
+  @ViewChild("deletestepmodal") deleteStepModal: ClrModal;
+  @ViewChild("newscenariomodal") newScenarioModal: ClrModal;
 
   openEdit(s: Step, i: number) {
     this.editingStep = s;
     this.editingIndex = i;
     this.editModal.open();
+  }
+
+  openNewScenario() {
+    this.newScenario = new Scenario();
+    this.newScenarioModal.open();
+  }
+
+  openNewStep() {
+    this.editingStep = new Step();
+    this.editingIndex = this.selectedscenario.steps.length;
+    this.editModal.open();
+  }
+
+  public openDeleteStep(i: number) {
+    this.deletingStepIndex = i;
+    this.deleteStepModal.open();
+  }
+
+  public doDeleteStep() {
+    this.selectedscenario.steps.splice(this.deletingStepIndex, 1);
+    this.deleteStepModal.close();
+    this.savescenario();
+  }
+
+  public addNewScenario() {
+    this.newScenario.name = this.scenarioDetails.get("scenario_name").value;
+    this.newScenario.description = this.scenarioDetails.get("scenario_description").value;
+    this.newScenario.virtualmachines = [];
+    this.newScenario.steps = [];
+
+    this.scenarios.push(this.newScenario);
+    this.scenarioTainted = true;
+    // switch selected to the new scenario
+    this.selectedscenario = this.newScenario;
+    this.newScenarioModal.close();
   }
 
   cancelEdit() {
@@ -66,12 +141,73 @@ export class ScenarioComponent implements OnInit {
       )
   }
 
+  public openCreateVM(i: number) {
+    this.vmform.reset();
+    this.newvmindex = i;
+    this.createVMModal.open();
+  }
+
+  public deleteVM(setIndex: number, key: string) {
+    this.scenarioTainted = true;
+    delete this.selectedscenario.virtualmachines[setIndex][key];
+  }
+
+  addVM() {
+    this.scenarioTainted = true;
+    this.selectedscenario.virtualmachines[this.newvmindex][this.vmform.get('vm_name').value] = this.vmform.get('vm_template').value;
+    this.createVMModal.close();
+  }
+
+
+  savescenario() {
+    this.scenarioService.update(this.selectedscenario)
+      .subscribe(
+        (s: ServerResponse) => {
+          if (s.type == "updated") {
+            this.scenarioSuccessAlert = "Scenario updated";
+            this.scenarioSuccessClosed = false;
+            setTimeout(() => {
+              this.scenarioSuccessClosed = true;
+              this.scenarioTainted = false;
+            }, 1000);
+          } else {
+            this.scenarioDangerAlert = "Unable to update scenario: " + s.message;
+            this.scenarioDangerClosed = false;
+            setTimeout(() => {
+              this.scenarioDangerClosed = true;
+            }, 1000);
+          }
+        }
+      )
+  }
+
+  moveStepUp(i: number) {
+    this.scenarioTainted = true;
+    // get a copy of the to-be-moved item
+    var obj = <Step>deepCopy(this.selectedscenario.steps[i]);
+    // delete at the index currently
+    this.selectedscenario.steps.splice(i, 1);
+    // put into the i-1 index
+    this.selectedscenario.steps.splice(i - 1, 0, obj);
+  }
+
+  moveStepDown(i: number) {
+    this.scenarioTainted = true;
+    // get a copy of the to-be-moved item
+    var obj = <Step>deepCopy(this.selectedscenario.steps[i]);
+    // delete at the index currently
+    this.selectedscenario.steps.splice(i, 1);
+    // put into the i+1 index
+    this.selectedscenario.steps.splice(i + 1, 0, obj);
+  }
+
   addVMSet() {
+    this.scenarioTainted = true;
     this.selectedscenario.virtualmachines.push(new Map());
   }
 
   deleteVMSet(i: number) {
-    console.log(i);
+    this.scenarioTainted = true;
     this.deletingVMSetIndex = i;
     this.deleteVMSetModal.open();
   }
@@ -85,6 +221,13 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.list()
       .subscribe(
         (s: Scenario[]) => this.scenarios = s
+      )
+
+    this.vmTemplateService.list()
+      .subscribe(
+        (v: VMTemplate[]) => {
+          this.vmtemplates = v;
+        }
       )
   }
 

@@ -86,8 +86,8 @@
 
       <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
-        <clr-dg-cell>{{ s.name | atob }}</clr-dg-cell>
-        <clr-dg-cell>{{ s.description | atob }}</clr-dg-cell>
+        <clr-dg-cell>{{ s.name }}</clr-dg-cell>
+        <clr-dg-cell>{{ s.description }}</clr-dg-cell>
       </clr-dg-row>
     </clr-datagrid>
   </clr-wizard-page>

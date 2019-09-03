@@ -21,7 +21,14 @@ export class ScenarioService {
     return this.http.get("https://" + environment.server + "/a/scenario/list")
     .pipe(
       map((s: ServerResponse) => {
-        return JSON.parse(atob(s.content));
+        let obj: Scenario[] = JSON.parse(atob(s.content)); // this doesn't encode a map though
+        // so now we need to go vmset-by-vmset and build maps
+        obj.forEach((s: Scenario) => {
+          s.virtualmachines.forEach((v: Object) => {
+            v = new Map(Object.entries(v))
+          })
+        });
+        return obj;
       }),
       map((sList: Scenario[]) => {
         sList.forEach((s: Scenario) => {

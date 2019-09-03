@@ -2,10 +2,31 @@
   <header class="header header-7" app-header></header>
   <div class="content-container">
     <div class="content-area">
+      <clr-alert [clrAlertType]="'warning'" [(clrAlertClosed)]="!scenarioTainted" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            Scenario has been modified. Save your changes.
+          </span>
+        </clr-alert-item>
+      </clr-alert>
+      <clr-alert [clrAlertType]="'danger'" [(clrAlertClosed)]="scenarioDangerClosed" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            {{ scenarioDangerAlert }}
+          </span>
+        </clr-alert-item>
+      </clr-alert>
+      <clr-alert [clrAlertType]="'success'" [(clrAlertClosed)]="scenarioSuccessClosed" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            {{ scenarioSuccessAlert }}
+          </span>
+        </clr-alert-item>
+      </clr-alert>
       <h3>Scenarios</h3>
       <div class="clr-row">
         <div class="clr-col">
-          <button class="btn btn-success" (click)="openNew()">
+          <button class="btn btn-success" (click)="openNewScenario()">
             <clr-icon shape="plus"></clr-icon> New Scenario
           </button>
         </div>
@@ -31,7 +52,8 @@
                   <form clrForm>
                     <clr-input-container>
                       <label>Name</label>
-                      <input clrInput type="text" class="full-width" [(ngModel)]="selectedscenario.name" name="scenario_name">
+                      <input clrInput type="text" class="full-width" [(ngModel)]="selectedscenario.name"
+                        name="scenario_name">
                     </clr-input-container>
                     <clr-input-container>
                       <label>Description</label>
@@ -47,25 +69,30 @@
                     <clr-stack-block *ngFor="let vmset of selectedscenario.virtualmachines; let i = index">
                       <clr-stack-label>Virtual Machine Set {{ i+1 }} </clr-stack-label>
                       <clr-stack-content>
-                        <button class="btn btn-sm btn-link btn-link-stack" (click)="deleteVMSet(i)">Delete VM Set</button>
+                        <button class="btn btn-sm btn-link btn-link-stack" (click)="deleteVMSet(i)">Delete VM
+                          Set</button>
                       </clr-stack-content>
                       <clr-stack-block *ngFor="let item of vmset | keyvalue">
                         <clr-stack-label>{{ item.key }}</clr-stack-label>
-                        <clr-stack-content>{{ item.value }}  <button class="btn btn-sm btn-link btn-link-stack">Delete VM</button></clr-stack-content>
+                        <clr-stack-content>{{ item.value }} <button class="btn btn-sm btn-link btn-link-stack"
+                            (click)="deleteVM(i, item.key)">Delete
+                            VM</button></clr-stack-content>
                       </clr-stack-block>
                       <clr-stack-block>
-                        <clr-stack-label><button class="btn btn-sm btn-link btn-link-stack">New VM</button></clr-stack-label>
+                        <clr-stack-label><button class="btn btn-sm btn-link btn-link-stack"
+                            (click)="openCreateVM(i)">New VM</button>
+                        </clr-stack-label>
                       </clr-stack-block>
                     </clr-stack-block>
                   </clr-stack-view>
                   <button class="btn btn-danger-outline">Delete</button>
-                  <button class="btn btn-success">Save</button>
+                  <button class="btn btn-success" (click)="savescenario()" [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
                 </clr-tab-content>
               </clr-tab>
               <clr-tab>
                 <button clrTabLink="stepsLink">Steps</button>
                 <clr-tab-content id="stepsContent" *clrIfActive>
-                  <button class="btn btn-success-outline btn-sm">
+                  <button class="btn btn-success-outline btn-sm" (click)="openNewStep()">
                     <clr-icon shape="plus"></clr-icon> New Step
                   </button>
                   <clr-datagrid>
@@ -74,16 +101,18 @@
 
                     <clr-dg-row *clrDgItems="let s of selectedscenario.steps; let i = index">
                       <clr-dg-action-overflow>
-                        <button class="action-item">Move Up</button>
-                        <button class="action-item">Move Down</button>
+                        <button class="action-item" *ngIf="i > 0" (click)="moveStepUp(i)">Move Up</button>
+                        <button class="action-item" *ngIf="i < selectedscenario.steps.length-1"
+                          (click)="moveStepDown(i)">Move Down</button>
                         <button class="action-item" (click)="openEdit(s, i)">Edit</button>
-                        <button class="action-item">Delete</button>
+                        <button class="action-item" (click)="openDeleteStep(i)">Delete</button>
                       </clr-dg-action-overflow>
 
                       <clr-dg-cell>{{ i+1 }}</clr-dg-cell>
                       <clr-dg-cell>{{ s.title }}</clr-dg-cell>
                     </clr-dg-row>
                   </clr-datagrid>
+                  <button class="btn btn-success" (click)="savescenario()" *ngIf="scenarioTainted" [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
                 </clr-tab-content>
               </clr-tab>
             </clr-tabs>
@@ -129,12 +158,77 @@
         <h3 class="modal-title">Delete VM Set</h3>
         <div class="modal-body">
           <p>
-            Are you sure you want to delete this VM set? This will remove any VM name -> template mappings you have created.
+            Are you sure you want to delete this VM set? This will remove any VM name -> template mappings you have
+            created.
           </p>
         </div>
         <div class="modal-footer">
           <button class="btn btn-success-outline" (click)="deleteVMSetOpen = false">Cancel</button>
           <button class="btn btn-danger" (click)="doDeleteVMSet()">Delete</button>
+        </div>
+      </clr-modal>
+
+      <clr-modal #deletestepmodal [(clrModalOpen)]="deleteStepOpen">
+        <h3 class="modal-title">Delete Step</h3>
+        <div class="modal-body">
+          <p>
+            Are you sure you want to delete this step?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success-outline" (click)="deleteStepOpen = false">Cancel</button>
+          <button class="btn btn-danger" (click)="doDeleteStep()">Delete</button>
+        </div>
+      </clr-modal>
+
+      <clr-modal #createvmmodal [(clrModalOpen)]="createVMOpen">
+        <h3 class="modal-title">Create VM</h3>
+        <div class="modal-body">
+          <form clrForm [formGroup]="vmform">
+            <clr-input-container>
+              <label>Name</label>
+              <input clrInput type="text" formControlName="vm_name" required>
+              <clr-control-error *clrIfError="'required'">VM name is required</clr-control-error>
+              <clr-control-error *clrIfError="'minlength'">VM name must be longer than 4 characters
+              </clr-control-error>
+            </clr-input-container>
+            <clr-select-container>
+              <label>VM Template</label>
+              <select clrSelect name="vm_template" formControlName="vm_template">
+                <option *ngFor="let v of vmtemplates" [value]="v.id">{{ v.name }}</option>
+              </select>
+            </clr-select-container>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger-outline" (click)="createVMOpen = false">Cancel</button>
+          <button class="btn btn-success" (click)="addVM()" [disabled]="!vmform.valid">Add</button>
+        </div>
+      </clr-modal>
+
+      <clr-modal #newscenariomodal [(clrModalOpen)]="newScenarioOpen">
+        <h3 class="modal-title">Create New Scenario</h3>
+        <div class="modal-body">
+          <form clrForm [formGroup]="scenarioDetails">
+            <clr-input-container>
+              <label>Name</label>
+              <input clrInput type="text" formControlName="scenario_name" required>
+              <clr-control-error *clrIfError="'required'">Scenario name is required</clr-control-error>
+              <clr-control-error *clrIfError="'minlength'">Scenario name must be longer than 4 characters
+              </clr-control-error>
+            </clr-input-container>
+            <clr-input-container>
+              <label>Description</label>
+              <input clrInput type="text" formControlName="scenario_description" required>
+              <clr-control-error *clrIfError="'required'">Scenario description is required</clr-control-error>
+              <clr-control-error *clrIfError="'minlength'">Scenario description must be longer than 4 characters
+              </clr-control-error>
+            </clr-input-container>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger-outline" (click)="newScenarioOpen = false">Cancel</button>
+          <button class="btn btn-success" (click)="addNewScenario()">Save</button>
         </div>
       </clr-modal>
     </div>
