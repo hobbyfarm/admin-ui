@@ -18,22 +18,22 @@ export class ScheduledeventService {
 
   public list() {
     return this.http.get("https://" + environment.server + "/a/scheduledevent/list")
-    .pipe(
-      switchMap((s: ServerResponse) => {
-        return from(JSON.parse(atob(s.content)))
-      }),
-      map((se: ScheduledEvent) => {
-        se.start_time = new Date(se.start_time);
-        se.end_time = new Date(se.end_time);
-        return of(se);
-      }),
-      combineAll()
-    )
+      .pipe(
+        switchMap((s: ServerResponse) => {
+          return from(JSON.parse(atob(s.content)))
+        }),
+        map((se: ScheduledEvent) => {
+          se.start_time = new Date(se.start_time);
+          se.end_time = new Date(se.end_time);
+          return of(se);
+        }),
+        combineAll()
+      )
   }
 
   private strMapToObj(strMap) {
     let obj = Object.create(null);
-    for (let [k,v] of strMap) {
+    for (let [k, v] of strMap) {
       if (typeof v == "object") {
         obj[k] = this.strMapToObj(v);
       } else {
@@ -45,28 +45,59 @@ export class ScheduledeventService {
 
   public create(se: ScheduledEvent) {
     var params = new HttpParams()
-    .set("name", se.event_name)
-    .set("description", se.description)
-    .set("start_time", formatDate(se.start_time, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC"))
-    .set("end_time", formatDate(se.end_time, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC"))
-    .set("required_vms", JSON.stringify(this.strMapToObj(se.required_vms)))
-    .set("access_code", se.access_code)
-    .set("scenarios", JSON.stringify(se.scenarios));
+      .set("name", se.event_name)
+      .set("description", se.description)
+      .set("start_time", formatDate(se.start_time, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC"))
+      .set("end_time", formatDate(se.end_time, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC"))
+      .set("required_vms", JSON.stringify(this.strMapToObj(se.required_vms)))
+      .set("access_code", se.access_code)
+      .set("scenarios", JSON.stringify(se.scenarios));
 
 
     return this.http.post("https://" + environment.server + "/a/scheduledevent/new", params)
-    .pipe(
-      switchMap((s: ServerResponse) => {
-        return from(JSON.parse(atob(s.message)))
-      })
-    )
+      .pipe(
+        switchMap((s: ServerResponse) => {
+          return from(JSON.parse(atob(s.message)))
+        })
+      )
+  }
+
+  public update(se: ScheduledEvent) {
+    var params = new HttpParams()
+      .set("name", se.event_name)
+      .set("description", se.description)
+      .set("start_time", formatDate(se.start_time, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC"))
+      .set("end_time", formatDate(se.end_time, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC"))
+      .set("required_vms", JSON.stringify(se.required_vms))
+      .set("access_code", se.access_code)
+      .set("scenarios", JSON.stringify(se.scenarios));
+
+
+    return this.http.put("https://" + environment.server + "/a/scheduledevent/" + se.id, params)
+      .pipe(
+        switchMap((s: ServerResponse) => {
+          return from(JSON.parse(atob(s.message)))
+        })
+      )
   }
 
   public delete(se: ScheduledEvent) {
     return this.http.delete("https://" + environment.server + "/a/scheduledevent/delete/" + se.id)
+      .pipe(
+        switchMap((s: ServerResponse) => {
+          return from(JSON.parse(atob(s.message)))
+        })
+      )
+  }
+
+  public get(id: string) {
+    return this.http.get("https://" + environment.server + "/a/scheduledevent/" + id)
     .pipe(
       switchMap((s: ServerResponse) => {
-        return from(JSON.parse(atob(s.message)))
+        let se = JSON.parse(atob(s.content));
+        se.start_time = new Date(se.start_time);
+        se.end_time = new Date(se.end_time);
+        return of(se);
       })
     )
   }

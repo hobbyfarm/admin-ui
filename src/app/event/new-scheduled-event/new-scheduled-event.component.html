@@ -161,7 +161,7 @@
             <tr>
               <td>{{ ea.environment }}</td>
               <td>{{ t }}</td>
-              <td><input type="number" name="count" ngModel (ngModelChange)="setVMCount(ea.environment, t, $event)">
+              <td><input type="number" name="count" [ngModel]="getVMCount(ea.environment, t)" (ngModelChange)="setVMCount(ea.environment, t, $event)">
               </td>
             </tr>
           </ng-container>
@@ -170,7 +170,7 @@
     </table>
   </clr-wizard-page>
 
-  <clr-wizard-page (clrWizardPageOnLoad)="logse()">
+  <clr-wizard-page>
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>
       Confirm the following details before finishing:

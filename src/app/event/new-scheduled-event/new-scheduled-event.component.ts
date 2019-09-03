@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angular/core';
 import { ClrWizard, ClrSignpostContent } from '@clr/angular';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { Scenario } from 'src/app/data/scenario';
@@ -11,6 +11,7 @@ import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DlDateTimePickerChange } from 'clr-angular-bootstrap-datetimepicker';
+import { deepCopy } from 'src/app/deepcopy';
 
 @Component({
   selector: 'new-scheduled-event',
@@ -20,6 +21,10 @@ import { DlDateTimePickerChange } from 'clr-angular-bootstrap-datetimepicker';
 export class NewScheduledEventComponent implements OnInit {
   @Output()
   public updated: EventEmitter<boolean> = new EventEmitter(false);
+
+  @Input()
+  public event: ScheduledEvent;
+
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
   public scenarios: Scenario[] = [];
@@ -94,14 +99,53 @@ export class NewScheduledEventComponent implements OnInit {
     return Object.entries(this.vmtotals);
   }
 
+  public getVMCount(env: string, template: string) {
+    return this.se.required_vms[env] ? this.se.required_vms[env][template] : 0;
+  }
+
   public setVMCount(env: string, template: string, count: number) {
     count == null ? 0 : count; // handle zeroes
-    this.se.required_vms.set(env, new Map().set(template, count));
+    this.se.required_vms[env] = {};
+    this.se.required_vms[env][template] = count;
+  }
+
+  ngOnChanges() {
+    if (this.event) {
+      this.se = this.event;
+      this.eventDetails.setValue({
+        'event_name': this.se.event_name,
+        'description': this.se.description,
+        'access_code': this.se.access_code
+      });
+
+      // auto-select the environments
+      this.se.scenarios.forEach(
+        (sid: string) => {
+          // find matching if there is one, and push into selectedscenarios
+          this.scenarios.map(
+            (s: Scenario) => {
+              if (s.id == sid) {
+                this.selectedscenarios.push(s);
+              }
+            }
+          )
+        }
+      )
+
+    } else {
+      this.se = new ScheduledEvent();
+      this.se.required_vms = {};
+    }
   }
 
   ngOnInit() {
-    this.se = new ScheduledEvent();
-    this.se.required_vms = new Map();
+    if (this.event) {
+      // we have passed in an event for editing
+      this.se = this.event;
+    } else {
+      this.se = new ScheduledEvent();
+      this.se.required_vms = {};
+    }
 
     this.ss.list()
       .subscribe(
@@ -174,6 +218,22 @@ export class NewScheduledEventComponent implements OnInit {
         (ea: EnvironmentAvailability[]) => {
           this.availableEnvironments = ea;
           this.checkingEnvironments = false;
+
+          if (this.event) {
+            // we are updating instead of creating new
+            // so we need to select the environments
+            Object.keys(this.se.required_vms).forEach(
+              (eid: string) => {
+                this.availableEnvironments.map(
+                  (ea: EnvironmentAvailability) => {
+                    if (ea.environment == eid) {
+                      this.selectedEnvironments.push(ea);
+                    }
+                  }
+                )
+              }
+            )
+          }
         }
       )
   }
@@ -208,15 +268,27 @@ export class NewScheduledEventComponent implements OnInit {
 
   public save() {
     this.saving = true;
-    this.ses.create(this.se)
-    .subscribe(
-      (reply: string) => {
-        this.updated.next(true);
-      },
-      (err: any) => {
-        // something went wrong
-      }
-    )
+    if (this.event) {
+      this.ses.update(this.se)
+        .subscribe(
+          (reply: string) => {
+            this.updated.next(true);
+          },
+          (err: any) => {
+            // something went wrong
+          }
+        )
+    } else {
+      this.ses.create(this.se)
+        .subscribe(
+          (reply: string) => {
+            this.updated.next(true);
+          },
+          (err: any) => {
+            // something went wrong
+          }
+        )
+    }
   }
 
 }

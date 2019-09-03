@@ -35,6 +35,7 @@
             <clr-dg-row *ngFor="let se of events">
               <clr-dg-action-overflow>
                 <button class="action-item" (click)="openDelete(se)">Delete</button>
+                <button class="action-item" (click)="openEdit(se)">Edit</button>
               </clr-dg-action-overflow>
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
               <clr-dg-cell>{{ se.start_time | date:'long' }}</clr-dg-cell>
@@ -47,7 +48,7 @@
         </div>
       </div>
 
-      <new-scheduled-event #wizard (updated)="refresh($event)"></new-scheduled-event>
+      <new-scheduled-event #wizard (updated)="refresh($event)" [event]="editingEvent"></new-scheduled-event>
 
       <clr-modal #deletemodal [(clrModalOpen)]="deleteopen">
         <h3 class="modal-title">Confirm Delete</h3>

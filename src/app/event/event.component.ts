@@ -21,6 +21,8 @@ export class EventComponent implements OnInit {
   public seSuccessClosed: boolean = true;
   public seDangerClosed: boolean = true;
 
+  public editingEvent: ScheduledEvent;
+
   constructor(
     public seService: ScheduledeventService
   ){
@@ -60,6 +62,12 @@ export class EventComponent implements OnInit {
   }
 
   public openNew() {
+    this.editingEvent = null;
+    this.wizard.open();
+  }
+
+  public openEdit(se: ScheduledEvent) {
+    this.editingEvent = se;
     this.wizard.open();
   }
 

@@ -5,7 +5,7 @@ export class ScheduledEvent {
     description: string;
     start_time: Date;
     end_time: Date;
-    required_vms: Map<string, Map<string, number>>;
+    required_vms: {};
     scenarios: string[];
     vmsets: string[];
     active: boolean;
