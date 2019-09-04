@@ -39,6 +39,12 @@ export class ScenarioComponent implements OnInit {
   public deletingVMSetIndex: number = 0;
   public deletingStepIndex: number = 0;
 
+  public editOpen: boolean = false;
+  public deleteVMSetOpen: boolean = false;
+  public deleteStepOpen: boolean = false;
+  public createVMOpen: boolean = false;
+  public newScenarioOpen: boolean = false;
+
   public newScenario: Scenario = new Scenario();
 
   constructor(

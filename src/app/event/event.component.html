@@ -48,7 +48,7 @@
         </div>
       </div>
 
-      <new-scheduled-event #wizard (updated)="refresh($event)" [event]="editingEvent"></new-scheduled-event>
+      <new-scheduled-event #wizard (updated)="refresh()" [event]="editingEvent"></new-scheduled-event>
 
       <clr-modal #deletemodal [(clrModalOpen)]="deleteopen">
         <h3 class="modal-title">Confirm Delete</h3>

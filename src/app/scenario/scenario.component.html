@@ -228,7 +228,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-danger-outline" (click)="newScenarioOpen = false">Cancel</button>
-          <button class="btn btn-success" (click)="addNewScenario()">Save</button>
+          <button class="btn btn-success" (click)="addNewScenario()" [disabled]="!scenarioDetails.valid">Save</button>
         </div>
       </clr-modal>
     </div>
