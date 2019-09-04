@@ -31,18 +31,6 @@ export class ScheduledeventService {
       )
   }
 
-  private strMapToObj(strMap) {
-    let obj = Object.create(null);
-    for (let [k, v] of strMap) {
-      if (typeof v == "object") {
-        obj[k] = this.strMapToObj(v);
-      } else {
-        obj[k] = v;
-      }
-    }
-    return obj;
-  }
-
   public create(se: ScheduledEvent) {
     var params = new HttpParams()
       .set("name", se.event_name)
