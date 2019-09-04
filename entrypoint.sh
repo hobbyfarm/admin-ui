@@ -12,4 +12,4 @@ EOT
 
 echo -e "$CONTENT" > /data/src/environments/environment.prod.ts
 
-ng serve --aot --prod --port 80 --host 0.0.0.0 --disable-host-check
+ng serve --aot --prod --port 80 --host 0.0.0.0 --disable-host-check --live-reload=false
