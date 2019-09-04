@@ -49,7 +49,7 @@ export class ScheduledeventService {
       .set("description", se.description)
       .set("start_time", formatDate(se.start_time, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC"))
       .set("end_time", formatDate(se.end_time, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC"))
-      .set("required_vms", JSON.stringify(this.strMapToObj(se.required_vms)))
+      .set("required_vms", JSON.stringify(se.required_vms))
       .set("access_code", se.access_code)
       .set("scenarios", JSON.stringify(se.scenarios));
 
