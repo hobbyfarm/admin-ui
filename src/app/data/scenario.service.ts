@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpParameterCodec } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Scenario } from './scenario';
-import { from } from 'rxjs';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
 

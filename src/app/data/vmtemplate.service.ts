@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
-import { from, of } from 'rxjs';
-import { VMTemplate } from './vmtemplate';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
