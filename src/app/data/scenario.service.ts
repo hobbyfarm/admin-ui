@@ -83,7 +83,6 @@ export class ScenarioService {
     s.steps.forEach((st: Step) => {
       st.title = btoa(st.title);
       st.content = btoa(st.content);
-      console.log(st.content);
     });
     
     var params = new HttpParams({encoder: new CustomEncoder()})
@@ -91,8 +90,6 @@ export class ScenarioService {
     .set("description", btoa(s.description))
     .set("steps", JSON.stringify(s.steps))
     .set("virtualmachines", JSON.stringify(s.virtualmachines));
-
-    console.log(JSON.stringify(s.steps));
 
     return this.http.put("https://" + environment.server + "/a/scenario/" + s.id, params)
   }
