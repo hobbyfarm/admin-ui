@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpParameterCodec } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
 import { map, switchMap } from 'rxjs/operators';
@@ -7,6 +7,24 @@ import { Scenario } from './scenario';
 import { from } from 'rxjs';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
+
+class CustomEncoder implements HttpParameterCodec {
+  encodeKey(key: string): string {
+    return encodeURIComponent(key);
+  }
+
+  encodeValue(value: string): string {
+    return encodeURIComponent(value);
+  }
+
+  decodeKey(key: string): string {
+    return decodeURIComponent(key);
+  }
+
+  decodeValue(value: string): string {
+    return decodeURIComponent(value);
+  }
+}
 
 @Injectable({
   providedIn: 'root'
@@ -67,7 +85,7 @@ export class ScenarioService {
       st.content = btoa(st.content);
     });
     
-    var params = new HttpParams()
+    var params = new HttpParams({encoder: new CustomEncoder()})
     .set("name", btoa(s.name))
     .set("description", btoa(s.description))
     .set("steps", JSON.stringify(s.steps))
