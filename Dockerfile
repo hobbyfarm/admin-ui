@@ -1,15 +1,11 @@
-FROM alexsuch/angular-cli:7.3.8
+FROM nginx
 
-COPY entrypoint.sh /data/entrypoint.sh
-COPY src/ /data/src/
-COPY *.json /data/
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-WORKDIR /data
+COPY dist/* /usr/share/nginx/html
 
-RUN npm install
+COPY entrypoint.sh /
 
-RUN chmod +x /data/entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-EXPOSE 80
-
-ENTRYPOINT [ "/data/entrypoint.sh" ]
+ENTRYPOINT ["/entrypoint.sh"]
