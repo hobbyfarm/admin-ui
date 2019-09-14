@@ -8,6 +8,24 @@ import { from } from 'rxjs';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
 
+class CustomEncoder implements HttpParameterCodec {
+  encodeKey(key: string): string {
+    return encodeURIComponent(key);
+  }
+
+  encodeValue(value: string): string {
+    return encodeURIComponent(value);
+  }
+
+  decodeKey(key: string): string {
+    return decodeURIComponent(key);
+  }
+
+  decodeValue(value: string): string {
+    return decodeURIComponent(value);
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -65,13 +83,16 @@ export class ScenarioService {
     s.steps.forEach((st: Step) => {
       st.title = btoa(st.title);
       st.content = btoa(st.content);
+      console.log(st.content);
     });
     
-    var params = new HttpParams()
+    var params = new HttpParams({encoder: new CustomEncoder()})
     .set("name", btoa(s.name))
     .set("description", btoa(s.description))
     .set("steps", JSON.stringify(s.steps))
     .set("virtualmachines", JSON.stringify(s.virtualmachines));
+
+    console.log(JSON.stringify(s.steps));
 
     return this.http.put("https://" + environment.server + "/a/scenario/" + s.id, params)
   }
