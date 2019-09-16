@@ -6,7 +6,7 @@ PACKAGE_VERSION=$(cat package.json \
 
 echo "Building HobbyFarm Amdin UI $PACKAGE_VERSION"
 
-ng build --aot
+ng build --prod --aot
 
 docker build -t "hobbyfarm/admin-ui" . 
 
