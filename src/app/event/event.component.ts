@@ -29,8 +29,8 @@ export class EventComponent implements OnInit {
 
   }
 
-  @ViewChild("wizard") wizard: NewScheduledEventComponent;
-  @ViewChild("deletemodal") deletemodal: ClrModal;
+  @ViewChild("wizard", { static: true }) wizard: NewScheduledEventComponent;
+  @ViewChild("deletemodal", { static: true }) deletemodal: ClrModal;
 
   ngOnInit() {
     this.refresh();

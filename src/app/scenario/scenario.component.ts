@@ -73,11 +73,11 @@ export class ScenarioComponent implements OnInit {
     ])
   })
 
-  @ViewChild("editmodal") editModal: ClrModal;
-  @ViewChild("deletevmsetmodal") deleteVMSetModal: ClrModal;
-  @ViewChild("createvmmodal") createVMModal: ClrModal;
-  @ViewChild("deletestepmodal") deleteStepModal: ClrModal;
-  @ViewChild("newscenariomodal") newScenarioModal: ClrModal;
+  @ViewChild("editmodal", { static: true }) editModal: ClrModal;
+  @ViewChild("deletevmsetmodal", { static: true }) deleteVMSetModal: ClrModal;
+  @ViewChild("createvmmodal", { static: true }) createVMModal: ClrModal;
+  @ViewChild("deletestepmodal", { static: true }) deleteStepModal: ClrModal;
+  @ViewChild("newscenariomodal", { static: true }) newScenarioModal: ClrModal;
 
   openEdit(s: Step, i: number) {
     this.editingStep = s;

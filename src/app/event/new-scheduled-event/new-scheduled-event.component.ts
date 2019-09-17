@@ -80,9 +80,9 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.access_code = this.eventDetails.get('access_code').value;
   }
 
-  @ViewChild("wizard") wizard: ClrWizard;
-  @ViewChild("startTimeSignpost") startTimeSignpost: ClrSignpostContent;
-  @ViewChild("endTimeSignpost") endTimeSignpost: ClrSignpostContent;
+  @ViewChild("wizard", { static: true }) wizard: ClrWizard;
+  @ViewChild("startTimeSignpost", { static: false }) startTimeSignpost: ClrSignpostContent;
+  @ViewChild("endTimeSignpost", { static: false }) endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
     this.se.scenarios = [];

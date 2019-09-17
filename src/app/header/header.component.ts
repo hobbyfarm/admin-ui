@@ -32,8 +32,8 @@ export class HeaderComponent implements OnInit {
   }
 
 
-  @ViewChild("logoutmodal") logoutModal: ClrModal;
-  @ViewChild("aboutmodal") aboutModal: ClrModal;
+  @ViewChild("logoutmodal", { static: true }) logoutModal: ClrModal;
+  @ViewChild("aboutmodal", { static: true }) aboutModal: ClrModal;
 
   public logout() {
     this.logoutModal.open();
