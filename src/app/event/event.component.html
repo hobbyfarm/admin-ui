@@ -31,6 +31,7 @@
             <clr-dg-column>Start</clr-dg-column>
             <clr-dg-column>End</clr-dg-column>
             <clr-dg-column>Scenarios</clr-dg-column>
+            <clr-dg-column>Status</clr-dg-column>
 
             <clr-dg-row *ngFor="let se of events">
               <clr-dg-action-overflow>
@@ -42,6 +43,17 @@
               <clr-dg-cell>{{ se.end_time | date:'long' }}</clr-dg-cell>
               <clr-dg-cell>
                 <span class="label" *ngFor="let s of se.scenarios">{{ s }}</span>
+              </clr-dg-cell>
+              <clr-dg-cell>
+                <ng-container *ngIf="se.active && se.provisioned && !se.finished && se.ready">
+                  <clr-icon shape="clock"></clr-icon> In Progress
+                </ng-container>
+                <ng-container *ngIf="!se.active">
+                  <clr-icon shape="times"></clr-icon> Inactive
+                </ng-container>
+                <ng-container *ngIf="se.finished">
+                  <clr-icon shape="check"></clr-icon> Finished
+                </ng-container>
               </clr-dg-cell>
             </clr-dg-row>
           </clr-datagrid>
