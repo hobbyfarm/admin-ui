@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { switchMap, catchError } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
 import { of, throwError } from 'rxjs';
+import { parseTemplate } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -34,11 +35,11 @@ export class UserService {
     .set("password", password);
     
     if (admin != null) {
-      params.set("admin", JSON.stringify(admin));
+      params = params.set("admin", JSON.stringify(admin));
     }
 
     if (accesscodes != null) {
-      params.set("accesscodes", JSON.stringify(accesscodes));
+      params = params.set("accesscodes", JSON.stringify(accesscodes));
     }
 
     return this.http.put("https://" + environment.server + "/a/user", params)
