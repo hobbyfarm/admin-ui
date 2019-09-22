@@ -5,6 +5,7 @@ import { EventComponent } from './event/event.component';
 import { AuthGuard } from './auth.guard';
 import { LoginComponent } from './login/login.component';
 import { ScenarioComponent } from './scenario/scenario.component';
+import { UserComponent } from './user/user/user.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -26,6 +27,13 @@ const routes: Routes = [
   {
     path: 'scenarios',
     component: ScenarioComponent,
+    canActivate: [
+      AuthGuard
+    ]
+  },
+  {
+    path: 'users',
+    component: UserComponent,
     canActivate: [
       AuthGuard
     ]

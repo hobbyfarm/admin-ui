@@ -1,0 +1,137 @@
+<div class="main-container">
+    <header class="header header-7" app-header></header>
+    <div class="content-container">
+        <div class="content-area">
+            <h3>User Management</h3>
+            <div class="clr-row">
+                <div class="clr-col">
+                    <clr-datagrid>
+                        <clr-dg-column>
+                            Id
+                            <clr-dg-string-filter [clrDgStringFilter]="idFilter"></clr-dg-string-filter>
+                        </clr-dg-column>
+                        <clr-dg-column>
+                            Email
+                            <clr-dg-string-filter [clrDgStringFilter]="emailFilter"></clr-dg-string-filter>
+                        </clr-dg-column>
+
+                        <clr-dg-row *clrDgItems="let u of users">
+                            <clr-dg-action-overflow>
+                                <button class="action-item" (click)="editUser(u)">Edit User</button>
+                                <button class="action-item" (click)="openAccessCodes(u)">Edit Access Codes</button>
+                            </clr-dg-action-overflow>
+
+                            <clr-dg-cell>{{ u.id }}</clr-dg-cell>
+                            <clr-dg-cell>{{ u.email }}</clr-dg-cell>
+                        </clr-dg-row>
+
+                        <clr-dg-footer>
+                            <clr-dg-pagination #pagination [clrDgPageSize]="10">
+                                <clr-dg-page-size [clrPageSizeOptions]="[10, 20, 50]">Users per page</clr-dg-page-size>
+                                {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+                                of {{pagination.totalItems}} users
+                            </clr-dg-pagination>
+                        </clr-dg-footer>
+                    </clr-datagrid>
+                </div>
+            </div>
+
+            <clr-modal #editusermodal [(clrModalOpen)]="editUserOpen">
+                <h3 class="modal-title">Edit User</h3>
+                <div class="modal-body">
+                    <clr-alert [clrAlertType]="'danger'" [(clrAlertClosed)]="editUserDangerClosed"
+                        [clrAlertClosable]="false">
+                        <clr-alert-item>
+                            <span class="alert-text">
+                                {{ editUserDangerAlert }}
+                            </span>
+                        </clr-alert-item>
+                    </clr-alert>
+                    <clr-alert [clrAlertType]="'success'" [(clrAlertClosed)]="editUserSuccessClosed"
+                        [clrAlertClosable]="false">
+                        <clr-alert-item>
+                            <span class="alert-text">
+                                {{ editUserSuccessAlert }}
+                            </span>
+                        </clr-alert-item>
+                    </clr-alert>
+                    <form clrForm [formGroup]="userDetailsForm">
+                        <clr-input-container>
+                            <label for="email">Email</label>
+                            <input clrInput name="email" formControlName="email" required />
+                            <clr-control-error *clrIfError="'required'">Email is required</clr-control-error>
+                            <clr-control-error *clrIfError="'email'">Input must be an email</clr-control-error>
+                        </clr-input-container>
+                        <clr-input-container>
+                            <label for="password">Password</label>
+                            <input clrInput name="password" formControlName="password" type="password" />
+                            <clr-control-helper>Blank leaves password unchanged.</clr-control-helper>
+                        </clr-input-container>
+                        <clr-toggle-container>
+                            <clr-toggle-wrapper>
+                                <input type="checkbox" clrToggle name="admin" value="admin" formControlName="admin" />
+                                <label>Administrator</label>
+                            </clr-toggle-wrapper>
+                        </clr-toggle-container>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger-outline" (click)="editUserOpen = false">Cancel</button>
+                    <button class="btn btn-success" (click)="saveDetails()">Save</button>
+                </div>
+            </clr-modal>
+
+            <clr-modal #editaccesscodes [(clrModalOpen)]="accessCodesOpen">
+                <h3 class="modal-title">Edit Access Codes</h3>
+                <div class="modal-body">
+                    <clr-alert [clrAlertType]="'danger'" [(clrAlertClosed)]="accessCodeDangerClosed"
+                        [clrAlertClosable]="false">
+                        <clr-alert-item>
+                            <span class="alert-text">
+                                {{ accessCodeDangerAlert }}
+                            </span>
+                        </clr-alert-item>
+                    </clr-alert>
+                    <clr-alert [clrAlertType]="'success'" [(clrAlertClosed)]="accessCodeSuccessClosed"
+                        [clrAlertClosable]="false">
+                        <clr-alert-item>
+                            <span class="alert-text">
+                                {{ accessCodeSuccessAlert }}
+                            </span>
+                        </clr-alert-item>
+                    </clr-alert>
+                    <button class="btn btn-success-outline btn-sm" (click)="newAccessCode = true">
+                        <clr-icon shape="plus"></clr-icon> Add Access Code
+                    </button>
+                    <ng-container *ngIf="newAccessCode">
+                        <form clrForm [formGroup]="newAccessCodeForm">
+                            <clr-input-container>
+                                <label class="clr-col-md-4">Access Code</label>
+                                <input class="clr-col-md-6" clrInput type="text" name="access_code"
+                                    formControlName="access_code" required />
+                                <clr-control-error *clrIfError="'required'">Access code required.</clr-control-error>
+                                <clr-control-error *clrIfError="'minLength'">Access code must be longer than 4
+                                    characters
+                                </clr-control-error>
+                            </clr-input-container>
+                            <div class="col-md-2">
+                                <button class="btn btn-success btn-sm" [disabled]="!newAccessCodeForm.valid"
+                                    (click)="saveAccessCode()">Save</button>
+                            </div>
+                        </form>
+                    </ng-container>
+                    <clr-datagrid class="datagrid-compact">
+                        <clr-dg-column>Access Code</clr-dg-column>
+
+                        <clr-dg-row *clrDgItems="let a of editingUser.access_codes" [clrDgItem]="a">
+                            <clr-dg-action-overflow>
+                                <button class="action-item" (click)="deleteAccessCode(a)">Delete</button>
+                            </clr-dg-action-overflow>
+                            <clr-dg-cell>{{ a }}</clr-dg-cell>
+                        </clr-dg-row>
+                    </clr-datagrid>
+                </div>
+            </clr-modal>
+        </div>
+    </div>
+</div>
