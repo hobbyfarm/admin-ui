@@ -52,7 +52,8 @@ export class UserComponent implements OnInit {
       Validators.required,
       Validators.email
     ]),
-    'password': new FormControl(null, [])
+    'password': new FormControl(""),
+    'admin': new FormControl(true)
   });
 
   public newAccessCodeForm: FormGroup = new FormGroup({
@@ -65,7 +66,9 @@ export class UserComponent implements OnInit {
   public editUser(u: User) {
     this.editingUser = u;
     this.userDetailsForm.reset({
-      'email': u.email
+      'email': u.email,
+      'password': "",
+      'admin': u.admin
     })
     this.editUserModal.open();
   }
@@ -135,6 +138,7 @@ export class UserComponent implements OnInit {
   saveDetails() {
     var email = this.userDetailsForm.get("email").value;
     var password = this.userDetailsForm.get("password").value;
+    var admin = this.userDetailsForm.get("admin").value;
 
     if (email == null) {
       email = "";
@@ -144,7 +148,7 @@ export class UserComponent implements OnInit {
       password = "";
     }
 
-    this.userService.saveUser(this.editingUser.id, email, password)
+    this.userService.saveUser(this.editingUser.id, email, password, admin)
       .subscribe(
         (s: ServerResponse) => {
           this.editUserSuccessAlert = "User updated.";
