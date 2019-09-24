@@ -11,7 +11,6 @@ import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
-import { deepCopy } from 'src/app/deepcopy';
 
 @Component({
   selector: 'new-scheduled-event',
@@ -71,7 +70,8 @@ export class NewScheduledEventComponent implements OnInit {
       Validators.required,
       Validators.minLength(5),
       Validators.pattern(/^[a-zA-Z0-9]*$/)
-    ])
+    ]),
+    'restricted_bind': new FormControl(true)
   })
 
   public copyEventDetails() {
@@ -115,7 +115,8 @@ export class NewScheduledEventComponent implements OnInit {
       this.eventDetails.setValue({
         'event_name': this.se.event_name,
         'description': this.se.description,
-        'access_code': this.se.access_code
+        'access_code': this.se.access_code,
+        'restricted_bind': true
       });
 
       // auto-select the environments
@@ -257,7 +258,9 @@ export class NewScheduledEventComponent implements OnInit {
   public open() {
     this.validTimes = false;
     this.se = new ScheduledEvent();
-    this.eventDetails.reset();
+    this.eventDetails.reset({
+      'restricted_bind': true
+    });
     this.se.required_vms = new Map();
     this.selectedEnvironments = [];
     this.selectedscenarios = [];
