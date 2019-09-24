@@ -69,9 +69,9 @@
                       <div class="clr-control-container clr-col-md-10 clr-col-12"
                         [class.clr-error]="keepaliveRequired || editScenarioForm.errors?.invalidKeepalivePeriod">
                         <div class="clr-input-wrapper">
-                          <div class="clr-input-group" [ngClass]="{ 'clr-focus': focusSelectGroup }">
+                          <div class="clr-input-group">
                             <input type="number" id="keepalive_amount" formControlName="keepalive_amount"
-                              class="clr-input" (focus)="focusSelectGroup = true" (blur)="focusSelectGroup = false">
+                              class="clr-input">
                             <select formControlName="keepalive_unit">
                               <option value="h">Hour(s)</option>
                               <option value="m">Minute(s)</option>
@@ -271,9 +271,8 @@
               <div class="clr-control-container clr-col-md-10 clr-col-12"
                 [class.clr-error]="keepaliveRequired || scenarioDetails.errors?.invalidKeepalivePeriod">
                 <div class="clr-input-wrapper">
-                  <div class="clr-input-group" [ngClass]="{ 'clr-focus': focusSelectGroup }">
-                    <input type="number" id="keepalive_amount" formControlName="keepalive_amount" class="clr-input"
-                      (focus)="focusSelectGroup = true" (blur)="focusSelectGroup = false">
+                  <div class="clr-input-group">
+                    <input type="number" id="keepalive_amount" formControlName="keepalive_amount" class="clr-input">
                     <select formControlName="keepalive_unit">
                       <option value="h">Hour(s)</option>
                       <option value="m">Minute(s)</option>
