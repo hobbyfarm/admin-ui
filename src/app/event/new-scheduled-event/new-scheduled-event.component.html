@@ -158,6 +158,16 @@
 
   <clr-wizard-page>
     <ng-template clrPageTitle>Select Virtual Machines</ng-template>
+    <p>
+      The following VMs are required:
+      <ng-container *ngFor="let s of selectedscenarios">
+        <ng-container *ngFor="let vmset of s.virtualmachines">
+          <ng-container *ngFor="let item of vmset | keyvalue">
+            <li>{{ item.value }} (required by {{ item.key }} on scenario {{ s.name | slice:0:30 }})</li>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </p>
     <table class="table table-compact">
       <thead>
         <tr>
