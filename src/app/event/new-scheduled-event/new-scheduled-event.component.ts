@@ -279,7 +279,7 @@ export class NewScheduledEventComponent implements OnInit {
             this.updated.next(true);
           },
           (err: any) => {
-            // something went wrong
+            this.updated.next(true);
           }
         )
     } else {
@@ -289,7 +289,7 @@ export class NewScheduledEventComponent implements OnInit {
             this.updated.next(true);
           },
           (err: any) => {
-            // something went wrong
+            this.updated.next(true);
           }
         )
     }

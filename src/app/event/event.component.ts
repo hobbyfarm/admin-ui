@@ -80,4 +80,8 @@ export class EventComponent implements OnInit {
     )
   }
 
+  public newupdated() {
+    this.refresh();
+  }
+
 }
