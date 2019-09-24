@@ -39,7 +39,8 @@ export class ScheduledeventService {
       .set("end_time", formatDate(se.end_time, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
       .set("required_vms", JSON.stringify(se.required_vms))
       .set("access_code", se.access_code.toLowerCase()) // this needs to be lower case because of RFC-1123
-      .set("scenarios", JSON.stringify(se.scenarios));
+      .set("scenarios", JSON.stringify(se.scenarios))
+      .set("disable_restriction", JSON.stringify(se.disable_restriction));
 
 
     return this.http.post("https://" + environment.server + "/a/scheduledevent/new", params)

@@ -13,4 +13,5 @@ export class ScheduledEvent {
     read: boolean;
     finished: boolean;
     access_code: string;
+    disable_restriction: boolean;
 }
