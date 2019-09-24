@@ -34,7 +34,7 @@
       <div class="clr-row">
         <div class="clr-col-4">
           <clr-datagrid [clrDgSingleSelected]="unusedSelectedScenario"
-            (clrDgSingleSelectedChange)="getscenario($event)">
+            (clrDgSingleSelectedChange)="editScenario($event)">
             <clr-dg-column>Name</clr-dg-column>
 
             <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
@@ -49,16 +49,56 @@
               <clr-tab>
                 <button clrTabLink id="detailsLink">Scenario Details</button>
                 <clr-tab-content id="detailsContent" *clrIfActive>
-                  <form clrForm>
+                  <form clrForm [formGroup]="editScenarioForm">
                     <clr-input-container>
                       <label>Name</label>
-                      <input clrInput type="text" class="full-width" [(ngModel)]="selectedscenario.name"
-                        name="scenario_name">
+                      <input clrInput type="text" formControlName="scenario_name" required>
+                      <clr-control-error *clrIfError="'required'">Scenario name is required</clr-control-error>
+                      <clr-control-error *clrIfError="'minlength'">Scenario name must be longer than 4 characters
+                      </clr-control-error>
                     </clr-input-container>
                     <clr-input-container>
                       <label>Description</label>
-                      <input clrInput type="text" class="full-width" [(ngModel)]="selectedscenario.description"
-                        name="scenario_description">
+                      <input clrInput type="text" formControlName="scenario_description" required>
+                      <clr-control-error *clrIfError="'required'">Scenario description is required</clr-control-error>
+                      <clr-control-error *clrIfError="'minlength'">Scenario description must be longer than 4 characters
+                      </clr-control-error>
+                    </clr-input-container>
+                    <div class="clr-form-control clr-row">
+                      <label for="keepalive_amount" class="clr-control-label">Keepalive Duration</label>
+                      <div class="clr-control-container clr-col-md-10 clr-col-12"
+                        [class.clr-error]="keepaliveRequired || editScenarioForm.errors?.invalidKeepalivePeriod">
+                        <div class="clr-input-wrapper">
+                          <div class="clr-input-group" [ngClass]="{ 'clr-focus': focusSelectGroup }">
+                            <input type="number" id="keepalive_amount" formControlName="keepalive_amount"
+                              class="clr-input" (focus)="focusSelectGroup = true" (blur)="focusSelectGroup = false">
+                            <select formControlName="keepalive_unit">
+                              <option value="h">Hour(s)</option>
+                              <option value="m">Minute(s)</option>
+                            </select>
+                          </div>
+                          <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+                        </div>
+                        <span class="clr-subtext"
+                          *ngIf="!keepaliveRequired && !editScenarioForm.errors?.invalidKeepalivePeriod">Period
+                          before VMs are reaped upon user inactivity.</span>
+                        <span class="clr-subtext" *ngIf="keepaliveRequired">Keepalive duration is required.</span>
+                        <span class="clr-subtext" *ngIf="editScenarioForm.errors?.invalidKeepalivePeriod">Invalid
+                          keepalive
+                          period.
+                          Valid
+                          periods: 1m to 48h inclusive.</span>
+                      </div>
+                    </div>
+                    <clr-input-container>
+                      <label>Pause Duration</label>
+                      <input clrInput type="number" name="pause_duration" placeholder="Duration in hours"
+                        formControlName="pause_duration" required />
+                      <clr-control-helper>Period in hours that a user may pause their scenario.</clr-control-helper>
+                      <clr-control-error *clrIfError="'required'">Pause duration is required.</clr-control-error>
+                      <clr-control-error *clrIfError="'min'">Pause duration must be 1 hour minimum.</clr-control-error>
+                      <clr-control-error *clrIfError="'max'">Pause duration must be 48 hours maximum.
+                      </clr-control-error>
                     </clr-input-container>
                   </form>
                   <clr-stack-view>
@@ -86,7 +126,8 @@
                     </clr-stack-block>
                   </clr-stack-view>
                   <button class="btn btn-danger-outline">Delete</button>
-                  <button class="btn btn-success" (click)="savescenario()" [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
+                  <button class="btn btn-success" (click)="savescenario()"
+                    [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
                 </clr-tab-content>
               </clr-tab>
               <clr-tab>
@@ -112,7 +153,8 @@
                       <clr-dg-cell>{{ s.title }}</clr-dg-cell>
                     </clr-dg-row>
                   </clr-datagrid>
-                  <button class="btn btn-success" (click)="savescenario()" *ngIf="scenarioTainted" [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
+                  <button class="btn btn-success" (click)="savescenario()" *ngIf="scenarioTainted"
+                    [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
                 </clr-tab-content>
               </clr-tab>
             </clr-tabs>
@@ -223,6 +265,40 @@
               <clr-control-error *clrIfError="'required'">Scenario description is required</clr-control-error>
               <clr-control-error *clrIfError="'minlength'">Scenario description must be longer than 4 characters
               </clr-control-error>
+            </clr-input-container>
+            <div class="clr-form-control clr-row">
+              <label for="keepalive_amount" class="clr-control-label">Keepalive Duration</label>
+              <div class="clr-control-container clr-col-md-10 clr-col-12"
+                [class.clr-error]="keepaliveRequired || scenarioDetails.errors?.invalidKeepalivePeriod">
+                <div class="clr-input-wrapper">
+                  <div class="clr-input-group" [ngClass]="{ 'clr-focus': focusSelectGroup }">
+                    <input type="number" id="keepalive_amount" formControlName="keepalive_amount" class="clr-input"
+                      (focus)="focusSelectGroup = true" (blur)="focusSelectGroup = false">
+                    <select formControlName="keepalive_unit">
+                      <option value="h">Hour(s)</option>
+                      <option value="m">Minute(s)</option>
+                    </select>
+                  </div>
+                  <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+                </div>
+                <span class="clr-subtext"
+                  *ngIf="!keepaliveRequired && !scenarioDetails.errors?.invalidKeepalivePeriod">Period
+                  before VMs are reaped upon user inactivity.</span>
+                <span class="clr-subtext" *ngIf="keepaliveRequired">Keepalive duration is required.</span>
+                <span class="clr-subtext" *ngIf="scenarioDetails.errors?.invalidKeepalivePeriod">Invalid keepalive
+                  period.
+                  Valid
+                  periods: 1m to 48h inclusive.</span>
+              </div>
+            </div>
+            <clr-input-container>
+              <label>Pause Duration</label>
+              <input clrInput type="number" name="pause_duration" placeholder="Duration in hours"
+                formControlName="pause_duration" required />
+              <clr-control-helper>Period in hours that a user may pause their scenario.</clr-control-helper>
+              <clr-control-error *clrIfError="'required'">Pause duration is required.</clr-control-error>
+              <clr-control-error *clrIfError="'min'">Pause duration must be 1 hour minimum.</clr-control-error>
+              <clr-control-error *clrIfError="'max'">Pause duration must be 48 hours maximum.</clr-control-error>
             </clr-input-container>
           </form>
         </div>

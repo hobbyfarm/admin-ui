@@ -7,7 +7,7 @@ import { ServerResponse } from '../data/serverresponse';
 import { deepCopy } from '../deepcopy';
 import { VmtemplateService } from '../data/vmtemplate.service';
 import { VMTemplate } from '../data/vmtemplate';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ValidatorFn, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-scenario',
@@ -52,6 +52,23 @@ export class ScenarioComponent implements OnInit {
     public vmTemplateService: VmtemplateService
   ) { }
 
+  public keepaliveValidator: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
+    var keepalive_amount = control.get("keepalive_amount").value;
+    var keepalive_unit = control.get("keepalive_unit").value;
+
+    if (keepalive_amount && keepalive_unit) {
+      if (keepalive_unit == 'm') {
+        if (keepalive_amount > 2880 || keepalive_amount < 1) { // 48 hours
+          return { 'invalidKeepalivePeriod': true };
+        }
+      } else if (keepalive_unit == 'h') {
+        if (keepalive_amount > 48) {
+          return { 'invalidKeepalivePeriod': true };
+        }
+      }
+    }
+  }
+
   public vmform: FormGroup = new FormGroup({
     'vm_name': new FormControl(null, [
       Validators.required,
@@ -62,6 +79,28 @@ export class ScenarioComponent implements OnInit {
     ])
   })
 
+  public editScenarioForm: FormGroup = new FormGroup({
+    'scenario_name': new FormControl(null, [
+      Validators.required,
+      Validators.minLength(4)
+    ]),
+    'scenario_description': new FormControl(null, [
+      Validators.required,
+      Validators.minLength(4)
+    ]),
+    'keepalive_amount': new FormControl(10, [
+      Validators.required
+    ]),
+    'keepalive_unit': new FormControl('m', [
+      Validators.required
+    ]),
+    'pause_duration': new FormControl(1, [
+      Validators.required,
+      Validators.min(1),
+      Validators.max(48)
+    ])
+  }, { validators: this.keepaliveValidator })
+
   public scenarioDetails: FormGroup = new FormGroup({
     'scenario_name': new FormControl(null, [
       Validators.required,
@@ -70,8 +109,37 @@ export class ScenarioComponent implements OnInit {
     'scenario_description': new FormControl(null, [
       Validators.required,
       Validators.minLength(4)
+    ]),
+    'keepalive_amount': new FormControl(10, [
+      Validators.required
+    ]),
+    'keepalive_unit': new FormControl('m', [
+      Validators.required
+    ]),
+    'pause_duration': new FormControl(1, [
+      Validators.required,
+      Validators.min(1),
+      Validators.max(48)
     ])
-  })
+  }, { validators: this.keepaliveValidator })
+
+  get keepaliveAmount() { return this.scenarioDetails.get("keepalive_amount"); }
+
+  get keepaliveUnit() { return this.scenarioDetails.get("keepalive_unit"); }
+
+  get keepaliveRequired() {
+    var ka = this.scenarioDetails.get("keepalive_amount");
+    var ku = this.scenarioDetails.get("keepalive_unit");
+
+    // validate 
+    if ((ka.dirty || ka.touched) && ka.invalid && ka.errors.required) {
+      return true;
+    } else if ((ku.dirty || ku.touched) && ku.invalid && ku.errors.required) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @ViewChild("editmodal", { static: true }) editModal: ClrModal;
   @ViewChild("deletevmsetmodal", { static: true }) deleteVMSetModal: ClrModal;
@@ -83,6 +151,25 @@ export class ScenarioComponent implements OnInit {
     this.editingStep = s;
     this.editingIndex = i;
     this.editModal.open();
+  }
+
+  editScenario(s: Scenario) {
+    if (s != undefined) {
+      // this is only a partial scenario, we need to get the full
+      this.scenarioService.get(s.id)
+        .subscribe(
+          (s: Scenario) => {
+            this.selectedscenario = s;
+            this.editScenarioForm.reset({
+              'scenario_name': s.name,
+              'scenario_description': s.description,
+              'keepalive_amount': s.keepalive_duration.substring(0, s.keepalive_duration.length - 1),
+              'keepalive_unit': s.keepalive_duration.substring(s.keepalive_duration.length - 1, s.keepalive_duration.length),
+              'pause_duration': s.pause_duration.substring(0, s.pause_duration.length - 1)
+            });
+          }
+        )
+    }
   }
 
   openNewScenario() {
@@ -126,22 +213,25 @@ export class ScenarioComponent implements OnInit {
   public addNewScenario() {
     this.newScenario.name = this.scenarioDetails.get("scenario_name").value;
     this.newScenario.description = this.scenarioDetails.get("scenario_description").value;
+    this.newScenario.keepalive_duration = this.scenarioDetails.get("keepalive_amount").value + this.scenarioDetails.get("keepalive_unit").value;
+    this.newScenario.pause_duration = this.scenarioDetails.get("pause_duration").value + "h";
+
     // should be able to save at this point
     this.scenarioService.create(this.newScenario)
-    .subscribe(
-      (s: string) => {
-        this._displayAlert(s, true);
-      },
-      (s: string) => {
-        this._displayAlert(s, false);
-      }
-    )
+      .subscribe(
+        (s: string) => {
+          this._displayAlert(s, true);
+        },
+        (s: string) => {
+          this._displayAlert(s, false);
+        }
+      )
 
     this.scenarioService.list()
-    .subscribe(
-      (s: Scenario[]) => this.scenarios = s
-    )
-    
+      .subscribe(
+        (s: Scenario[]) => this.scenarios = s
+      )
+
     this.newScenarioModal.close();
   }
 
@@ -191,6 +281,11 @@ export class ScenarioComponent implements OnInit {
 
 
   savescenario() {
+    this.selectedscenario.keepalive_duration = this.editScenarioForm.get("keepalive_amount").value + this.editScenarioForm.get("keepalive_unit").value;
+    this.selectedscenario.pause_duration = this.editScenarioForm.get("pause_duration").value + "h";
+    this.selectedscenario.name = this.editScenarioForm.get("scenario_name").value;
+    this.selectedscenario.description = this.editScenarioForm.get("scenario_description").value;
+    
     this.scenarioService.update(this.selectedscenario)
       .subscribe(
         (s: ServerResponse) => {
@@ -260,18 +355,6 @@ export class ScenarioComponent implements OnInit {
           this.vmtemplates = v;
         }
       )
-  }
-
-  getscenario(s: Scenario) {
-    if (s != undefined) {
-      // this is only a partial scenario, we need to get the full
-      this.scenarioService.get(s.id)
-        .subscribe(
-          (s: Scenario) => {
-            this.selectedscenario = s;
-          }
-        )
-    }
   }
 
 }

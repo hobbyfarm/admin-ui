@@ -88,7 +88,9 @@ export class ScenarioService {
     .set("name", btoa(s.name))
     .set("description", btoa(s.description))
     .set("steps", JSON.stringify(s.steps))
-    .set("virtualmachines", JSON.stringify(s.virtualmachines));
+    .set("virtualmachines", JSON.stringify(s.virtualmachines))
+    .set("pause_duration", s.pause_duration)
+    .set("keepalive_duration", s.keepalive_duration);
 
     return this.http.put("https://" + environment.server + "/a/scenario/" + s.id, params)
   }
@@ -96,7 +98,9 @@ export class ScenarioService {
   public create(s: Scenario) {
     var params = new HttpParams()
     .set("name", btoa(s.name))
-    .set("description", btoa(s.description));
+    .set("description", btoa(s.description))
+    .set('pause_duration', s.pause_duration)
+    .set('keepalive_duration', s.keepalive_duration);
 
     return this.http.post("https://" + environment.server + "/a/scenario/new", params)
   }
