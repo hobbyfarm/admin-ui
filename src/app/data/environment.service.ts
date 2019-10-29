@@ -23,8 +23,8 @@ export class EnvironmentService {
   }
 
   public available(env: string, start: Date, end: Date) {
-    var startString = formatDate(start, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC");
-    var endString = formatDate(end, "E LLL dd hh:mm:ss UTC yyyy", "en-US", "UTC");
+    var startString = formatDate(start, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC");
+    var endString = formatDate(end, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC");
 
     let params = new HttpParams()
     .set("start", startString)
