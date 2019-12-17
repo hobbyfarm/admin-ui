@@ -105,8 +105,11 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   public setVMCount(env: string, template: string, count: number) {
+    console.log(env, template, count);
     count == null ? 0 : count; // handle zeroes
-    this.se.required_vms[env] = {};
+    if (!this.se.required_vms[env]) {
+      this.se.required_vms[env] = {};
+    }
     this.se.required_vms[env][template] = count;
   }
 
