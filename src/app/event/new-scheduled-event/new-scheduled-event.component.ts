@@ -105,12 +105,10 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   public setVMCount(env: string, template: string, count: number) {
-    console.log(env, template, count);
-    count == null ? 0 : count; // handle zeroes
     if (!this.se.required_vms[env]) {
       this.se.required_vms[env] = {};
     }
-    this.se.required_vms[env][template] = count;
+    this.se.required_vms[env][template] = count == null ? 0 : count;
   }
 
   ngOnChanges() {
