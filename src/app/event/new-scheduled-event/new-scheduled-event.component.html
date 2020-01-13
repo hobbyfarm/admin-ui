@@ -156,7 +156,8 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page (clrWizardPageOnLoad)="setupVMSelection()" (clrWizardPageNext)="copyVMCounts()"
+    [clrWizardPageNextDisabled]="!vmCounts.valid">
     <ng-template clrPageTitle>Select Virtual Machines</ng-template>
     <p>
       The following VMs are required:
@@ -176,14 +177,17 @@
           <th>Count</th>
         </tr>
       </thead>
-      <tbody>
-        <ng-container *ngFor="let ea of selectedEnvironments">
-          <ng-container *ngFor="let t of getTemplates(ea.environment)">
+      <tbody [formGroup]="vmCounts">
+        <ng-container *ngFor="let groupName of controls('')" [formGroupName]="groupName">
+          <ng-container *ngFor="let controlName of controls(groupName)">
             <tr>
-              <td>{{ ea.environment }}</td>
-              <td>{{ t }}</td>
-              <td><input type="number" name="count" [ngModel]="getVMCount(ea.environment, t)"
-                  (ngModelChange)="setVMCount(ea.environment, t, $event)">
+              <td>{{ groupName }}</td>
+              <td>{{ controlName }}</td>
+              <td>
+                <clr-input-container class="table-input">
+                  <input clrInput type="number" [formControlName]="controlName">
+                  <clr-control-error *clrIfError="'max'">VM count higher than max</clr-control-error>
+                </clr-input-container>
               </td>
             </tr>
           </ng-container>
