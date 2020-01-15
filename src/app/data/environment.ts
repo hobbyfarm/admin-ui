@@ -7,11 +7,8 @@ export class Environment {
     ip_translation_map: Map<string, string>;
     ws_endpoint: string;
     capacity_mode: string;
-    count_capacity: {
-        cpu: number;
-        memory: number;
-        storage: number;
-    };
+    burst_capable: boolean;
+    count_capacity: Map<string, number>;
     capacity: {
         cpu: number;
         memory: number;
@@ -23,4 +20,10 @@ export class Environment {
         storage: number;
     };
     available_count: number;
+    burst_count_capacity: Map<string, number>;
+    burst_capacity: {
+        cpu: number;
+        memory: number;
+        storage: number;
+    }
 }
