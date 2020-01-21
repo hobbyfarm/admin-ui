@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { EnvironmentService } from 'src/app/data/environment.service';
 import { Environment } from 'src/app/data/environment';
+import { NewEnvironmentComponent } from './new-environment/new-environment.component';
 
 @Component({
   selector: 'app-environments',
@@ -14,6 +15,8 @@ export class EnvironmentsComponent implements OnInit {
     public environmentService: EnvironmentService
   ) { }
 
+  @ViewChild("newEnvironmentWizard", {static: true}) newWizard: NewEnvironmentComponent;
+
   ngOnInit() {
     this.refresh();
   }
@@ -24,5 +27,9 @@ export class EnvironmentsComponent implements OnInit {
     .subscribe(
       (e: Environment[]) => this.environments = e
     )
+  }
+
+  public openNew() {
+    this.newWizard.open();
   }
 }

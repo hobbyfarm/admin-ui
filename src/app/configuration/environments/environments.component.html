@@ -5,7 +5,7 @@
 </div>
 <div class="clr-row">
     <div class="clr-col">
-        <button class="btn btn-success">
+        <button class="btn btn-success" (click)="openNew()">
             <clr-icon shape="plus"></clr-icon> New
         </button>
     </div>
@@ -27,3 +27,5 @@
         </clr-datagrid>
     </div>
 </div>
+
+<new-environment-wizard #newEnvironmentWizard></new-environment-wizard>
