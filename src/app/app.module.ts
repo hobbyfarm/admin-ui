@@ -22,6 +22,9 @@ import { DlDateTimePickerDateModule, DlDateTimePickerModule} from 'angular-boots
 import { ScenarioComponent } from './scenario/scenario.component';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { UserComponent } from './user/user/user.component';
+import { ConfigurationComponent } from './configuration/configuration.component';
+import { EnvironmentsComponent } from './configuration/environments/environments.component';
+import { NewEnvironmentComponent } from './configuration/environments/new-environment/new-environment.component';
 
 export function tokenGetter() {
   return localStorage.getItem("hobbyfarm_admin_token");
@@ -38,7 +41,10 @@ export function tokenGetter() {
     NewScheduledEventComponent,
     AtobPipe,
     ScenarioComponent,
-    UserComponent
+    UserComponent,
+    ConfigurationComponent,
+    EnvironmentsComponent,
+    NewEnvironmentComponent
   ],
   imports: [
     BrowserModule,

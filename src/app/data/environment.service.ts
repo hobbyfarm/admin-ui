@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
 import { formatDate } from '@angular/common';
 import { EnvironmentAvailability } from './environmentavailability';
+import { Environment } from './environment';
 
 @Injectable({
   providedIn: 'root'
@@ -38,5 +39,22 @@ export class EnvironmentService {
         return ea;
       })
     )
+  }
+
+  public add(env: Environment) {
+    console.log("env specifics", JSON.stringify(env.environment_specifics));
+    console.log("template mappings", JSON.stringify(env.template_mapping));
+    let params = new HttpParams()
+    .set("display_name", env.display_name)
+    .set("dnssuffix", env.dnssuffix)
+    .set("provider", env.provider)
+    .set("template_mapping", JSON.stringify(env.template_mapping))
+    .set("environment_specifics", JSON.stringify(env.environment_specifics))
+    .set("ip_translation_map", JSON.stringify(env.ip_translation_map))
+    .set("ws_endpoint", env.ws_endpoint)
+    .set("capacity_mode", env.capacity_mode)
+    .set("burst_capable", JSON.stringify(env.burst_capable));
+
+    return this.http.post("https://" + environment.server + "/a/environment/create", params)
   }
 }
