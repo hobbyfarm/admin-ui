@@ -30,7 +30,7 @@ export class LoginComponent {
       .set("password", this.password)
       .set("access_code", this.accesscode);
 
-    this.http.post('https://' + environment.server + "/auth/registerwithaccesscode", body)
+    this.http.post(environment.server + "/auth/registerwithaccesscode", body)
       .subscribe(
         (s: ServerResponse) => {
           this.success = "Success! User created. Please login.";
@@ -54,7 +54,7 @@ export class LoginComponent {
       .set("email", this.email)
       .set("password", this.password);
 
-    this.http.post('https://' + environment.server + "/auth/authenticate", body)
+    this.http.post(environment.server + "/auth/authenticate", body)
       .subscribe(
         (s: ServerResponse) => {
           // should have a token here

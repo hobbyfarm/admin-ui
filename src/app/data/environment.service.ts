@@ -17,7 +17,7 @@ export class EnvironmentService {
   ) { }
 
   public list() {
-    return this.http.get("https://" + environment.server + "/a/environment/list")
+    return this.http.get(environment.server + "/a/environment/list")
     .pipe(
       map((s: ServerResponse) => JSON.parse(atob(s.content)))
     )
@@ -31,7 +31,7 @@ export class EnvironmentService {
     .set("start", startString)
     .set("end", endString);
 
-    return this.http.post("https://" + environment.server + "/a/environment/" + env + "/available", params)
+    return this.http.post(environment.server + "/a/environment/" + env + "/available", params)
     .pipe(
       map((s: ServerResponse) => JSON.parse(atob(s.content))),
       map((ea: EnvironmentAvailability) => {
@@ -55,6 +55,6 @@ export class EnvironmentService {
     .set("capacity_mode", env.capacity_mode)
     .set("burst_capable", JSON.stringify(env.burst_capable));
 
-    return this.http.post("https://" + environment.server + "/a/environment/create", params)
+    return this.http.post(environment.server + "/a/environment/create", params)
   }
 }

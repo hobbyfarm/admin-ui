@@ -17,7 +17,7 @@ export class ScheduledeventService {
   ) { }
 
   public list() {
-    return this.http.get("https://" + environment.server + "/a/scheduledevent/list")
+    return this.http.get(environment.server + "/a/scheduledevent/list")
       .pipe(
         switchMap((s: ServerResponse) => {
           return from(JSON.parse(atob(s.content)))
@@ -43,7 +43,7 @@ export class ScheduledeventService {
       .set("disable_restriction", JSON.stringify(se.disable_restriction));
 
 
-    return this.http.post("https://" + environment.server + "/a/scheduledevent/new", params)
+    return this.http.post(environment.server + "/a/scheduledevent/new", params)
       .pipe(
         switchMap((s: ServerResponse) => {
           return from(JSON.parse(atob(s.message)))
@@ -62,7 +62,7 @@ export class ScheduledeventService {
       .set("scenarios", JSON.stringify(se.scenarios));
 
 
-    return this.http.put("https://" + environment.server + "/a/scheduledevent/" + se.id, params)
+    return this.http.put(environment.server + "/a/scheduledevent/" + se.id, params)
       .pipe(
         switchMap((s: ServerResponse) => {
           return from(JSON.parse(atob(s.message)))
@@ -71,7 +71,7 @@ export class ScheduledeventService {
   }
 
   public delete(se: ScheduledEvent) {
-    return this.http.delete("https://" + environment.server + "/a/scheduledevent/delete/" + se.id)
+    return this.http.delete(environment.server + "/a/scheduledevent/delete/" + se.id)
       .pipe(
         switchMap((s: ServerResponse) => {
           return from(JSON.parse(atob(s.message)))
@@ -80,7 +80,7 @@ export class ScheduledeventService {
   }
 
   public get(id: string) {
-    return this.http.get("https://" + environment.server + "/a/scheduledevent/" + id)
+    return this.http.get(environment.server + "/a/scheduledevent/" + id)
     .pipe(
       switchMap((s: ServerResponse) => {
         let se = JSON.parse(atob(s.content));

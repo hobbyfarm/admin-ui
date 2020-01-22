@@ -60,8 +60,12 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        whitelistedDomains: [environment.server],
-        blacklistedRoutes: [environment.server + "/auth/authenticate"]
+        whitelistedDomains: [
+          environment.server.match(/.*\:\/\/?([^\/]+)/)[1]
+        ],
+        blacklistedRoutes: [
+          environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + "/auth/authenticate"
+        ]
       }
     }),
     BrowserAnimationsModule

@@ -15,7 +15,7 @@ export class VmtemplateService {
   ) { }
 
   public list() {
-    return this.http.get('https://' + environment.server + '/a/vmtemplate/list')
+    return this.http.get(environment.server + '/a/vmtemplate/list')
     .pipe(
       switchMap((s: ServerResponse) => {
         return of(JSON.parse(atob(s.content)))
