@@ -1,4 +1,5 @@
 export class Environment {
+    name: string;
     display_name: string;
     dnssuffix: string;
     provider: string;

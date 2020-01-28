@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { EnvironmentService } from 'src/app/data/environment.service';
 import { Environment } from 'src/app/data/environment';
-import { NewEnvironmentComponent } from './new-environment/new-environment.component';
+import { EditEnvironmentComponent } from './edit-environment/edit-environment.component';
 
 @Component({
   selector: 'app-environments',
@@ -10,12 +10,13 @@ import { NewEnvironmentComponent } from './new-environment/new-environment.compo
 })
 export class EnvironmentsComponent implements OnInit {
   public environments: Environment[] = [];
+  public updateEnv: Environment;
 
   constructor(
     public environmentService: EnvironmentService
   ) { }
 
-  @ViewChild("newEnvironmentWizard", {static: true}) newWizard: NewEnvironmentComponent;
+  @ViewChild("editEnvironmentWizard", {static: true}) editWizard: EditEnvironmentComponent;
 
   ngOnInit() {
     this.refresh();
@@ -30,6 +31,12 @@ export class EnvironmentsComponent implements OnInit {
   }
 
   public openNew() {
-    this.newWizard.open();
+    this.updateEnv = undefined;
+    this.editWizard.open();
+  }
+
+  public openUpdate(index: number) {
+    this.updateEnv = this.environments[index];
+    this.editWizard.open();
   }
 }

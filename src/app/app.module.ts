@@ -24,7 +24,7 @@ import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { UserComponent } from './user/user/user.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { EnvironmentsComponent } from './configuration/environments/environments.component';
-import { NewEnvironmentComponent } from './configuration/environments/new-environment/new-environment.component';
+import { EditEnvironmentComponent } from './configuration/environments/edit-environment/edit-environment.component';
 
 export function tokenGetter() {
   return localStorage.getItem("hobbyfarm_admin_token");
@@ -44,7 +44,7 @@ export function tokenGetter() {
     UserComponent,
     ConfigurationComponent,
     EnvironmentsComponent,
-    NewEnvironmentComponent
+    EditEnvironmentComponent
   ],
   imports: [
     BrowserModule,
