@@ -2,6 +2,6 @@ import pkg from '../../package.json';
 
 export const environment = {
     production: true,
-    server: 'http://localhost:8080',
+    server: 'https://api.na1dev.hobbyfarm.io',
     version: pkg.version
 };
