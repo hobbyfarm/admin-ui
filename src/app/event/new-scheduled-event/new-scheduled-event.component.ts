@@ -45,6 +45,8 @@ export class NewScheduledEventComponent implements OnInit {
   public startTime: string;
   public endTime: string;
 
+  public simpleMode: boolean = true;
+
   public validTimes: boolean = false;
 
   public vmtotals: Map<string, number> = new Map();
@@ -118,7 +120,7 @@ export class NewScheduledEventComponent implements OnInit {
       this.getTemplates(ea.environment).forEach((templateName: string) => {
         var initVal = 0;
         if (this.se.required_vms[ea.environment]) {
-          initVal = this.se.required_vms[ea.environment][templateName] || 0;
+          initVal = this.se.required_vms[ea.environment][templateName] || 0; // so we don't blow away old input values when rebuilding this form
         }
         var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(ea.available_count[templateName])]);
         newFormGroup.addControl(templateName, newControl);
@@ -303,6 +305,7 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   public open() {
+    this.simpleMode = true;
     this.validTimes = false;
     this.se = new ScheduledEvent();
     this.eventDetails.reset({
