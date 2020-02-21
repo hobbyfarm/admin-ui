@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import '@clr/icons';
 import '@clr/icons/shapes/all-shapes';
 import { AppRoutingModule } from './app-routing.module';
@@ -73,6 +73,9 @@ export function tokenGetter() {
   providers: [
     ScenarioService
   ],
-  bootstrap: [RootComponent]
+  bootstrap: [RootComponent],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+  ]
 })
 export class AppModule { }
