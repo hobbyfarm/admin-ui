@@ -1,0 +1,10 @@
+version: "3.4"
+
+services:
+  ui:
+    build:
+      context: ../../../
+      dockerfile: cicd/docker/release/Dockerfile
+      args:
+        GIT_COMMIT_SHORT_HASH: ${GIT_COMMIT_SHORT_HASH:-dev}
+    image: hobbyfarm/ui:${GIT_COMMIT_SHORT_HASH:-dev}

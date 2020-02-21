@@ -1,0 +1,23 @@
+common:
+  images:
+  - hobbyfarm/ui
+  eventRegistryKeys:
+  - event: commit/jenkins
+    registryKey: trainingDev
+  - event: commit/jenkins
+    registryKey: trainingProd
+  - event: commit/develop
+    registryKey: trainingDev
+  - event: commit/develop
+    registryKey: trainingProd
+  - event: commit/master
+    registryKey: trainingDev
+  - event: commit/master
+    registryKey: trainingProd
+build:
+  composeProfileMap:
+    sdk: ./cicd/docker/sdk
+    release: ./cicd/docker/release
+  pullImages:
+    - node:lts-alpine
+    - nginx:stable-alpine
