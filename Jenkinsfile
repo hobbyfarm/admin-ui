@@ -9,16 +9,14 @@ def build = new BoxBuild()
 
 node() {
   build.wrap {
-    gitlabCommitStatus {
-      stage('Test'){
-        build.composeBuild("sdk")
-      }
-      stage('Build'){
-        build.composeBuild("release")
-      }
-      stage ('Push'){
-        build.push()
-      }
+    stage('Test'){
+      build.composeBuild("sdk")
+    }
+    stage('Build'){
+      build.composeBuild("release")
+    }
+    stage ('Push'){
+      build.push()
     }
   }
 }
