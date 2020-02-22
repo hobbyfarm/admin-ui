@@ -1,5 +1,5 @@
 ARG GIT_COMMIT_SHORT_HASH
-FROM hobbyfarm/ui-sdk:${GIT_COMMIT_SHORT_HASH} AS sdk
+FROM hobbyfarm/admin-ui-sdk:${GIT_COMMIT_SHORT_HASH} AS sdk
 
 RUN $(npm bin)/ng build --prod --aot
 

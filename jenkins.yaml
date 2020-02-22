@@ -1,6 +1,6 @@
 common:
   images:
-  - hobbyfarm/ui
+  - hobbyfarm/admin-ui
   eventRegistryKeys:
   - event: commit/jenkins
     registryKey: trainingDev

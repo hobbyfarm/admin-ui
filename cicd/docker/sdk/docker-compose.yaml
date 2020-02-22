@@ -5,4 +5,4 @@ services:
     build:
       context: ../../../
       dockerfile: cicd/docker/sdk/Dockerfile
-    image: hobbyfarm/ui-sdk:${GIT_COMMIT_SHORT_HASH:-dev}
+    image: hobbyfarm/admin-ui-sdk:${GIT_COMMIT_SHORT_HASH:-dev}
