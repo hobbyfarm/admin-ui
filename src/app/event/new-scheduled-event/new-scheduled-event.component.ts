@@ -69,7 +69,7 @@ export class NewScheduledEventComponent implements OnInit {
     'access_code': new FormControl(this.se.access_code, [
       Validators.required,
       Validators.minLength(5),
-      Validators.pattern(/^[a-zA-Z0-9]*$/)
+      Validators.pattern(/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)
     ]),
     'restricted_bind': new FormControl(true)
   })

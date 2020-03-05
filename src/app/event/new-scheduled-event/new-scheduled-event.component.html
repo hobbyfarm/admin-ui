@@ -29,8 +29,12 @@
           required />
         <clr-control-error *clrIfError="'required'">Access code is required</clr-control-error>
         <clr-control-error *clrIfError="'minlength'">Access code must be longer than 5 characters</clr-control-error>
-        <clr-control-error *clrIfError="'pattern'">Access code must be alphanumeric characters only. Pattern:
-          /^[a-zA-Z0-9]*$/</clr-control-error>
+        <clr-control-error *clrIfError="'pattern'">Access code must
+           <ul>
+             <li>contain only lowercase alphanumeric characters, '-', or '.'</li>
+             <li>start and end with an alphanumber character</li>
+           </ul>
+        </clr-control-error>
       </clr-input-container>
       <clr-toggle-container>
         <clr-toggle-wrapper>
