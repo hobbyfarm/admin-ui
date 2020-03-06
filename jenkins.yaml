@@ -3,17 +3,11 @@ common:
   - hobbyfarm/admin-ui
   eventRegistryKeys:
   - event: commit/jenkins
-    registryKey: trainingDev
-  - event: commit/jenkins
-    registryKey: trainingProd
+    registryKey: public
   - event: commit/develop
-    registryKey: trainingDev
-  - event: commit/develop
-    registryKey: trainingProd
+    registryKey: public
   - event: commit/master
-    registryKey: trainingDev
-  - event: commit/master
-    registryKey: trainingProd
+    registryKey: public
 build:
   composeProfileMap:
     sdk: ./cicd/docker/sdk
