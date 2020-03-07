@@ -29,8 +29,12 @@
           required />
         <clr-control-error *clrIfError="'required'">Access code is required</clr-control-error>
         <clr-control-error *clrIfError="'minlength'">Access code must be longer than 5 characters</clr-control-error>
-        <clr-control-error *clrIfError="'pattern'">Access code must be alphanumeric characters only. Pattern:
-          /^[a-zA-Z0-9]*$/</clr-control-error>
+        <clr-control-error *clrIfError="'pattern'">Access code must
+           <ul>
+             <li>contain only lowercase alphanumeric characters, '-', or '.'</li>
+             <li>start and end with an alphanumber character</li>
+           </ul>
+        </clr-control-error>
       </clr-input-container>
       <clr-toggle-container>
         <clr-toggle-wrapper>
@@ -156,7 +160,8 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page (clrWizardPageOnLoad)="setupVMSelection()" (clrWizardPageNext)="copyVMCounts()"
+    [clrWizardPageNextDisabled]="!vmCounts.valid">
     <ng-template clrPageTitle>Select Virtual Machines</ng-template>
     <p>
       The following VMs are required:
@@ -176,14 +181,17 @@
           <th>Count</th>
         </tr>
       </thead>
-      <tbody>
-        <ng-container *ngFor="let ea of selectedEnvironments">
-          <ng-container *ngFor="let t of getTemplates(ea.environment)">
+      <tbody [formGroup]="vmCounts">
+        <ng-container *ngFor="let groupName of controls('')" [formGroupName]="groupName">
+          <ng-container *ngFor="let controlName of controls(groupName)">
             <tr>
-              <td>{{ ea.environment }}</td>
-              <td>{{ t }}</td>
-              <td><input type="number" name="count" [ngModel]="getVMCount(ea.environment, t)"
-                  (ngModelChange)="setVMCount(ea.environment, t, $event)">
+              <td>{{ groupName }}</td>
+              <td>{{ controlName }}</td>
+              <td>
+                <clr-input-container class="table-input">
+                  <input clrInput type="number" [formControlName]="controlName">
+                  <clr-control-error *clrIfError="'max'">VM count higher than max</clr-control-error>
+                </clr-input-container>
               </td>
             </tr>
           </ng-container>

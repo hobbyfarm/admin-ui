@@ -35,7 +35,7 @@ export class ScenarioService {
   ) { }
 
   public list() {
-    return this.http.get("https://" + environment.server + "/a/scenario/list")
+    return this.http.get(environment.server + "/a/scenario/list")
     .pipe(
       map((s: ServerResponse) => {
         let obj: Scenario[] = JSON.parse(atob(s.content)); // this doesn't encode a map though
@@ -58,7 +58,7 @@ export class ScenarioService {
   }
 
   public get(id: string) {
-    return this.http.get("https://" + environment.server + "/a/scenario/" + id)
+    return this.http.get(environment.server + "/a/scenario/" + id)
     .pipe(
       map((s: ServerResponse) => {
         return JSON.parse(atob(s.content))
@@ -92,7 +92,7 @@ export class ScenarioService {
     .set("pause_duration", s.pause_duration)
     .set("keepalive_duration", s.keepalive_duration);
 
-    return this.http.put("https://" + environment.server + "/a/scenario/" + s.id, params)
+    return this.http.put(environment.server + "/a/scenario/" + s.id, params)
   }
 
   public create(s: Scenario) {
@@ -102,6 +102,6 @@ export class ScenarioService {
     .set('pause_duration', s.pause_duration)
     .set('keepalive_duration', s.keepalive_duration);
 
-    return this.http.post("https://" + environment.server + "/a/scenario/new", params)
+    return this.http.post(environment.server + "/a/scenario/new", params)
   }
 }

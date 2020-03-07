@@ -9,7 +9,7 @@ import { Environment } from 'src/app/data/environment';
 import { from, of } from 'rxjs';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormArray, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 
 @Component({
@@ -69,10 +69,12 @@ export class NewScheduledEventComponent implements OnInit {
     'access_code': new FormControl(this.se.access_code, [
       Validators.required,
       Validators.minLength(5),
-      Validators.pattern(/^[a-zA-Z0-9]*$/)
+      Validators.pattern(/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)
     ]),
     'restricted_bind': new FormControl(true)
   })
+
+  public vmCounts: FormGroup = new FormGroup({});
 
   public copyEventDetails() {
     this.se.event_name = this.eventDetails.get('event_name').value;
@@ -104,11 +106,53 @@ export class NewScheduledEventComponent implements OnInit {
     return this.se.required_vms[env] ? this.se.required_vms[env][template] : 0;
   }
 
-  public setVMCount(env: string, template: string, count: number) {
-    if (!this.se.required_vms[env]) {
-      this.se.required_vms[env] = {};
+  public setupVMSelection() {
+    // reset
+    this.vmCounts = new FormGroup({});
+    // Steps: 1. get selected environments.
+    // 2. For each environment, if it is supported in that environment, add an input for the vmtype in the scenario
+    this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
+      // first, create a new form group
+      var newFormGroup = new FormGroup({});
+      // add the supported templates to this form group
+      this.getTemplates(ea.environment).forEach((templateName: string) => {
+        var initVal = 0;
+        if (this.se.required_vms[ea.environment]) {
+          initVal = this.se.required_vms[ea.environment][templateName] || 0;
+        }
+        var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(ea.available_count[templateName])]);
+        newFormGroup.addControl(templateName, newControl);
+      })
+      // add the form group into the parent group
+      this.vmCounts.addControl(ea.environment, newFormGroup);
+      // this.vmCounts.controls[ea.environment] = newFormGroup;
+    })
+  }
+
+  public copyVMCounts() {
+    // clean up
+    this.se.required_vms = {};
+    // basically do setupVMSelection in reverse and shove the results into se.required_vms
+    this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
+      // for each template, get the count. 
+      this.getTemplates(ea.environment).forEach((template: string) => {
+        var val = this.vmCounts.get(ea.environment).get(template).value;
+        if (val != 0) { // only map vm counts that are not 0 (instead of using >0 so that -1 is allowable)
+          if (!this.se.required_vms[ea.environment]) { this.se.required_vms[ea.environment] = {}; }
+          this.se.required_vms[ea.environment][template] = val;
+        }
+      })
+    })
+  }
+
+  controls(path: string) {
+    var group;
+    if (path == '') {
+      group = this.vmCounts as FormGroup;
+    } else {
+      group = this.vmCounts.get(path) as FormGroup;
     }
-    this.se.required_vms[env][template] = count == null ? 0 : count;
+    return Object.keys(group.controls)
   }
 
   ngOnChanges() {
@@ -225,27 +269,28 @@ export class NewScheduledEventComponent implements OnInit {
           if (this.event) {
             // we are updating instead of creating new
             // so we need to select the environments
-            Object.keys(this.se.required_vms).forEach(
-              (eid: string) => {
-                this.availableEnvironments.map(
-                  (ea: EnvironmentAvailability) => {
-                    if (ea.environment == eid) {
-                      this.selectedEnvironments.push(ea);
-                    }
-                  }
-                )
-              }
-            )
+            this._mapExistingEnvironments(Object.keys(this.event.required_vms));
+          } else if (Object.keys(this.vmCounts.controls).length > 0) { 
+            // there exists fields filled in for vm counts - user probably went back in the form
+            this._mapExistingEnvironments(Object.keys(this.vmCounts.controls));
           }
         }
       )
   }
 
-  public prepareEnvironments() {
-    // get a list of environments we are using
-    // from that list, we will n eed to ask the user how many of each associated VM type they would like
+  private _mapExistingEnvironments(envs: string[]) {
+    envs.forEach(
+      (eid: string) => {
+        this.availableEnvironments.map(
+          (ea: EnvironmentAvailability) => {
+            if (ea.environment == eid) {
+              this.selectedEnvironments.push(ea);
+            }
+          }
+        )
+      }
+    )
   }
-
 
   public setStartTime(d: DlDateTimePickerChange<Date>) {
     this.se.start_time = d.value;
@@ -269,6 +314,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.startDate = this.startTime = this.endDate = this.endTime = "";
     this.wizard.reset();
     this.wizard.open();
+    this.vmCounts = new FormGroup({});
   }
 
   public save() {

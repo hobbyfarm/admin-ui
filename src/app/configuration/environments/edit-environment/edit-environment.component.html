@@ -1,0 +1,293 @@
+<clr-wizard #wizard clrWizardSize="xl" (clrWizardOnFinish)="saveEnvironment()">
+    <clr-wizard-title>Edit Environment</clr-wizard-title>
+
+    <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+    <clr-wizard-button [type]="'previous'">Previous</clr-wizard-button>
+    <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+    <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+
+    <clr-wizard-page [clrWizardPageNextDisabled]="!environmentDetails.valid" (clrWizardPageNext)="copyEnvironmentDetails()">
+        <ng-template clrPageTitle>Basic Information</ng-template>
+
+        <form clrForm [formGroup]="environmentDetails">
+            <clr-input-container>
+                <label>Display Name</label>
+                <input clrInput type="text" placeholder="display name" name="display_name"
+                    formControlName="display_name" required />
+                <clr-control-error *clrIfError="'required'">Environment name is required</clr-control-error>
+                <clr-control-error *clrIfError="'minlength'">Environment name must be longer than 4 characters
+                </clr-control-error>
+            </clr-input-container>
+            <clr-input-container>
+                <label>DNS Suffix</label>
+                <input clrInput type="text" placeholder="my.fqdn.com" name="dnssuffix" formControlName="dnssuffix" />
+                <clr-control-helper>Optional</clr-control-helper>
+                <clr-control-error *clrIfError="'notDomain'">DNS suffix is not a valid domain name</clr-control-error>
+            </clr-input-container>
+            <clr-input-container>
+                <label>Provider</label>
+                <input clrInput type="text" placeholder="vsphere, aws, etc." name="provider" formControlName="provider"
+                    required />
+                <clr-control-error *clrIfError="'required'">Provider is required</clr-control-error>
+                <clr-control-error *clrIfError="'minlength'">Provider must be longer than 2 characters
+                </clr-control-error>
+            </clr-input-container>
+            <clr-input-container>
+                <label>Websocket Endpoint</label>
+                <input clrInput type="text" placeholder="ip or fqdn" name="ws_endpoint" formControlName="ws_endpoint"
+                    required />
+                <clr-control-error *clrIfError="'required'">Websocket endpoint is required</clr-control-error>
+                <clr-control-error *clrIfError="'pattern'">Value must be valid IP or hostname</clr-control-error>
+            </clr-input-container>
+            <clr-radio-container clrInline>
+                <label>Capacity Mode</label>
+                <clr-radio-wrapper>
+                    <input type="radio" clrRadio name="capacity_mode" required value="raw" formControlName="capacity_mode" />
+                    <label>Raw</label>
+                </clr-radio-wrapper>
+                <clr-radio-wrapper>
+                    <input type="radio" clrRadio name="capacity_mode" required value="count" formControlName="capacity_mode" />
+                    <label>Count</label>
+                </clr-radio-wrapper>
+                <clr-control-helper>
+                    Raw calculates resource usage in terms of CPU, memory, and storage. Count is number of VMs.
+                </clr-control-helper>
+                <clr-control-error *clrIfError="'required'">Capacity mode is required</clr-control-error>
+            </clr-radio-container>
+            <clr-toggle-container>
+                <label>Burst Capability</label>
+                <clr-toggle-wrapper>
+                    <input type="checkbox" clrToggle name="burst_capable" formControlName="burst_capable" /> 
+                </clr-toggle-wrapper>
+                <clr-control-helper>
+                    Burst is the ability to dynamically allocate VMs upon user request.
+                </clr-control-helper>
+            </clr-toggle-container>
+        </form>
+    </clr-wizard-page>
+
+    <clr-wizard-page [clrWizardPageNextDisabled]="!environmentSpecifics.valid" (clrWizardPageNext)="copyEnvironmentSpecifics()">
+        <ng-template clrPageTitle>Environment Specifics</ng-template>
+
+        <button class="btn btn-table btn-link" (click)="newEnvironmentSpecific()">
+            <clr-icon shape="plus"></clr-icon> New Parameter
+        </button>
+        <table class="table table-compact" [formGroup]="environmentSpecifics">
+            <thead>
+                <tr>
+                    <th class="left">Key</th>
+                    <th class="left">Value</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody formArrayName="params">
+                <ng-container *ngFor="let p of environmentSpecifics['controls'].params['controls']; let i = index">
+                    <tr formGroupName="{{i}}">
+                        <td>
+                            <clr-input-container class="table-input">
+                                <input clrInput type="text" placeholder="key" formControlName="key" />
+                                <clr-control-error *clrIfError="'required'">Key is required</clr-control-error>
+                            </clr-input-container>
+                        </td>
+                        <td>
+                            <clr-input-container class="table-input">
+                                <input clrInput type="text" placeholder="value" formControlName="value" />
+                                <clr-control-error *clrIfError="'required'">Value is required</clr-control-error>
+                            </clr-input-container>
+                        </td>
+                        <td>
+                            <button class="btn btn-table btn-link"
+                                (click)="deleteEnvironmentSpecific(i)">Delete</button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+        <span class="clr-subtext" *ngIf="environmentSpecifics['controls'].params['controls'].length != 0">Parameters require both 'key' and 'value' fields to be set. Remove any
+            parameters that do not meet this criteria.</span>
+    </clr-wizard-page>
+
+    <clr-wizard-page [clrWizardPageNextDisabled]="!templateMappings.valid" (clrWizardPageNext)="copyTemplateMapping()">
+        <ng-template clrPageTitle>Template Mappings</ng-template>
+
+        <button class="btn btn-table btn-link" (click)="newTemplateMapping()">
+            <clr-icon shape="plus"></clr-icon> New Template
+        </button>
+        <span class="clr-subtext">Parameters require both 'key' and 'value' fields to be set. Remove any
+            parameters that do not meet this criteria.</span>
+        <ng-container [formGroup]="templateMappings">
+            <clr-stack-view formArrayName="templates">
+                <clr-stack-block *ngFor="let t of templateMappings['controls'].templates['controls']; let it = index"
+                    formGroupName="{{it}}">
+                    <clr-stack-label>
+                        <input clrStackInput type="text" placeholder="Template name" formControlName="template" />
+                    </clr-stack-label>
+                    <clr-stack-content>
+                        <button class="btn btn-table btn-link" (click)="deleteTemplateMapping(it)">
+                            Delete Template
+                        </button>
+                        <button class="btn btn-table btn-link" (click)="newTemplateParameter(it)">
+                            <clr-icon shape="plus"></clr-icon> New Parameter
+                        </button>
+                    </clr-stack-content>
+                    <clr-stack-block *ngFor="let p of t['controls'].params['controls']; let ip = index"
+                        formArrayName="params">
+                        <clr-stack-label formGroupName="{{ip}}">
+                            <input clrStackInput type="text" placeholder="key" formControlName="key" />
+                        </clr-stack-label>
+                        <clr-stack-content formGroupName="{{ip}}">
+                            <input clrStackInput type="text" placeholder="value" formControlName="value" />
+                            <button class="btn btn-table btn-link" (click)="deleteTemplateParameter(it, ip)">
+                                Delete Parameter
+                            </button>
+                        </clr-stack-content>
+                    </clr-stack-block>
+                </clr-stack-block>
+            </clr-stack-view>
+        </ng-container>
+    </clr-wizard-page>
+
+    <clr-wizard-page [clrWizardPageNextDisabled]="!ipMapping.valid" (clrWizardPageNext)="copyIpMapping()">
+        <ng-template clrPageTitle>IP Mappings</ng-template>
+
+        <button class="btn btn-table btn-link" (click)="newIpMapping()">
+            <clr-icon shape="plus"></clr-icon> New Mapping
+        </button>
+        <table class="table table-compact" [formGroup]="ipMapping">
+            <thead>
+                <tr>
+                    <th class="left">From</th>
+                    <th class="left">To</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody formArrayName="mappings">
+                <ng-container *ngFor="let im of ipMapping['controls'].mappings['controls']; let i = index">
+                    <tr formGroupName="{{i}}">
+                        <td>
+                            <clr-input-container class="table-input">
+                                <input clrInput type="text" placeholder="xxx.xxx.xxx" formControlName="from" />
+                                <clr-control-error *clrIfError="'required'">From is required</clr-control-error>
+                            </clr-input-container>
+                        </td>
+                        <td>
+                            <clr-input-container class="table-input">
+                                <input clrInput type="text" placeholder="yyy.yyy.yyy" formControlName="to" />
+                                <clr-control-error *clrIfError="'required'">To is required</clr-control-error>
+                            </clr-input-container>
+                        </td>
+                        <td>
+                            <button class="btn btn-table btn-link" (click)="deleteIpMapping(i)">Delete</button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+        <span class="clr-subtext" *ngIf="ipMapping['controls'].mappings['controls'].length != 0">IP mappings require both 'from' and 'to' fields to be set. Remove any
+            mappings that do not meet this criteria.</span>
+    </clr-wizard-page>
+
+    <clr-wizard-page>
+        <ng-template clrPageTitle>Confirmation</ng-template>
+
+        <p>Confirm the following details before finalizing</p>
+        <h4>Basic Information</h4>
+        <table class="table table-compact">
+            <thead>
+                <tr>
+                    <th>Option</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Display Name</td>
+                    <td>{{ env.display_name }}</td>
+                </tr>
+                <tr>
+                    <td>DNS Suffix</td>
+                    <td>{{ env.dnssuffix }}</td>
+                </tr>
+                <tr>
+                    <td>Provider</td>
+                    <td>{{ env.provider }}</td>
+                </tr>
+                <tr>
+                    <td>Websocket Endpoint</td>
+                    <td>{{ env.ws_endpoint }}</td>
+                </tr>
+                <tr>
+                    <td>Capacity Mode</td>
+                    <td>{{ env.capacity_mode }}</td>
+                </tr>
+                <tr>
+                    <td>Burst Capable</td>
+                    <td>{{ env.burst_capable }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>Environment Specifics</h4>
+        <table class="table table-compact">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of env.environment_specifics | keyvalue">
+                    <td>{{ item.key }}</td>
+                    <td>{{ item.value }}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h4>Template Mappings</h4>
+        <table class="table table-compact">
+            <thead>
+                <tr>
+                    <th>Template</th>
+                    <th>Parameters</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let template of env.template_mapping | keyvalue">
+                    <td>{{ template.key }}</td>
+                    <td>
+                        <table class="table table-compact">
+                            <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of template.value | keyvalue">
+                                    <td>{{ item.key }}</td>
+                                    <td>{{ item.value }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>IP Mappings</h4>
+        <table class="table table-compact">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>To</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of env.ip_translation_map | keyvalue">
+                    <td>{{ item.key }}</td>
+                    <td>{{ item.value }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </clr-wizard-page>
+</clr-wizard>

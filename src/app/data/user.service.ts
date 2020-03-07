@@ -17,7 +17,7 @@ export class UserService {
   ) { }
 
   public getUsers() {
-    return this.http.get("https://" + environment.server + "/a/user/list")
+    return this.http.get(environment.server + "/a/user/list")
     .pipe(
       switchMap((s: ServerResponse) => {
         return of(JSON.parse(atob(s.content)));
@@ -42,7 +42,7 @@ export class UserService {
       params = params.set("accesscodes", JSON.stringify(accesscodes));
     }
 
-    return this.http.put("https://" + environment.server + "/a/user", params)
+    return this.http.put(environment.server + "/a/user", params)
     .pipe(
       catchError((e: HttpErrorResponse) => {
         return of(e.error);
