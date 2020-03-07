@@ -2,8 +2,6 @@ common:
   images:
   - hobbyfarm/admin-ui
   eventRegistryKeys:
-  - event: commit/jenkins
-    registryKey: public
   - event: commit/develop
     registryKey: public
   - event: commit/master
