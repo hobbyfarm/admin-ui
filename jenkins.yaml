@@ -1,0 +1,15 @@
+common:
+  images:
+  - hobbyfarm/admin-ui
+  eventRegistryKeys:
+  - event: commit/develop
+    registryKey: public
+  - event: commit/master
+    registryKey: public
+build:
+  composeProfileMap:
+    sdk: ./cicd/docker/sdk
+    release: ./cicd/docker/release
+  pullImages:
+    - node:lts-alpine
+    - nginx:stable-alpine
