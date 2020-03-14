@@ -3,6 +3,8 @@ import { ClrWizard, ClrSignpostContent } from '@clr/angular';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { Scenario } from 'src/app/data/scenario';
 import { ScenarioService } from 'src/app/data/scenario.service';
+import { Course } from 'src/app/data/course';
+import { CourseService } from 'src/app/data/course.service';
 import { EnvironmentService } from 'src/app/data/environment.service';
 import { combineAll, concatMap, map, filter } from 'rxjs/operators';
 import { Environment } from 'src/app/data/environment';
@@ -27,6 +29,7 @@ export class NewScheduledEventComponent implements OnInit {
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
   public scenarios: Scenario[] = [];
+  public courses: Course[] = [];
 
   public saving: boolean = false;
 
@@ -50,15 +53,17 @@ export class NewScheduledEventComponent implements OnInit {
   public vmtotals: Map<string, number> = new Map();
 
   public selectedscenarios: Scenario[] = [];
+  public selectedcourses: Course[] = [];
 
   constructor(
     public ss: ScenarioService,
+    public cs: CourseService,
     public ses: ScheduledeventService,
     public es: EnvironmentService
   ) { }
 
   public eventDetails: FormGroup = new FormGroup({
-    'event_name': new FormControl(this.se.event_name, [
+    'name': new FormControl(this.se.name, [
       Validators.required,
       Validators.minLength(4)
     ]),
@@ -77,7 +82,7 @@ export class NewScheduledEventComponent implements OnInit {
   public vmCounts: FormGroup = new FormGroup({});
 
   public copyEventDetails() {
-    this.se.event_name = this.eventDetails.get('event_name').value;
+    this.se.name = this.eventDetails.get('name').value;
     this.se.description = this.eventDetails.get('description').value;
     this.se.access_code = this.eventDetails.get('access_code').value;
     this.se.disable_restriction = !this.eventDetails.get("restricted_bind").value; // opposite, since restricted_bind: enabled really means disable_restriction: false
@@ -91,6 +96,12 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.scenarios = [];
     s.forEach(
       (sc: Scenario) => this.se.scenarios.push(sc.id)
+    )
+  }
+  public coursesSelected(c: Course[]) {
+    this.se.courses = [];
+    c.forEach(
+      (co: Course) => this.se.courses.push(co.id)
     )
   }
 
@@ -134,7 +145,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.required_vms = {};
     // basically do setupVMSelection in reverse and shove the results into se.required_vms
     this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
-      // for each template, get the count. 
+      // for each template, get the count.
       this.getTemplates(ea.environment).forEach((template: string) => {
         var val = this.vmCounts.get(ea.environment).get(template).value;
         if (val != 0) { // only map vm counts that are not 0 (instead of using >0 so that -1 is allowable)
@@ -159,7 +170,7 @@ export class NewScheduledEventComponent implements OnInit {
     if (this.event) {
       this.se = this.event;
       this.eventDetails.setValue({
-        'event_name': this.se.event_name,
+        'name': this.se.name,
         'description': this.se.description,
         'access_code': this.se.access_code,
         'restricted_bind': true
@@ -178,7 +189,18 @@ export class NewScheduledEventComponent implements OnInit {
           )
         }
       )
-
+      this.se.courses.forEach(
+        (sid: string) => {
+          // find matching if there is one, and push into selectedcourses
+          this.courses.map(
+            (c: Course) => {
+              if (c.id == sid) {
+                this.selectedcourses.push(c);
+              }
+            }
+          )
+        }
+      )
     } else {
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
@@ -196,7 +218,11 @@ export class NewScheduledEventComponent implements OnInit {
 
     this.ss.list()
       .subscribe(
-        (s: Scenario[]) => this.scenarios = s
+        (s: Scenario[]) => { this.scenarios = s },
+      );
+    this.cs.list()
+      .subscribe(
+        (c: Course[]) => { this.courses = c },
       );
 
     // setup the times
@@ -222,6 +248,17 @@ export class NewScheduledEventComponent implements OnInit {
     this.selectedscenarios.forEach(
       (s: Scenario) => {
         s.virtualmachines.forEach(
+          (se: Map<string, string>) => {
+            Object.entries(se).forEach(
+              (ee: string[]) => templates.set(ee[1], true)
+            )
+          }
+        )
+      }
+    )
+    this.selectedcourses.forEach(
+      (c: Course) => {
+        c.virtualmachines.forEach(
           (se: Map<string, string>) => {
             Object.entries(se).forEach(
               (ee: string[]) => templates.set(ee[1], true)
@@ -270,7 +307,7 @@ export class NewScheduledEventComponent implements OnInit {
             // we are updating instead of creating new
             // so we need to select the environments
             this._mapExistingEnvironments(Object.keys(this.event.required_vms));
-          } else if (Object.keys(this.vmCounts.controls).length > 0) { 
+          } else if (Object.keys(this.vmCounts.controls).length > 0) {
             // there exists fields filled in for vm counts - user probably went back in the form
             this._mapExistingEnvironments(Object.keys(this.vmCounts.controls));
           }
@@ -311,6 +348,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.required_vms = new Map();
     this.selectedEnvironments = [];
     this.selectedscenarios = [];
+    this.selectedcourses = [];
     this.startDate = this.startTime = this.endDate = this.endTime = "";
     this.wizard.reset();
     this.wizard.open();

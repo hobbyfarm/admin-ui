@@ -33,15 +33,20 @@ export class ScheduledeventService {
 
   public create(se: ScheduledEvent) {
     var params = new HttpParams()
-      .set("name", se.event_name)
+      .set("name", se.name)
       .set("description", se.description)
       .set("start_time", formatDate(se.start_time, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
       .set("end_time", formatDate(se.end_time, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
       .set("required_vms", JSON.stringify(se.required_vms))
       .set("access_code", se.access_code.toLowerCase()) // this needs to be lower case because of RFC-1123
-      .set("scenarios", JSON.stringify(se.scenarios))
       .set("disable_restriction", JSON.stringify(se.disable_restriction));
 
+      if (se.scenarios != null) {
+         params = params.set("scenarios", JSON.stringify(se.scenarios))
+      }
+      if (se.courses != null) {
+         params = params.set("courses", JSON.stringify(se.courses))
+      }
 
     return this.http.post(environment.server + "/a/scheduledevent/new", params)
       .pipe(
@@ -53,14 +58,19 @@ export class ScheduledeventService {
 
   public update(se: ScheduledEvent) {
     var params = new HttpParams()
-      .set("name", se.event_name)
+      .set("name", se.name)
       .set("description", se.description)
       .set("start_time", formatDate(se.start_time, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
       .set("end_time", formatDate(se.end_time, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
       .set("required_vms", JSON.stringify(se.required_vms))
-      .set("access_code", se.access_code)
-      .set("scenarios", JSON.stringify(se.scenarios));
+      .set("access_code", se.access_code);
 
+      if (se.scenarios != null) {
+         params = params.set("scenarios", JSON.stringify(se.scenarios))
+      }
+      if (se.courses != null) {
+         params = params.set("courses", JSON.stringify(se.courses))
+      }
 
     return this.http.put(environment.server + "/a/scheduledevent/" + se.id, params)
       .pipe(
