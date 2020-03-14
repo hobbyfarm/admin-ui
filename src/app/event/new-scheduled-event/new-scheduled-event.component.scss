@@ -1,3 +1,13 @@
 clr-input-container.table-input {
     margin-top: 0 !important;
 }
+
+clr-dg-row-detail {
+    padding-top: 0;
+
+    table {
+        margin-top: 0;
+        background-color: transparent;
+        width: auto
+    }
+}

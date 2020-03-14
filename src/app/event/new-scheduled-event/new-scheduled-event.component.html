@@ -11,7 +11,7 @@
     <form clrForm [formGroup]="eventDetails">
       <clr-input-container>
         <label>Name</label>
-        <input clrInput type="text" placeholder="Event name" name="event_name" formControlName="event_name" required />
+        <input clrInput type="text" placeholder="Event name" name="name" formControlName="name" required />
         <clr-control-error *clrIfError="'required'">Event name is required</clr-control-error>
         <clr-control-error *clrIfError="'minlength'">Event name must be longer than 4 characters</clr-control-error>
       </clr-input-container>
@@ -91,18 +91,39 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="selectedscenarios.length == 0">
-    <ng-template clrPageTitle>Select Scenario(s)</ng-template>
-    <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)">
+  <clr-wizard-page [clrWizardPageNextDisabled]="selectedcourses.length == 0">
+    <ng-template clrPageTitle>Select Course(s) or Scenario(s)</ng-template>
+    <clr-datagrid [clrDgSelected]="selectedcourses" (clrDgSelectedChange)="coursesSelected($event)">
       <clr-dg-column>Id</clr-dg-column>
       <clr-dg-column>Name</clr-dg-column>
       <clr-dg-column>Description</clr-dg-column>
 
-      <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
+      <clr-dg-row *clrDgItems="let c of courses" [clrDgItem]="c">
+        <clr-dg-cell>{{ c.id }}</clr-dg-cell>
+        <clr-dg-cell>{{ c.name }}</clr-dg-cell>
+        <clr-dg-cell>{{ c.description }}</clr-dg-cell>
+
+        <clr-dg-row-detail *clrIfExpanded>
+          <table class="table table-noborder">
+            <thead>
+              <th class="left">Scenario</th>
+              <th class="left">Description</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of c.scenarios">
+                <td class="left">{{ s.name }}</td>
+                <td class="left">{{ s.description }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </clr-dg-row-detail>
+
+      </clr-dg-row>
+      <!-- <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
         <clr-dg-cell>{{ s.name }}</clr-dg-cell>
         <clr-dg-cell>{{ s.description }}</clr-dg-cell>
-      </clr-dg-row>
+      </clr-dg-row> -->
     </clr-datagrid>
   </clr-wizard-page>
 
@@ -117,22 +138,22 @@
     <ng-container *ngIf="!checkingEnvironments">
       <clr-datagrid [(clrDgSelected)]="selectedEnvironments">
         <clr-dg-column>
-          <clr-icon shape="building"></clr-icon> Environment
+          <clr-icon shape="building"></clr-icon>&nbsp;Environment
         </clr-dg-column>
         <clr-dg-column>
-          <clr-icon shape="resource-pool"></clr-icon> Mode
+          <clr-icon shape="resource-pool"></clr-icon>&nbsp;Mode
         </clr-dg-column>
         <clr-dg-column>
-          <clr-icon shape="host"></clr-icon> Count
+          <clr-icon shape="host"></clr-icon>&nbsp;Count
         </clr-dg-column>
         <clr-dg-column>
-          <clr-icon shape="cpu"></clr-icon> CPU
+          <clr-icon shape="cpu"></clr-icon>&nbsp;CPU
         </clr-dg-column>
         <clr-dg-column>
-          <clr-icon shape="memory"></clr-icon> Memory
+          <clr-icon shape="memory"></clr-icon>&nbsp;Memory
         </clr-dg-column>
         <clr-dg-column>
-          <clr-icon shape="hard-drive"></clr-icon> Storage
+          <clr-icon shape="hard-drive"></clr-icon>&nbsp;Storage
         </clr-dg-column>
 
         <clr-dg-row *clrDgItems="let ea of availableEnvironments" [clrDgItem]="ea">
@@ -216,7 +237,7 @@
       <tbody>
         <tr>
           <td>Name</td>
-          <td>{{ se.event_name }}</td>
+          <td>{{ se.name }}</td>
         </tr>
         <tr>
           <td>Description</td>
@@ -229,6 +250,12 @@
         <tr>
           <td>End Time</td>
           <td>{{ se.end_time | date:'long' }}</td>
+        </tr>
+        <tr>
+          <td>Courses</td>
+          <td>
+            <span *ngFor="let c of se.courses" class="label">{{c}}</span>
+          </td>
         </tr>
         <tr>
           <td>Scenarios</td>
