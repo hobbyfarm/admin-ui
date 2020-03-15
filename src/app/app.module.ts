@@ -61,10 +61,10 @@ export function tokenGetter() {
       config: {
         tokenGetter: tokenGetter,
         whitelistedDomains: [
-          environment.server.match(/.*\:\/\/?([^\/]+)/)[1]
+          environment.server.replace(/(^\w+:|^)\/\//, '')
         ],
         blacklistedRoutes: [
-          environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + "/auth/authenticate"
+          environment.server.replace(/(^\w+:|^)\/\//, '') + "/auth/authenticate"
         ]
       }
     }),
