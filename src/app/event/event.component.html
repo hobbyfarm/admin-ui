@@ -27,13 +27,13 @@
       <div class="clr-row">
         <div class="clr-col">
           <clr-datagrid>
-            <clr-dg-column>Name</clr-dg-column>
-            <clr-dg-column>Start</clr-dg-column>
-            <clr-dg-column>End</clr-dg-column>
-            <clr-dg-column>Scenarios</clr-dg-column>
+            <clr-dg-column [clrDgField]="'event_name'">Name</clr-dg-column>
+            <clr-dg-column [clrDgField]="'start_time'" [clrDgSortOrder]="descSort">Start</clr-dg-column>
+            <clr-dg-column [clrDgField]="'end_time'">End</clr-dg-column>
+            <clr-dg-column [clrDgField]="'scenarios'">Scenarios</clr-dg-column>
             <clr-dg-column>Status</clr-dg-column>
 
-            <clr-dg-row *ngFor="let se of events">
+            <clr-dg-row *clrDgItems="let se of events">
               <clr-dg-action-overflow>
                 <button class="action-item" (click)="openDelete(se)">Delete</button>
                 <button class="action-item" (click)="openEdit(se)">Edit</button>

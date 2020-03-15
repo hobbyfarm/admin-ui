@@ -9,7 +9,7 @@ import { Environment } from 'src/app/data/environment';
 import { from, of } from 'rxjs';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
-import { FormGroup, FormControl, Validators, FormArray, ValidatorFn, ValidationErrors } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormArray, ValidatorFn, ValidationErrors, FormBuilder } from '@angular/forms';
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 
 @Component({
@@ -45,13 +45,21 @@ export class NewScheduledEventComponent implements OnInit {
   public startTime: string;
   public endTime: string;
 
+  public simpleMode: boolean = true;
+
   public validTimes: boolean = false;
 
   public vmtotals: Map<string, number> = new Map();
 
   public selectedscenarios: Scenario[] = [];
 
+  public simpleUserCounts: {} = {};
+  public requiredVmCounts: {} = {};
+  public maxUserCounts: {} = {};
+  public invalidSimpleEnvironments: string[] = [];
+
   constructor(
+    private _fb: FormBuilder,
     public ss: ScenarioService,
     public ses: ScheduledeventService,
     public es: EnvironmentService
@@ -75,6 +83,10 @@ export class NewScheduledEventComponent implements OnInit {
   })
 
   public vmCounts: FormGroup = new FormGroup({});
+
+  public simpleModeVmCounts: FormGroup = this._fb.group({
+    envs: this._fb.array([])
+  })
 
   public copyEventDetails() {
     this.se.event_name = this.eventDetails.get('event_name').value;
@@ -107,40 +119,123 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   public setupVMSelection() {
+    this.calculateRequiredVms();
+    this.maxUserCount();
     // reset
     this.vmCounts = new FormGroup({});
+    this.simpleModeVmCounts = this._fb.group({
+      envs: this._fb.array([])
+    })
     // Steps: 1. get selected environments.
     // 2. For each environment, if it is supported in that environment, add an input for the vmtype in the scenario
+    this.invalidSimpleEnvironments = []; // reset invalid simple mode environments
     this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
-      // first, create a new form group
-      var newFormGroup = new FormGroup({});
-      // add the supported templates to this form group
-      this.getTemplates(ea.environment).forEach((templateName: string) => {
-        var initVal = 0;
-        if (this.se.required_vms[ea.environment]) {
-          initVal = this.se.required_vms[ea.environment][templateName] || 0;
-        }
-        var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(ea.available_count[templateName])]);
-        newFormGroup.addControl(templateName, newControl);
-      })
-      // add the form group into the parent group
-      this.vmCounts.addControl(ea.environment, newFormGroup);
-      // this.vmCounts.controls[ea.environment] = newFormGroup;
+      this.setupSimpleVMPage(ea);
+      this.setupAdvancedVMPage(ea);
     })
+  }
+
+  public setupAdvancedVMPage(ea: EnvironmentAvailability) {
+    var newFormGroup = new FormGroup({});
+    this.getTemplates(ea.environment).forEach((templateName: string, index: number) => {
+      var initVal = 0;
+      if (this.se.required_vms[ea.environment]) {
+        initVal = this.se.required_vms[ea.environment][templateName] || 0; // so we don't blow away old input values when rebuilding this form
+      }
+      var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(ea.available_count[templateName])]);
+      newFormGroup.addControl(templateName, newControl);
+    });
+
+    this.vmCounts.addControl(ea.environment, newFormGroup);
+  }
+
+  public setupSimpleVMPage(ea: EnvironmentAvailability) {
+    // go through each required VM (and its count) and verify that a) it exists in the selected environment and b) there is a minimum count that supports a single user
+    // (otherwise don't list it)
+    var meetsCriteria = true;
+    Object.keys(this.requiredVmCounts).forEach((requiredVm: string, index: number) => {
+      if (!ea.available_count[requiredVm] || ea.available_count[requiredVm] < this.requiredVmCounts[requiredVm]) {
+        // this template either doesn't exist in the environment, or doesn't match a minimum count
+        meetsCriteria = false;
+        this.invalidSimpleEnvironments.push(ea.environment);
+      }
+    });
+
+    if (meetsCriteria) {
+      var initVal = 0;
+      if (this.simpleUserCounts[ea.environment]) {
+        initVal = this.simpleUserCounts[ea.environment] || 0; // so we don't blow away old input values when rebuilding this form
+      }
+      var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(this.maxUserCounts[ea.environment])]);
+      (this.simpleModeVmCounts.get('envs') as FormArray).push(newControl);
+    }
   }
 
   public copyVMCounts() {
     // clean up
     this.se.required_vms = {};
-    // basically do setupVMSelection in reverse and shove the results into se.required_vms
-    this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
-      // for each template, get the count. 
-      this.getTemplates(ea.environment).forEach((template: string) => {
-        var val = this.vmCounts.get(ea.environment).get(template).value;
-        if (val != 0) { // only map vm counts that are not 0 (instead of using >0 so that -1 is allowable)
-          if (!this.se.required_vms[ea.environment]) { this.se.required_vms[ea.environment] = {}; }
-          this.se.required_vms[ea.environment][template] = val;
+    this.simpleUserCounts = {};
+
+    if (this.simpleMode) {
+      this.selectedEnvironments.forEach((env, i) => {
+        var users = this.simpleModeVmCounts.get(['envs', i]).value;
+        this.simpleUserCounts[env.environment] = users;
+        if (users == 0) { return; }
+        Object.keys(this.requiredVmCounts).forEach((template, j) => {
+          if (!this.se.required_vms[env.environment]) { this.se.required_vms[env.environment] = {}; }
+          this.se.required_vms[env.environment][template] = (users * this.requiredVmCounts[template]);
+        })
+      })
+    } else {
+      // basically do setupVMSelection in reverse and shove the results into se.required_vms
+      this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
+        // for each template, get the count. 
+        this.getTemplates(ea.environment).forEach((template: string) => {
+          var val = this.vmCounts.get(ea.environment).get(template).value;
+          if (val != 0) { // only map vm counts that are not 0 (instead of using >0 so that -1 is allowable)
+            if (!this.se.required_vms[ea.environment]) { this.se.required_vms[ea.environment] = {}; }
+            this.se.required_vms[ea.environment][template] = val;
+          }
+        })
+      })
+    }
+  }
+
+  /*
+  Calculate the maximum number of users that can be scheduled in an environment.
+  This is used for the simple method of VM provisioning.
+  */
+  public maxUserCount() {
+    this.maxUserCounts = {}; // map[string]int
+    // we need to get the number of VMs of each type that a user needs
+    // then divide that amount by the number of _available_ VMs, arriving at a max. 
+    // this max will be passed to the Angular FormControl as a max() validator.
+    // it also will be displayed on the page for the users knowledge
+    this.selectedEnvironments.forEach((se, i) => {
+      // for each environment, get the templates supported by that environment
+      var min = Number.MAX_SAFE_INTEGER;
+      Object.keys(se.available_count).forEach((template, j) => {
+        if ((se.available_count[template] / this.requiredVmCounts[template]) < min) {
+          min = se.available_count[template] / this.requiredVmCounts[template];
+          min = Math.floor(min);
         }
+      })
+
+      this.maxUserCounts[se.environment] = min;
+    })
+  }
+
+  public calculateRequiredVms() {
+    this.requiredVmCounts = {}; // this will be map[string]int, where string is vm template and int is required count
+    this.selectedscenarios.forEach((ss, i) => { // ss is selectedscenario, i is index
+      ss.virtualmachines.forEach((vmset, j) => { // vmset is virtualmachineset, j is index
+        Object.values(vmset).forEach((template: string, k) => { // tmeplate is vmtemplate name, k is index
+          if (this.requiredVmCounts[template]) {
+            this.requiredVmCounts[template]++;
+          } else {
+            this.requiredVmCounts[template] = 1;
+          }
+        })
       })
     })
   }
@@ -183,6 +278,14 @@ export class NewScheduledEventComponent implements OnInit {
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
     }
+  }
+
+  public simpleUserTotal() {
+    var total = 0;
+    for (var i = 0; i < (this.simpleModeVmCounts.get('envs') as FormArray).length; i++) {
+      total += (this.simpleModeVmCounts.get(['envs', i]) as FormControl).value;
+    }
+    return total;
   }
 
   ngOnInit() {
@@ -270,7 +373,7 @@ export class NewScheduledEventComponent implements OnInit {
             // we are updating instead of creating new
             // so we need to select the environments
             this._mapExistingEnvironments(Object.keys(this.event.required_vms));
-          } else if (Object.keys(this.vmCounts.controls).length > 0) { 
+          } else if (Object.keys(this.vmCounts.controls).length > 0) {
             // there exists fields filled in for vm counts - user probably went back in the form
             this._mapExistingEnvironments(Object.keys(this.vmCounts.controls));
           }
@@ -303,6 +406,7 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   public open() {
+    this.simpleMode = true;
     this.validTimes = false;
     this.se = new ScheduledEvent();
     this.eventDetails.reset({
