@@ -47,9 +47,8 @@ export class ScenarioComponent implements OnInit {
   public newScenarioOpen: boolean = false;
 
   public newScenario: Scenario = new Scenario();
-
-  public vmProps: string[] = ["id", "vm_template_id", "keypair_name", "vm_claim_id", "user", "status", "allocated", "tainted",
-"public_ip", "private_ip", "environment_id", "hostname", "tfstate", "ws_endpoint"];
+  
+  public vmProps: string[] = Object.keys(new VirtualMachine());
 
   constructor(
     public scenarioService: ScenarioService,
