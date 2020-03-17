@@ -182,43 +182,98 @@
   </clr-wizard-page>
 
   <clr-wizard-page (clrWizardPageOnLoad)="setupVMSelection()" (clrWizardPageNext)="copyVMCounts()"
-    [clrWizardPageNextDisabled]="!vmCounts.valid">
+    [clrWizardPageNextDisabled]="!vmCounts.valid || !simpleModeVmCounts.valid">
     <ng-template clrPageTitle>Select Virtual Machines</ng-template>
-    <p>
-      The following VMs are required:
-      <ng-container *ngFor="let s of selectedscenarios">
-        <ng-container *ngFor="let vmset of s.virtualmachines">
-          <ng-container *ngFor="let item of vmset | keyvalue">
-            <li>{{ item.value }} (required by {{ item.key }} on scenario {{ s.name | slice:0:30 }})</li>
-          </ng-container>
-        </ng-container>
-      </ng-container>
-    </p>
-    <table class="table table-compact">
-      <thead>
-        <tr>
-          <th>Environment</th>
-          <th>VM Template</th>
-          <th>Count</th>
-        </tr>
-      </thead>
-      <tbody [formGroup]="vmCounts">
-        <ng-container *ngFor="let groupName of controls('')" [formGroupName]="groupName">
-          <ng-container *ngFor="let controlName of controls(groupName)">
+    <clr-toggle-wrapper>
+      <input type="checkbox" clrToggle [(ngModel)]="simpleMode" name="simpleMode" />
+      <label>Simple Mode</label>
+    </clr-toggle-wrapper>
+    <ng-container *ngIf="simpleMode">
+      <i>In simple mode, define the number of users per environment. Virtual machines are calculated for you.</i>
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th class="left">Environment</th>
+            <th class="left">Users</th>
+          </tr>
+        </thead>
+        <tbody [formGroup]="simpleModeVmCounts">
+          <ng-container *ngFor="let fc of simpleModeVmCounts['controls']?.envs['controls']; let it = index">
             <tr>
-              <td>{{ groupName }}</td>
-              <td>{{ controlName }}</td>
-              <td>
+              <td class="left">
+                {{ selectedEnvironments[it]?.environment }}
+              </td>
+              <td class="left">
                 <clr-input-container class="table-input">
-                  <input clrInput type="number" [formControlName]="controlName">
-                  <clr-control-error *clrIfError="'max'">VM count higher than max</clr-control-error>
+                  <input clrInput type="number" [formControl]="fc">
+                  <clr-control-error *clrIfError="'max'">User count higher than max</clr-control-error>
                 </clr-input-container>
+                (max {{ maxUserCounts[selectedEnvironments[it]?.environment]}})
               </td>
             </tr>
           </ng-container>
+          <tr>
+            <td class="right">
+              <b>Total</b>
+            </td>
+            <td class="left">
+              {{ simpleUserTotal() }} users
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br />
+      <i>The following environments are incompatible with simple mode: </i>
+      <clr-signpost>
+        <clr-signpost-content *clrIfOpen>
+          <h3>Simple Mode Compatibility</h3>
+          <p>
+            An environment must be able to support the creation of all types of required VMs, as well as 
+            have enough capacity for at least one user (and all their associated VMs).
+          </p>
+        </clr-signpost-content>
+      </clr-signpost>
+      <ul>
+        <li *ngFor="let s of invalidSimpleEnvironments">{{s}}</li>
+      </ul>
+    </ng-container>
+    <ng-container *ngIf="!simpleMode">
+      <i>In advanced mode, define the number of virtual machines per environment. Remember to account for the number of
+        expected users,
+        thus <code>number_of_users * number_of_required_vms</code>.
+      </i>
+      <p>
+        The following VMs are required <b>per user</b>:
+        <ng-container *ngFor="let item of requiredVmCounts | keyvalue">
+          <li>{{ item.key }}: {{ item.value }}</li>
         </ng-container>
-      </tbody>
-    </table>
+      </p>
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>Environment</th>
+            <th>VM Template</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody [formGroup]="vmCounts">
+          <ng-container *ngFor="let groupName of controls('')" [formGroupName]="groupName">
+            <ng-container *ngFor="let controlName of controls(groupName)">
+              <tr>
+                <td>{{ groupName }}</td>
+                <td>{{ controlName }}</td>
+                <td>
+                  <clr-input-container class="table-input">
+                    <input clrInput type="number" [formControlName]="controlName">
+                    <clr-control-error *clrIfError="'max'">VM count higher than max</clr-control-error>
+                  </clr-input-container>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+        </tbody>
+      </table>
+    </ng-container>
   </clr-wizard-page>
 
   <clr-wizard-page>

@@ -2,13 +2,25 @@
 @import "../node_modules/@clr/ui/src/main.scss";
 
 .row {
-    @extend .clr-row
+    @extend .clr-row;
 }
 
 .col {
-    @extend .clr-col
+    @extend .clr-col;
 }
 
 .col-10 {
-    @extend .clr-col-10
+    @extend .clr-col-10;
+}
+
+/* added because of the edit step stack view improperly rendering at 55vh */
+.modal .stack-view {
+    height: unset !important;
+}
+
+/* created compact stack view */
+clr-stack-view.compact {
+    .stack-view .stack-block-label {
+        line-height: 0rem;
+    }
 }
