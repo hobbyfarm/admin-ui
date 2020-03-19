@@ -33,7 +33,7 @@ export class ScheduledeventService {
 
   public create(se: ScheduledEvent) {
     var params = new HttpParams()
-      .set("name", se.name)
+      .set("name", se.event_name)
       .set("description", se.description)
       .set("start_time", formatDate(se.start_time, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
       .set("end_time", formatDate(se.end_time, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
@@ -58,7 +58,7 @@ export class ScheduledeventService {
 
   public update(se: ScheduledEvent) {
     var params = new HttpParams()
-      .set("name", se.name)
+      .set("name", se.event_name)
       .set("description", se.description)
       .set("start_time", formatDate(se.start_time, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
       .set("end_time", formatDate(se.end_time, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))

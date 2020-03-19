@@ -7,6 +7,7 @@ import { ServerResponse } from '../data/serverresponse';
 import { deepCopy } from '../deepcopy';
 import { VmtemplateService } from '../data/vmtemplate.service';
 import { VMTemplate } from '../data/vmtemplate';
+import { VirtualMachine } from '../data/virtualmachine';
 import { FormGroup, FormControl, Validators, ValidatorFn, ValidationErrors } from '@angular/forms';
 
 @Component({
@@ -46,6 +47,8 @@ export class ScenarioComponent implements OnInit {
   public newScenarioOpen: boolean = false;
 
   public newScenario: Scenario = new Scenario();
+  
+  public vmProps: string[] = Object.keys(new VirtualMachine());
 
   constructor(
     public scenarioService: ScenarioService,

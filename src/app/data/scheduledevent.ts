@@ -1,7 +1,7 @@
 export class ScheduledEvent {
     id: string;
     creator: string;
-    name: string;
+    event_name: string;
     description: string;
     start_time: Date;
     end_time: Date;

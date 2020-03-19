@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { NewScheduledEventComponent } from './new-scheduled-event/new-scheduled-event.component';
-import { ClrModal } from '@clr/angular';
+import { ClrModal, ClrDatagridSortOrder } from '@clr/angular';
 
 @Component({
   selector: 'app-event',
@@ -22,6 +22,8 @@ export class EventComponent implements OnInit {
   public seDangerClosed: boolean = true;
 
   public editingEvent: ScheduledEvent;
+
+  public descSort = ClrDatagridSortOrder.DESC;
 
   constructor(
     public seService: ScheduledeventService

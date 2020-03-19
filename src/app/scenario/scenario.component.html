@@ -178,6 +178,52 @@
               </span>
             </clr-alert-item>
           </clr-alert>
+          <ng-container>
+            <clr-stack-view class="compact">
+              <clr-stack-header>
+                HobbyFarm Syntax Reference
+              </clr-stack-header>
+              <clr-stack-block>
+                <clr-stack-label>Virtual Machine Information</clr-stack-label>
+                <clr-stack-content>
+                </clr-stack-content>
+                <clr-stack-block>
+                  <clr-stack-label>
+                    <p>The listed variables are available. To use, specify within a <code>{{ '${}' }}</code> block using the following syntax:</p>
+                    <p><code>{{'${vminfo:[vmname]:[variable]}'}}</code> where <code>vminfo</code> is a static string, <code>vmname</code> is the name 
+                    of one of the VMs in the scenario, and <code>variable</code> is an item from the list on the right.</p>
+                    <p>Example: <code>{{'${vminfo:cluster01:public_ip}'}}</code></p>
+                  </clr-stack-label>
+                  <clr-stack-content>
+                    <ul>
+                      <li *ngFor="let vp of vmProps">{{ vp }}</li>
+                    </ul>
+                  </clr-stack-content>
+                </clr-stack-block>
+              </clr-stack-block>
+              <clr-stack-block>
+                <clr-stack-label>Click-to-run</clr-stack-label>
+                <clr-stack-content>
+                </clr-stack-content>
+                <clr-stack-block>
+                  <clr-stack-label>
+                    <p>Click-to-run is enabled by passing a special language argument to a markdown code block.
+                    Use the syntax <code>ctr:[vmname]</code> as the language argument where <code>vmname</code> is the name 
+                    of one of the VMs in the scenario.</p>
+                    <p>
+                      Example:<br/>
+                      <code>
+                        ```ctr:cluster01<br/>
+                        cat example.txt<br/>
+                        ```<br/>
+                      </code>
+                    </p>
+                  </clr-stack-label>
+                </clr-stack-block>
+              </clr-stack-block>
+            </clr-stack-view>
+          </ng-container>
+
           <form clrForm>
             <clr-input-container>
               <label for="title">Step title</label>
@@ -188,6 +234,7 @@
             <div class="clr-col">
               <md-editor name="Content" [(ngModel)]="editingStep.content" required>
               </md-editor>
+              <i>Variables do not render in the WYSIWYG section of this Markdown editor.</i>
             </div>
           </div>
         </div>
