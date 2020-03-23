@@ -34,7 +34,8 @@
               "node_modules/ngx-markdown-editor/assets/highlight.js/agate.min.css"
             ],
             "scripts": [
-              "node_modules/@webcomponents/custom-elements/custom-elements.min.js",
+              "node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js",
+              "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
               "node_modules/ngx-markdown-editor/assets/highlight.js/highlight.min.js",
               "node_modules/ngx-markdown-editor/assets/marked.min.js"
             ],
