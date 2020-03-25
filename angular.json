@@ -40,6 +40,14 @@
             "es5BrowserSupport": true
           },
           "configurations": {
+            "local": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ]
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -72,6 +80,9 @@
             "browserTarget": "hobbyfarm-admin:build"
           },
           "configurations": {
+            "local": {
+              "browserTarget": "hobbyfarm-admin:build:local"
+            },
             "production": {
               "browserTarget": "hobbyfarm-admin:build:production"
             }
