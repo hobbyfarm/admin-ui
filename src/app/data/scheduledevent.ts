@@ -7,6 +7,7 @@ export class ScheduledEvent {
     end_time: Date;
     required_vms: {};
     scenarios: string[];
+    courses: string[];
     vmsets: string[];
     active: boolean;
     provisioned: boolean;

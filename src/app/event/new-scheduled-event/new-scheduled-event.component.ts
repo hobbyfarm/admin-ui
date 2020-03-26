@@ -3,6 +3,8 @@ import { ClrWizard, ClrSignpostContent } from '@clr/angular';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { Scenario } from 'src/app/data/scenario';
 import { ScenarioService } from 'src/app/data/scenario.service';
+import { Course } from 'src/app/data/course';
+import { CourseService } from 'src/app/data/course.service';
 import { EnvironmentService } from 'src/app/data/environment.service';
 import { combineAll, concatMap, map, filter } from 'rxjs/operators';
 import { Environment } from 'src/app/data/environment';
@@ -27,6 +29,7 @@ export class NewScheduledEventComponent implements OnInit {
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
   public scenarios: Scenario[] = [];
+  public courses: Course[] = [];
 
   public saving: boolean = false;
 
@@ -52,6 +55,7 @@ export class NewScheduledEventComponent implements OnInit {
   public vmtotals: Map<string, number> = new Map();
 
   public selectedscenarios: Scenario[] = [];
+  public selectedcourses: Course[] = [];
 
   public simpleUserCounts: {} = {};
   public requiredVmCounts: {} = {};
@@ -61,6 +65,7 @@ export class NewScheduledEventComponent implements OnInit {
   constructor(
     private _fb: FormBuilder,
     public ss: ScenarioService,
+    public cs: CourseService,
     public ses: ScheduledeventService,
     public es: EnvironmentService
   ) { }
@@ -100,9 +105,16 @@ export class NewScheduledEventComponent implements OnInit {
   @ViewChild("endTimeSignpost", { static: false }) endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
+    console.log("scenario change occurred:", s);
     this.se.scenarios = [];
     s.forEach(
       (sc: Scenario) => this.se.scenarios.push(sc.id)
+    )
+  }
+  public coursesSelected(c: Course[]) {
+    this.se.courses = [];
+    c.forEach(
+      (co: Course) => this.se.courses.push(co.id)
     )
   }
 
@@ -189,7 +201,7 @@ export class NewScheduledEventComponent implements OnInit {
     } else {
       // basically do setupVMSelection in reverse and shove the results into se.required_vms
       this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
-        // for each template, get the count. 
+        // for each template, get the count.
         this.getTemplates(ea.environment).forEach((template: string) => {
           var val = this.vmCounts.get(ea.environment).get(template).value;
           if (val != 0) { // only map vm counts that are not 0 (instead of using >0 so that -1 is allowable)
@@ -208,7 +220,7 @@ export class NewScheduledEventComponent implements OnInit {
   public maxUserCount() {
     this.maxUserCounts = {}; // map[string]int
     // we need to get the number of VMs of each type that a user needs
-    // then divide that amount by the number of _available_ VMs, arriving at a max. 
+    // then divide that amount by the number of _available_ VMs, arriving at a max.
     // this max will be passed to the Angular FormControl as a max() validator.
     // it also will be displayed on the page for the users knowledge
     this.selectedEnvironments.forEach((se, i) => {
@@ -230,6 +242,17 @@ export class NewScheduledEventComponent implements OnInit {
     this.selectedscenarios.forEach((ss, i) => { // ss is selectedscenario, i is index
       ss.virtualmachines.forEach((vmset, j) => { // vmset is virtualmachineset, j is index
         Object.values(vmset).forEach((template: string, k) => { // tmeplate is vmtemplate name, k is index
+          if (this.requiredVmCounts[template]) {
+            this.requiredVmCounts[template]++;
+          } else {
+            this.requiredVmCounts[template] = 1;
+          }
+        })
+      })
+    })
+    this.selectedcourses.forEach((sc, i) => { // sc is selected course, i is index
+      sc.virtualmachines.forEach((vmset, j) => { // vmset is virtualmachineset, j is index
+        Object.values(vmset).forEach((template: string, k) => { // template is vmtemplate name, k is index
           if (this.requiredVmCounts[template]) {
             this.requiredVmCounts[template]++;
           } else {
@@ -273,7 +296,18 @@ export class NewScheduledEventComponent implements OnInit {
           )
         }
       )
-
+      this.se.courses.forEach(
+        (sid: string) => {
+          // find matching if there is one, and push into selectedcourses
+          this.courses.map(
+            (c: Course) => {
+              if (c.id == sid) {
+                this.selectedcourses.push(c);
+              }
+            }
+          )
+        }
+      )
     } else {
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
@@ -299,7 +333,11 @@ export class NewScheduledEventComponent implements OnInit {
 
     this.ss.list()
       .subscribe(
-        (s: Scenario[]) => this.scenarios = s
+        (s: Scenario[]) => { this.scenarios = s },
+      );
+    this.cs.list()
+      .subscribe(
+        (c: Course[]) => { this.courses = c },
       );
 
     // setup the times
@@ -325,6 +363,17 @@ export class NewScheduledEventComponent implements OnInit {
     this.selectedscenarios.forEach(
       (s: Scenario) => {
         s.virtualmachines.forEach(
+          (se: Map<string, string>) => {
+            Object.entries(se).forEach(
+              (ee: string[]) => templates.set(ee[1], true)
+            )
+          }
+        )
+      }
+    )
+    this.selectedcourses.forEach(
+      (c: Course) => {
+        c.virtualmachines.forEach(
           (se: Map<string, string>) => {
             Object.entries(se).forEach(
               (ee: string[]) => templates.set(ee[1], true)
@@ -415,6 +464,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.required_vms = new Map();
     this.selectedEnvironments = [];
     this.selectedscenarios = [];
+    this.selectedcourses = [];
     this.startDate = this.startTime = this.endDate = this.endTime = "";
     this.wizard.reset();
     this.wizard.open();
