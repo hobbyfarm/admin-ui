@@ -105,6 +105,7 @@ export class NewScheduledEventComponent implements OnInit {
   @ViewChild("endTimeSignpost", { static: false }) endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
+    console.log("scenario change occurred:", s);
     this.se.scenarios = [];
     s.forEach(
       (sc: Scenario) => this.se.scenarios.push(sc.id)
@@ -241,6 +242,17 @@ export class NewScheduledEventComponent implements OnInit {
     this.selectedscenarios.forEach((ss, i) => { // ss is selectedscenario, i is index
       ss.virtualmachines.forEach((vmset, j) => { // vmset is virtualmachineset, j is index
         Object.values(vmset).forEach((template: string, k) => { // tmeplate is vmtemplate name, k is index
+          if (this.requiredVmCounts[template]) {
+            this.requiredVmCounts[template]++;
+          } else {
+            this.requiredVmCounts[template] = 1;
+          }
+        })
+      })
+    })
+    this.selectedcourses.forEach((sc, i) => { // sc is selected course, i is index
+      sc.virtualmachines.forEach((vmset, j) => { // vmset is virtualmachineset, j is index
+        Object.values(vmset).forEach((template: string, k) => { // template is vmtemplate name, k is index
           if (this.requiredVmCounts[template]) {
             this.requiredVmCounts[template]++;
           } else {

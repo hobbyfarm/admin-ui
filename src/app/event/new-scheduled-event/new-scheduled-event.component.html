@@ -30,10 +30,10 @@
         <clr-control-error *clrIfError="'required'">Access code is required</clr-control-error>
         <clr-control-error *clrIfError="'minlength'">Access code must be longer than 5 characters</clr-control-error>
         <clr-control-error *clrIfError="'pattern'">Access code must
-           <ul>
-             <li>contain only lowercase alphanumeric characters, '-', or '.'</li>
-             <li>start and end with an alphanumber character</li>
-           </ul>
+          <ul>
+            <li>contain only lowercase alphanumeric characters, '-', or '.'</li>
+            <li>start and end with an alphanumber character</li>
+          </ul>
         </clr-control-error>
       </clr-input-container>
       <clr-toggle-container>
@@ -91,8 +91,9 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="selectedcourses.length == 0">
-    <ng-template clrPageTitle>Select Course(s) or Scenario(s)</ng-template>
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Select Course(s)</ng-template>
+    <i>Expand a row to view scenarios within that course</i>
     <clr-datagrid [clrDgSelected]="selectedcourses" (clrDgSelectedChange)="coursesSelected($event)">
       <clr-dg-column>Id</clr-dg-column>
       <clr-dg-column>Name</clr-dg-column>
@@ -117,14 +118,34 @@
             </tbody>
           </table>
         </clr-dg-row-detail>
-
       </clr-dg-row>
-      <!-- <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
+    </clr-datagrid>
+  </clr-wizard-page>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="selectedcourses.length == 0 && selectedscenarios.length == 0">
+    <ng-template clrPageTitle>Select Scenario(s)</ng-template>
+    <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)">
+      <clr-dg-column>Id</clr-dg-column>
+      <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-column>Description</clr-dg-column>
+
+      <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
         <clr-dg-cell>{{ s.name }}</clr-dg-cell>
         <clr-dg-cell>{{ s.description }}</clr-dg-cell>
-      </clr-dg-row> -->
+      </clr-dg-row>
     </clr-datagrid>
+
+    <!-- TODO - BUILD THIS AS AN ALERT INSTEAD OF ITALIZED HELPER TEXT.-->
+    <ng-container *ngIf="selectedcourses.length == 0 && selectedscenarios.length == 0">
+      <clr-alert [clrAlertSizeSmall]="true" [clrAlertType]="'warning'" [clrAlertClosable]="false" class="bottom">
+        <clr-alert-item>
+          <span class="alert-text">
+            You must select at least one course or scenario to proceed
+          </span>
+        </clr-alert-item>
+      </clr-alert>
+    </ng-container>
   </clr-wizard-page>
 
   <clr-wizard-page (clrWizardPageOnLoad)="checkEnvironments()"

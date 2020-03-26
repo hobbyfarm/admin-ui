@@ -18,7 +18,7 @@ export class CourseService {
   ) { }
 
   public list() {
-    return this.http.get(environment.server + "/a/course/list")
+    return this.http.get(environment.server + "/course/list")
     .pipe(
       map((s: ServerResponse) => {
         let obj: Course[] = JSON.parse(atob(s.content)); // this doesn't encode a map though
