@@ -30,6 +30,7 @@
             <clr-dg-column [clrDgField]="'event_name'">Name</clr-dg-column>
             <clr-dg-column [clrDgField]="'start_time'" [clrDgSortOrder]="descSort">Start</clr-dg-column>
             <clr-dg-column [clrDgField]="'end_time'">End</clr-dg-column>
+            <clr-dg-column [clrDgField]="'courses'">Courses</clr-dg-column>
             <clr-dg-column [clrDgField]="'scenarios'">Scenarios</clr-dg-column>
             <clr-dg-column>Status</clr-dg-column>
 
@@ -41,6 +42,9 @@
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
               <clr-dg-cell>{{ se.start_time | date:'long' }}</clr-dg-cell>
               <clr-dg-cell>{{ se.end_time | date:'long' }}</clr-dg-cell>
+              <clr-dg-cell>
+                <span class="label" *ngFor="let c of se.courses">{{ c }}</span>
+              </clr-dg-cell>
               <clr-dg-cell>
                 <span class="label" *ngFor="let s of se.scenarios">{{ s }}</span>
               </clr-dg-cell>
