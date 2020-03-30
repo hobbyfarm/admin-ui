@@ -11,7 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './header/header.component';
 import { EventComponent } from './event/event.component';
 import { HttpClientModule } from '@angular/common/http';
-import { JwtModule } from '@auth0/angular-jwt';
+import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -26,8 +26,18 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { EnvironmentsComponent } from './configuration/environments/environments.component';
 import { EditEnvironmentComponent } from './configuration/environments/edit-environment/edit-environment.component';
 
-export function tokenGetter() {
-  return localStorage.getItem("hobbyfarm_admin_token");
+export function jwtOptionsFactory() {
+  return {
+    tokenGetter: () => {
+      return localStorage.getItem("hobbyfarm_admin_token");
+    },
+    whitelistedDomains: [
+      environment.server.match(/.*\:\/\/?([^\/]+)/)[1]
+    ],
+    blacklistedRoutes: [
+      environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + "/auth/authenticate"
+    ]
+  }
 }
 
 @NgModule({
@@ -58,14 +68,9 @@ export function tokenGetter() {
     ClarityModule,
     HttpClientModule,
     JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        whitelistedDomains: [
-          environment.server.match(/.*\:\/\/?([^\/]+)/)[1]
-        ],
-        blacklistedRoutes: [
-          environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + "/auth/authenticate"
-        ]
+      jwtOptionsProvider: {
+        provide: JWT_OPTIONS,
+        useFactory: jwtOptionsFactory
       }
     }),
     BrowserAnimationsModule
