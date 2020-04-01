@@ -8,6 +8,8 @@ import { ScenarioComponent } from './scenario/scenario.component';
 import { UserComponent } from './user/user/user.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { EnvironmentsComponent } from './configuration/environments/environments.component';
+import { ContentComponent } from './content/content.component';
+import { CourseComponent } from './course/course.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -27,10 +29,20 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'scenarios',
-    component: ScenarioComponent,
+    path: 'content',
+    component: ContentComponent,
     canActivate: [
       AuthGuard
+    ],
+    children: [
+      {
+        path: 'scenarios',
+        component: ScenarioComponent
+      },
+      {
+        path: 'courses',
+        component: CourseComponent
+      }
     ]
   },
   {

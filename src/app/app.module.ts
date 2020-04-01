@@ -25,6 +25,9 @@ import { UserComponent } from './user/user/user.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { EnvironmentsComponent } from './configuration/environments/environments.component';
 import { EditEnvironmentComponent } from './configuration/environments/edit-environment/edit-environment.component';
+import { ContentComponent } from './content/content.component';
+import { CourseComponent } from './course/course.component';
+import { NewCourseComponent } from './course/new-course/new-course.component';
 
 export function jwtOptionsFactory() {
   return {
@@ -54,7 +57,10 @@ export function jwtOptionsFactory() {
     UserComponent,
     ConfigurationComponent,
     EnvironmentsComponent,
-    EditEnvironmentComponent
+    EditEnvironmentComponent,
+    ContentComponent,
+    CourseComponent,
+    NewCourseComponent
   ],
   imports: [
     BrowserModule,

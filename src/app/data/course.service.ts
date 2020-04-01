@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpParameterCodec } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Course } from './course';
 import { Scenario } from './scenario';
 import { ScenarioService } from './scenario.service';
+import { from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +42,23 @@ export class CourseService {
           c.description = atob(c.description);
         });
         return cList;
+      })
+    )
+  }
+
+  public create(c: Course) {
+    var params = new HttpParams()
+    .set("name", c.name)
+    .set("description", c.description)
+    .set("virtualmachines", JSON.stringify(c.virtualmachines))
+    .set("scenarios", JSON.stringify(c.scenarios.map((s: Scenario) => s.id)))
+    .set("keepalive_duration", c.keepalive_duration)
+    .set("pauseable", JSON.stringify(c.pause_duration))
+
+    return this.http.post(environment.server + "/a/course/new", params)
+    .pipe(
+      switchMap((s: ServerResponse) => {
+        return from(JSON.parse(atob(s.message)))
       })
     )
   }
