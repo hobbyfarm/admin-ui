@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # check all args for the insecure flag
 if [[ "$@" == *"--insecure"* ]]; then
