@@ -19,6 +19,6 @@ COPY --from=sdk /app/dist/* /usr/share/nginx/html
 COPY cicd/docker/stage-release/ /
 
 # Install bash
-apk --no-cache add bash
+RUN apk --no-cache add bash
 
 ENTRYPOINT ["entrypoint.sh"]
