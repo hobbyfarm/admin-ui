@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CourseService } from '../data/course.service';
 import { Course } from '../data/course';
+import { NewCourseComponent } from './new-course/new-course.component';
 
 @Component({
   selector: 'app-course',
@@ -9,6 +10,8 @@ import { Course } from '../data/course';
 })
 export class CourseComponent implements OnInit {
   public courses: Course[] = [];
+
+  @ViewChild("newCourse") newCourse: NewCourseComponent;
 
   constructor(
     public cService: CourseService
@@ -23,5 +26,9 @@ export class CourseComponent implements OnInit {
     .subscribe(
       (cList: Course[]) => this.courses = cList
     )
+  }
+
+  openNew() {
+    this.newCourse.open();
   }
 }

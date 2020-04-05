@@ -1,7 +1,7 @@
 <h3>Courses</h3>
 <div class="clr-row">
     <div class="clr-col">
-        <button class="btn btn-success">
+        <button class="btn btn-success" (click)="openNew()">
             <clr-icon shape="plus"></clr-icon> New Course
         </button>
     </div>
@@ -17,3 +17,4 @@
         </clr-datagrid>
     </div>
 </div>
+<new-course #newCourse (added)="refresh()"></new-course> 
