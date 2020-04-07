@@ -16,6 +16,10 @@ export class NewCourseComponent implements OnInit {
   @Output()
   public added: EventEmitter<boolean> = new EventEmitter(null);
 
+  public course: Course = new Course();
+
+  public form: FormGroup = new FormGroup({});
+
   public alertText: string = null;
   public isAlert: boolean = false;
   public alertType: string = ClrAlertType.Info;
@@ -29,68 +33,72 @@ export class NewCourseComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  setupForm(fg: FormGroup) {
+    this.form = fg;
+  }
+
   public open() {
-    this.courseDetails.reset({
-      'course_name': null,
-      'course_description': null,
-      'keepalive_amount': 10,
-      'keepalive_unit': 'm',
-      'pauseable': true
-    });
+    // this.courseDetails.reset({
+    //   'course_name': null,
+    //   'course_description': null,
+    //   'keepalive_amount': 10,
+    //   'keepalive_unit': 'm',
+    //   'pauseable': true
+    // });
+    this.course = new Course();
     this.alertText = null;
     this.isAlert = false;
     this.newCourseOpen = true;
   }
 
-  get keepaliveRequired() {
-    var ka = this.courseDetails.get("keepalive_amount");
-    var ku = this.courseDetails.get("keepalive_unit");
+  // get keepaliveRequired() {
+  //   var ka = this.courseDetails.get("keepalive_amount");
+  //   var ku = this.courseDetails.get("keepalive_unit");
 
-    if ((ka.dirty || ka.touched) && ka.invalid && ka.errors.required) {
-      return true;
-    } else if ((ku.dirty || ku.touched) && ku.invalid && ku.errors.required) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  //   if ((ka.dirty || ka.touched) && ka.invalid && ka.errors.required) {
+  //     return true;
+  //   } else if ((ku.dirty || ku.touched) && ku.invalid && ku.errors.required) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
-  public courseDetails: FormGroup = new FormGroup({
-    'course_name': new FormControl(null, [
-      Validators.required,
-      Validators.minLength(4)
-    ]),
-    'course_description': new FormControl(null, [
-      Validators.required,
-      Validators.minLength(4)
-    ]),
-    'keepalive_amount': new FormControl(10, [
-      Validators.required
-    ]),
-    'keepalive_unit': new FormControl('m', [
-      Validators.required
-    ]),
-    'pauseable': new FormControl(true, [
-      Validators.required
-    ]),
-    'pause_duration': new FormControl(1, [
-      Validators.required,
-      Validators.min(1),
-      Validators.max(48)
-    ])
-  }, { validators: KeepaliveValidator })
+  // public courseDetails: FormGroup = new FormGroup({
+  //   'course_name': new FormControl(null, [
+  //     Validators.required,
+  //     Validators.minLength(4)
+  //   ]),
+  //   'course_description': new FormControl(null, [
+  //     Validators.required,
+  //     Validators.minLength(4)
+  //   ]),
+  //   'keepalive_amount': new FormControl(10, [
+  //     Validators.required
+  //   ]),
+  //   'keepalive_unit': new FormControl('m', [
+  //     Validators.required
+  //   ]),
+  //   'pauseable': new FormControl(true, [
+  //     Validators.required
+  //   ]),
+  //   'pause_duration': new FormControl(1, [
+  //     Validators.required,
+  //     Validators.min(1),
+  //     Validators.max(48)
+  //   ])
+  // }, { validators: KeepaliveValidator })
 
   save() {
-    var course = new Course();
-    course.name = this.courseDetails.get('course_name').value;
-    course.description = this.courseDetails.get('course_description').value;
-    course.keepalive_duration = this.courseDetails.get('keepalive_amount').value +
-      this.courseDetails.get('keepalive_unit').value;
-    course.pause_duration = this.courseDetails.get('pause_duration').value;
-    course.pauseable = this.courseDetails.get('pauseable').value;
+    this.course.name = this.form.get('course_name').value;
+    this.course.description = this.form.get('course_description').value;
+    this.course.keepalive_duration = this.form.get('keepalive_amount').value +
+      this.form.get('keepalive_unit').value;
+    this.course.pause_duration = this.form.get('pause_duration').value;
+    this.course.pauseable = this.form.get('pauseable').value;
 
 
-    this.courseService.create(course)
+    this.courseService.create(this.course)
       .subscribe(
         (s: ServerResponse) => {
           this.alertText = "Course created";
