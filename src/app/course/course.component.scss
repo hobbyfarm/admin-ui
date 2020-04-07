@@ -1,0 +1,18 @@
+@import "src/theme.scss";
+
+.btn-link-danger {
+    margin: 0;
+    color: $clr-color-danger-700;
+    &:hover {
+        color: $clr-color-danger-900;
+    }
+}
+
+td {
+    vertical-align: middle;
+}
+
+tr.gu-mirror {
+    display: table;
+    background-color: #dcdcdc;
+}

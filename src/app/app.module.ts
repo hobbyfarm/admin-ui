@@ -29,6 +29,8 @@ import { ContentComponent } from './content/content.component';
 import { CourseComponent } from './course/course.component';
 import { NewCourseComponent } from './course/new-course/new-course.component';
 import { CourseFormComponent } from './course/course-form/course-form.component';
+import { DragulaModule } from 'ng2-dragula';
+import { AddScenarioComponent } from './course/add-scenario/add-scenario.component';
 
 export function jwtOptionsFactory() {
   return {
@@ -62,7 +64,8 @@ export function jwtOptionsFactory() {
     ContentComponent,
     CourseComponent,
     NewCourseComponent,
-    CourseFormComponent
+    CourseFormComponent,
+    AddScenarioComponent
   ],
   imports: [
     BrowserModule,
@@ -81,7 +84,8 @@ export function jwtOptionsFactory() {
         useFactory: jwtOptionsFactory
       }
     }),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    DragulaModule.forRoot()
   ],
   providers: [
     ScenarioService

@@ -1,3 +1,10 @@
+<clr-alert [clrAlertType]="alertType" [clrAlertClosable]="false" [(clrAlertClosed)]="!isAlert">
+    <clr-alert-item>
+        <span class="alert-text">
+            {{ alertText }}
+        </span>
+    </clr-alert-item>
+</clr-alert>
 <h3>Courses</h3>
 <div class="clr-row">
     <div class="clr-col">
@@ -28,8 +35,43 @@
             </clr-tab>
             <clr-tab>
                 <button clrTabLink id="scenariosLink">Scenarios</button>
+                <clr-tab-content id="scenariosContent" *clrIfActive>
+                    <button class="btn btn-sm btn-success-outline" (click)="openAdd()">Add Scenario</button>
+                    <table class="table table-compact">
+                        <thead>
+                            <tr>
+                                <th>Move</th>
+                                <th>Order</th>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="container" [dragula]="'scenarios'" [(dragulaModel)]="scenarios">
+                            <tr *ngFor="let s of scenarios; let i = index">
+                                <td>
+                                    <clr-icon class="handle" shape="drag-handle" size="24"></clr-icon>
+                                </td>
+                                <td>
+                                    {{ i+1 }}
+                                </td>
+                                <td>
+                                    {{ s.id }}
+                                </td>
+                                <td>
+                                    {{ s.name }}
+                                </td>
+                                <td>
+                                    <button class="btn btn-link btn-sm btn-link-danger">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="btn btn-success">Save</button>
+                </clr-tab-content>
             </clr-tab>
         </clr-tabs>
     </div>
 </div>
-<new-course #newCourse (added)="refresh()"></new-course> 
+<new-course #newCourse (added)="refresh()"></new-course>
+<add-scenario #addScenario [scenarios]="scenarios" (selected)="addSelected($event)"></add-scenario>
