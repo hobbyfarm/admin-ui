@@ -28,6 +28,7 @@ import { EditEnvironmentComponent } from './configuration/environments/edit-envi
 import { ContentComponent } from './content/content.component';
 import { CourseComponent } from './course/course.component';
 import { NewCourseComponent } from './course/new-course/new-course.component';
+import { CourseFormComponent } from './course/course-form/course-form.component';
 
 export function jwtOptionsFactory() {
   return {
@@ -60,7 +61,8 @@ export function jwtOptionsFactory() {
     EditEnvironmentComponent,
     ContentComponent,
     CourseComponent,
-    NewCourseComponent
+    NewCourseComponent,
+    CourseFormComponent
   ],
   imports: [
     BrowserModule,
