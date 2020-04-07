@@ -18,14 +18,6 @@ export class CourseFormComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.courseDetails.reset({
-      'course_name': null,
-      'course_description': null,
-      'keepalive_amount': 10,
-      'keepalive_unit': 'm',
-      'pauseable': true
-    });
-
     this.formReady.emit(this.courseDetails);
   }
 
