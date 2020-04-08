@@ -21,7 +21,7 @@ export class CourseFormComponent implements OnInit {
     this.formReady.emit(this.courseDetails);
   }
 
-  ngOnChanges(): void {
+  reset(): void {
     if (this.course) {
       this.courseDetails.reset({
         'course_name': null,
@@ -51,6 +51,10 @@ export class CourseFormComponent implements OnInit {
         })
       }
     }
+  }
+
+  ngOnChanges(): void {
+    this.reset();
   }
 
   public courseDetails: FormGroup = new FormGroup({
