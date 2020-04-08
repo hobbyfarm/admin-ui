@@ -58,4 +58,15 @@ export class CourseService {
     return this.http.post(environment.server + "/a/course/new", params)
   }
 
+  public update(c: Course) {
+    var params = new HttpParams()
+    .set("name", btoa(c.name))
+    .set("description", btoa(c.description))
+    .set("keepalive_duration", c.keepalive_duration)
+    .set("pause_duration", JSON.stringify(c.pause_duration))
+    .set("pauseable", JSON.stringify(c.pauseable))
+
+    return this.http.put(environment.server + "/a/course/" + c.id, params)
+  }
+
 }
