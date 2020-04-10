@@ -33,6 +33,7 @@ import { DragulaModule } from 'ng2-dragula';
 import { AddScenarioComponent } from './course/add-scenario/add-scenario.component';
 import { VmsetComponent } from './vmset/vmset.component';
 import { NewVmComponent } from './vmset/new-vm/new-vm.component';
+import { DeleteConfirmationComponent } from './delete-confirmation/delete-confirmation.component';
 
 export function jwtOptionsFactory() {
   return {
@@ -69,7 +70,8 @@ export function jwtOptionsFactory() {
     CourseFormComponent,
     AddScenarioComponent,
     VmsetComponent,
-    NewVmComponent
+    NewVmComponent,
+    DeleteConfirmationComponent
   ],
   imports: [
     BrowserModule,
