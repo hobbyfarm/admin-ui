@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/cor
 import { ClrModal } from '@clr/angular';
 
 @Component({
-  selector: 'app-delete-confirmation',
+  selector: 'delete-confirmation',
   templateUrl: './delete-confirmation.component.html',
   styleUrls: ['./delete-confirmation.component.scss']
 })
