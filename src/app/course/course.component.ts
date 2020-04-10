@@ -9,6 +9,9 @@ import { DragulaService } from 'ng2-dragula';
 import { AddScenarioComponent } from './add-scenario/add-scenario.component';
 import { CourseFormComponent } from './course-form/course-form.component';
 import { ClrTab } from '@clr/angular';
+import * as _ from 'lodash';
+import { ServerResponse } from '../data/serverresponse';
+import { HttpErrorResponse } from '@angular/common/http';
 
 /*
 NEXT UP:
@@ -38,6 +41,7 @@ export class CourseComponent implements OnInit {
 
   public scenarios: Scenario[] = [];
   public dragScenarios: Scenario[] = [];
+  public editVirtualMachines: {}[] = [];
 
   public alertType: string = "warning";
   public alertText: string = null;
@@ -47,7 +51,7 @@ export class CourseComponent implements OnInit {
   public courseDetailsActive: boolean = true;
 
   constructor(
-    public cService: CourseService,
+    public courseService: CourseService,
     public scenarioService: ScenarioService,
     public dragulaService: DragulaService
   ) { 
@@ -72,7 +76,7 @@ export class CourseComponent implements OnInit {
   }
 
   refresh(): void {
-    this.cService.list()
+    this.courseService.list()
     .subscribe(
       (cList: Course[]) => this.courses = cList
     )
@@ -121,11 +125,42 @@ export class CourseComponent implements OnInit {
     setTimeout(() => this.courseForm.reset(), 200); // hack
 
     this.dragScenarios = this.selectedCourse.scenarios;
+    this.editVirtualMachines = _.cloneDeep(this.selectedCourse.virtualmachines);
     this.clearModified();
   }
 
   editCourse(c: Course) {
     this.dragScenarios = c.scenarios;
+    this.editVirtualMachines = _.cloneDeep(c.virtualmachines);
   }
 
+  saveCourse() {
+    this.selectedCourse.name = this.editForm.get('course_name').value;
+    this.selectedCourse.description = this.editForm.get('course_description').value;
+    this.selectedCourse.keepalive_duration = this.editForm.get('keepalive_amount').value +
+      this.editForm.get('keepalive_unit').value;
+    this.selectedCourse.pause_duration = this.editForm.get('pause_duration').value;
+    this.selectedCourse.pauseable = this.editForm.get('pauseable').value;
+
+    this.selectedCourse.scenarios = this.dragScenarios;
+    this.selectedCourse.virtualmachines = this.editVirtualMachines;
+
+    this.courseService.update(this.selectedCourse)
+    .subscribe(
+      (s: ServerResponse) => {
+        this.clearModified();
+        this.alertType = 'success';
+        this.alertText = 'Course successfully updated'
+        this.isAlert = true;
+        setTimeout(() => this.isAlert = false, 1000);
+      },
+      (e: HttpErrorResponse) => {
+        this.alertText = "Error creating object: " + e.error.message;
+        this.alertType = 'danger';
+        this.isAlert = true;
+        setTimeout(() => this.isAlert = false, 3000);
+      }
+    )
+
+  }
 }

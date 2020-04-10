@@ -26,7 +26,7 @@
     <div class="clr-col-8">
         <clr-tabs>
             <clr-tab #detailsTab>
-                <button clrTabLink id="detailsLink">Course Details</button>
+                <button [disabled]="!selectedCourse" clrTabLink id="detailsLink">Course Details</button>
                 <ng-template [(clrIfActive)]="courseDetailsActive">
                     <clr-tab-content id="detailsContent">
                         <course-form #courseform [course]="selectedCourse" (formReady)="setupForm($event)"></course-form>
@@ -34,7 +34,13 @@
                 </ng-template>
             </clr-tab>
             <clr-tab>
-                <button clrTabLink id="scenariosLink">Scenarios</button>
+                <button [disabled]="!selectedCourse" clrTabLink id="virtualMachinesLink">Virtual Machines</button>
+                <clr-tab-content id="virtualMachinesContent" *clrIfActive>
+                    <vmset [(vms)]="editVirtualMachines" (modified)="setModified()"></vmset>
+                </clr-tab-content>
+            </clr-tab>
+            <clr-tab>
+                <button [disabled]="!selectedCourse" clrTabLink id="scenariosLink">Scenarios</button>
                 <clr-tab-content id="scenariosContent" *clrIfActive>
                     <button class="btn btn-sm btn-success-outline" (click)="openAdd()">Add Scenario</button>
                     <table class="table table-compact">
@@ -72,7 +78,7 @@
         </clr-tabs>
         <button class="btn btn-outline" (click)="discardChanges()" *ngIf="modified">Discard Changes</button>
         <button class="btn btn-danger-outline">Delete</button>
-        <button class="btn btn-success" [disabled]="!editForm?.valid">Save</button>
+        <button class="btn btn-success" [disabled]="!editForm?.valid" (click)="saveCourse()">Save</button>
     </div>
 </div>
 <new-course #newCourse (added)="refresh()"></new-course>
