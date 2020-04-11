@@ -7,6 +7,7 @@ import { ClrModal } from '@clr/angular';
   styleUrls: ['./delete-confirmation.component.scss']
 })
 export class DeleteConfirmationComponent implements OnInit {
+  public modalOpen: boolean = false;
 
   @Output()
   public delete: EventEmitter<boolean> = new EventEmitter(null);

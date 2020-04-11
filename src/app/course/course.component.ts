@@ -12,6 +12,7 @@ import { ClrTab } from '@clr/angular';
 import * as _ from 'lodash';
 import { ServerResponse } from '../data/serverresponse';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 
 /*
 NEXT UP:
@@ -34,6 +35,7 @@ export class CourseComponent implements OnInit {
   @ViewChild("addScenario") addScenario: AddScenarioComponent; 
   @ViewChild("courseform") courseForm: CourseFormComponent;
   @ViewChild("detailsTab") detailsTab: ClrTab;
+  @ViewChild("deleteConfirmation") deleteConfirmation: DeleteConfirmationComponent;
 
   public selectedCourse: Course;
 
@@ -112,6 +114,20 @@ export class CourseComponent implements OnInit {
     this.modified = false;
   }
 
+  alertSuccess(msg: string) {
+    this.alertType = 'success';
+    this.alertText = msg;
+    this.isAlert = true;
+    setTimeout(() => this.isAlert = false, 1000);
+  }
+
+  alertDanger(msg: string) {
+    this.alertType = 'danger';
+    this.alertText = msg;
+    this.isAlert = true;
+    setTimeout(() => this.isAlert = false, 3000);
+  }
+
   openNew() {
     this.newCourse.open();
   }
@@ -130,6 +146,8 @@ export class CourseComponent implements OnInit {
   }
 
   editCourse(c: Course) {
+    this.courseDetailsActive = true;
+    setTimeout(() => this.courseForm.reset(), 200); // hack
     this.dragScenarios = c.scenarios;
     this.editVirtualMachines = _.cloneDeep(c.virtualmachines);
   }
@@ -149,18 +167,31 @@ export class CourseComponent implements OnInit {
     .subscribe(
       (s: ServerResponse) => {
         this.clearModified();
-        this.alertType = 'success';
-        this.alertText = 'Course successfully updated'
-        this.isAlert = true;
-        setTimeout(() => this.isAlert = false, 1000);
+        this.alertSuccess('Course successfully updated');
       },
       (e: HttpErrorResponse) => {
-        this.alertText = "Error creating object: " + e.error.message;
-        this.alertType = 'danger';
-        this.isAlert = true;
-        setTimeout(() => this.isAlert = false, 3000);
+        this.alertDanger('Error creating object: ' + e.error.message);
       }
     )
 
+  }
+
+  delete(): void {
+    this.deleteConfirmation.open();
+  }
+
+  deleteSelected(): void {
+    this.courseService.delete(this.selectedCourse)
+    .subscribe(
+      (s: ServerResponse) => {
+        this.clearModified();
+        this.alertSuccess('Course deleted');
+        this.refresh();
+        this.selectedCourse = null;
+      },
+      (e: HttpErrorResponse) => {
+        this.alertDanger('Error deleting object: ' + e.error.message)
+      }
+    )
   }
 }

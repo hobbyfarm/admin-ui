@@ -77,9 +77,10 @@
             </clr-tab>
         </clr-tabs>
         <button class="btn btn-outline" (click)="discardChanges()" *ngIf="modified">Discard Changes</button>
-        <button class="btn btn-danger-outline">Delete</button>
+        <button class="btn btn-danger-outline" (click)="delete()">Delete</button>
         <button class="btn btn-success" [disabled]="!editForm?.valid" (click)="saveCourse()">Save</button>
     </div>
 </div>
 <new-course #newCourse (added)="refresh()"></new-course>
 <add-scenario #addScenario [scenarios]="scenarios" (selected)="addSelected($event)"></add-scenario>
+<delete-confirmation #deleteConfirmation (delete)="deleteSelected()"></delete-confirmation>
