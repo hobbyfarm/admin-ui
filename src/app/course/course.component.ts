@@ -186,6 +186,7 @@ export class CourseComponent implements OnInit {
           this.alertSuccess('Course deleted');
           this.refresh();
           this.selectedCourse = null;
+          this.courseDetailsActive = true; // return the user to the details tab
         },
         (e: HttpErrorResponse) => {
           this.alertDanger('Error deleting object: ' + e.error.message)
