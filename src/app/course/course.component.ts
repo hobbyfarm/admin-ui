@@ -101,6 +101,11 @@ export class CourseComponent implements OnInit {
     this.setModified();
   }
 
+  deleteScenario(i: number) {
+    this.dragScenarios.splice(i, 1);
+    this.setModified();
+  }
+
   setModified() {
     this.alertText = "Course has been modified, please save your changes or discard";
     this.alertType = "warning";
