@@ -23,7 +23,7 @@ export class CourseComponent implements OnInit {
   public courses: Course[] = [];
 
   @ViewChild("newCourse") newCourse: NewCourseComponent;
-  @ViewChild("addScenario") addScenario: AddScenarioComponent; 
+  @ViewChild("addScenario") addScenario: AddScenarioComponent;
   @ViewChild("courseform") courseForm: CourseFormComponent;
   @ViewChild("detailsTab") detailsTab: ClrTab;
   @ViewChild("deleteConfirmation") deleteConfirmation: DeleteConfirmationComponent;
@@ -47,7 +47,7 @@ export class CourseComponent implements OnInit {
     public courseService: CourseService,
     public scenarioService: ScenarioService,
     public dragulaService: DragulaService
-  ) { 
+  ) {
     dragulaService.destroy('scenarios');
     dragulaService.createGroup('scenarios', {
       moves: (el, container, handle) => {
@@ -65,19 +65,19 @@ export class CourseComponent implements OnInit {
   ngOnInit(): void {
     this.refresh();
     this.scenarioService.list()
-    .subscribe((s: Scenario[]) => this.scenarios = s)
+      .subscribe((s: Scenario[]) => this.scenarios = s)
   }
 
   refresh(): void {
     this.courseService.list()
-    .subscribe(
-      (cList: Course[]) => this.courses = cList
-    )
+      .subscribe(
+        (cList: Course[]) => this.courses = cList
+      )
   }
 
   setupForm(fg: FormGroup) {
     this.editForm = fg;
-    
+
     this.editForm.valueChanges.subscribe(
       (a: any) => {
         if (this.editForm.dirty) {
@@ -142,10 +142,12 @@ export class CourseComponent implements OnInit {
   }
 
   editCourse(c: Course) {
-    this.courseDetailsActive = true;
-    setTimeout(() => this.courseForm.reset(), 200); // hack
-    this.dragScenarios = c.scenarios;
-    this.editVirtualMachines = _.cloneDeep(c.virtualmachines);
+    if (c) { // because this can be called when unsetting the selected course
+      this.courseDetailsActive = true;
+      setTimeout(() => this.courseForm.reset(), 200); // hack
+      this.dragScenarios = c.scenarios;
+      this.editVirtualMachines = _.cloneDeep(c.virtualmachines);
+    }
   }
 
   saveCourse() {
@@ -160,15 +162,15 @@ export class CourseComponent implements OnInit {
     this.selectedCourse.virtualmachines = this.editVirtualMachines;
 
     this.courseService.update(this.selectedCourse)
-    .subscribe(
-      (s: ServerResponse) => {
-        this.clearModified();
-        this.alertSuccess('Course successfully updated');
-      },
-      (e: HttpErrorResponse) => {
-        this.alertDanger('Error creating object: ' + e.error.message);
-      }
-    )
+      .subscribe(
+        (s: ServerResponse) => {
+          this.clearModified();
+          this.alertSuccess('Course successfully updated');
+        },
+        (e: HttpErrorResponse) => {
+          this.alertDanger('Error creating object: ' + e.error.message);
+        }
+      )
 
   }
 
@@ -178,16 +180,16 @@ export class CourseComponent implements OnInit {
 
   deleteSelected(): void {
     this.courseService.delete(this.selectedCourse)
-    .subscribe(
-      (s: ServerResponse) => {
-        this.clearModified();
-        this.alertSuccess('Course deleted');
-        this.refresh();
-        this.selectedCourse = null;
-      },
-      (e: HttpErrorResponse) => {
-        this.alertDanger('Error deleting object: ' + e.error.message)
-      }
-    )
+      .subscribe(
+        (s: ServerResponse) => {
+          this.clearModified();
+          this.alertSuccess('Course deleted');
+          this.refresh();
+          this.selectedCourse = null;
+        },
+        (e: HttpErrorResponse) => {
+          this.alertDanger('Error deleting object: ' + e.error.message)
+        }
+      )
   }
 }
