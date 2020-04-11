@@ -42,6 +42,10 @@ export class CourseFormComponent implements OnInit {
         this.courseDetails.patchValue({
           'pauseable': true
         })
+      } else {
+        this.courseDetails.patchValue({
+          'pauseable': this.course.pauseable
+        })
       }
 
       if (this.course.keepalive_duration) {
