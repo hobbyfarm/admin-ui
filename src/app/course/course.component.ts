@@ -14,15 +14,6 @@ import { ServerResponse } from '../data/serverresponse';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 
-/*
-NEXT UP:
-Need to pull actual list of scenarios from the Course object.
-Will need to figure out how to display the whole scenario object based on the key from the course object. 
-Once that is done, figure out how to remove scenarios from the course (probably use splice())
-Once that is done, need to figure out saving the object.
-
-Also look into encapsulating the tab set within an ng-container so you can show/hide like in scenario editing.
-*/
 @Component({
   selector: 'app-course',
   templateUrl: './course.component.html',
