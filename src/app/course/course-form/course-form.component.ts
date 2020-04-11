@@ -22,16 +22,16 @@ export class CourseFormComponent implements OnInit {
   }
 
   reset(): void {
+    this.courseDetails.reset({
+      'course_name': null,
+      'course_description': null,
+      'keepalive_amount': 10,
+      'keepalive_unit': 'm',
+      'pauseable': true,
+      'pause_duration': 1
+    });
+    
     if (this.course) {
-      this.courseDetails.reset({
-        'course_name': null,
-        'course_description': null,
-        'keepalive_amount': 10,
-        'keepalive_unit': 'm',
-        'pauseable': true,
-        'pause_duration': 1
-      });
-
       this.courseDetails.patchValue({
         'course_name': this.course.name,
         'course_description': this.course.description,
