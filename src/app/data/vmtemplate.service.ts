@@ -4,7 +4,6 @@ import { environment } from 'src/environments/environment';
 import { switchMap } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
 import { of } from 'rxjs';
-import { atou } from '../unicode';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +18,7 @@ export class VmtemplateService {
     return this.http.get(environment.server + '/a/vmtemplate/list')
     .pipe(
       switchMap((s: ServerResponse) => {
-        return of(JSON.parse(atou(s.content)))
+        return of(JSON.parse(atob(s.content)))
       })
     )
   }
