@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { Scenario } from './scenario';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
+import { atou } from '../unicode';
 
 class CustomEncoder implements HttpParameterCodec {
   encodeKey(key: string): string {
@@ -38,7 +39,7 @@ export class ScenarioService {
     return this.http.get(environment.server + "/a/scenario/list")
     .pipe(
       map((s: ServerResponse) => {
-        let obj: Scenario[] = JSON.parse(atob(s.content)); // this doesn't encode a map though
+        let obj: Scenario[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
         // so now we need to go vmset-by-vmset and build maps
         obj.forEach((s: Scenario) => {
           s.virtualmachines.forEach((v: Object) => {
@@ -49,8 +50,8 @@ export class ScenarioService {
       }),
       map((sList: Scenario[]) => {
         sList.forEach((s: Scenario) => {
-          s.name = atob(s.name);
-          s.description = atob(s.description);
+          s.name = atou(s.name);
+          s.description = atou(s.description);
         });
         return sList;
       })
@@ -61,15 +62,15 @@ export class ScenarioService {
     return this.http.get(environment.server + "/a/scenario/" + id)
     .pipe(
       map((s: ServerResponse) => {
-        return JSON.parse(atob(s.content))
+        return JSON.parse(atou(s.content))
       }),
       map((s: Scenario) => {
-        // atob all the relevant fields
-        s.name = atob(s.name);
-        s.description = atob(s.description);
+        // atou all the relevant fields
+        s.name = atou(s.name);
+        s.description = atou(s.description);
         s.steps.forEach((st: Step) => {
-          st.content = atob(st.content);
-          st.title = atob(st.title);
+          st.content = atou(st.content);
+          st.title = atou(st.title);
         });
         return s;
       })
