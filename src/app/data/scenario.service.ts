@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { Scenario } from './scenario';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
-import { atou } from '../unicode';
+import { atou, utoa } from '../unicode';
 
 class CustomEncoder implements HttpParameterCodec {
   encodeKey(key: string): string {
