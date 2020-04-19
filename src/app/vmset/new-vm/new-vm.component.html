@@ -1,0 +1,24 @@
+<clr-modal #modal [(clrModalOpen)]="modalOpen">
+    <h3 class="modal-title">Create VM</h3>
+    <div class="modal-body">
+        <form clrForm [formGroup]="vmform">
+            <clr-input-container>
+                <label>Name</label>
+                <input clrInput type="text" formControlName="vm_name" required>
+                <clr-control-error *clrIfError="'required'">VM name is required</clr-control-error>
+                <clr-control-error *clrIfError="'minlength'">VM name must be longer than 4 characters
+                </clr-control-error>
+            </clr-input-container>
+            <clr-select-container>
+                <label>VM Template</label>
+                <select clrSelect name="vm_template" formControlName="vm_template">
+                    <option *ngFor="let v of vmtemplates" [value]="v.id">{{ v.name }}</option>
+                </select>
+            </clr-select-container>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-danger-outline" (click)="modalOpen = false">Cancel</button>
+        <button class="btn btn-success" (click)="addVM()" [disabled]="!vmform.valid">Add</button>
+    </div>
+</clr-modal>

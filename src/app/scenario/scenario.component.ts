@@ -9,6 +9,7 @@ import { VmtemplateService } from '../data/vmtemplate.service';
 import { VMTemplate } from '../data/vmtemplate';
 import { VirtualMachine } from '../data/virtualmachine';
 import { FormGroup, FormControl, Validators, ValidatorFn, ValidationErrors } from '@angular/forms';
+import { KeepaliveValidator } from '../validators/keepalive.validator';
 
 @Component({
   selector: 'app-scenario',
@@ -55,23 +56,6 @@ export class ScenarioComponent implements OnInit {
     public vmTemplateService: VmtemplateService
   ) { }
 
-  public keepaliveValidator: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
-    var keepalive_amount = control.get("keepalive_amount").value;
-    var keepalive_unit = control.get("keepalive_unit").value;
-
-    if (keepalive_amount && keepalive_unit) {
-      if (keepalive_unit == 'm') {
-        if (keepalive_amount > 2880 || keepalive_amount < 1) { // 48 hours
-          return { 'invalidKeepalivePeriod': true };
-        }
-      } else if (keepalive_unit == 'h') {
-        if (keepalive_amount > 48) {
-          return { 'invalidKeepalivePeriod': true };
-        }
-      }
-    }
-  }
-
   public vmform: FormGroup = new FormGroup({
     'vm_name': new FormControl(null, [
       Validators.required,
@@ -102,7 +86,7 @@ export class ScenarioComponent implements OnInit {
       Validators.min(1),
       Validators.max(48)
     ])
-  }, { validators: this.keepaliveValidator })
+  }, { validators: KeepaliveValidator })
 
   public scenarioDetails: FormGroup = new FormGroup({
     'scenario_name': new FormControl(null, [
@@ -124,7 +108,7 @@ export class ScenarioComponent implements OnInit {
       Validators.min(1),
       Validators.max(48)
     ])
-  }, { validators: this.keepaliveValidator })
+  }, { validators: KeepaliveValidator })
 
   get keepaliveAmount() { return this.scenarioDetails.get("keepalive_amount"); }
 
