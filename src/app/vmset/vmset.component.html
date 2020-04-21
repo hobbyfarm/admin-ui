@@ -1,0 +1,25 @@
+<clr-stack-view>
+    <clr-stack-header>
+        Virtual Machines
+        <button class="stack-action btn btn-sm btn-link" (click)="addVMSet()">Add VM Set</button>
+    </clr-stack-header>
+    <clr-stack-block *ngFor="let vmset of vms; let i = index">
+        <clr-stack-label>Virtual Machine Set {{ i+1 }} </clr-stack-label>
+        <clr-stack-content>
+            <button class="btn btn-sm btn-link btn-link-stack" (click)="deleteVMSet(i)">Delete VM
+                Set</button>
+        </clr-stack-content>
+        <clr-stack-block *ngFor="let item of vmset | keyvalue">
+            <clr-stack-label>{{ item.key }}</clr-stack-label>
+            <clr-stack-content>{{ item.value }} <button class="btn btn-sm btn-link btn-link-stack"
+                    (click)="deleteVM(i, item.key)">Delete
+                    VM</button></clr-stack-content>
+        </clr-stack-block>
+        <clr-stack-block>
+            <clr-stack-label><button class="btn btn-sm btn-link btn-link-stack" (click)="openAddVm(i)">New
+                    VM</button>
+            </clr-stack-label>
+        </clr-stack-block>
+    </clr-stack-block>
+</clr-stack-view>
+<new-vm #newvm (vm)="addVM($event)"></new-vm>

@@ -1,0 +1,86 @@
+<clr-alert [clrAlertType]="alertType" [clrAlertClosable]="false" [(clrAlertClosed)]="!isAlert">
+    <clr-alert-item>
+        <span class="alert-text">
+            {{ alertText }}
+        </span>
+    </clr-alert-item>
+</clr-alert>
+<h3>Courses</h3>
+<div class="clr-row">
+    <div class="clr-col">
+        <button class="btn btn-success" (click)="openNew()">
+            <clr-icon shape="plus"></clr-icon> New Course
+        </button>
+    </div>
+</div>
+<div class="clr-row">
+    <div class="clr-col-4">
+        <clr-datagrid [(clrDgSingleSelected)]="selectedCourse" (clrDgSingleSelectedChange)="editCourse($event)">
+            <clr-dg-column>Name</clr-dg-column>
+
+            <clr-dg-row *clrDgItems="let c of courses" [clrDgItem]="c" [clrDgSelectable]="!modified">
+                <clr-dg-cell>{{ c.name }}</clr-dg-cell>
+            </clr-dg-row>
+        </clr-datagrid>
+    </div>
+    <div class="clr-col-8">
+        <clr-tabs>
+            <clr-tab #detailsTab>
+                <button [disabled]="!selectedCourse" clrTabLink id="detailsLink">Course Details</button>
+                <ng-template [(clrIfActive)]="courseDetailsActive">
+                    <clr-tab-content id="detailsContent">
+                        <course-form #courseform [course]="selectedCourse" (formReady)="setupForm($event)"></course-form>
+                    </clr-tab-content>
+                </ng-template>
+            </clr-tab>
+            <clr-tab>
+                <button [disabled]="!selectedCourse" clrTabLink id="virtualMachinesLink">Virtual Machines</button>
+                <clr-tab-content id="virtualMachinesContent" *clrIfActive>
+                    <vmset [(vms)]="editVirtualMachines" (modified)="setModified()"></vmset>
+                </clr-tab-content>
+            </clr-tab>
+            <clr-tab>
+                <button [disabled]="!selectedCourse" clrTabLink id="scenariosLink">Scenarios</button>
+                <clr-tab-content id="scenariosContent" *clrIfActive>
+                    <button class="btn btn-sm btn-success-outline" (click)="openAdd()">Add Scenario</button>
+                    <table class="table table-compact">
+                        <thead>
+                            <tr>
+                                <th>Move</th>
+                                <th>Order</th>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="container" [dragula]="'scenarios'" [(dragulaModel)]="dragScenarios">
+                            <tr *ngFor="let s of dragScenarios; let i = index">
+                                <td>
+                                    <clr-icon class="handle" shape="drag-handle" size="24"></clr-icon>
+                                </td>
+                                <td>
+                                    {{ i+1 }}
+                                </td>
+                                <td>
+                                    {{ s.id }}
+                                </td>
+                                <td>
+                                    {{ s.name }}
+                                </td>
+                                <td>
+                                    <button class="btn btn-link btn-sm btn-link-danger" (click)="deleteScenario(i)">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </clr-tab-content>
+            </clr-tab>
+        </clr-tabs>
+        <button class="btn btn-outline" (click)="discardChanges()" *ngIf="modified">Discard Changes</button>
+        <button class="btn btn-danger-outline" (click)="delete()">Delete</button>
+        <button class="btn btn-success" [disabled]="!editForm?.valid" (click)="saveCourse()">Save</button>
+    </div>
+</div>
+<new-course #newCourse (added)="refresh()"></new-course>
+<add-scenario #addScenario [scenarios]="scenarios" (selected)="addSelected($event)"></add-scenario>
+<delete-confirmation #deleteConfirmation (delete)="deleteSelected()"></delete-confirmation>

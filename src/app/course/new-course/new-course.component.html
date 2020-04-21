@@ -1,0 +1,17 @@
+<clr-modal #newcoursemodal [(clrModalOpen)]="newCourseOpen">
+  <h3 class="modal-title">Create New Course</h3>
+  <div class="modal-body">
+    <clr-alert [clrAlertType]="alertType" [clrAlertClosable]="false" [(clrAlertClosed)]="!isAlert">
+      <clr-alert-item>
+        <span class="alert-text">
+          {{ alertText }}
+        </span>
+      </clr-alert-item>
+    </clr-alert>
+    <course-form [course]="course" (formReady)="setupForm($event)"></course-form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-danger-outline" (click)="newCourseOpen = false">Cancel</button>
+    <button class="btn btn-success" (click)="save()" [disabled]="!form.valid">Save</button>
+  </div>
+</clr-modal>

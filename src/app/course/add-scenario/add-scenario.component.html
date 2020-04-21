@@ -1,0 +1,25 @@
+<clr-modal #addModal [(clrModalOpen)]="addOpen" [clrModalSize]="'lg'">
+    <h3 class="modal-title">Add Scenario</h3>
+    <div class="modal-body">
+        <i>Select scenarios to add to the course. Scenarios will be appended to the current set of scenarios.</i>
+        <br/>
+        <i>Filter by using the <clr-icon shape="filter"></clr-icon> icon in the table column headers.</i>
+        <clr-datagrid [(clrDgSelected)]="selectedScenarios">
+            <clr-dg-column [clrDgField]="'id'">Id</clr-dg-column>
+            <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
+            <clr-dg-column [clrDgField]="'description'">Description</clr-dg-column>
+
+            <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
+                <clr-dg-cell>{{ s.id }}</clr-dg-cell>
+                <clr-dg-cell>{{ s.name }}</clr-dg-cell>
+                <clr-dg-cell>{{ s.description }}</clr-dg-cell>
+            </clr-dg-row>
+        </clr-datagrid>
+        <br/>
+        Scenarios to add: <span *ngFor="let s of selectedScenarios">{{ s.id }}, </span>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-danger-outline" (click)="addOpen = false">Cancel</button>
+        <button class="btn btn-success" (click)="save()">Add Scenario</button>
+    </div>
+</clr-modal>

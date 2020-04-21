@@ -1,0 +1,55 @@
+<form clrForm [formGroup]="courseDetails">
+    <clr-input-container>
+      <label>Name</label>
+      <input clrInput type="text" formControlName="course_name" required>
+      <clr-control-error *clrIfError="'required'">Course name is required</clr-control-error>
+      <clr-control-error *clrIfError="'minlength'">Course name must be longer than 4 characters
+      </clr-control-error>
+    </clr-input-container>
+    <clr-input-container>
+      <label>Description</label>
+      <input clrInput type="text" formControlName="course_description" required>
+      <clr-control-error *clrIfError="'required'">Course description is required</clr-control-error>
+      <clr-control-error *clrIfError="'minlength'">Course description must be longer than 4 characters
+      </clr-control-error>
+    </clr-input-container>
+    <div class="clr-form-control clr-row">
+      <label for="keepalive_amount" class="clr-control-label">Keepalive Duration</label>
+      <div class="clr-control-container clr-col-md-10 clr-col-12"
+        [class.clr-error]="keepaliveRequired || courseDetails.errors?.invalidKeepalivePeriod">
+        <div class="clr-input-wrapper">
+          <div class="clr-input-group">
+            <input type="number" id="keepalive_amount" formControlName="keepalive_amount" class="clr-input">
+            <select formControlName="keepalive_unit">
+              <option value="h">Hour(s)</option>
+              <option value="m">Minute(s)</option>
+            </select>
+          </div>
+          <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+        </div>
+        <span class="clr-subtext" *ngIf="!keepaliveRequired && !courseDetails.errors?.invalidKeepalivePeriod">Period
+          before VMs are reaped upon user inactivity.</span>
+        <span class="clr-subtext" *ngIf="keepaliveRequired">Keepalive duration is required.</span>
+        <span class="clr-subtext" *ngIf="courseDetails.errors?.invalidKeepalivePeriod">Invalid keepalive
+          period.
+          Valid
+          periods: 1m to 48h inclusive.</span>
+      </div>
+    </div>
+    <clr-toggle-container>
+      <clr-toggle-wrapper>
+        <input type="checkbox" clrToggle name="pauseable" formControlName="pauseable">
+        <label>Pauseable</label>
+      </clr-toggle-wrapper>
+      <clr-control-helper>Whether the user can pause the course.</clr-control-helper>
+    </clr-toggle-container>
+    <clr-input-container *ngIf="courseDetails.value.pauseable">
+      <label>Pause Duration</label>
+      <input clrInput type="number" name="pause_duration" placeholder="Duration in hours"
+        formControlName="pause_duration" required />
+      <clr-control-helper>Period in hours that a user may pause their course.</clr-control-helper>
+      <clr-control-error *clrIfError="'required'">Pause duration is required.</clr-control-error>
+      <clr-control-error *clrIfError="'min'">Pause duration must be 1 hour minimum.</clr-control-error>
+      <clr-control-error *clrIfError="'max'">Pause duration must be 48 hours maximum.</clr-control-error>
+    </clr-input-container>
+  </form>
