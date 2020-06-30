@@ -6,6 +6,7 @@ import { ServerResponse } from './serverresponse';
 import { map, switchMap, combineAll } from 'rxjs/operators';
 import { from, of } from 'rxjs';
 import { formatDate } from '@angular/common';
+import { atou } from '../unicode';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class ScheduledeventService {
     return this.http.get(environment.server + "/a/scheduledevent/list")
       .pipe(
         switchMap((s: ServerResponse) => {
-          return from(JSON.parse(atob(s.content)))
+          return from(JSON.parse(atou(s.content)))
         }),
         map((se: ScheduledEvent) => {
           se.start_time = new Date(se.start_time);
@@ -51,7 +52,7 @@ export class ScheduledeventService {
     return this.http.post(environment.server + "/a/scheduledevent/new", params)
       .pipe(
         switchMap((s: ServerResponse) => {
-          return from(JSON.parse(atob(s.message)))
+          return from(JSON.parse(atou(s.message)))
         })
       )
   }
@@ -75,7 +76,7 @@ export class ScheduledeventService {
     return this.http.put(environment.server + "/a/scheduledevent/" + se.id, params)
       .pipe(
         switchMap((s: ServerResponse) => {
-          return from(JSON.parse(atob(s.message)))
+          return from(JSON.parse(atou(s.message)))
         })
       )
   }
@@ -84,7 +85,7 @@ export class ScheduledeventService {
     return this.http.delete(environment.server + "/a/scheduledevent/delete/" + se.id)
       .pipe(
         switchMap((s: ServerResponse) => {
-          return from(JSON.parse(atob(s.message)))
+          return from(JSON.parse(atou(s.message)))
         })
       )
   }
@@ -93,7 +94,7 @@ export class ScheduledeventService {
     return this.http.get(environment.server + "/a/scheduledevent/" + id)
     .pipe(
       switchMap((s: ServerResponse) => {
-        let se = JSON.parse(atob(s.content));
+        let se = JSON.parse(atou(s.content));
         se.start_time = new Date(se.start_time);
         se.end_time = new Date(se.end_time);
         return of(se);

@@ -6,7 +6,8 @@ import { map, switchMap, catchError } from 'rxjs/operators';
 import { Course } from './course';
 import { Scenario } from './scenario';
 import { ScenarioService } from './scenario.service';
-import { from, of } from 'rxjs';
+import { atou } from '../unicode';
+
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class CourseService {
     return this.http.get(environment.server + "/a/course/list")
     .pipe(
       map((s: ServerResponse) => {
-        let obj: Course[] = JSON.parse(atob(s.content)); // this doesn't encode a map though
+        let obj: Course[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
         // so now we need to go vmset-by-vmset and build maps
         if (obj == null) { return []; }
         obj.forEach((c: Course) => {
@@ -39,8 +40,8 @@ export class CourseService {
       }),
       map((cList: Course[]) => {
         cList.forEach((c: Course) => {
-          c.name = atob(c.name);
-          c.description = atob(c.description);
+          c.name = atou(c.name);
+          c.description = atou(c.description);
         });
         return cList;
       })

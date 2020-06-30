@@ -6,6 +6,7 @@ import { switchMap, catchError } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
 import { of, throwError } from 'rxjs';
 import { parseTemplate } from '@angular/compiler';
+import { atou } from '../unicode';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class UserService {
     return this.http.get(environment.server + "/a/user/list")
     .pipe(
       switchMap((s: ServerResponse) => {
-        return of(JSON.parse(atob(s.content)));
+        return of(JSON.parse(atou(s.content)));
       }),
       catchError((e: HttpErrorResponse) => {
         return throwError(e.error);
