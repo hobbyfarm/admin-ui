@@ -90,3 +90,4 @@ jobs:
       run: |
         docker push \
           hobbyfarm/admin-ui:latest
+          

@@ -6,6 +6,7 @@ import { ServerResponse } from './serverresponse';
 import { formatDate } from '@angular/common';
 import { EnvironmentAvailability } from './environmentavailability';
 import { Environment } from './environment';
+import { atou } from '../unicode';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class EnvironmentService {
   public list() {
     return this.http.get(environment.server + "/a/environment/list")
     .pipe(
-      map((s: ServerResponse) => JSON.parse(atob(s.content)))
+      map((s: ServerResponse) => JSON.parse(atou(s.content)))
     )
   }
 
@@ -33,7 +34,7 @@ export class EnvironmentService {
 
     return this.http.post(environment.server + "/a/environment/" + env + "/available", params)
     .pipe(
-      map((s: ServerResponse) => JSON.parse(atob(s.content))),
+      map((s: ServerResponse) => JSON.parse(atou(s.content))),
       map((ea: EnvironmentAvailability) => {
         ea.environment = env;
         return ea;
