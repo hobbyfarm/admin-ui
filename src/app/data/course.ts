@@ -7,5 +7,6 @@ export class Course {
     virtualmachines: {}[];
     scenarios: Scenario[];
     keepalive_duration: string;
-    pause_duration: string;
+    pause_duration: number;
+    pauseable: boolean;
 }

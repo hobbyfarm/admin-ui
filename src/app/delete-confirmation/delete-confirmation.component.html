@@ -1,0 +1,12 @@
+<clr-modal #modal [(clrModalOpen)]="modalOpen">
+    <h3 class="modal-title">Delete Confirmation</h3>
+    <div class="modal-body">
+        Are you sure you wish to delete this object?
+        <br/>
+        This action is not recoverable. 
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success-outline" (click)="modalOpen = false">Cancel</button>
+        <button class="btn btn-danger" (click)="doDelete()">Delete</button>
+    </div>
+</clr-modal>
