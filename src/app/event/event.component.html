@@ -32,7 +32,12 @@
             <clr-dg-column [clrDgField]="'end_time'">End</clr-dg-column>
             <clr-dg-column [clrDgField]="'courses'">Courses</clr-dg-column>
             <clr-dg-column [clrDgField]="'scenarios'">Scenarios</clr-dg-column>
-            <clr-dg-column>Status</clr-dg-column>
+            <clr-dg-column>
+              Status
+              <clr-dg-filter>
+                <event-status-filter></event-status-filter>
+              </clr-dg-filter>
+            </clr-dg-column>
 
             <clr-dg-row *clrDgItems="let se of events">
               <clr-dg-action-overflow>

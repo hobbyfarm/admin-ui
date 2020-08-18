@@ -34,6 +34,7 @@ import { AddScenarioComponent } from './course/add-scenario/add-scenario.compone
 import { VmsetComponent } from './vmset/vmset.component';
 import { NewVmComponent } from './vmset/new-vm/new-vm.component';
 import { DeleteConfirmationComponent } from './delete-confirmation/delete-confirmation.component';
+import { EventStatusFilterComponent } from './event/event-status-filter/event-status-filter.component';
 
 export function jwtOptionsFactory() {
   return {
@@ -71,7 +72,8 @@ export function jwtOptionsFactory() {
     AddScenarioComponent,
     VmsetComponent,
     NewVmComponent,
-    DeleteConfirmationComponent
+    DeleteConfirmationComponent,
+    EventStatusFilterComponent
   ],
   imports: [
     BrowserModule,
