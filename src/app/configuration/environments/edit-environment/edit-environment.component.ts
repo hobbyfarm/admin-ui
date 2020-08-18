@@ -130,8 +130,23 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     }
   }
 
+  public fixNullValues() {
+    if (this.updateEnv.ip_translation_map == null) {
+      this.updateEnv.ip_translation_map = {};
+    }
+
+    if (this.updateEnv.template_mapping == null) {
+      this.updateEnv.template_mapping = {};
+    }
+
+    if (this.updateEnv.environment_specifics == null) {
+      this.updateEnv.environment_specifics = {};
+    }
+  }
+
   ngOnChanges() {
     if (this.updateEnv) {
+      this.fixNullValues();
       this._prepare();
     }
   }
