@@ -38,8 +38,7 @@
               "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js",
               "node_modules/ngx-markdown-editor/assets/highlight.js/highlight.min.js",
               "node_modules/ngx-markdown-editor/assets/marked.min.js"
-            ],
-            "es5BrowserSupport": true
+            ]
           },
           "configurations": {
             "local": {
