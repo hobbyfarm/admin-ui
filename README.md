@@ -1,6 +1,6 @@
-# HobbyfarmAdmin
+# Hobbyfarm Admin
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.8.
+This is the admin UI for https://github.com/hobbyfarm
 
 ## Contributing
 
