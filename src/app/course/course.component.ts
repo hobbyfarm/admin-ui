@@ -9,7 +9,7 @@ import { DragulaService } from 'ng2-dragula';
 import { AddScenarioComponent } from './add-scenario/add-scenario.component';
 import { CourseFormComponent } from './course-form/course-form.component';
 import { ClrTab } from '@clr/angular';
-import * as _ from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { ServerResponse } from '../data/serverresponse';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
@@ -137,7 +137,7 @@ export class CourseComponent implements OnInit {
     setTimeout(() => this.courseForm.reset(), 200); // hack
 
     this.dragScenarios = this.selectedCourse.scenarios;
-    this.editVirtualMachines = _.cloneDeep(this.selectedCourse.virtualmachines);
+    this.editVirtualMachines = cloneDeep(this.selectedCourse.virtualmachines);
     this.clearModified();
   }
 
@@ -146,7 +146,7 @@ export class CourseComponent implements OnInit {
       this.courseDetailsActive = true;
       setTimeout(() => this.courseForm.reset(), 200); // hack
       this.dragScenarios = c.scenarios;
-      this.editVirtualMachines = _.cloneDeep(c.virtualmachines);
+      this.editVirtualMachines = cloneDeep(c.virtualmachines);
     }
   }
 
