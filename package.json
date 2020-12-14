@@ -59,7 +59,7 @@
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "~7.0.0",
     "node-sass": "^4.0.0",
-    "fibers": "^4.0.0",
+    "fibers": "^4.0.3",
     "html-webpack-plugin": "~3",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",
