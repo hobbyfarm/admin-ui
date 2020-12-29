@@ -1,14 +1,12 @@
-<clr-modal #modal [(clrModalOpen)]="modalOpen">
-    <h3 class="modal-title">Edit Access Codes</h3>
-    <div class="modal-body">
-        <clr-alert [clrAlertType]="alertType" [(clrAlertClosed)]="alertClosed"
-            [clrAlertClosable]="false">
-            <clr-alert-item>
-                <span class="alert-text">
-                    {{ alertText }}
-                </span>
-            </clr-alert-item>
-        </clr-alert>
+<clr-alert [clrAlertType]="alertType" [(clrAlertClosed)]="alertClosed" [clrAlertClosable]="false">
+    <clr-alert-item>
+        <span class="alert-text">
+            {{ alertText }}
+        </span>
+    </clr-alert-item>
+</clr-alert>
+<div class="clr-row">
+    <div class="clr-col-4">
         <button class="btn btn-success-outline btn-sm" (click)="newAccessCode = true">
             <clr-icon shape="plus"></clr-icon> Add Access Code
         </button>
@@ -16,8 +14,8 @@
             <form clrForm [formGroup]="newAccessCodeForm">
                 <clr-input-container>
                     <label class="clr-col-md-4">Access Code</label>
-                    <input class="clr-col-md-6" clrInput type="text" name="access_code"
-                        formControlName="access_code" required />
+                    <input class="clr-col-md-6" clrInput type="text" name="access_code" formControlName="access_code"
+                        required />
                     <clr-control-error *clrIfError="'required'">Access code required.</clr-control-error>
                     <clr-control-error *clrIfError="'minLength'">Access code must be longer than 4
                         characters
@@ -40,4 +38,4 @@
             </clr-dg-row>
         </clr-datagrid>
     </div>
-</clr-modal>
+</div>

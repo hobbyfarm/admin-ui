@@ -4,24 +4,14 @@
         <div class="content-area">
             <h3>User Management</h3>
             <div class="clr-row">
-                <div class="clr-col">
-                    <clr-datagrid>
-                        <clr-dg-column>
-                            Id
-                            <clr-dg-string-filter [clrDgStringFilter]="idFilter"></clr-dg-string-filter>
-                        </clr-dg-column>
+                <div class="clr-col-4">
+                    <clr-datagrid [(clrDgSingleSelected)]="selectedUser">
                         <clr-dg-column>
                             Email
                             <clr-dg-string-filter [clrDgStringFilter]="emailFilter"></clr-dg-string-filter>
                         </clr-dg-column>
 
-                        <clr-dg-row *clrDgItems="let u of users">
-                            <clr-dg-action-overflow>
-                                <button class="action-item" (click)="editUser(u)">Edit User</button>
-                                <button class="action-item" (click)="openAccessCodes(u)">Edit Access Codes</button>
-                            </clr-dg-action-overflow>
-
-                            <clr-dg-cell>{{ u.id }}</clr-dg-cell>
+                        <clr-dg-row *clrDgItems="let u of users" [clrDgItem]="u">
                             <clr-dg-cell>{{ u.email }}</clr-dg-cell>
                         </clr-dg-row>
 
@@ -34,11 +24,29 @@
                         </clr-dg-footer>
                     </clr-datagrid>
                 </div>
-            </div>
-
-            <edit-user #editusermodal [user]="editingUser"></edit-user>
-            <edit-access-codes #editaccesscodesmodal [user]="editingUser"></edit-access-codes>
-            
+                <div class="clr-col-8">
+                    <ng-container *ngIf="selectedUser">
+                        <clr-tabs>
+                            <clr-tab>
+                                <button clrTabLink>Basic Info</button>
+                                <ng-template [(clrIfActive)]="basicInfoActive">
+                                    <clr-tab-content>
+                                        <edit-user [user]="selectedUser"></edit-user>
+                                    </clr-tab-content>
+                                </ng-template>
+                            </clr-tab>
+                            <clr-tab>
+                                <button clrTabLink>Access Codes</button>
+                                <ng-template [(clrIfActive)]="accessCodesActive">
+                                    <clr-tab-content>
+                                        <edit-access-codes [user]="selectedUser"></edit-access-codes>
+                                    </clr-tab-content>
+                                </ng-template>
+                            </clr-tab>
+                        </clr-tabs>
+                    </ng-container>
+                </div>
+            </div>            
         </div>
     </div>
 </div>

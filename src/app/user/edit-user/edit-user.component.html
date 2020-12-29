@@ -1,14 +1,12 @@
-<clr-modal #editusermodal [(clrModalOpen)]="editUserOpen">
-    <h3 class="modal-title">Edit User</h3>
-    <div class="modal-body">
-        <clr-alert [clrAlertType]="alertType" [(clrAlertClosed)]="alertClosed"
-            [clrAlertClosable]="false">
-            <clr-alert-item>
-                <span class="alert-text">
-                    {{ alertText }}
-                </span>
-            </clr-alert-item>
-        </clr-alert>
+<clr-alert [clrAlertType]="alertType" [(clrAlertClosed)]="alertClosed" [clrAlertClosable]="false">
+    <clr-alert-item>
+        <span class="alert-text">
+            {{ alertText }}
+        </span>
+    </clr-alert-item>
+</clr-alert>
+<div class="clr-row">
+    <div class="clr-col">
         <form clrForm [formGroup]="userDetailsForm">
             <clr-input-container>
                 <label for="email">Email</label>
@@ -29,8 +27,9 @@
             </clr-toggle-container>
         </form>
     </div>
-    <div class="modal-footer">
-        <button class="btn btn-danger-outline" (click)="editUserOpen = false" [disabled]="saving">Cancel</button>
+</div>
+<div class="clr-row">
+    <div class="clr-col">
         <button class="btn btn-success" (click)="saveDetails()" [disabled]="saving">Save</button>
     </div>
-</clr-modal>
+</div>

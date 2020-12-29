@@ -15,16 +15,7 @@ import { EditAccessCodesComponent } from '../edit-access-codes/edit-access-codes
 export class UserComponent implements OnInit {
   public users: User[] = [];
 
-  public editingUser: User = new User();
-
-  @ViewChild("editusermodal", { static: true }) editUserModal: EditUserComponent;
-  @ViewChild("editaccesscodesmodal", {static: true}) accessCodeModal: EditAccessCodesComponent;
-
-  public newAccessCode: boolean = false;
-  
-  public accessCodesOpen: boolean = false;
-
-  public fetchingAccessCodes: boolean = false;
+  public selectedUser: User = new User();
 
   public accesscodes: string[] = [];
 
@@ -35,18 +26,8 @@ export class UserComponent implements OnInit {
   public emailFilter: UserEmailFilter = new UserEmailFilter();
   public idFilter: UserIdFilter = new UserIdFilter();
 
-  public editUser(u: User) {
-    this.editingUser = u;
-    this.editUserModal.open();
-  }
-
   ngOnInit() {
     this.refresh();
-  }
-
-  public openAccessCodes(u: User) {
-    this.editingUser = u;
-    this.accessCodeModal.open();
   }
 
   refresh() {

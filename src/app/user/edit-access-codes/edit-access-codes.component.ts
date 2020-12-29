@@ -14,8 +14,6 @@ export class EditAccessCodesComponent implements OnInit, OnChanges {
   @Input()
   public user: User = new User();
 
-  public modalOpen: boolean = false;
-
   public alertType: string = "success";
   public alertClosed: boolean = true;
   public alertText: string = "";
@@ -34,8 +32,6 @@ export class EditAccessCodesComponent implements OnInit, OnChanges {
     ])
   })
 
-  @ViewChild("modal") modal: ClrModal;
-
   ngOnInit(): void {
   }
 
@@ -47,11 +43,6 @@ export class EditAccessCodesComponent implements OnInit, OnChanges {
     this.newAccessCodeForm.reset({
       "access_code": ""
     })
-  }
-
-  public open(): void {
-    this.reset();
-    this.modal.open();
   }
 
   deleteAccessCode(a: string) {

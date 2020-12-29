@@ -14,8 +14,6 @@ export class EditUserComponent implements OnInit, OnChanges {
   @Input()
   public user: User = new User();
 
-  public editUserOpen: boolean = false;
-
   public alertClosed: boolean = true;
   public alertType: string = "danger";
   public alertText: string = "";
@@ -32,8 +30,6 @@ export class EditUserComponent implements OnInit, OnChanges {
   ngOnChanges(): void {
     this.reset();
   }
-
-  @ViewChild("editusermodal") modal: ClrModal;
 
   public userDetailsForm: FormGroup = new FormGroup({
     'email': new FormControl(this.user.email, [
@@ -52,11 +48,6 @@ export class EditUserComponent implements OnInit, OnChanges {
     });
     this.alertText = "";
     this.alertClosed = true;
-  }
-
-  public open(): void {
-    this.reset();
-    this.modal.open();
   }
 
   saveDetails() {
@@ -79,8 +70,9 @@ export class EditUserComponent implements OnInit, OnChanges {
           this.alertText = "User updated";
           this.alertType = "success";
           this.alertClosed = false;
+          this.saving = false;
           setTimeout(() => {
-            this.editUserOpen = false;
+            this.alertClosed = true;
           }, 2000);
         },
         (s: ServerResponse) => {
