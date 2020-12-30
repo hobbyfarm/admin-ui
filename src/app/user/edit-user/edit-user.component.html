@@ -1,0 +1,35 @@
+<clr-alert [clrAlertType]="alertType" [(clrAlertClosed)]="alertClosed" [clrAlertClosable]="false">
+    <clr-alert-item>
+        <span class="alert-text">
+            {{ alertText }}
+        </span>
+    </clr-alert-item>
+</clr-alert>
+<div class="clr-row">
+    <div class="clr-col">
+        <form clrForm [formGroup]="userDetailsForm">
+            <clr-input-container>
+                <label for="email">Email</label>
+                <input clrInput name="email" formControlName="email" required />
+                <clr-control-error *clrIfError="'required'">Email is required</clr-control-error>
+                <clr-control-error *clrIfError="'email'">Input must be an email</clr-control-error>
+            </clr-input-container>
+            <clr-input-container>
+                <label for="password">Password</label>
+                <input clrInput name="password" formControlName="password" type="password" />
+                <clr-control-helper>Blank leaves password unchanged.</clr-control-helper>
+            </clr-input-container>
+            <clr-toggle-container>
+                <clr-toggle-wrapper>
+                    <input type="checkbox" clrToggle name="admin" value="admin" formControlName="admin" />
+                    <label>Administrator</label>
+                </clr-toggle-wrapper>
+            </clr-toggle-container>
+        </form>
+    </div>
+</div>
+<div class="clr-row">
+    <div class="clr-col">
+        <button class="btn btn-success" (click)="saveDetails()" [disabled]="saving">Save</button>
+    </div>
+</div>
