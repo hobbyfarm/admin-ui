@@ -44,6 +44,15 @@
         <clr-control-helper>Restricted bind prevents users from reserving VM resources not associated with this
           Scheduled Event.</clr-control-helper>
       </clr-toggle-container>
+      <clr-toggle-container>
+        <clr-toggle-wrapper>
+          <input type="checkbox" clrToggle name="on_demand" formControlName="on_demand">
+          <label>On Demand</label>
+        </clr-toggle-wrapper>
+        <clr-control-helper>
+          On demand allocates VM resources when requested by a user instead of pre-provisioning.
+        </clr-control-helper>
+      </clr-toggle-container>
     </form>
   </clr-wizard-page>
 
