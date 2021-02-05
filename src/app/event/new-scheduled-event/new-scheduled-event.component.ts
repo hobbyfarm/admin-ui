@@ -105,7 +105,6 @@ export class NewScheduledEventComponent implements OnInit {
   @ViewChild("endTimeSignpost") endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
-    console.log("scenario change occurred:", s);
     this.se.scenarios = [];
     s.forEach(
       (sc: Scenario) => this.se.scenarios.push(sc.id)
