@@ -84,7 +84,8 @@ export class NewScheduledEventComponent implements OnInit {
       Validators.minLength(5),
       Validators.pattern(/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)
     ]),
-    'restricted_bind': new FormControl(true)
+    'restricted_bind': new FormControl(true),
+    'on_demand': new FormControl(true)
   })
 
   public vmCounts: FormGroup = new FormGroup({});
@@ -98,6 +99,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.description = this.eventDetails.get('description').value;
     this.se.access_code = this.eventDetails.get('access_code').value;
     this.se.disable_restriction = !this.eventDetails.get("restricted_bind").value; // opposite, since restricted_bind: enabled really means disable_restriction: false
+    this.se.on_demand = this.eventDetails.get("on_demand").value;
   }
 
   @ViewChild("wizard", { static: true }) wizard: ClrWizard;
@@ -105,17 +107,18 @@ export class NewScheduledEventComponent implements OnInit {
   @ViewChild("endTimeSignpost") endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
-    console.log("scenario change occurred:", s);
     this.se.scenarios = [];
     s.forEach(
       (sc: Scenario) => this.se.scenarios.push(sc.id)
     )
+    this.selectedscenarios = s;
   }
   public coursesSelected(c: Course[]) {
     this.se.courses = [];
     c.forEach(
       (co: Course) => this.se.courses.push(co.id)
     )
+    this.selectedcourses = c;
   }
 
   public getTemplates(env: string) {
@@ -280,7 +283,8 @@ export class NewScheduledEventComponent implements OnInit {
         'event_name': this.se.event_name,
         'description': this.se.description,
         'access_code': this.se.access_code,
-        'restricted_bind': true
+        'restricted_bind': true,
+        'on_demand': true,
       });
 
       // auto-select the environments
@@ -459,7 +463,8 @@ export class NewScheduledEventComponent implements OnInit {
     this.validTimes = false;
     this.se = new ScheduledEvent();
     this.eventDetails.reset({
-      'restricted_bind': true
+      'restricted_bind': true,
+      'on_demand': true,
     });
     this.se.required_vms = new Map();
     this.selectedEnvironments = [];
