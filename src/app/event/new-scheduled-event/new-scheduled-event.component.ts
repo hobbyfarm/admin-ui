@@ -111,12 +111,14 @@ export class NewScheduledEventComponent implements OnInit {
     s.forEach(
       (sc: Scenario) => this.se.scenarios.push(sc.id)
     )
+    this.selectedscenarios = s;
   }
   public coursesSelected(c: Course[]) {
     this.se.courses = [];
     c.forEach(
       (co: Course) => this.se.courses.push(co.id)
     )
+    this.selectedcourses = c;
   }
 
   public getTemplates(env: string) {
