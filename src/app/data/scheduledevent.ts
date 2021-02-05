@@ -15,4 +15,5 @@ export class ScheduledEvent {
     finished: boolean;
     access_code: string;
     disable_restriction: boolean;
+    on_demand: boolean;
 }
