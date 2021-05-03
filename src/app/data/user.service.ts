@@ -50,4 +50,13 @@ export class UserService {
       })
     )
   }
+
+  public deleteUser(id: string) {
+    return this.http.delete(environment.server + "/a/user/" + id)
+    .pipe(
+      catchError((e: HttpErrorResponse) => {
+        return of(e.error)
+      })
+    )
+  }
 }

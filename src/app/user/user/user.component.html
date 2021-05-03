@@ -31,7 +31,7 @@
                                 <button clrTabLink>Basic Info</button>
                                 <ng-template [(clrIfActive)]="basicInfoActive">
                                     <clr-tab-content>
-                                        <edit-user [user]="selectedUser"></edit-user>
+                                        <edit-user (deleted)="refresh()" [user]="selectedUser"></edit-user>
                                     </clr-tab-content>
                                 </ng-template>
                             </clr-tab>
