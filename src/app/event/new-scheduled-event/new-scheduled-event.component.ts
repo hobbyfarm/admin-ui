@@ -85,7 +85,7 @@ export class NewScheduledEventComponent implements OnInit {
       Validators.pattern(/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)
     ]),
     'restricted_bind': new FormControl(true),
-    'on_demand': new FormControl(true)
+    'on_demand': new FormControl(false)
   })
 
   public vmCounts: FormGroup = new FormGroup({});
