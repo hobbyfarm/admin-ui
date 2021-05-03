@@ -104,7 +104,7 @@ export class EditUserComponent implements OnInit, OnChanges {
           this.deleted.next(true);
         },
         (s: ServerResponse) => {
-          this.alertText = "Unable to delete user: " + s.message;
+          this.alertText = s.message;
           this.alertType = "danger";
           this.alertClosed = false;
           setTimeout(() => {
