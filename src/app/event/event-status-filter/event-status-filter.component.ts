@@ -27,7 +27,7 @@ export class EventStatusFilterComponent implements OnInit, ClrDatagridFilterInte
   }
 
   accepts(se: ScheduledEvent): boolean {
-    return !se.active;
+    return !se.finished;
   }
 
   ngOnInit(): void {
