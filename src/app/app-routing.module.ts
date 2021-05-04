@@ -10,6 +10,7 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { EnvironmentsComponent } from './configuration/environments/environments.component';
 import { ContentComponent } from './content/content.component';
 import { CourseComponent } from './course/course.component';
+import { PrintableComponent } from './printable/printable.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -63,6 +64,13 @@ const routes: Routes = [
         path: 'environments',
         component: EnvironmentsComponent
       }
+    ]
+  },
+  {
+    path: 'scenario/:scenario/printable',
+    component: PrintableComponent,
+    canActivate: [
+      AuthGuard
     ]
   }
 ];
