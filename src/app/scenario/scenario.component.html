@@ -119,6 +119,9 @@
                 </clr-stack-block>
               </clr-stack-block>
             </clr-stack-view>
+            <a [routerLink]="['/scenario', selectedscenario.id, 'printable']" target="_blank">
+              <button class="btn btn-info-outline">Print</button>
+            </a>
             <button class="btn btn-danger-outline">Delete</button>
             <button class="btn btn-success" (click)="savescenario()"
               [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
