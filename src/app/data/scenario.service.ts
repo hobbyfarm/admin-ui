@@ -105,4 +105,8 @@ export class ScenarioService {
 
     return this.http.post(environment.server + "/a/scenario/new", params)
   }
+
+  public printable(id: string) {
+    return this.http.get(environment.server + "/a/scenario/" + id + "/printable", {responseType: 'text'})
+  }
 }
