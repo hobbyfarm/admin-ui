@@ -1,9 +1,10 @@
-import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ClrModal } from '@clr/angular';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { User } from 'src/app/data/user';
 import { UserService } from 'src/app/data/user.service';
+import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-confirmation.component';
 
 @Component({
   selector: 'edit-user',
@@ -18,7 +19,12 @@ export class EditUserComponent implements OnInit, OnChanges {
   public alertType: string = "danger";
   public alertText: string = "";
 
+  @Output()
+  public deleted: EventEmitter<boolean> = new EventEmitter(false);
+
   public saving: boolean = false;
+
+  @ViewChild('deleteconfirm') deleteConfirmModal: DeleteConfirmationComponent;
 
   constructor(
     public userService: UserService
@@ -86,4 +92,25 @@ export class EditUserComponent implements OnInit, OnChanges {
         }
       )
   }
+
+  delete() {
+    this.deleteConfirmModal.open();
+  }
+
+  doDelete() {
+    this.userService.deleteUser(this.user.id)
+      .subscribe(
+        (s: ServerResponse) => {
+          this.deleted.next(true);
+        },
+        (s: ServerResponse) => {
+          this.alertText = s.message;
+          this.alertType = "danger";
+          this.alertClosed = false;
+          setTimeout(() => {
+            this.alertClosed = true;
+          }, 2000);
+        }
+      )
+    }
 }

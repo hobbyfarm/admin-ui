@@ -4,7 +4,7 @@ import { User } from './user';
 import { environment } from 'src/environments/environment';
 import { switchMap, catchError } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { parseTemplate } from '@angular/compiler';
 import { atou } from '../unicode';
 
@@ -47,6 +47,15 @@ export class UserService {
     .pipe(
       catchError((e: HttpErrorResponse) => {
         return of(e.error);
+      })
+    )
+  }
+
+  public deleteUser(id: string) {
+    return this.http.delete(environment.server + "/a/user/" + id)
+    .pipe(
+      catchError((e: HttpErrorResponse) => {
+        return throwError(e.error)
       })
     )
   }
