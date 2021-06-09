@@ -36,6 +36,7 @@
     "lodash-es": "^4.17.15",
     "moment": "^2.24.0",
     "ng2-dragula": "^2.1.1",
+    "ngx-markdown": "^10.1.1",
     "ngx-markdown-editor": "^2.5.0",
     "rxjs": "^6.5.4",
     "tslib": "^2.0.0",

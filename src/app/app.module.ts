@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, SecurityContext } from '@angular/core';
 import '@clr/icons';
 import '@clr/icons/shapes/all-shapes';
 import { AppRoutingModule } from './app-routing.module';
@@ -37,6 +37,8 @@ import { DeleteConfirmationComponent } from './delete-confirmation/delete-confir
 import { EventStatusFilterComponent } from './event/event-status-filter/event-status-filter.component';
 import { EditUserComponent } from './user/edit-user/edit-user.component';
 import { EditAccessCodesComponent } from './user/edit-access-codes/edit-access-codes.component';
+import { PrintableComponent } from './printable/printable.component';
+import { MarkdownModule } from 'ngx-markdown';
 
 export function jwtOptionsFactory() {
   return {
@@ -77,7 +79,8 @@ export function jwtOptionsFactory() {
     DeleteConfirmationComponent,
     EventStatusFilterComponent,
     EditUserComponent,
-    EditAccessCodesComponent
+    EditAccessCodesComponent,
+    PrintableComponent
   ],
   imports: [
     BrowserModule,
@@ -97,7 +100,10 @@ export function jwtOptionsFactory() {
       }
     }),
     BrowserAnimationsModule,
-    DragulaModule.forRoot()
+    DragulaModule.forRoot(),
+    MarkdownModule.forRoot({
+      sanitize: SecurityContext.NONE
+    })
   ],
   providers: [
     ScenarioService
