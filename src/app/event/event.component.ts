@@ -27,7 +27,7 @@ export class EventComponent implements OnInit {
 
   constructor(
     public seService: ScheduledeventService
-  ){
+  ) {
 
   }
 
@@ -43,24 +43,26 @@ export class EventComponent implements OnInit {
     this.deletemodal.open();
   }
 
-  public doDelete()  {
+  public doDelete() {
+    this.deleteopen = false;
     this.seService.delete(this.deletingevent)
-    .subscribe(
-      (reply: string) => {
-        this.seSuccessAlert = reply;
-        this.seSuccessClosed = false;
-        setTimeout(() => {
-          this.seSuccessClosed = true;
-        }, 1000);
-      },
-      (reply: string) => {
-        this.seDangerAlert = reply;
-        this.seDangerClosed = false;
-        setTimeout(() => {
-          this.seDangerClosed = true;
-        }, 1000);
-      }
-    )
+      .subscribe(
+        (_reply: string) => {
+          this.refresh();
+          this.seSuccessAlert = `Deleted scheduled event \"${this.deletingevent.event_name}\" successfully!`;
+          this.seSuccessClosed = false;
+          setTimeout(() => {
+            this.seSuccessClosed = true;
+          }, 2000);
+        },
+        (reply: string) => {
+          this.seDangerAlert = reply;
+          this.seDangerClosed = false;
+          setTimeout(() => {
+            this.seDangerClosed = true;
+          }, 1000);
+        }
+      )
   }
 
   public openNew() {
@@ -75,11 +77,11 @@ export class EventComponent implements OnInit {
 
   public refresh() {
     this.seService.list()
-    .subscribe(
-      (se: ScheduledEvent[]) => {
-        this.events = se;
-      }
-    )
+      .subscribe(
+        (se: ScheduledEvent[]) => {
+          this.events = se;
+        }
+      )
   }
 
   public newupdated() {

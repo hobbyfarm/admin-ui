@@ -86,7 +86,7 @@ export class ScheduledeventService {
     return this.http.delete(environment.server + "/a/scheduledevent/delete/" + se.id)
       .pipe(
         switchMap((s: ServerResponse) => {
-          return from(JSON.parse(atou(s.message)))
+          return from(s.message)
         })
       )
   }
