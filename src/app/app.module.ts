@@ -83,7 +83,7 @@ export function jwtOptionsFactory() {
     EventStatusFilterComponent,
     EditUserComponent,
     EditAccessCodesComponent,
-    AlertComponent
+    AlertComponent,
     PrintableComponent,
     VmtemplatesComponent,
     EditVmtemplateComponent
