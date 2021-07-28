@@ -11,6 +11,7 @@ import { EnvironmentsComponent } from './configuration/environments/environments
 import { ContentComponent } from './content/content.component';
 import { CourseComponent } from './course/course.component';
 import { PrintableComponent } from './printable/printable.component';
+import { VmtemplatesComponent } from './configuration/vmtemplates/vmtemplates.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -63,6 +64,10 @@ const routes: Routes = [
       {
         path: 'environments',
         component: EnvironmentsComponent
+      },
+      {
+        path: 'vmtemplates',
+        component: VmtemplatesComponent
       }
     ]
   },
