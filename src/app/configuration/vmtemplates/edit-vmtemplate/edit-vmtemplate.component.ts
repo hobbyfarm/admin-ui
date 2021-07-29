@@ -1,6 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClrWizard } from '@clr/angular';
+import { AlertComponent } from 'src/app/alert/alert.component';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
@@ -31,6 +33,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
 
   @ViewChild("wizard", {static: true}) wizard: ClrWizard;
+  @ViewChild("alert") alert: AlertComponent;
 
   public open() {
     this.template = new VMTemplate();
@@ -129,14 +132,21 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       this.vmTemplateService.update(this.template)
       .subscribe(
         (s: ServerResponse) => {
+          this.alert.success("VM Template saved")
           this.event.next(true);
+        },
+        (e: HttpErrorResponse) => {
+          this.alert.error("Error saving VM Template: " + e.error.message);
         }
       )
     } else {
       this.vmTemplateService.create(this.template)
       .subscribe(
         (s: ServerResponse) => {
-          this.event.next(true);
+          this.alert.success("VM Template saved")
+        },
+        (e: HttpErrorResponse) => {
+          this.alert.error("Error saving VM Template: " + e.error.message);
         }
       )
     }

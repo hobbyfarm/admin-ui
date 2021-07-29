@@ -1,4 +1,4 @@
-<clr-wizard #wizard clrWizardSize="xl" (clrWizardOnFinish)="saveTemplate()">
+<clr-wizard #wizard clrWizardSize="xl">
     <clr-wizard-title>Edit VM Template</clr-wizard-title>
     
     <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
@@ -6,8 +6,7 @@
     <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
     <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
-    <!-- <clr-wizard-page [clrWizardPageNextDisabled]="!templateDetails.valid"> -->
-    <clr-wizard-page>
+    <clr-wizard-page [clrWizardPageNextDisabled]="!templateDetails.valid">
         <ng-template clrPageTitle>Basic Information</ng-template>
 
         <form clrForm [formGroup]="templateDetails">
@@ -86,9 +85,9 @@
             <span class="clr-subtext">All mappings must have key and value filled out. Complete, or remove, any entries that do not.</span>
         </ng-container>
     </clr-wizard-page>
-    <clr-wizard-page (clrWizardPageOnLoad)="copyTemplate()">
+    <clr-wizard-page (clrWizardPageOnLoad)="copyTemplate()" [clrWizardPagePreventDefaultNext]="true" (clrWizardPageFinish)="saveTemplate()">
         <ng-template clrPageTitle>Confirmation</ng-template>
-
+        <alert #alert></alert>
         <p>Confirm the following details before finalizing</p>
         <h4>Basic Information</h4>
         <table class="table table-compact">

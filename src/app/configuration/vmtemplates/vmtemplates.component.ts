@@ -1,5 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ClrDatagridSortOrder } from '@clr/angular';
+import { AlertComponent } from 'src/app/alert/alert.component';
+import { ServerResponse } from 'src/app/data/serverresponse';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-confirmation.component';
@@ -22,6 +25,7 @@ export class VmtemplatesComponent implements OnInit {
 
   @ViewChild("editTemplateWizard") editWizard: EditVmtemplateComponent;
   @ViewChild("deleteConfirmation") deleteConfirmation: DeleteConfirmationComponent;
+  @ViewChild("alert") alert: AlertComponent;
 
   ngOnInit(): void {
     this.refresh();
@@ -34,8 +38,8 @@ export class VmtemplatesComponent implements OnInit {
     )
   }
 
-  public openEdit(index: number) {
-    this.editTemplate = this.templates[index];
+  public openEdit(t: VMTemplate) {
+    this.editTemplate = t;
     this.editWizard.open();
   }
 
@@ -44,15 +48,21 @@ export class VmtemplatesComponent implements OnInit {
     this.editWizard.open();
   }
 
-  public openDelete(index:  number) {
-    this.deleteTemplate = this.templates[index];
+  public openDelete(t: VMTemplate) {
+    this.deleteTemplate = t;
     this.deleteConfirmation.open();
   }
   
   public doDelete() {
     this.vmTemplateService.delete(this.deleteTemplate.id)
     .subscribe(
-      ()
+      (s: ServerResponse) => {
+        this.alert.success("Deleted virtual machine template", false, 1000);
+        this.refresh();
+      },
+      (e: HttpErrorResponse) => {
+        this.alert.error("Error deleting virtual machine template: " + e.error.message, false, 3000);
+      }
     )
   }
 }
