@@ -22,8 +22,8 @@ export class AlertComponent implements OnInit {
     this._close();
   }
 
-  public error(text: string, closable: boolean = true, timeout: number = 0) {
-    this.doAlert(text, ClrAlertType.Error, closable, timeout)
+  public danger(text: string, closable: boolean = true, timeout: number = 0) {
+    this.doAlert(text, ClrAlertType.Danger, closable, timeout)
   }
 
   public info(text: string, closable: boolean = true, timeout: number = 0) {
