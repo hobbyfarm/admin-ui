@@ -1,10 +1,10 @@
-<clr-wizard #wizard clrWizardSize="xl">
+<clr-wizard #wizard clrWizardSize="xl" [clrWizardDisableStepnav]="false">
     <clr-wizard-title>Edit VM Template</clr-wizard-title>
     
-    <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
-    <clr-wizard-button [type]="'previous'">Previous</clr-wizard-button>
-    <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-    <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+    <clr-wizard-button [clrWizardButtonDisabled]="buttonsDisabled" [type]="'cancel'">Cancel</clr-wizard-button>
+    <clr-wizard-button [clrWizardButtonDisabled]="buttonsDisabled" [type]="'previous'">Previous</clr-wizard-button>
+    <clr-wizard-button [clrWizardButtonDisabled]="buttonsDisabled" [type]="'next'">Next</clr-wizard-button>
+    <clr-wizard-button [clrWizardButtonDisabled]="buttonsDisabled" [type]="'finish'">Finish</clr-wizard-button>
 
     <clr-wizard-page [clrWizardPageNextDisabled]="!templateDetails.valid">
         <ng-template clrPageTitle>Basic Information</ng-template>

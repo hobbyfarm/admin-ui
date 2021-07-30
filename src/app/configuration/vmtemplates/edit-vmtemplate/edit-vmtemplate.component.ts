@@ -15,6 +15,7 @@ import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 export class EditVmtemplateComponent implements OnInit, OnChanges {
   public templateDetails: FormGroup;
   public countMap: FormGroup;
+  public buttonsDisabled: boolean = false;
 
   @Input()
   public editTemplate: VMTemplate;
@@ -37,6 +38,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   public open() {
     this.template = new VMTemplate();
+    this.buttonsDisabled = false;
     this._build();
     this.wizard.reset();
     if (this.editTemplate) {
@@ -127,26 +129,32 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
 
   public saveTemplate() {
+    this.buttonsDisabled = true;
     if (this.editTemplate) {
       this.template.id = this.editTemplate.id;
       this.vmTemplateService.update(this.template)
       .subscribe(
         (s: ServerResponse) => {
-          this.alert.success("VM Template saved")
+          this.alert.success("VM Template saved", false, 1000)
           this.event.next(true);
+          setTimeout(() => this.wizard.close(), 1000);
         },
         (e: HttpErrorResponse) => {
-          this.alert.error("Error saving VM Template: " + e.error.message);
+          this.alert.danger("Error saving VM Template: " + e.error.message, false, 3000);
+          this.buttonsDisabled = false;
         }
       )
     } else {
       this.vmTemplateService.create(this.template)
       .subscribe(
         (s: ServerResponse) => {
-          this.alert.success("VM Template saved")
+          this.alert.success("VM Template saved", false, 1000)
+          this.event.next(true);
+          setTimeout(() => this.wizard.close(), 1000);
         },
         (e: HttpErrorResponse) => {
-          this.alert.error("Error saving VM Template: " + e.error.message);
+          this.alert.danger("Error saving VM Template: " + e.error.message, false, 3000);
+          this.buttonsDisabled = false;
         }
       )
     }
