@@ -61,7 +61,7 @@ export class VmtemplatesComponent implements OnInit {
         this.refresh();
       },
       (e: HttpErrorResponse) => {
-        this.alert.error("Error deleting virtual machine template: " + e.error.message, false, 3000);
+        this.alert.danger("Error deleting virtual machine template: " + e.error.message, false, 3000);
       }
     )
   }
