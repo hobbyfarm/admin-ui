@@ -39,6 +39,7 @@ import { EditUserComponent } from './user/edit-user/edit-user.component';
 import { EditAccessCodesComponent } from './user/edit-access-codes/edit-access-codes.component';
 import { PrintableComponent } from './printable/printable.component';
 import { MarkdownModule } from 'ngx-markdown';
+import { AlertComponent } from './alert/alert.component';
 
 export function jwtOptionsFactory() {
   return {
@@ -80,7 +81,8 @@ export function jwtOptionsFactory() {
     EventStatusFilterComponent,
     EditUserComponent,
     EditAccessCodesComponent,
-    PrintableComponent
+    PrintableComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,
