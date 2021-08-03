@@ -68,6 +68,7 @@
               minuteStep="30"></dl-date-time-picker>
           </clr-signpost-content>
         </clr-signpost>
+        <button class="btn btn-outline" (click)="quickStartTime()">Start now</button>
       </div>
     </div>
 
@@ -81,6 +82,34 @@
               minuteStep="30"></dl-date-time-picker>
           </clr-signpost-content>
         </clr-signpost>
+        <form clrForm [formGroup]="quicksetEndtimeForm">
+          <div class="clr-form-control clr-row">
+            <label for="quickset_endtime" class="clr-control-label">Terminate in</label>
+            <div class="clr-control-container clr-col-md-10 clr-col-12"
+              [class.clr-error]="quicksetRequired || quicksetEndtimeForm.errors?.invalidQuicksetAmount || quicksetEndtimeForm.errors?.invalidNumber">
+              <div class="clr-input-wrapper">
+                <div class="clr-input-group">
+                  <input type="number" id="quickset_endtime" formControlName="quickset_endtime" class="clr-input">
+                  <select formControlName="quickset_unit">
+                    <option value="h">Hour(s)</option>
+                    <option value="d">Day(s)</option>
+                    <option value="w">Week(s)</option>
+                    <option value="m">Month(s)</option>
+                  </select>
+                </div>
+                <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+                <button class="btn btn-outline" (click)="quickEndTime()" [disabled]="!quicksetEndtimeForm.valid">Set duration</button>
+              </div>
+              <span class="clr-subtext" *ngIf="quicksetRequired">Please specify when your event should end.</span>
+              <span class="clr-subtext" *ngIf="quicksetEndtimeForm.errors?.invalidQuicksetAmount">
+                Invalid event duration.
+              </span>
+              <span class="clr-subtext" *ngIf="quicksetEndtimeForm.errors?.invalidNumber">
+                Please enter an integral number.
+              </span>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -361,8 +390,8 @@
         <tr *ngFor="let i of se.required_vms | keyvalue">
           <td>{{ i.key }}</td>
           <td>
-            <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span
-                class="badge badge-success">{{ q.value }}</span></span>
+            <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span class="badge badge-success">{{
+                q.value }}</span></span>
           </td>
         </tr>
       </tbody>

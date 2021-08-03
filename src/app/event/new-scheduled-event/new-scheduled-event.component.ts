@@ -13,6 +13,7 @@ import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { FormGroup, FormControl, Validators, FormArray, ValidatorFn, ValidationErrors, FormBuilder } from '@angular/forms';
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
+import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 
 @Component({
   selector: 'new-scheduled-event',
@@ -446,6 +447,71 @@ export class NewScheduledEventComponent implements OnInit {
         )
       }
     )
+  }
+
+  public quicksetEndtimeForm: FormGroup = new FormGroup({
+    'quickset_endtime': new FormControl(1, [
+      Validators.required
+    ]),
+    'quickset_unit': new FormControl('w', [
+      Validators.required
+    ])
+  }, { validators: QuicksetValidator })
+
+  get quicksetAmount() { return this.quicksetEndtimeForm.get("quickset_endtime"); }
+
+  get quicksetUnit() { return this.quicksetEndtimeForm.get("quickset_unit"); }
+
+  get quicksetRequired() {
+    var qe = this.quicksetEndtimeForm.get("quickset_endtime");
+    var qu = this.quicksetEndtimeForm.get("quickset_unit");
+
+    // validate 
+    if ((qe.dirty || qe.touched) && qe.invalid && qe.errors.required) {
+      return true;
+    } else if ((qu.dirty || qu.touched) && qu.invalid && qu.errors.required) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public quickStartTime() {
+    this.se.start_time = new Date();
+  }
+
+  public quickEndTime() {
+    const durationType: "h" | "d" | "w" | "m" = this.quicksetEndtimeForm.get("quickset_unit").value;
+    const duration: number = this.quicksetEndtimeForm.get("quickset_endtime").value;
+    switch (durationType) {
+      case "h":
+        this.se.end_time = new Date(Date.now() + 3600 * 1000 * duration);
+        break;
+      case "d":
+        this.se.end_time = new Date(Date.now() + 24 * 3600 * 1000 * duration);
+        break;
+      case "w":
+        this.se.end_time = new Date(Date.now() + 7 * 24 * 3600 * 1000 * duration);
+        break;
+      case "m":
+        let days: number = 0;
+        const today = new Date();
+        for (let i = 0; i < duration; i++) {
+          days += this.daysPerMonth(i, today);
+        }
+        this.se.end_time = new Date(Date.now() + 24 * 3600 * 1000 * days);
+        break;
+    }
+  }
+
+  private daysPerMonth(i: number, date: Date) {
+    const monthIteration: number = date.getMonth() + i;
+    const monthParam: number = (monthIteration % 12) + 1;
+    let yearParam: number = date.getFullYear();
+    if (monthIteration / 12 >= 1) {
+      yearParam = yearParam + Math.floor(monthIteration / 12);
+    }
+    return new Date(yearParam, monthParam, 0).getDate();
   }
 
   public setStartTime(d: DlDateTimePickerChange<Date>) {
