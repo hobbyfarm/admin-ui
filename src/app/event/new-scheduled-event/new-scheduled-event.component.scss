@@ -16,3 +16,16 @@ clr-alert.bottom {
     position: absolute;
     bottom: 3rem;
 }
+
+.quickset-endtime-form {
+    padding-top: 0;
+    padding-left: 0;
+}
+
+[class*=" no-margin-top"] {
+    margin-top: 0;
+}
+
+[class*=" padding-left"] {
+    padding-left: .6rem;
+}
