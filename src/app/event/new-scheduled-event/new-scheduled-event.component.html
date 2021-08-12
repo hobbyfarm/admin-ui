@@ -35,6 +35,7 @@
             <li>start and end with an alphanumber character</li>
           </ul>
         </clr-control-error>
+        <clr-control-error *clrIfError="'notUnqiue'">Access code is already in use</clr-control-error>
       </clr-input-container>
       <clr-toggle-container>
         <clr-toggle-wrapper>
@@ -139,8 +140,8 @@
     <i>Expand a row to view scenarios within that course</i>
     <clr-datagrid [clrDgSelected]="selectedcourses" (clrDgSelectedChange)="coursesSelected($event)">
       <clr-dg-column>Id</clr-dg-column>
-      <clr-dg-column>Name</clr-dg-column>
-      <clr-dg-column>Description</clr-dg-column>
+      <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
+      <clr-dg-column [clrDgField]="'description'">Description</clr-dg-column>
 
       <clr-dg-row *clrDgItems="let c of courses" [clrDgItem]="c">
         <clr-dg-cell>{{ c.id }}</clr-dg-cell>
@@ -169,8 +170,8 @@
     <ng-template clrPageTitle>Select Scenario(s)</ng-template>
     <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)">
       <clr-dg-column>Id</clr-dg-column>
-      <clr-dg-column>Name</clr-dg-column>
-      <clr-dg-column>Description</clr-dg-column>
+      <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
+      <clr-dg-column [clrDgField]="'description'">Description</clr-dg-column>
 
       <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
