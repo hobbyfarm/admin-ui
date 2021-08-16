@@ -40,6 +40,8 @@ import { EditAccessCodesComponent } from './user/edit-access-codes/edit-access-c
 import { PrintableComponent } from './printable/printable.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { AlertComponent } from './alert/alert.component';
+import { VmtemplatesComponent } from './configuration/vmtemplates/vmtemplates.component';
+import { EditVmtemplateComponent } from './configuration/vmtemplates/edit-vmtemplate/edit-vmtemplate.component';
 
 export function jwtOptionsFactory() {
   return {
@@ -81,8 +83,10 @@ export function jwtOptionsFactory() {
     EventStatusFilterComponent,
     EditUserComponent,
     EditAccessCodesComponent,
+    AlertComponent,
     PrintableComponent,
-    AlertComponent
+    VmtemplatesComponent,
+    EditVmtemplateComponent
   ],
   imports: [
     BrowserModule,

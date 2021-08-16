@@ -1,0 +1,34 @@
+<alert #alert></alert>
+<div class="clr-row">
+    <div class="clr-col">
+        <h3>VM Templates</h3>
+    </div>
+</div>
+<div class="clr-row">
+    <div class="clr-col">
+        <button class="btn btn-success" (click)="openNew()">
+            <clr-icon shape="plus"></clr-icon> New
+        </button>
+    </div>
+</div>
+<div class="clr-row">
+    <div class="clr-col">
+        <clr-datagrid>
+            <clr-dg-column [clrDgField]="'name'" [clrDgSortOrder]="ascSort">Name</clr-dg-column>
+            <clr-dg-column [clrDgField]="'image'">Image</clr-dg-column>
+            <clr-dg-column [clrDgField]="'id'">Object Id</clr-dg-column>
+
+            <clr-dg-row *clrDgItems="let t of templates; let i = index">
+                <clr-dg-action-overflow>
+                    <button class="action-item" (click)="openEdit(t)">Edit</button>
+                    <button class="action-item" (click)="openDelete(t)">Delete</button>
+                </clr-dg-action-overflow>
+                <clr-dg-cell>{{ t.name }}</clr-dg-cell>
+                <clr-dg-cell>{{ t.image }}</clr-dg-cell>
+                <clr-dg-cell>{{ t.id }}</clr-dg-cell>
+            </clr-dg-row>
+        </clr-datagrid>
+    </div>
+</div>
+<edit-vmtemplate-wizard [(editTemplate)]="editTemplate" (event)="refresh()" #editTemplateWizard></edit-vmtemplate-wizard>
+<delete-confirmation #deleteConfirmation (delete)="doDelete()"></delete-confirmation>
