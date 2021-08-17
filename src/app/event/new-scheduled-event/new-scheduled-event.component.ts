@@ -11,7 +11,7 @@ import { Environment } from 'src/app/data/environment';
 import { from, of } from 'rxjs';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
-import { FormGroup, FormControl, Validators, FormArray, ValidatorFn, ValidationErrors, FormBuilder } from '@angular/forms';
+import {FormGroup, FormControl, Validators, FormArray, ValidatorFn, ValidationErrors, FormBuilder, AbstractControl} from '@angular/forms';
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 
@@ -31,6 +31,7 @@ export class NewScheduledEventComponent implements OnInit {
   public se: ScheduledEvent = new ScheduledEvent();
   public scenarios: Scenario[] = [];
   public courses: Course[] = [];
+  public scheduledEvents: ScheduledEvent[] = [];
 
   public saving: boolean = false;
 
@@ -83,7 +84,8 @@ export class NewScheduledEventComponent implements OnInit {
     'access_code': new FormControl(this.se.access_code, [
       Validators.required,
       Validators.minLength(5),
-      Validators.pattern(/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)
+      Validators.pattern(/^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/),
+      this.uniqueAccessCode()
     ]),
     'restricted_bind': new FormControl(true),
     'on_demand': new FormControl(false)
@@ -101,6 +103,17 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.access_code = this.eventDetails.get('access_code').value;
     this.se.disable_restriction = !this.eventDetails.get("restricted_bind").value; // opposite, since restricted_bind: enabled really means disable_restriction: false
     this.se.on_demand = this.eventDetails.get("on_demand").value;
+  }
+
+  public uniqueAccessCode(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      if (!control.value || this.scheduledEvents.filter(el => el.access_code === control.value).length > 0) {
+        return {
+          notUnqiue: true
+        };
+      }
+      return null;
+    };
   }
 
   @ViewChild("wizard", { static: true }) wizard: ClrWizard;
@@ -344,6 +357,10 @@ export class NewScheduledEventComponent implements OnInit {
       .subscribe(
         (c: Course[]) => { this.courses = c },
       );
+    this.ses.list()
+      .subscribe(
+        (se: ScheduledEvent[]) => { this.scheduledEvents = se },
+      );
 
     // setup the times
     ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"].forEach(
@@ -466,7 +483,7 @@ export class NewScheduledEventComponent implements OnInit {
     var qe = this.quicksetEndtimeForm.get("quickset_endtime");
     var qu = this.quicksetEndtimeForm.get("quickset_unit");
 
-    // validate 
+    // validate
     if ((qe.dirty || qe.touched) && qe.invalid && qe.errors.required) {
       return true;
     } else if ((qu.dirty || qu.touched) && qu.invalid && qu.errors.required) {
