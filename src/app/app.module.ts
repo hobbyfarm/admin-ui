@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA, SecurityContext } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, SecurityContext, APP_INITIALIZER } from '@angular/core';
 import '@clr/icons';
 import '@clr/icons/shapes/all-shapes';
 import { AppRoutingModule } from './app-routing.module';
@@ -42,6 +42,13 @@ import { MarkdownModule } from 'ngx-markdown';
 import { AlertComponent } from './alert/alert.component';
 import { VmtemplatesComponent } from './configuration/vmtemplates/vmtemplates.component';
 import { EditVmtemplateComponent } from './configuration/vmtemplates/edit-vmtemplate/edit-vmtemplate.component';
+import { AppConfigService } from './app-config.service';
+
+const appInitializerFn = (appConfig: AppConfigService) => {
+  return () => {
+    return appConfig.loadAppConfig();
+  };
+};
 
 export function jwtOptionsFactory() {
   return {
@@ -112,7 +119,14 @@ export function jwtOptionsFactory() {
     })
   ],
   providers: [
-    ScenarioService
+    ScenarioService,
+    AppConfigService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializerFn,
+      multi: true,
+      deps: [AppConfigService]
+    }
   ],
   bootstrap: [RootComponent],
   schemas: [
