@@ -11,7 +11,6 @@ import { AppConfigService } from './app-config.service';
 export class AppComponent {
 
   private config = this.configService.getConfig();
-  public favicon = this.config.favicon || "/assets/default/favicon.png";
   public logo = this.config.logo || '/assets/default/logo.svg';
 
   constructor(
@@ -24,11 +23,6 @@ export class AppComponent {
           "logo": obj
         })
       })
-
-    if (this.config.favicon) {
-      var fi = <HTMLLinkElement>document.querySelector("#favicon")
-      fi.href = this.config.favicon;
-    }
   }
 
 }

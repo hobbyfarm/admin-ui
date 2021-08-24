@@ -32,6 +32,10 @@ export class HeaderComponent implements OnInit {
           "logo": obj
         })
       })
+      if (this.config.favicon) {
+        let fi = <HTMLLinkElement>document.querySelector("#favicon")
+        fi.href = this.config.favicon;
+      }
   }
 
   ngOnInit() {

@@ -34,6 +34,10 @@ export class LoginComponent {
     if (this.config.login && this.config.login.background) {
       this.background = "url(" + this.config.login.background + ")";
     }
+    if (this.config.favicon) {
+      let fi = <HTMLLinkElement>document.querySelector("#favicon")
+      fi.href = this.config.favicon;
+    }
   }
 
   public register() {
