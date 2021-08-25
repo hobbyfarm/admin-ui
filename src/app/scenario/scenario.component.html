@@ -190,7 +190,8 @@
                 following syntax:</p>
               <p><code>{{'${vminfo:[vmname]:[variable]}'}}</code> where <code>vminfo</code> is a static string,
                 <code>vmname</code> is the name
-                of one of the VMs in the scenario, and <code>variable</code> is an item from the list on the right.</p>
+                of one of the VMs in the scenario, and <code>variable</code> is an item from the list on the right.
+              </p>
               <p>Example: <code>{{'${vminfo:cluster01:public_ip}'}}</code></p>
             </clr-stack-label>
             <clr-stack-content>
@@ -220,6 +221,50 @@
             </clr-stack-label>
           </clr-stack-block>
         </clr-stack-block>
+        <clr-stack-block>
+          <clr-stack-label>Hidden Text Elements</clr-stack-label>
+          <clr-stack-content>
+          </clr-stack-content>
+          <clr-stack-block>
+            <clr-stack-label>
+              <p>To create a hidden text element, pass the special language argument <code>hidden</code> to a markdown
+                code block.</p>
+              <p>
+                Example:<br />
+                <code>
+                        ```hidden:Hidden Text Summary<br/>
+                        This is the hidden Text that opens and closes after a click on the summary<br/>
+                        ```<br/>
+                      </code>
+              </p>
+            </clr-stack-label>
+          </clr-stack-block>
+        </clr-stack-block>
+        <clr-stack-block>
+          <clr-stack-label>Nested Elements</clr-stack-label>
+          <clr-stack-content>
+          </clr-stack-content>
+          <clr-stack-block>
+            <clr-stack-label>
+              <p>Nested elements can be applied inside blocks or hidden elements. To define a nested block, replace
+                backticks by tildes.</p>
+              <p>
+                Example:<br />
+                <code>
+                        ```<br/>
+                        Some text<br/>
+                        ~~~python<br/>
+                        # This program prints Hello, world!<br/>
+                        <br/>
+                        print('Hello, world!')<br/>
+                        ~~~<br/>
+                        Some more text<br/>
+                        ```<br/>
+                      </code>
+              </p>
+            </clr-stack-label>
+          </clr-stack-block>
+        </clr-stack-block>
       </clr-stack-view>
     </ng-container>
 
@@ -233,7 +278,7 @@
       <div class="clr-col">
         <md-editor name="Content" [(ngModel)]="editingStep.content" required>
         </md-editor>
-        <i>Variables do not render in the WYSIWYG section of this Markdown editor.</i>
+        <i>Variables and nested elements do not render in the WYSIWYG section of this Markdown editor.</i>
       </div>
     </div>
   </div>
