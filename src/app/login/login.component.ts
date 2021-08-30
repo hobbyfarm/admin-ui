@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Router } from '@angular/router';
 import { ServerResponse } from '../data/serverresponse';
 import { environment } from 'src/environments/environment';
+import { AppConfigService } from '../app-config.service';
 
 @Component({
   selector: 'app-login',
@@ -17,10 +18,26 @@ export class LoginComponent {
   public accesscode: string = "";
 
   public loginactive: boolean = false;
+
+  private config = this.configService.getConfig();
+  public logo;
+  public background;
+
   constructor(
     public http: HttpClient,
-    public router: Router
+    public router: Router,
+    public configService: AppConfigService
   ) {
+    if (this.config.login && this.config.login.logo) {
+      this.logo = this.config.login.logo
+    }
+    if (this.config.login && this.config.login.background) {
+      this.background = "url(" + this.config.login.background + ")";
+    }
+    if (this.config.favicon) {
+      let fi = <HTMLLinkElement>document.querySelector("#favicon")
+      fi.href = this.config.favicon;
+    }
   }
 
   public register() {
