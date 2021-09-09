@@ -107,7 +107,7 @@ export class NewScheduledEventComponent implements OnInit {
 
   public uniqueAccessCode(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      if (!control.value || this.scheduledEvents.filter(el => el.access_code === control.value).length > 0) {
+      if (!control.value || this.scheduledEvents.filter(el => el.access_code === control.value && (!this.event || this.event.access_code !== control.value)).length > 0) {
         return {
           notUnqiue: true
         };
