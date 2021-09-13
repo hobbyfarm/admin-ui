@@ -14,12 +14,12 @@
 </div>
 
 <div class="header-actions">
-    <clr-dropdown clrMenuPosition="bottom-right">
+    <clr-dropdown>
         <button class="nav-text" clrDropdownToggle>
             {{email}}
             <clr-icon shape="caret down"></clr-icon>
         </button>
-        <clr-dropdown-menu>
+        <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
             <a (click)="about()" clrDropdownItem>About</a>
             <a (click)="logout()" clrDropdownItem>Logout</a>
         </clr-dropdown-menu>
