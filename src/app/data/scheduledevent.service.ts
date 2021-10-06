@@ -3,8 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { ScheduledEvent } from './scheduledevent';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { map, switchMap, combineAll } from 'rxjs/operators';
-import { from, of } from 'rxjs';
+import { map, switchMap, combineAll, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, of } from 'rxjs';
 import { formatDate } from '@angular/common';
 import { atou } from '../unicode';
 
@@ -13,23 +13,45 @@ import { atou } from '../unicode';
 })
 export class ScheduledeventService {
 
+  private cachedSEList: ScheduledEvent[] = []
+  private bh: BehaviorSubject<ScheduledEvent[]> = new BehaviorSubject(this.cachedSEList);
+  private fetchedList = false;
+
   constructor(
     public http: HttpClient
   ) { }
 
-  public list() {
-    return this.http.get(environment.server + "/a/scheduledevent/list")
-      .pipe(
-        switchMap((s: ServerResponse) => {
-          return from(JSON.parse(atou(s.content)))
-        }),
-        map((se: ScheduledEvent) => {
-          se.start_time = new Date(se.start_time);
-          se.end_time = new Date(se.end_time);
-          return of(se);
-        }),
-        combineAll()
-      )
+  public watch() {
+    return this.bh.asObservable();
+  }
+
+  public list(force=false) {
+    if (!force && this.fetchedList)  {
+      return of(this.cachedSEList);
+  } else {
+      return this.http.get(environment.server + "/a/scheduledevent/list")
+        .pipe(
+          switchMap((s: ServerResponse) => {
+            return from(JSON.parse(atou(s.content)))
+          }),
+          map((se: ScheduledEvent) => {
+            se.start_time = new Date(se.start_time);
+            se.end_time = new Date(se.end_time);
+            return of(se);
+          }),
+          combineAll(),
+          tap((ses: ScheduledEvent[]) => {
+              this.set(ses);
+            }
+          ),
+        )
+    }
+  }
+
+  public set(list: ScheduledEvent[]){
+    this.cachedSEList = list;
+    this.fetchedList = true;
+    this.bh.next(list);
   }
 
   public create(se: ScheduledEvent) {

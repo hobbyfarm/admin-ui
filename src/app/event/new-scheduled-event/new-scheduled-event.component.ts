@@ -357,10 +357,16 @@ export class NewScheduledEventComponent implements OnInit {
       .subscribe(
         (c: Course[]) => { this.courses = c },
       );
-    this.ses.list()
-      .subscribe(
-        (se: ScheduledEvent[]) => { this.scheduledEvents = se },
-      );
+    this.ses.watch().subscribe(
+      (se: ScheduledEvent[]) => {
+        this.scheduledEvents = se;
+      }
+    );
+    this.ses.list().subscribe(
+      (se: ScheduledEvent[]) => {
+        this.scheduledEvents = se;
+      }
+    );
 
     // setup the times
     ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"].forEach(

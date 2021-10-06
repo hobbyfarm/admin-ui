@@ -35,7 +35,11 @@ export class EventComponent implements OnInit {
   @ViewChild("deletemodal", { static: true }) deletemodal: ClrModal;
 
   ngOnInit() {
-    this.refresh();
+    this.seService.list().subscribe(
+      (se: ScheduledEvent[]) => {
+        this.events = se;
+      }
+    );
   }
 
   public openDelete(se: ScheduledEvent) {
@@ -76,12 +80,11 @@ export class EventComponent implements OnInit {
   }
 
   public refresh() {
-    this.seService.list()
-      .subscribe(
-        (se: ScheduledEvent[]) => {
-          this.events = se;
-        }
-      )
+    this.seService.list(true).subscribe(
+      (se: ScheduledEvent[]) => {
+        this.events = se;
+      }
+    );
   }
 
   public newupdated() {
