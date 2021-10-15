@@ -41,8 +41,8 @@
 
             <clr-dg-row *clrDgItems="let se of events">
               <clr-dg-action-overflow>
-                <button class="action-item" (click)="openDelete(se)">Delete</button>
                 <button class="action-item" (click)="openEdit(se)">Edit</button>
+                <button class="action-item" (click)="openDelete(se)">Delete</button>
               </clr-dg-action-overflow>
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
               <clr-dg-cell>{{ se.start_time | date:'long' }}</clr-dg-cell>
