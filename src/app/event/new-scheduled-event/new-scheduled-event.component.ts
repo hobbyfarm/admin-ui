@@ -438,6 +438,9 @@ export class NewScheduledEventComponent implements OnInit {
       ).subscribe(
         (ea: EnvironmentAvailability[]) => {
           this.availableEnvironments = ea;
+          if (this.availableEnvironments.length && this.availableEnvironments.length == 1) {
+            this.selectedEnvironments.push(this.availableEnvironments[0]);
+          }
           this.checkingEnvironments = false;
 
           if (this.event) {
