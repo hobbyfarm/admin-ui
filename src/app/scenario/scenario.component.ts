@@ -47,6 +47,9 @@ export class ScenarioComponent implements OnInit {
   public createVMOpen: boolean = false;
   public newScenarioOpen: boolean = false;
 
+  public newCategory: boolean = false;
+  public newTag: boolean = false;
+
   public newScenario: Scenario = new Scenario();
   
   public vmProps: string[] = Object.keys(new VirtualMachine());
@@ -109,6 +112,18 @@ export class ScenarioComponent implements OnInit {
       Validators.max(48)
     ])
   }, { validators: KeepaliveValidator })
+
+  public newCategoryForm: FormGroup = new FormGroup({
+    "category": new FormControl(null, [
+      Validators.required
+    ])
+  })
+
+  public newTagForm: FormGroup = new FormGroup({
+    "tag": new FormControl(null, [
+      Validators.required
+    ])
+  })
 
   get keepaliveAmount() { return this.scenarioDetails.get("keepalive_amount"); }
 
@@ -312,6 +327,44 @@ export class ScenarioComponent implements OnInit {
     this.selectedscenario.steps.splice(i, 1);
     // put into the i+1 index
     this.selectedscenario.steps.splice(i + 1, 0, obj);
+  }
+
+  deleteCategory(category: string){
+    this.selectedscenario.categories.forEach((element,index)=>{
+      if(element==category) this.selectedscenario.categories.splice(index,1);
+    });
+  }
+
+  addCategory(){
+    let categories = this.newCategoryForm.get("category").value
+    categories = categories.split(","); 
+    categories.forEach(category => {
+      category = category.replace(/\s/g, ""); //remove all whitespaces
+      if(category != "" && !this.selectedscenario.categories.includes(category)){
+        this.selectedscenario.categories.push(category); 
+      }
+    });
+    this.newCategoryForm.reset();
+    this.newCategory = false;
+  }
+
+  deleteTag(tag: string){
+    this.selectedscenario.tags.forEach((element,index)=>{
+      if(element==tag) this.selectedscenario.tags.splice(index,1);
+    });
+  }
+
+  addTag(){
+    let tags = this.newTagForm.get("tag").value
+    tags = tags.split(","); 
+    tags.forEach(tag => {
+      tag = tag.replace(/\s/g, ""); //remove all whitespaces
+      if(tag != "" && !this.selectedscenario.tags.includes(tag)){
+        this.selectedscenario.tags.push(tag); 
+      }
+    });
+    this.newTagForm.reset();
+    this.newTag = false;
   }
 
   addVMSet() {

@@ -154,6 +154,75 @@
               [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
           </clr-tab-content>
         </clr-tab>
+        <clr-tab>
+          <button clrTabLink>Categories</button>
+          <clr-tab-content id="categoriesContent" *clrIfActive>
+            <button class="btn btn-success-outline btn-sm" (click)="newCategory = true">
+              <clr-icon shape="plus"></clr-icon> Add Category
+            </button>
+            <ng-container *ngIf="newCategory">
+              <p>You can provide multiple categories by passing them as a Comma-separated List</p>
+              <form clrForm [formGroup]="newCategoryForm">
+                  <clr-input-container>
+                      <label class="clr-col-md-4">Category</label>
+                      <input class="clr-col-md-6" clrInput type="text" name="category" formControlName="category"
+                          required />
+                      <clr-control-error *clrIfError="'required'">Category required.</clr-control-error>
+                      
+                  </clr-input-container>
+                  <div class="col-md-2">
+                      <button class="btn btn-success btn-sm" [disabled]="!newCategoryForm.valid"
+                          (click)="addCategory()">Add</button>
+                  </div>
+              </form>
+            </ng-container>
+            <clr-datagrid class="datagrid-compact">
+              <clr-dg-column>Category</clr-dg-column>
+              <clr-dg-row *clrDgItems="let a of selectedscenario.categories" [clrDgItem]="a"> 
+                  <clr-dg-action-overflow>
+                      <button class="action-item" (click)="deleteCategory(a)">Delete</button>
+                  </clr-dg-action-overflow>
+                  <clr-dg-cell>{{ a }}</clr-dg-cell>
+              </clr-dg-row>
+            </clr-datagrid>
+            <button class="btn btn-success" (click)="savescenario()"
+              [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
+          </clr-tab-content>
+        </clr-tab>
+        <clr-tab>
+          <button clrTabLink>Tags</button>
+          <clr-tab-content id="tagsContent" *clrIfActive>
+            <button class="btn btn-success-outline btn-sm" (click)="newTag = true">
+              <clr-icon shape="plus"></clr-icon> Add Tag
+            </button>
+            <ng-container *ngIf="newTag">
+              <p>You can provide multiple tags by passing them as a Comma-separated List</p>
+              <form clrForm [formGroup]="newTagForm">
+                  <clr-input-container>
+                      <label class="clr-col-md-4">Tag</label>
+                      <input class="clr-col-md-6" clrInput type="text" name="tag" formControlName="tag"
+                          required />
+                      <clr-control-error *clrIfError="'required'">Tag required.</clr-control-error>
+                  </clr-input-container>
+                  <div class="col-md-2">
+                      <button class="btn btn-success btn-sm" [disabled]="!newTagForm.valid"
+                          (click)="addTag()">Add</button>
+                  </div>
+              </form>
+            </ng-container>
+            <clr-datagrid class="datagrid-compact">
+              <clr-dg-column>Tag</clr-dg-column>
+              <clr-dg-row *clrDgItems="let a of selectedscenario.tags" [clrDgItem]="a"> 
+                  <clr-dg-action-overflow>
+                      <button class="action-item" (click)="deleteTag(a)">Delete</button>
+                  </clr-dg-action-overflow>
+                  <clr-dg-cell>{{ a }}</clr-dg-cell>
+              </clr-dg-row>
+            </clr-datagrid>
+            <button class="btn btn-success" (click)="savescenario()"
+              [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
+          </clr-tab-content>
+        </clr-tab>
       </clr-tabs>
     </ng-container>
   </div>
