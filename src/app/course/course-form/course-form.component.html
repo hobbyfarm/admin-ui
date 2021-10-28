@@ -43,6 +43,13 @@
       </clr-toggle-wrapper>
       <clr-control-helper>Whether the user can pause the course.</clr-control-helper>
     </clr-toggle-container>
+    <clr-toggle-container>
+      <clr-toggle-wrapper>
+        <input type="checkbox" clrToggle name="keep_vm" formControlName="keep_vm">
+        <label>Keep VM</label>
+      </clr-toggle-wrapper>
+      <clr-control-helper>Whether VMs should be kept for the whole course or destroyed after each scenario.</clr-control-helper>
+    </clr-toggle-container>
     <clr-input-container *ngIf="courseDetails.value.pauseable">
       <label>Pause Duration</label>
       <input clrInput type="number" name="pause_duration" placeholder="Duration in hours"

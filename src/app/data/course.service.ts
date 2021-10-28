@@ -71,7 +71,8 @@ export class CourseService {
     .set("pause_duration", JSON.stringify(c.pause_duration))
     .set("pauseable", JSON.stringify(c.pauseable))
     .set("virtualmachines", JSON.stringify(c.virtualmachines))
-    .set("scenarios", JSON.stringify(scenarioArray));
+    .set("scenarios", JSON.stringify(scenarioArray))
+    .set("keep_vm", JSON.stringify(c.keep_vm));
 
     return this.http.put(environment.server + "/a/course/" + c.id, params)
   }

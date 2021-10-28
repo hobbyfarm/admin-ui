@@ -157,6 +157,7 @@ export class CourseComponent implements OnInit {
       this.editForm.get('keepalive_unit').value;
     this.selectedCourse.pause_duration = this.editForm.get('pause_duration').value;
     this.selectedCourse.pauseable = this.editForm.get('pauseable').value;
+    this.selectedCourse.keep_vm = this.editForm.get('keep_vm').value;
 
     this.selectedCourse.scenarios = this.dragScenarios;
     this.selectedCourse.virtualmachines = this.editVirtualMachines;

@@ -28,6 +28,7 @@ export class CourseFormComponent implements OnInit {
       'keepalive_amount': 10,
       'keepalive_unit': 'm',
       'pauseable': true,
+      'keep_vm': true,
       'pause_duration': 1
     });
     
@@ -45,6 +46,16 @@ export class CourseFormComponent implements OnInit {
       } else {
         this.courseDetails.patchValue({
           'pauseable': this.course.pauseable
+        })
+      }
+
+      if (this.course.keep_vm == undefined) {
+        this.courseDetails.patchValue({
+          'keep_vm': true
+        })
+      } else {
+        this.courseDetails.patchValue({
+          'keep_vm': this.course.keep_vm
         })
       }
 
@@ -77,6 +88,9 @@ export class CourseFormComponent implements OnInit {
       Validators.required
     ]),
     'pauseable': new FormControl(true, [
+      Validators.required
+    ]),
+    'keep_vm': new FormControl(true, [
       Validators.required
     ]),
     'pause_duration': new FormControl(1, [
