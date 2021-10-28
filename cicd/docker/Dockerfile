@@ -1,7 +1,7 @@
 ##### sdk image #####
 FROM node:lts-alpine AS sdk
 
-RUN apk add python3 make g++
+RUN apk add python2 make g++
 
 WORKDIR /app
 
