@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ɵConsole } from '@angular/core';
 import { CourseService } from '../data/course.service';
 import { Course } from '../data/course';
 import { NewCourseComponent } from './new-course/new-course.component';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
 import { DragulaService } from 'ng2-dragula';
@@ -31,15 +31,23 @@ export class CourseComponent implements OnInit {
   public selectedCourse: Course;
 
   public editForm: FormGroup;
+  public newCategoryForm: FormGroup = new FormGroup({
+    "category": new FormControl(null, [
+      Validators.required
+    ])
+  })
 
   public scenarios: Scenario[] = [];
   public dragScenarios: Scenario[] = [];
   public editVirtualMachines: {}[] = [];
+  public editCategories: string[] = [];
 
   public alertType: string = "warning";
   public alertText: string = null;
   public isAlert: boolean = false;
   public modified: boolean = false;
+
+  public newCategory: boolean = false;
 
   public courseDetailsActive: boolean = true;
 
@@ -132,12 +140,34 @@ export class CourseComponent implements OnInit {
     this.addScenario.open();
   }
 
+  deleteCategory(category: string){
+    this.editCategories.forEach((element,index)=>{
+      if(element==category) this.editCategories.splice(index,1);
+    });
+    this.setModified();
+  }
+
+  addCategory(){
+    let categories = this.newCategoryForm.get("category").value
+    categories = categories.split(","); 
+    categories.forEach(category => {
+      category = category.replace(/\s/g, ""); //remove all whitespaces
+      if(category != "" && !this.editCategories.includes(category)){
+        this.editCategories.push(category); 
+      }
+    });
+    this.newCategoryForm.reset();
+    this.newCategory = false;
+    this.setModified();
+  }
+
   discardChanges() {
     this.courseDetailsActive = true;
     setTimeout(() => this.courseForm.reset(), 200); // hack
 
     this.dragScenarios = this.selectedCourse.scenarios;
     this.editVirtualMachines = cloneDeep(this.selectedCourse.virtualmachines);
+    this.editCategories = this.selectedCourse.categories;
     this.clearModified();
   }
 
@@ -147,6 +177,7 @@ export class CourseComponent implements OnInit {
       setTimeout(() => this.courseForm.reset(), 200); // hack
       this.dragScenarios = c.scenarios;
       this.editVirtualMachines = cloneDeep(c.virtualmachines);
+      this.editCategories = c.categories;
     }
   }
 
@@ -158,7 +189,7 @@ export class CourseComponent implements OnInit {
     this.selectedCourse.pause_duration = this.editForm.get('pause_duration').value;
     this.selectedCourse.pauseable = this.editForm.get('pauseable').value;
     this.selectedCourse.keep_vm = this.editForm.get('keep_vm').value;
-
+    this.selectedCourse.categories = this.editCategories;
     this.selectedCourse.scenarios = this.dragScenarios;
     this.selectedCourse.virtualmachines = this.editVirtualMachines;
 

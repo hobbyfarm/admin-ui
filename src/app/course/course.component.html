@@ -75,6 +75,81 @@
                     </table>
                 </clr-tab-content>
             </clr-tab>
+            <clr-tab>
+                <button [disabled]="!selectedCourse" clrTabLink id="categoriesLink">Dynamic Scenarios</button>
+                <clr-tab-content id="categoriesContent" *clrIfActive>
+                    <p>
+                        Scenarios that match at least one of the queries provided are dynamically included in this course,<br>
+                        together with all scenarios selected in the scenarios-tab which are always included.<br>
+                        There is no need to update the course (or any scheduled event that includes this course) if categories of a scenario are changed.<br>
+                    </p>
+                    <button class="btn btn-success-outline btn-sm" (click)="newCategory = true">
+                      <clr-icon shape="plus"></clr-icon> Add Query
+                    </button>
+                    <button class="btn btn-success-outline btn-sm" (click)="seeExamples = !seeExamples">
+                        <clr-icon shape="plus"></clr-icon> Example Queries
+                    </button>
+                    <ng-container *ngIf="seeExamples">
+                        <clr-datagrid class="datagrid-compact">
+                            <clr-dg-column>Query</clr-dg-column>
+                            <clr-dg-column>Explanation</clr-dg-column>
+                            <clr-dg-row> 
+                                <clr-dg-cell>kubernetes</clr-dg-cell>
+                                <clr-dg-cell>All Scenarios that are in the kubernetes category</clr-dg-cell>
+                            </clr-dg-row>
+                            <clr-dg-row> 
+                                <clr-dg-cell>!kubernetes</clr-dg-cell>
+                                <clr-dg-cell>All Scenarios that are not in the kubernetes category</clr-dg-cell>
+                            </clr-dg-row>
+                            <clr-dg-row> 
+                                <clr-dg-cell>kubernetes&basic</clr-dg-cell>
+                                <clr-dg-cell>All Scenarios that are in the kubernetes AND in the basic category</clr-dg-cell>
+                            </clr-dg-row>
+                            <clr-dg-row> 
+                                <clr-dg-cell>kubernetes&k3s&basic</clr-dg-cell>
+                                <clr-dg-cell>Queries also work with more than two categories</clr-dg-cell>
+                            </clr-dg-row>
+                            <clr-dg-row> 
+                                <clr-dg-cell>kubernetes&!basic</clr-dg-cell>
+                                <clr-dg-cell>All Scenarios that are in the kubernetes category, but not in the basic category</clr-dg-cell>
+                            </clr-dg-row>
+                            <clr-dg-row> 
+                                <clr-dg-cell>example&!example</clr-dg-cell>
+                                <clr-dg-cell>No Scenarios will ever match this</clr-dg-cell>
+                            </clr-dg-row>
+                          </clr-datagrid>
+                          <p>
+                            Logical OR can be achieved by adding two queries. Each queries matched scenarios will be uniquely merged<br>
+                            Adding one query `kubernetes` and one query `docker` will select all categories that are part of either one.
+                        </p>
+                    </ng-container>
+                    <ng-container *ngIf="newCategory">
+                      <p>You can provide multiple queries by passing them as a Comma-separated List</p>
+                      <form clrForm [formGroup]="newCategoryForm">
+                          <clr-input-container>
+                              <label class="clr-col-md-4">Query</label>
+                              <input class="clr-col-md-6" clrInput type="text" name="category" formControlName="category"
+                                  required />
+                              <clr-control-error *clrIfError="'required'">Query required.</clr-control-error>
+                              
+                          </clr-input-container>
+                          <div class="col-md-2">
+                              <button class="btn btn-success btn-sm" [disabled]="!newCategoryForm.valid"
+                                  (click)="addCategory()">Add</button>
+                          </div>
+                      </form>
+                    </ng-container>
+                    <clr-datagrid class="datagrid-compact">
+                      <clr-dg-column>Query</clr-dg-column>
+                      <clr-dg-row *clrDgItems="let a of editCategories" [clrDgItem]="a"> 
+                          <clr-dg-action-overflow>
+                              <button class="action-item" (click)="deleteCategory(a)">Delete</button>
+                          </clr-dg-action-overflow>
+                          <clr-dg-cell>{{ a }}</clr-dg-cell>
+                      </clr-dg-row>
+                    </clr-datagrid>
+                  </clr-tab-content>
+            </clr-tab>
         </clr-tabs>
         <button class="btn btn-outline" (click)="discardChanges()" *ngIf="modified">Discard Changes</button>
         <button class="btn btn-danger-outline" (click)="delete()">Delete</button>

@@ -33,6 +33,7 @@ export class CourseService {
           c.scenarios.forEach((s) => {
             this.scenarioService.get(<any>s).subscribe((sc: Scenario) => { c.scenarios.push(sc) })
           });
+          c.categories = c.categories ?? [];
           c.scenarios = c.scenarios.filter(x => typeof x != 'string');
           c.scenarios.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
         });
@@ -55,7 +56,8 @@ export class CourseService {
     .set("keepalive_duration", c.keepalive_duration)
     .set("pause_duration", JSON.stringify(c.pause_duration))
     .set("pauseable", JSON.stringify(c.pauseable))
-
+    .set("keep_vm", JSON.stringify(c.keep_vm))
+    
     return this.http.post(environment.server + "/a/course/new", params)
   }
 
@@ -72,7 +74,8 @@ export class CourseService {
     .set("pauseable", JSON.stringify(c.pauseable))
     .set("virtualmachines", JSON.stringify(c.virtualmachines))
     .set("scenarios", JSON.stringify(scenarioArray))
-    .set("keep_vm", JSON.stringify(c.keep_vm));
+    .set("keep_vm", JSON.stringify(c.keep_vm))
+    .set("categories", JSON.stringify(c.categories));
 
     return this.http.put(environment.server + "/a/course/" + c.id, params)
   }
