@@ -304,6 +304,7 @@ export class NewScheduledEventComponent implements OnInit {
       });
 
       // auto-select the environments
+      this.se.scenarios = this.se.scenarios ?? [];
       this.se.scenarios.forEach(
         (sid: string) => {
           // find matching if there is one, and push into selectedscenarios
@@ -316,6 +317,7 @@ export class NewScheduledEventComponent implements OnInit {
           )
         }
       )
+      this.se.courses = this.se.courses ?? [];
       this.se.courses.forEach(
         (sid: string) => {
           // find matching if there is one, and push into selectedcourses
