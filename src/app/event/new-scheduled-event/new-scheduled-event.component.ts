@@ -166,14 +166,16 @@ export class NewScheduledEventComponent implements OnInit {
 
   public setupAdvancedVMPage(ea: EnvironmentAvailability) {
     var newFormGroup = new FormGroup({});
-    this.getTemplates(ea.environment).forEach((templateName: string, index: number) => {
-      var initVal = 0;
-      if (this.se.required_vms[ea.environment]) {
-        initVal = this.se.required_vms[ea.environment][templateName] || 0; // so we don't blow away old input values when rebuilding this form
+    let templates = this.getTemplates(ea.environment)
+    for (let template in this.requiredVmCounts){
+      if(!templates.includes(template)){
+        //this environment does not support this template
+        continue;
       }
-      var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(ea.available_count[templateName])]);
-      newFormGroup.addControl(templateName, newControl);
-    });
+      var initVal = this.se.required_vms[ea.environment]?.[template] ?? 0; // so we don't blow away old input values when rebuilding this form
+      var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(ea.available_count[template])]);
+      newFormGroup.addControl(template, newControl);
+  }
 
     this.vmCounts.addControl(ea.environment, newFormGroup);
   }
