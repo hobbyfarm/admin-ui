@@ -280,15 +280,26 @@ export class NewScheduledEventComponent implements OnInit {
     }
     })
     this.selectedcourses.forEach((sc, i) => { // sc is selected course, i is index
+      let vmCountPerTemplate = {}
       sc.virtualmachines.forEach((vmset, j) => { // vmset is virtualmachineset, j is index
+        // 1. sum up count of vms needed for this course.
         Object.values(vmset).forEach((template: string, k) => { // template is vmtemplate name, k is index
-          if (this.requiredVmCounts[template]) {
-            this.requiredVmCounts[template]++;
+          if (vmCountPerTemplate[template]) {
+            vmCountPerTemplate[template]++;
           } else {
-            this.requiredVmCounts[template] = 1;
+            vmCountPerTemplate[template] = 1;
           }
         })
       })
+
+      // 2. Set the required VM count to the maximum count of VMs needed
+      for (let template in vmCountPerTemplate) {
+        if (this.requiredVmCounts[template]) {
+          this.requiredVmCounts[template] = Math.max(vmCountPerTemplate[template], this.requiredVmCounts[template]);
+        } else {
+          this.requiredVmCounts[template] = vmCountPerTemplate[template];
+        }
+      }
     })
   }
 
