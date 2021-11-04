@@ -297,8 +297,8 @@ export class NewScheduledEventComponent implements OnInit {
         'event_name': this.se.event_name,
         'description': this.se.description,
         'access_code': this.se.access_code,
-        'restricted_bind': true,
-        'on_demand': true,
+        'restricted_bind': !this.se.disable_restriction,  // opposite, since restricted_bind: enabled really means disable_restriction: false
+        'on_demand': this.se.on_demand,
       });
 
       // auto-select the environments
