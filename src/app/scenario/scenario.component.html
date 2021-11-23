@@ -208,15 +208,27 @@
           <clr-stack-block>
             <clr-stack-label>
               <p>Click-to-run is enabled by passing a special language argument to a markdown code block.
-                Use the syntax <code>ctr:[vmname]</code> as the language argument where <code>vmname</code> is the name
-                of one of the VMs in the scenario.</p>
+                Use the syntax <code>ctr:&lt;vmname&gt;[:&lt;limit&gt;]</code> as the language argument where <code>vmname</code> is the name
+                of one of the VMs in the scenario. and <code>limit</code> is the maximum number of times the CTR can be pressed to be executed.
+              Limit can be omitted which defaults to unlimited executions.</p>
               <p>
-                Example:<br />
+                Examples:<br />
                 <code>
-                        ```ctr:cluster01<br/>
-                        cat example.txt<br/>
-                        ```<br/>
-                      </code>
+                  ```ctr:cluster01<br/>
+                  cat example.txt<br/>
+                  ```<br/>
+                </code>
+                <br>
+                <code>
+                  ```ctr:cluster01<br/>
+                  echo This CTR has no limit<br/>
+                  ```<br/>
+                </code>
+                <code>
+                  ```ctr:cluster01:2<br/>
+                  echo This CTR limits to 2 clicks<br/>
+                  ```<br/>
+                </code>
               </p>
             </clr-stack-label>
           </clr-stack-block>
@@ -236,6 +248,25 @@
                         This is the hidden Text that opens and closes after a click on the summary<br/>
                         ```<br/>
                       </code>
+              </p>
+            </clr-stack-label>
+          </clr-stack-block>
+        </clr-stack-block>
+        <clr-stack-block>
+          <clr-stack-label>Glossary</clr-stack-label>
+          <clr-stack-content>
+          </clr-stack-content>
+          <clr-stack-block>
+            <clr-stack-label>
+              <p>To create a glossary element, pass the special language argument <code>glossary:&lt;name&gt;</code> to a markdown
+                code block. The text inside the code block will be displayed when a user hovers over the provided name</p>
+              <p>
+                Example:<br />
+                <code>
+                  ```glossary:Kubernetes<br/>
+                  Kubernetes, also known as K8s, is an open-source system for automating deployment, scaling, and management of containerized applications.<br/>
+                  ```<br/>
+                </code>
               </p>
             </clr-stack-label>
           </clr-stack-block>
