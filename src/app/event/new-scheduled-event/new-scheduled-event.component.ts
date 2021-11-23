@@ -259,26 +259,47 @@ export class NewScheduledEventComponent implements OnInit {
   public calculateRequiredVms() {
     this.requiredVmCounts = {}; // this will be map[string]int, where string is vm template and int is required count
     this.selectedscenarios.forEach((ss, i) => { // ss is selectedscenario, i is index
+      let vmCountPerTemplate = {} // this will be map[string]int, where string is vm template and int is required count for this scenario.
       ss.virtualmachines.forEach((vmset, j) => { // vmset is virtualmachineset, j is index
+        // 1. sum up count of vms needed for this scenario.
         Object.values(vmset).forEach((template: string, k) => { // tmeplate is vmtemplate name, k is index
-          if (this.requiredVmCounts[template]) {
-            this.requiredVmCounts[template]++;
+          if (vmCountPerTemplate[template]) {
+            vmCountPerTemplate[template]++;
           } else {
-            this.requiredVmCounts[template] = 1;
+            vmCountPerTemplate[template] = 1;
           }
         })
       })
+      // 2. Set the required VM count to the maximum count of VMs needed in one scenario.
+      for (let template in vmCountPerTemplate) {
+        if (this.requiredVmCounts[template]) {
+          this.requiredVmCounts[template] = Math.max(vmCountPerTemplate[template], this.requiredVmCounts[template]);
+        } else {
+          this.requiredVmCounts[template] = vmCountPerTemplate[template];
+        }
+    }
     })
     this.selectedcourses.forEach((sc, i) => { // sc is selected course, i is index
+      let vmCountPerTemplate = {}
       sc.virtualmachines.forEach((vmset, j) => { // vmset is virtualmachineset, j is index
+        // 1. sum up count of vms needed for this course.
         Object.values(vmset).forEach((template: string, k) => { // template is vmtemplate name, k is index
-          if (this.requiredVmCounts[template]) {
-            this.requiredVmCounts[template]++;
+          if (vmCountPerTemplate[template]) {
+            vmCountPerTemplate[template]++;
           } else {
-            this.requiredVmCounts[template] = 1;
+            vmCountPerTemplate[template] = 1;
           }
         })
       })
+
+      // 2. Set the required VM count to the maximum count of VMs needed
+      for (let template in vmCountPerTemplate) {
+        if (this.requiredVmCounts[template]) {
+          this.requiredVmCounts[template] = Math.max(vmCountPerTemplate[template], this.requiredVmCounts[template]);
+        } else {
+          this.requiredVmCounts[template] = vmCountPerTemplate[template];
+        }
+      }
     })
   }
 
