@@ -84,4 +84,15 @@ export class CourseService {
     return this.http.delete(environment.server + "/a/course/" + c.id)
   }
 
+  public listDynamicScenarios(categories: String[]){
+    var params = new HttpParams()
+    .set("categories", JSON.stringify(categories));
+    return this.http.post(environment.server + "/a/course/previewDynamicScenarios", params)
+    .pipe(
+      map((s: ServerResponse) => {
+        let obj: String[] = JSON.parse(atou(s.content));
+        return obj;
+      }
+    ));
+  }
 }

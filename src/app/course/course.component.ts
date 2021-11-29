@@ -39,6 +39,7 @@ export class CourseComponent implements OnInit {
 
   public scenarios: Scenario[] = [];
   public dragScenarios: Scenario[] = [];
+  public dynamicAddedScenarios: Scenario[] = [];
   public editVirtualMachines: {}[] = [];
   public editCategories: string[] = [];
 
@@ -144,6 +145,7 @@ export class CourseComponent implements OnInit {
     this.editCategories.forEach((element,index)=>{
       if(element==category) this.editCategories.splice(index,1);
     });
+    this.updateDynamicScenarios();
     this.setModified();
   }
 
@@ -158,7 +160,25 @@ export class CourseComponent implements OnInit {
     });
     this.newCategoryForm.reset();
     this.newCategory = false;
+    this.updateDynamicScenarios();
     this.setModified();
+  }
+
+  updateDynamicScenarios(){
+    this.dynamicAddedScenarios = [];
+    this.courseService.listDynamicScenarios(this.editCategories)
+    .subscribe(
+      (dynamicScenarios: String[]) => {
+        this.scenarios.forEach(scenario => {
+          if(dynamicScenarios.includes(scenario.id)){
+              this.dynamicAddedScenarios.push(scenario);
+          }
+        })
+      },
+      (e: HttpErrorResponse) => {
+        this.alertDanger('Error listing dynmamic scenarios: ' + e.error.message);
+      }
+    )
   }
 
   discardChanges() {
@@ -169,6 +189,7 @@ export class CourseComponent implements OnInit {
     this.editVirtualMachines = cloneDeep(this.selectedCourse.virtualmachines);
     this.editCategories = this.selectedCourse.categories;
     this.clearModified();
+    this.updateDynamicScenarios();
   }
 
   editCourse(c: Course) {
@@ -178,6 +199,7 @@ export class CourseComponent implements OnInit {
       this.dragScenarios = c.scenarios;
       this.editVirtualMachines = cloneDeep(c.virtualmachines);
       this.editCategories = c.categories;
+      this.updateDynamicScenarios();
     }
   }
 
