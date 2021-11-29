@@ -54,7 +54,7 @@ export class CourseService {
     .set("name", btoa(c.name))
     .set("description", btoa(c.description))
     .set("keepalive_duration", c.keepalive_duration)
-    .set("pause_duration", JSON.stringify(c.pause_duration))
+    .set("pause_duration", c.pause_duration)
     .set("pauseable", JSON.stringify(c.pauseable))
     .set("keep_vm", JSON.stringify(c.keep_vm))
     
@@ -70,7 +70,7 @@ export class CourseService {
     .set("name", btoa(c.name))
     .set("description", btoa(c.description))
     .set("keepalive_duration", c.keepalive_duration)
-    .set("pause_duration", JSON.stringify(c.pause_duration))
+    .set("pause_duration", c.pause_duration)
     .set("pauseable", JSON.stringify(c.pauseable))
     .set("virtualmachines", JSON.stringify(c.virtualmachines))
     .set("scenarios", JSON.stringify(scenarioArray))
