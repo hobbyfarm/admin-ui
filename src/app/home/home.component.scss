@@ -1,3 +1,17 @@
 span.bignum {
     font-size: 6em;
 }
+
+ul > li.selected{
+    background-color: #eaeaea;
+    font-weight: bold;
+    color: black;
+}
+
+ul.nav-list > li {
+    padding: 10px;
+}
+
+ul.nav-list > li:first-child {
+    margin-top: 5px;
+}

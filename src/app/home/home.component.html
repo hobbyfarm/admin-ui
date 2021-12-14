@@ -7,19 +7,38 @@
                 <input id="activeEventsToggle" type="checkbox" />
                 <label for="activeEventsToggle">Active Events</label>
                 <ul class="nav-list">
-                    <li><a class="nav-link">Link 1</a></li>
-                    <li><a class="nav-link">Link 2</a></li>
+                    <li *ngFor="let se of scheduledEvents" (click)="setScheduledEvent(se.id)" [ngClass]="{'selected' : selectedEvent == se.id}">
+                        {{se.event_name}}
+                    </li>
                 </ul>
                 <input id="accesCodesToggle" type="checkbox" />
                 <label for="accesCodesToggle">Access Codes</label>
             </section>
         </nav>
         <div class="content-area">
-            <clr-datagrid>
-            <clr-dg-row *clrDgItems="let us of userSessions" [clrDgItem]="us">
-                <clr-dg-cell>{{ us.scenario_id }}</clr-dg-cell>
-                <clr-dg-cell>{{ us.scheduledevent_id }}</clr-dg-cell>
-            </clr-dg-row>
-        </clr-datagrid>
+            <h3>Active Sessions</h3>
+            <div>
+                <clr-toggle-container>
+                    <clr-toggle-wrapper>
+                      <input type="checkbox" clrToggle name="includeFinished"  [(ngModel)]="includeFinished" (change)="refresh()">
+                      <label>Include Finished</label>
+                    </clr-toggle-wrapper>
+                    <clr-control-helper>Whether finished sessions should be included.</clr-control-helper>
+                </clr-toggle-container>
+            </div>
+            <div class="clr-row">
+                <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
+                    <div class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3" *ngFor="let p of filteredProgress">
+                        <progress-card [progress] = "p" ></progress-card>
+                    </div>
+                </ng-container>
+            </div>
+            <ng-template #no_sessions>
+                <div class="clr-col-12">
+                  <p>
+                    No sessions found.
+                  </p>
+                </div>
+              </ng-template>       
         </div>
     </div>

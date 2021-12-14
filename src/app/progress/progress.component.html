@@ -1,0 +1,24 @@
+<div class="card">
+    <div class="progress">
+        <progress class="{{getProgressColorClass()}}" [value]="getProgress() || 0" max="100"></progress>
+    </div>
+    
+    <div class="card-header">
+        {{ username }}
+    </div>
+    <div class="card-block">
+        <div class="card-text">
+            <div><clr-icon shape="play" solid></clr-icon> {{scenario}}</div>
+            <div *ngIf="progress.current_step > 0"><clr-icon shape="number-list"></clr-icon> {{ progress.current_step }} / {{ progress.total_step }}</div>
+            <div *ngIf="progress.current_step == 0"><clr-icon shape="number-list"></clr-icon> Not started yet</div>
+            <div *ngIf="!progress.finished" title="Since {{progress.started}}"><clr-icon shape="clock"></clr-icon> {{  timeSince(progress.started) }}</div>
+            <div *ngIf="progress.finished" title="{{progress.started}}-{{progress.last_update}}"><clr-icon shape="clock"></clr-icon> {{  timeSince(progress.started, progress.last_update) }}</div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button class="btn btn-outline" (click)="openInfo()" >Info</button>
+        <button class="btn btn-danger-outline" (click)="terminateSession()" [disabled]="progress.finished" >Terminate Session</button>
+    </div>
+</div>
+
+<!--<progress-info #progressInfo [steps]="progress.steps"></progress-info>-->

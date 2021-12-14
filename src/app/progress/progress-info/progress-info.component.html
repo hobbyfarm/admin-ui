@@ -1,0 +1,9 @@
+<clr-modal #infoModal [(clrModalOpen)]="infoOpen" [clrModalSize]="'lg'">
+    <h3 class="modal-title">Information about Session</h3>
+    <div class="modal-body">
+        <div>Testcontent</div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-danger-outline" (click)="infoOpen = false">Close</button>
+    </div>
+</clr-modal>
