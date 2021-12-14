@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { UserSessionService } from 'src/app/data/user_session.service';
+import { UserSession } from 'src/app/data/user_session';
 
 @Component({
   selector: 'app-home',
@@ -6,10 +8,18 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  public userSessions: UserSession[] = [];
 
-  constructor() { }
+  constructor(
+    public userSessionService: UserSessionService
+  ) { }
 
   ngOnInit() {
+    this.refresh();
+  }
+
+  refresh() {
+    this.userSessions = this.userSessionService.list()      
   }
 
 }

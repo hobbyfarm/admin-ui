@@ -1,14 +1,25 @@
 <div class="main-container">
     <header class="header header-7" app-header></header>
     <div class="content-container">
+
+        <nav class="sidenav">
+            <section class="nav-group collapsible">
+                <input id="activeEventsToggle" type="checkbox" />
+                <label for="activeEventsToggle">Active Events</label>
+                <ul class="nav-list">
+                    <li><a class="nav-link">Link 1</a></li>
+                    <li><a class="nav-link">Link 2</a></li>
+                </ul>
+                <input id="accesCodesToggle" type="checkbox" />
+                <label for="accesCodesToggle">Access Codes</label>
+            </section>
+        </nav>
         <div class="content-area">
-            <div class="clr-row">
-                <div class="clr-col">
-                    <p>
-                        Some day this will have a great dashboard!
-                    </p>
-                </div>
-            </div>
+            <clr-datagrid>
+            <clr-dg-row *clrDgItems="let us of userSessions" [clrDgItem]="us">
+                <clr-dg-cell>{{ us.scenario_id }}</clr-dg-cell>
+                <clr-dg-cell>{{ us.scheduledevent_id }}</clr-dg-cell>
+            </clr-dg-row>
+        </clr-datagrid>
         </div>
     </div>
-</div>
