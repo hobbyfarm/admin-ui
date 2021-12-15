@@ -21,6 +21,8 @@ export class HomeComponent implements OnInit {
   public callDelay: number = 10
 
   public scheduledEvents: ScheduledEvent[] = [];
+
+  public userFilter: string = "";
   
   constructor(
     public userService: UserService,
@@ -49,6 +51,14 @@ export class HomeComponent implements OnInit {
   setScheduledEvent(id: string){
     this.selectedEvent = id;
     this.refresh();
+  }
+
+  filter() {
+    if (this.userFilter != "") {
+      this.filteredProgress = this.currentProgress.filter(prog => prog.username.match(this.userFilter))
+    } else {
+      this.filteredProgress = this.currentProgress;
+    } 
   }
 
   refresh() {
@@ -90,7 +100,7 @@ export class HomeComponent implements OnInit {
               }
             )
           });
-          this.filteredProgress = p;
+          this.filter()
           console.log(p);
         }
       );   
