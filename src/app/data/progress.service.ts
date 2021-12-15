@@ -36,4 +36,13 @@ export class ProgressService {
             })
         )
   }
+
+  public count() {
+    return this.http.get(environment.server + "/a/progress/count")
+    .pipe(
+        map((s: ServerResponse) => {
+            return JSON.parse(atou(s.content));
+        })
+    )
+}
 }

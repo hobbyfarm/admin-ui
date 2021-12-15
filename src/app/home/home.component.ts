@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProgressService } from 'src/app/data/progress.service';
-import { Progress } from 'src/app/data/progress';
+import { Progress, ProgressCount } from 'src/app/data/progress';
 import { UserService } from '../data/user.service';
 import { ScheduledEvent } from '../data/scheduledevent';
 import { ScheduledeventService } from '../data/scheduledevent.service';
@@ -104,5 +104,15 @@ export class HomeComponent implements OnInit {
           console.log(p);
         }
       );   
+
+      this.progressService.count().subscribe(
+        (c: ProgressCount) => {
+          this.scheduledEvents.forEach(se => {
+            if(c[se.id]){
+              se.activeSessions = c[se.id];
+            }
+          })
+        }
+      )
   }
 }

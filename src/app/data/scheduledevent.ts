@@ -16,4 +16,5 @@ export class ScheduledEvent {
     access_code: string;
     disable_restriction: boolean;
     on_demand: boolean;
+    activeSessions: number;
 }

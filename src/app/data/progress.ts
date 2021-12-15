@@ -19,3 +19,7 @@ export class ProgressStep {
     step: number;
     timestamp: Date;
 }
+
+export class ProgressCount {
+    count_map: {}
+}

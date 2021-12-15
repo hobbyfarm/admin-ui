@@ -15,3 +15,11 @@ ul.nav-list > li {
 ul.nav-list > li:first-child {
     margin-top: 5px;
 }
+
+li .active-sessions-bubble{
+    float: right;
+    margin-right: 10px;
+    background-color: white;
+    padding: 0 10px;
+    border-radius: 100%;
+}
