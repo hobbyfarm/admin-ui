@@ -23,6 +23,8 @@ export class HomeComponent implements OnInit {
   public scheduledEvents: ScheduledEvent[] = [];
 
   public userFilter: string = "";
+  public scenarioList: Set<string> = new Set<string>();
+  public scenarioFilterList: Set<string> = new Set<string>();
   
   constructor(
     public userService: UserService,
@@ -58,7 +60,20 @@ export class HomeComponent implements OnInit {
       this.filteredProgress = this.currentProgress.filter(prog => prog.username.match(this.userFilter))
     } else {
       this.filteredProgress = this.currentProgress;
+    }
+    if (this.scenarioFilterList.size > 0) {
+      this.filteredProgress = this.filteredProgress.filter(prog => this.scenarioFilterList.has(prog.scenario_name))
     } 
+  }
+
+  filterScenario(scenario) {
+    this.scenarioFilterList.has(scenario) ? this.scenarioFilterList.delete(scenario) : this.scenarioFilterList.add(scenario);
+    this.filter()    
+  }
+
+  removeScenarioFilter() {
+    this.scenarioFilterList = new Set<string>();
+    this.filter()
   }
 
   refresh() {
@@ -80,7 +95,7 @@ export class HomeComponent implements OnInit {
           this.currentProgress = p;
           this.currentProgress.forEach(element => {
             element.username = "none"
-            element.scenario_name = "none"
+            element.scenario_name = "none"            
             this.userService.getUsers().subscribe(
               (users: User[]) => {
                   users.forEach(user => {
@@ -95,6 +110,7 @@ export class HomeComponent implements OnInit {
                   scenarios.forEach(s => {
                       if(s.id == element.scenario){
                           element.scenario_name = s.name
+                          this.scenarioList.add(s.name)
                       }
                   });
               }

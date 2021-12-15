@@ -18,9 +18,9 @@
         <div class="content-area">
             <h3>Active Sessions</h3>
             <div class="card clr-col-6">
-            <div class="clr-row">
-                <div class="clr-col-3">                  
-                    <clr-toggle-container>
+            <div class="clr-row clr-align-items-center">
+                <div class="clr-col">                  
+                    <clr-toggle-container id="includeFinishedToggle">
                         <clr-toggle-wrapper>
                           <input type="checkbox" clrToggle name="includeFinished"  [(ngModel)]="includeFinished" (change)="refresh()">
                           <label>Include Finished</label>
@@ -28,8 +28,23 @@
                         <clr-control-helper>Whether finished sessions should be included.</clr-control-helper>
                     </clr-toggle-container>                
                 </div>
-                <div class="clr-col-3">                   
+                <div class="clr-col ">                   
                     <input clrInput placeholder="filter users" name="userFilter" [(ngModel)]="userFilter" (change)="filter()"/>                
+                </div>
+                <div class="clr-col">
+                    <clr-dropdown>
+                        <button class="dropdown-toggle btn btn-link" clrDropdownTrigger>
+                          Filter scenario(s)
+                          <clr-icon shape="caret down"></clr-icon>
+                        </button>
+                        <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>                          
+                            <clr-row *ngFor="let sc of scenarioList" clrDropdownItem (click)="filterScenario(sc)">
+                                {{sc}}
+                                <clr-icon *ngIf="this.scenarioFilterList.has(sc)" shape="check" ></clr-icon>
+                            </clr-row>                            
+                        </clr-dropdown-menu>
+                      </clr-dropdown>
+                      <button class="btn btn-icon btn-warning" (click)="removeScenarioFilter()"><clr-icon shape="trash"></clr-icon></button> 
                 </div>            
             </div>
         </div>
@@ -46,6 +61,6 @@
                     No sessions found.
                   </p>
                 </div>
-              </ng-template>       
+              </ng-template>                     
         </div>
     </div>
