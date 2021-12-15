@@ -4,6 +4,9 @@ import { Progress } from 'src/app/data/progress';
 import { UserService } from '../data/user.service';
 import { ScheduledEvent } from '../data/scheduledevent';
 import { ScheduledeventService } from '../data/scheduledevent.service';
+import { User } from '../data/user';
+import { ScenarioService } from '../data/scenario.service';
+import { Scenario } from '../data/scenario';
 
 @Component({
   selector: 'app-home',
@@ -20,6 +23,8 @@ export class HomeComponent implements OnInit {
   public scheduledEvents: ScheduledEvent[] = [];
   
   constructor(
+    public userService: UserService,
+    public scenarioService: ScenarioService,
     public progressService: ProgressService,
     public scheduledeventService: ScheduledeventService,
   ) { }
@@ -63,6 +68,28 @@ export class HomeComponent implements OnInit {
             return 0;
           });
           this.currentProgress = p;
+          this.currentProgress.forEach(element => {
+            element.username = "none"
+            element.scenario_name = "none"
+            this.userService.getUsers().subscribe(
+              (users: User[]) => {
+                  users.forEach(user => {
+                      if(user.id == element.user){
+                          element.username = user.email
+                      }
+                  });
+              }
+            )
+            this.scenarioService.list().subscribe(
+              (scenarios: Scenario[]) => {
+                  scenarios.forEach(s => {
+                      if(s.id == element.scenario){
+                          element.scenario_name = s.name
+                      }
+                  });
+              }
+            )
+          });
           this.filteredProgress = p;
           console.log(p);
         }

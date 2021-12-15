@@ -11,6 +11,8 @@ export class Progress {
     last_update: Date;
     started: Date;
     steps: ProgressStep[];
+    username: string;
+    scenario_name: string;
 }
 
 export class ProgressStep {

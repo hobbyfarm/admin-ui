@@ -4,11 +4,11 @@
     </div>
     
     <div class="card-header">
-        {{ username }}
+        {{ progress.username }}
     </div>
     <div class="card-block">
         <div class="card-text">
-            <div><clr-icon shape="play" solid></clr-icon> {{scenario}}</div>
+            <div><clr-icon shape="play" solid></clr-icon> {{progress.scenario_name}}</div>
             <div *ngIf="progress.current_step > 0"><clr-icon shape="number-list"></clr-icon> {{ progress.current_step }} / {{ progress.total_step }}</div>
             <div *ngIf="progress.current_step == 0"><clr-icon shape="number-list"></clr-icon> Not started yet</div>
             <div *ngIf="!progress.finished" title="Since {{progress.started}}"><clr-icon shape="clock"></clr-icon> {{  timeSince(progress.started) }}</div>

@@ -2,11 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Progress } from '../data/progress';
-import { Scenario } from '../data/scenario';
-import { ScenarioService } from '../data/scenario.service';
 import { ServerResponse } from '../data/serverresponse';
-import { User } from '../data/user';
-import { UserService } from '../data/user.service';
 //import { ProgressInfoComponent } from './progress-info/progress-info.component';
 
 @Component({
@@ -16,25 +12,16 @@ import { UserService } from '../data/user.service';
 })
 
 
-export class ProgressComponent implements OnInit {
+export class ProgressComponent {
     @Input()
     public progress: Progress;
-    public username: string = "none";
-    public scenario: string = "none";
 
     //@ViewChild("progressInfo") progressInfo: ProgressInfoComponent;
     
   constructor(
-    public userService: UserService,
-    public scenarioService: ScenarioService,
     private http: HttpClient
   ) {
      
-  }
-
-  ngOnInit() {
-    this.getUsername();
-    this.getScenarioName();
   }
 
   public terminateSession(){
@@ -48,32 +35,6 @@ export class ProgressComponent implements OnInit {
 
   openInfo() {
     //this.progressInfo.open();
-  }
-
-  public getUsername(){
-      this.username = this.progress.user; //fallback to saved user id if user is unkown.
-      this.userService.getUsers().subscribe(
-          (users: User[]) => {
-              users.forEach(user => {
-                  if(user.id == this.progress.user){
-                      this.username = user.email
-                  }
-              });
-          }
-      )
-  }
-
-  public getScenarioName(){
-    this.scenario = this.progress.scenario; //fallback to saved scenario id if scenario is unkown.
-    this.scenarioService.list().subscribe(
-        (scenarios: Scenario[]) => {
-            scenarios.forEach(s => {
-                if(s.id == this.progress.scenario){
-                    this.scenario = s.name
-                }
-            });
-        }
-    )
   }
 
   public getProgress(){
