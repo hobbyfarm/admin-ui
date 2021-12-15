@@ -52,6 +52,7 @@ export class HomeComponent implements OnInit {
 
   setScheduledEvent(id: string){
     this.selectedEvent = id;
+    this.scenarioFilterList.clear()
     this.refresh();
   }
 
@@ -71,8 +72,9 @@ export class HomeComponent implements OnInit {
     this.filter()    
   }
 
-  removeScenarioFilter() {
-    this.scenarioFilterList = new Set<string>();
+  removeFilter() {
+    this.scenarioFilterList.clear()
+    this.userFilter = "";
     this.filter()
   }
 
@@ -80,7 +82,7 @@ export class HomeComponent implements OnInit {
     if(this.selectedEvent == ""){
       return
     }
-
+    this.scenarioList.clear()
     this.progressService.list(this.selectedEvent, this.includeFinished).subscribe(
       (p: Progress[]) =>
         {
