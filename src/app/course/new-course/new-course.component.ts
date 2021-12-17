@@ -49,7 +49,7 @@ export class NewCourseComponent implements OnInit {
     this.course.description = this.form.get('course_description').value;
     this.course.keepalive_duration = this.form.get('keepalive_amount').value +
       this.form.get('keepalive_unit').value;
-    this.course.pause_duration = this.form.get('pause_duration').value;
+    this.course.pause_duration = this.form.get('pause_duration').value + 'h';
     this.course.pauseable = this.form.get('pauseable').value;
     this.course.keep_vm = this.form.get('keep_vm').value;
 

@@ -208,7 +208,7 @@ export class CourseComponent implements OnInit {
     this.selectedCourse.description = this.editForm.get('course_description').value;
     this.selectedCourse.keepalive_duration = this.editForm.get('keepalive_amount').value +
       this.editForm.get('keepalive_unit').value;
-    this.selectedCourse.pause_duration = this.editForm.get('pause_duration').value;
+    this.selectedCourse.pause_duration = this.editForm.get('pause_duration').value + 'h';
     this.selectedCourse.pauseable = this.editForm.get('pauseable').value;
     this.selectedCourse.keep_vm = this.editForm.get('keep_vm').value;
     this.selectedCourse.categories = this.editCategories;

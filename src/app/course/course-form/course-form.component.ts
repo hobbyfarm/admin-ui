@@ -36,7 +36,7 @@ export class CourseFormComponent implements OnInit {
       this.courseDetails.patchValue({
         'course_name': this.course.name,
         'course_description': this.course.description,
-        'pause_duration': this.course.pause_duration
+        'pause_duration': this.course.pause_duration.slice(0, -1)
       })
 
       if (this.course.pauseable == undefined) {
