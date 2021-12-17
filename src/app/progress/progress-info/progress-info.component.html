@@ -1,9 +1,56 @@
-<clr-modal #infoModal [(clrModalOpen)]="infoOpen" [clrModalSize]="'lg'">
-    <h3 class="modal-title">Information about Session</h3>
+<clr-modal #infoModal [(clrModalOpen)]="open" [clrModalSize]="'lg'">
+    <h3 class="modal-title">Info about Session</h3>
     <div class="modal-body">
-        <div>Testcontent</div>
+        <h5>General Info</h5>
+        <table class="table table-compact">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Progress</td>
+                    <td>{{ progress.id }}</td>
+                </tr>
+                <tr>
+                    <td>Session</td>
+                    <td>{{ progress.session }}</td>
+                </tr>
+                <tr>
+                    <td>Last Update</td>
+                    <td>{{ progress.last_update }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h5>Step History</h5>
+        <table class="table table-compact">
+            <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Preperation</td>
+                    <td>{{ progress.steps[0].timestamp }}</td>
+                </tr>
+                <tr *ngFor="let item of progress.steps.slice(1)">
+                    <td>{{ item.step }}</td>
+                    <td>{{ item.timestamp }}</td>
+                </tr>
+                <tr *ngIf="progress.finished">
+                    <td>Finished</td>
+                    <td>{{ progress.last_update }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-danger-outline" (click)="infoOpen = false">Close</button>
+        <button class="btn btn-outline" (click)="open = false">Close</button>
     </div>
 </clr-modal>

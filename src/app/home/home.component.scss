@@ -24,6 +24,13 @@ li .active-sessions-bubble{
     border-radius: 100%;
 }
 
+.filter-selected{
+    float: right;
+    margin-left: 20px;
+    width: 10px;
+    height: 10px;
+}
+
 #includeFinishedToggle {
     margin-bottom: 1.2rem;
 }

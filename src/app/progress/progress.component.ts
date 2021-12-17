@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Progress } from '../data/progress';
 import { ServerResponse } from '../data/serverresponse';
-//import { ProgressInfoComponent } from './progress-info/progress-info.component';
+import { ProgressInfoComponent } from './progress-info/progress-info.component';
+import { timeSince } from '../utils';
 
 @Component({
   selector: 'progress-card',
@@ -16,7 +17,12 @@ export class ProgressComponent {
     @Input()
     public progress: Progress;
 
-    //@ViewChild("progressInfo") progressInfo: ProgressInfoComponent;
+    @Input()
+    public pause: Function;
+
+    public timeSince= timeSince;
+
+    @ViewChild("progressInfo") progressInfo: ProgressInfoComponent;
     
   constructor(
     private http: HttpClient
@@ -34,7 +40,7 @@ export class ProgressComponent {
   }
 
   openInfo() {
-    //this.progressInfo.open();
+    this.progressInfo.openModal();
   }
 
   public getProgress(){
@@ -42,6 +48,12 @@ export class ProgressComponent {
     if(this.progress.total_step == 0 || this.progress.current_step == 0){
         return 100;
     }
+    //if finished display the total step reached percentage
+    if(this.progress.finished){
+      return Math.floor((this.progress.max_step / this.progress.total_step ) * 100);
+    }
+
+    //if currently running display the current step percentage
     return Math.floor((this.progress.current_step / this.progress.total_step ) * 100);
   }
 
@@ -56,33 +68,5 @@ export class ProgressComponent {
         return "status-success";
     }
     return "status-running";
-  }
-
-  public timeSince(date: Date, end: Date = new Date()) {
-
-    var seconds: number = Math.floor((end.getTime() - date.getTime()) / 1000);
-  
-    var interval = seconds / 31536000;
-  
-    if (interval > 1) {
-      return Math.floor(interval) + " year(s)";
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      return Math.floor(interval) + " month(s)";
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      return Math.floor(interval) + " day(s)";
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      return Math.floor(interval) + " hour(s)";
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      return Math.floor(interval) + " minute(s)";
-    }
-    return Math.floor(seconds) + " second(s)";
   }
 }

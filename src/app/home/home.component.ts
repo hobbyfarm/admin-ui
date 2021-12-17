@@ -18,7 +18,15 @@ export class HomeComponent implements OnInit {
   public selectedEvent: string = "";
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
+
   public callDelay: number = 10
+  public pauseCall: boolean = false; // Stop refreshing if we are looking at a progress
+  public pause = (pause: boolean) => {
+    this.pauseCall = pause;
+    if(!pause){
+      this.refresh(); //refresh if unpaused
+    }
+  }
 
   public scheduledEvents: ScheduledEvent[] = [];
 
@@ -48,6 +56,7 @@ export class HomeComponent implements OnInit {
           }
         }
      )
+     console.log("init");
   }
 
   setScheduledEvent(id: string){
@@ -79,10 +88,12 @@ export class HomeComponent implements OnInit {
   }
 
   refresh() {
+    if(this.pauseCall){
+      return;
+    }
     if(this.selectedEvent == ""){
       return
     }
-    this.scenarioList.clear()
     this.progressService.list(this.selectedEvent, this.includeFinished).subscribe(
       (p: Progress[]) =>
         {
@@ -95,6 +106,7 @@ export class HomeComponent implements OnInit {
             return 0;
           });
           this.currentProgress = p;
+          this.scenarioList.clear();
           this.currentProgress.forEach(element => {
             element.username = "none"
             element.scenario_name = "none"            
@@ -119,7 +131,6 @@ export class HomeComponent implements OnInit {
             )
           });
           this.filter()
-          console.log(p);
         }
       );   
 

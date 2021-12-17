@@ -23,16 +23,16 @@
                     <clr-toggle-container id="includeFinishedToggle">
                         <clr-toggle-wrapper>
                           <input type="checkbox" clrToggle name="includeFinished"  [(ngModel)]="includeFinished" (change)="refresh()">
-                          <label>Include Finished</label>
+                          <label>Include finished</label>
                         </clr-toggle-wrapper>
                         <clr-control-helper>Whether finished sessions should be included.</clr-control-helper>
                     </clr-toggle-container>                
                 </div>
                 <div class="clr-col ">                   
-                    <input clrInput placeholder="filter users" name="userFilter" [(ngModel)]="userFilter" (ngModelChange)="filter()"/>                
+                    <input clrInput placeholder="filter users" name="userFilter" [(ngModel)]="userFilter" (ngModelChange)="filter()" [disabled] = "filteredProgress.length == 0"/>                
                 </div>
                 <div class="clr-col">
-                    <clr-dropdown>
+                    <clr-dropdown [clrDisabled] = "scenarioList.size == 0">
                         <button class="dropdown-toggle btn btn-link" clrDropdownTrigger>
                           Filter scenario(s)
                           <clr-icon shape="caret down"></clr-icon>
@@ -40,7 +40,10 @@
                         <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>                          
                             <clr-row *ngFor="let sc of scenarioList" clrDropdownItem (click)="filterScenario(sc)">
                                 {{sc}}
-                                <clr-icon *ngIf="this.scenarioFilterList.has(sc)" shape="check" ></clr-icon>
+                                <span class="filter-selected" >
+                                    <clr-icon *ngIf="this.scenarioFilterList.has(sc)" shape="check" ></clr-icon>
+                                </span>
+                                
                             </clr-row>                            
                         </clr-dropdown-menu>
                       </clr-dropdown>
@@ -51,7 +54,7 @@
             <div class="clr-row">
                 <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
                     <div class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3" *ngFor="let p of filteredProgress">
-                        <progress-card [progress] = "p" ></progress-card>
+                        <progress-card [progress] = "p" [pause] = "pause" ></progress-card>
                     </div>
                 </ng-container>
             </div>

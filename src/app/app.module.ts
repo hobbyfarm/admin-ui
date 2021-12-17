@@ -44,6 +44,7 @@ import { VmtemplatesComponent } from './configuration/vmtemplates/vmtemplates.co
 import { EditVmtemplateComponent } from './configuration/vmtemplates/edit-vmtemplate/edit-vmtemplate.component';
 import { AppConfigService } from './app-config.service';
 import { ProgressComponent } from './progress/progress.component';
+import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -95,6 +96,7 @@ export function jwtOptionsFactory() {
     PrintableComponent,
     VmtemplatesComponent,
     EditVmtemplateComponent,
+    ProgressInfoComponent,
     ProgressComponent,
   ],
   imports: [
