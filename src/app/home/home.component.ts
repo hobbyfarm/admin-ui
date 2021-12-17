@@ -7,6 +7,8 @@ import { ScheduledeventService } from '../data/scheduledevent.service';
 import { User } from '../data/user';
 import { ScenarioService } from '../data/scenario.service';
 import { Scenario } from '../data/scenario';
+import { Course } from '../data/course';
+import { CourseService } from '../data/course.service';
 
 @Component({
   selector: 'app-home',
@@ -37,6 +39,7 @@ export class HomeComponent implements OnInit {
   constructor(
     public userService: UserService,
     public scenarioService: ScenarioService,
+    public courseService: CourseService,
     public progressService: ProgressService,
     public scheduledeventService: ScheduledeventService,
   ) { }
@@ -47,6 +50,11 @@ export class HomeComponent implements OnInit {
       this.refresh();
      } , this.callDelay * 1000);
 
+      //Fill cache
+      this.courseService.list().subscribe();
+      this.userService.getUsers().subscribe();
+      this.scenarioService.list().subscribe();
+
      this.scheduledeventService.list().subscribe(
         (s: ScheduledEvent[]) => {
           this.scheduledEvents = s;
@@ -56,7 +64,8 @@ export class HomeComponent implements OnInit {
           }
         }
      )
-     console.log("init");
+
+
   }
 
   setScheduledEvent(id: string){
@@ -129,6 +138,17 @@ export class HomeComponent implements OnInit {
                   });
               }
             )
+            if(element.course && element.course != ""){
+              this.courseService.list().subscribe(
+                (courses: Course[]) => {
+                    courses.forEach(c => {
+                        if(c.id == element.course){
+                            element.course_name = c.name
+                        }
+                    });
+                }
+              )
+            }
           });
           this.filter()
         }
@@ -139,6 +159,8 @@ export class HomeComponent implements OnInit {
           this.scheduledEvents.forEach(se => {
             if(c[se.id]){
               se.activeSessions = c[se.id];
+            }else{
+              se.activeSessions = 0;
             }
           })
         }

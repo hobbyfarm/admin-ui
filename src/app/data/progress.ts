@@ -13,6 +13,7 @@ export class Progress {
     steps: ProgressStep[];
     username: string;
     scenario_name: string;
+    course_name: string;
 }
 
 export class ProgressStep {

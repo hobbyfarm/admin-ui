@@ -12,6 +12,18 @@
             </thead>
             <tbody>
                 <tr>
+                    <td>Scenario</td>
+                    <td>{{ progress.scenario }}</td>
+                </tr>
+                <tr *ngIf="progress.course">
+                    <td>Course</td>
+                    <td>{{ progress.course }}</td>
+                </tr>
+                <tr>
+                    <td>User</td>
+                    <td>{{ progress.user }}</td>
+                </tr>
+                <tr>
                     <td>Progress</td>
                     <td>{{ progress.id }}</td>
                 </tr>

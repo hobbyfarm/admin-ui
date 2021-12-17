@@ -8,7 +8,7 @@
                 <label for="activeEventsToggle">Active Events</label>
                 <ul class="nav-list">
                     <li *ngFor="let se of scheduledEvents" (click)="setScheduledEvent(se.id)" [ngClass]="{'selected' : selectedEvent == se.id}">
-                        {{se.event_name}} <span *ngIf="se.activeSessions != undefined" class="active-sessions-bubble">{{se.activeSessions}}</span>
+                        {{se.event_name}} <span *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble">{{se.activeSessions}}</span>
                     </li>
                 </ul>
                 <input id="accesCodesToggle" type="checkbox" />
