@@ -32,13 +32,13 @@
                     <input clrInput placeholder="filter users" name="userFilter" [(ngModel)]="userFilter" (ngModelChange)="filter()" [disabled] = "filteredProgress.length == 0"/>                
                 </div>
                 <div class="clr-col">
-                    <clr-dropdown [clrDisabled] = "scenarioList.size == 0">
-                        <button class="dropdown-toggle btn btn-link" clrDropdownTrigger>
+                    <clr-dropdown >
+                        <button class="dropdown-toggle btn btn-link" clrDropdownTrigger [disabled] = "scenarioList.size < 2">
                           Filter scenario(s)
                           <clr-icon shape="caret down"></clr-icon>
                         </button>
                         <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>                          
-                            <clr-row *ngFor="let sc of scenarioList" clrDropdownItem (click)="filterScenario(sc)">
+                            <clr-row *ngFor="let sc of scenarioList" clrDropdownItem (click)="filterScenario(sc)" [ngClass]="{'selected' : this.scenarioFilterList.has(sc)}">
                                 {{sc}}
                                 <span class="filter-selected" >
                                     <clr-icon *ngIf="this.scenarioFilterList.has(sc)" shape="check" ></clr-icon>
