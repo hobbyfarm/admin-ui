@@ -7,6 +7,8 @@ export class Scenario {
     stepcount: number;
     virtualmachines: {}[];
     steps: Step[];
+    categories: string[];
+    tags: string[];
     keepalive_duration: string;
     pause_duration: string;
 }
