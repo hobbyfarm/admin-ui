@@ -80,8 +80,13 @@ svg circle {
 @keyframes countdown {
     from {
       stroke-dashoffset: 0px;
+      stroke: green;
+    }
+    40% {
+       stroke: orange; 
     }
     to {
       stroke-dashoffset: 113px;
+      stroke: red;
     }
   }
