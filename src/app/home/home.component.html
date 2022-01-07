@@ -7,30 +7,28 @@
                 <input id="activeEventsToggle" type="checkbox" />
                 <label for="activeEventsToggle">Active Events</label>
                 <ul class="nav-list">
-                    <li *ngFor="let se of activeEvents" (click)="setScheduledEvent(se.id)" [ngClass]="{'selected' : selectedEvent == se.id}">
+                    <li *ngFor="let se of activeEvents" (click)="setScheduledEvent(se)" [ngClass]="{'selected' : selectedEvent == se}">
                         {{se.event_name}} <span *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble">{{se.activeSessions}}</span>
                     </li>
                 </ul>
                 <input id="finishedEventsToggle" type="checkbox" checked="!checked" />
                 <label for="finishedEventsToggle">Finished Events</label>
                 <ul class="nav-list">
-                    <li *ngFor="let se of finishedEvents" (click)="setScheduledEvent(se.id)" [ngClass]="{'selected' : selectedEvent == se.id}">
+                    <li *ngFor="let se of finishedEvents" (click)="setScheduledEvent(se)" [ngClass]="{'selected' : selectedEvent == se}">
                         {{se.event_name}} <span *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble">{{se.activeSessions}}</span>
                     </li>
                 </ul>
-                <input id="accesCodesToggle" type="checkbox" />
-                <label for="accesCodesToggle">Access Codes</label>
             </section>
         </nav>
         <div class="content-area">
-            <h3>Active Sessions</h3>
+            <h3>Active Sessions for {{selectedEvent?.event_name}}</h3>
             <div class="clr-row clr-align-items-center clr-justify-content-between">
             <div class="card clr-col-9">
                 <div class="clr-row clr-align-items-center">
                     <div class="clr-col">                  
                         <clr-toggle-container id="includeFinishedToggle">
                             <clr-toggle-wrapper>
-                            <input type="checkbox" clrToggle name="includeFinished"  [(ngModel)]="includeFinished" (change)="refresh()">
+                            <input type="checkbox" clrToggle name="includeFinished" [disabled] = "selectedEvent?.finished" [(ngModel)]="includeFinished" (change)="refresh()">
                             <label>Include finished</label>
                             </clr-toggle-wrapper>
                             <clr-control-helper>Whether finished sessions should be included.</clr-control-helper>

@@ -17,7 +17,7 @@ import { CourseService } from '../data/course.service';
 })
 export class HomeComponent implements OnInit {
   public includeFinished: boolean = false;
-  public selectedEvent: string = "";
+  public selectedEvent: ScheduledEvent;
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
   public callInterval: any;
@@ -66,7 +66,7 @@ export class HomeComponent implements OnInit {
           this.activeEvents = s.filter(se => !se.finished);
           this.finishedEvents = s.filter(se => se.finished);
           if(s.length > 0){
-            this.selectedEvent = s[0].id;
+            this.selectedEvent = s[0];
             this.refresh();
           }
         }
@@ -102,8 +102,8 @@ export class HomeComponent implements OnInit {
     this.refresh(); //also refresh when call delay has changed
   }
 
-  setScheduledEvent(id: string){
-    this.selectedEvent = id;
+  setScheduledEvent(ev: ScheduledEvent){
+    this.selectedEvent = ev;
     this.scenarioFilterList.clear()
     this.refresh();
   }  
@@ -134,10 +134,10 @@ export class HomeComponent implements OnInit {
     if(this.pauseCall){
       return;
     }
-    if(this.selectedEvent == ""){
+    if(!this.selectedEvent){
       return
     }
-    this.progressService.list(this.selectedEvent, this.includeFinished).subscribe(
+    this.progressService.list(this.selectedEvent.id, this.selectedEvent?.finished ? true : this.includeFinished).subscribe(
       (p: Progress[]) =>
         {
           p.sort(function(a, b) {
