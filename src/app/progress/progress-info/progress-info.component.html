@@ -49,15 +49,15 @@
             <tbody>
                 <tr>
                     <td>Preperation</td>
-                    <td>{{ progress.steps[0].timestamp }}</td>
+                    <td>{{ progress.steps[0].timestamp | date:'MMMM d, y, HH:mm:ss z'}}</td>
                 </tr>
                 <tr *ngFor="let item of progress.steps.slice(1)">
                     <td>{{ item.step }}</td>
-                    <td>{{ item.timestamp }}</td>
+                    <td>{{ item.timestamp | date:'MMMM d, y, HH:mm:ss z'}}</td>
                 </tr>
                 <tr *ngIf="progress.finished">
                     <td>Finished</td>
-                    <td>{{ progress.last_update }}</td>
+                    <td>{{ progress.last_update | date:'MMMM d, y, HH:mm:ss z'}}</td>
                 </tr>
             </tbody>
         </table>
