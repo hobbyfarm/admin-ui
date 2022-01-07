@@ -3,7 +3,7 @@
         <progress class="{{getProgressColorClass()}}" [value]="getProgress() || 0" max="100"></progress>
     </div>
     
-    <div class="card-header">
+    <div class="card-header" (click)="progressFilterName()">
         {{ progress.username }}
     </div>
     <div class="card-block">
