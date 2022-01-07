@@ -79,7 +79,7 @@
             <div class="clr-row">
                 <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
                     <div class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3" *ngFor="let p of filteredProgress">
-                        <progress-card [progress] = "p" [pause] = "pause" ></progress-card>
+                        <progress-card [progress] = "p" [pause] = "pause" (nameClickedEvent)="filterName($event)"></progress-card>
                     </div>
                 </ng-container>
             </div>

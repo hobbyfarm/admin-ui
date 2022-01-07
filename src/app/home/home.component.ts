@@ -130,6 +130,11 @@ export class HomeComponent implements OnInit {
     this.filter()
   }
 
+  filterName(name) {
+    this.userFilter = name;
+    this.filter()
+  }
+
   refresh() {    
     if(this.pauseCall){
       return;

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Progress } from '../data/progress';
 import { ServerResponse } from '../data/serverresponse';
@@ -19,6 +19,8 @@ export class ProgressComponent {
 
     @Input()
     public pause: Function;
+
+    @Output() nameClickedEvent = new EventEmitter<string>();   
 
     public timeSince= timeSince;
 
@@ -41,6 +43,10 @@ export class ProgressComponent {
 
   openInfo() {
     this.progressInfo.openModal();
+  }
+  
+  public progressFilterName() {
+    this.nameClickedEvent.emit(this.progress.username)
   }
 
   public getProgress(){
