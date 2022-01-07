@@ -110,7 +110,14 @@ export class HomeComponent implements OnInit {
 
   filter() {
     if (this.userFilter != "") {
-      this.filteredProgress = this.currentProgress.filter(prog => prog.username.match(this.userFilter))
+      try {
+        this.filteredProgress = this.currentProgress.filter(prog => prog.username.match(this.userFilter))
+      }
+      catch (err) {
+        if (!(err instanceof SyntaxError)) {
+          console.log(err)
+        }
+      }
     } else {
       this.filteredProgress = this.currentProgress;
     }
