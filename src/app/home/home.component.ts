@@ -20,8 +20,11 @@ export class HomeComponent implements OnInit {
   public selectedEvent: string = "";
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
+  public callInterval: any;
+  public circleVisible: boolean = true; 
 
-  public callDelay: number = 10
+  public callDelay: number = 10;
+  public callDelayOptions: number[] = [10, 30, 60, 120, 300];
   public pauseCall: boolean = false; // Stop refreshing if we are looking at a progress
   public pause = (pause: boolean) => {
     this.pauseCall = pause;
@@ -46,7 +49,7 @@ export class HomeComponent implements OnInit {
 
 
   ngOnInit() {
-    setInterval(() => {
+    this.callInterval = setInterval(() => {
       this.refresh();
      } , this.callDelay * 1000);
 
@@ -68,11 +71,37 @@ export class HomeComponent implements OnInit {
 
   }
 
+  changeCallDelay() {
+    var index = this.callDelayOptions.indexOf(this.callDelay);  
+    if (index < this.callDelayOptions.length - 1) {
+      this. callDelay = this.callDelayOptions[index + 1];
+    } else {
+      this.callDelay = this.callDelayOptions[0];
+    }        
+  
+    clearInterval(this.callInterval);
+    this.callInterval = setInterval(() => {
+      this.refresh();
+     } , this.callDelay * 1000);
+
+    //Reload the Circle to refresh the Animation
+    this.circleVisible = false;
+    setTimeout(() => {      
+      this.circleVisible = true;           
+    },0);
+
+    setTimeout(() => {
+      var circle = document.getElementById('countdownCircle');
+      circle.style.animationDuration = this.callDelay+'s';
+    },0);
+    
+  }
+
   setScheduledEvent(id: string){
     this.selectedEvent = id;
     this.scenarioFilterList.clear()
     this.refresh();
-  }
+  }  
 
   filter() {
     if (this.userFilter != "") {
@@ -96,7 +125,7 @@ export class HomeComponent implements OnInit {
     this.filter()
   }
 
-  refresh() {
+  refresh() {    
     if(this.pauseCall){
       return;
     }

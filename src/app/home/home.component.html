@@ -17,6 +17,7 @@
         </nav>
         <div class="content-area">
             <h3>Active Sessions</h3>
+            <div class="clr-row clr-align-items-center clr-justify-content-between">
             <div class="card clr-col-6">
             <div class="clr-row clr-align-items-center">
                 <div class="clr-col">                  
@@ -29,7 +30,7 @@
                     </clr-toggle-container>                
                 </div>
                 <div class="clr-col ">                   
-                    <input clrInput placeholder="filter users" name="userFilter" [(ngModel)]="userFilter" (ngModelChange)="filter()" [disabled] = "filteredProgress.length == 0"/>                
+                    <input clrInput placeholder="filter users" name="userFilter" [(ngModel)]="userFilter" (ngModelChange)="filter()" [disabled] = "filteredProgress.length == 0 && userFilter.length == 0"/>                
                 </div>
                 <div class="clr-col">
                     <clr-dropdown >
@@ -49,8 +50,25 @@
                       </clr-dropdown>
                       <button class="btn btn-icon btn-warning" (click)="removeFilter()"><clr-icon shape="trash"></clr-icon></button> 
                 </div>            
+            </div>            
+        </div>
+        <div class="clr-col-6">
+            <div class="clr-row clr-align-items-center clr-justify-content-around">
+                <p class="clr-col-3">Showing {{filteredProgress.length}}/{{currentProgress.length}}</p>
+                <div class="clr-col-3">
+                <div id="countdown" (click)="changeCallDelay()">
+                    <div id="countdown-number">{{callDelay}}</div>
+                    <svg>
+                        <circle *ngIf="circleVisible" id="countdownCircle" r="18" cx="20" cy="20"></circle>
+                    </svg>
+                </div>
+            </div>
+            
             </div>
         </div>
+        
+        
+    </div>
             <div class="clr-row">
                 <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
                     <div class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3" *ngFor="let p of filteredProgress">
