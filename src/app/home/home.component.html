@@ -7,7 +7,14 @@
                 <input id="activeEventsToggle" type="checkbox" />
                 <label for="activeEventsToggle">Active Events</label>
                 <ul class="nav-list">
-                    <li *ngFor="let se of scheduledEvents" (click)="setScheduledEvent(se.id)" [ngClass]="{'selected' : selectedEvent == se.id}">
+                    <li *ngFor="let se of activeEvents" (click)="setScheduledEvent(se.id)" [ngClass]="{'selected' : selectedEvent == se.id}">
+                        {{se.event_name}} <span *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble">{{se.activeSessions}}</span>
+                    </li>
+                </ul>
+                <input id="finishedEventsToggle" type="checkbox" checked="!checked" />
+                <label for="finishedEventsToggle">Finished Events</label>
+                <ul class="nav-list">
+                    <li *ngFor="let se of finishedEvents" (click)="setScheduledEvent(se.id)" [ngClass]="{'selected' : selectedEvent == se.id}">
                         {{se.event_name}} <span *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble">{{se.activeSessions}}</span>
                     </li>
                 </ul>
