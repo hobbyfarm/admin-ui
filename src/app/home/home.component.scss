@@ -2,6 +2,11 @@ span.bignum {
     font-size: 6em;
 }
 
+span.access-code{
+  user-select: all;
+  cursor: pointer;
+}
+
 ul > li.selected{
     background-color: #eaeaea;
     font-weight: bold;

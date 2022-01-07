@@ -22,6 +22,7 @@
         </nav>
         <div class="content-area">
             <h3>Active Sessions for {{selectedEvent?.event_name}}</h3>
+            <span class="additional-info">AC: <span class="access-code">{{selectedEvent?.access_code}}</span> &#8226; Until {{selectedEvent?.end_time | date:'MMM d, y, HH:mm'}}</span>
             <div class="clr-row clr-align-items-center clr-justify-content-between">
             <div class="card clr-col-9">
                 <div class="clr-row clr-align-items-center">
