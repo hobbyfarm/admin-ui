@@ -34,6 +34,8 @@ export class HomeComponent implements OnInit {
   }
 
   public scheduledEvents: ScheduledEvent[] = [];
+  public activeEvents: ScheduledEvent[] = [];
+  public finishedEvents: ScheduledEvent[] = [];
 
   public userFilter: string = "";
   public scenarioList: Set<string> = new Set<string>();
@@ -59,8 +61,10 @@ export class HomeComponent implements OnInit {
       this.scenarioService.list().subscribe();
 
      this.scheduledeventService.list().subscribe(
-        (s: ScheduledEvent[]) => {
+        (s: ScheduledEvent[]) => {          
           this.scheduledEvents = s;
+          this.activeEvents = s.filter(se => !se.finished);
+          this.finishedEvents = s.filter(se => se.finished);
           if(s.length > 0){
             this.selectedEvent = s[0].id;
             this.refresh();
