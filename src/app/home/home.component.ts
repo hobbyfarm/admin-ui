@@ -95,6 +95,7 @@ export class HomeComponent implements OnInit {
       circle.style.animationDuration = this.callDelay+'s';
     },0);
     
+    this.refresh(); //also refresh when call delay has changed
   }
 
   setScheduledEvent(id: string){
