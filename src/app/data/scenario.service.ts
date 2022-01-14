@@ -52,6 +52,8 @@ export class ScenarioService {
         sList.forEach((s: Scenario) => {
           s.name = atou(s.name);
           s.description = atou(s.description);
+          s.categories = s.categories ?? [];
+          s.tags = s.tags ?? [];
         });
         return sList;
       })
@@ -72,6 +74,8 @@ export class ScenarioService {
           st.content = atou(st.content);
           st.title = atou(st.title);
         });
+        s.categories = s.categories ?? [];
+        s.tags = s.tags ?? [];
         return s;
       })
     )
@@ -89,6 +93,8 @@ export class ScenarioService {
     .set("name", utoa(s.name))
     .set("description", utoa(s.description))
     .set("steps", JSON.stringify(s.steps))
+    .set("categories", JSON.stringify(s.categories))
+    .set("tags", JSON.stringify(s.tags))
     .set("virtualmachines", JSON.stringify(s.virtualmachines))
     .set("pause_duration", s.pause_duration)
     .set("keepalive_duration", s.keepalive_duration);
