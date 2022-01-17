@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpParameterCodec } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Scenario } from './scenario';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
 import { atou, utoa } from '../unicode';
+import { BehaviorSubject, of } from 'rxjs';
 
 class CustomEncoder implements HttpParameterCodec {
   encodeKey(key: string): string {
@@ -30,34 +31,49 @@ class CustomEncoder implements HttpParameterCodec {
   providedIn: 'root'
 })
 export class ScenarioService {
+  private cachedScenarioList: Scenario[] = []
+  private fetchedList = false;
 
   constructor(
     public http: HttpClient
   ) { }
 
-  public list() {
-    return this.http.get(environment.server + "/a/scenario/list")
-    .pipe(
-      map((s: ServerResponse) => {
-        let obj: Scenario[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
-        // so now we need to go vmset-by-vmset and build maps
-        obj.forEach((s: Scenario) => {
-          s.virtualmachines.forEach((v: Object) => {
-            v = new Map(Object.entries(v))
-          })
-        });
-        return obj;
-      }),
-      map((sList: Scenario[]) => {
-        sList.forEach((s: Scenario) => {
-          s.name = atou(s.name);
-          s.description = atou(s.description);
-          s.categories = s.categories ?? [];
-          s.tags = s.tags ?? [];
-        });
-        return sList;
-      })
-    )
+  public list(force=false) {
+    if (!force && this.fetchedList)  {
+      return of(this.cachedScenarioList);
+    }else {
+      return this.http.get(environment.server + "/a/scenario/list")
+      .pipe(
+        map((s: ServerResponse) => {
+          let obj: Scenario[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
+          // so now we need to go vmset-by-vmset and build maps
+          obj.forEach((s: Scenario) => {
+            s.virtualmachines.forEach((v: Object) => {
+              v = new Map(Object.entries(v))
+            })
+          });
+          return obj;
+        }),
+        map((sList: Scenario[]) => {
+          sList.forEach((s: Scenario) => {
+            s.name = atou(s.name);
+            s.description = atou(s.description);
+            s.categories = s.categories ?? [];
+            s.tags = s.tags ?? [];
+          });
+          return sList;
+        }),
+        tap((s: Scenario[]) => {
+          this.set(s);
+          }
+        )
+      )
+    }
+  }
+
+  public set(list: Scenario[]){
+    this.cachedScenarioList = list;
+    this.fetchedList = true;
   }
 
   public get(id: string) {

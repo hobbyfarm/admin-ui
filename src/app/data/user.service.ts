@@ -1,32 +1,46 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { User } from './user';
 import { environment } from 'src/environments/environment';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, tap } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
-import { Observable, of, throwError } from 'rxjs';
-import { parseTemplate } from '@angular/compiler';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { atou } from '../unicode';
+import { User } from './user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+  private cachedUserList: User[] = []
+  private fetchedList = false;
 
   constructor(
     public http: HttpClient
   ) { }
 
-  public getUsers() {
-    return this.http.get(environment.server + "/a/user/list")
-    .pipe(
-      switchMap((s: ServerResponse) => {
-        return of(JSON.parse(atou(s.content)));
-      }),
-      catchError((e: HttpErrorResponse) => {
-        return throwError(e.error);
-      })
-    )
+  public getUsers(force : boolean = false) {
+    if (!force && this.fetchedList)  {
+      return of(this.cachedUserList);
+    } else{
+      return this.http.get(environment.server + "/a/user/list")
+      .pipe(
+        switchMap((s: ServerResponse) => {
+          return of(JSON.parse(atou(s.content)));
+        }),
+        tap((u: User[]) => {
+          this.set(u);
+          }
+        ),
+        catchError((e: HttpErrorResponse) => {
+          return throwError(e.error);
+        })
+      )
+    }
+  }
+
+  public set(list: User[]){
+    this.cachedUserList = list;
+    this.fetchedList = true;
   }
 
   public saveUser(id: string, email: string = "", password: string = "", admin: boolean = null, accesscodes: string[] = null)  {

@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { Scenario } from 'src/app/data/scenario';
 import { ClrModal } from '@clr/angular';
-import { ScenarioService } from 'src/app/data/scenario.service';
 
 @Component({
   selector: 'add-scenario',
