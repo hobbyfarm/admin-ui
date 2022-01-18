@@ -88,7 +88,8 @@ export class NewScheduledEventComponent implements OnInit {
       this.uniqueAccessCode()
     ]),
     'restricted_bind': new FormControl(true),
-    'on_demand': new FormControl(false)
+    'on_demand': new FormControl(false),
+    'printable': new FormControl(false)
   })
 
   public vmCounts: FormGroup = new FormGroup({});
@@ -103,6 +104,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.se.access_code = this.eventDetails.get('access_code').value;
     this.se.disable_restriction = !this.eventDetails.get("restricted_bind").value; // opposite, since restricted_bind: enabled really means disable_restriction: false
     this.se.on_demand = this.eventDetails.get("on_demand").value;
+    this.se.printable = this.eventDetails.get("printable").value;
   }
 
   public uniqueAccessCode(): ValidatorFn {
@@ -322,6 +324,7 @@ export class NewScheduledEventComponent implements OnInit {
         'access_code': this.se.access_code,
         'restricted_bind': !this.se.disable_restriction,  // opposite, since restricted_bind: enabled really means disable_restriction: false
         'on_demand': this.se.on_demand,
+        'printable': this.se.printable,
       });
 
       // auto-select the environments
@@ -579,6 +582,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.eventDetails.reset({
       'restricted_bind': true,
       'on_demand': true,
+      'printable': false,
     });
     this.se.required_vms = new Map();
     this.selectedEnvironments = [];
