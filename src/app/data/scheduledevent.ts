@@ -17,4 +17,5 @@ export class ScheduledEvent {
     disable_restriction: boolean;
     on_demand: boolean;
     printable: boolean;
+    activeSessions: number;
 }
