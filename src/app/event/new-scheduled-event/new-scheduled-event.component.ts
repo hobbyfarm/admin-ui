@@ -224,7 +224,7 @@ export class NewScheduledEventComponent implements OnInit {
       this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
         // for each template, get the count.
         this.getTemplates(ea.environment).forEach((template: string) => {
-          var val = this.vmCounts.get(ea.environment).get(template).value;
+          var val = this.vmCounts.get(ea.environment)?.get(template)?.value ?? 0;
           if (val != 0) { // only map vm counts that are not 0 (instead of using >0 so that -1 is allowable)
             if (!this.se.required_vms[ea.environment]) { this.se.required_vms[ea.environment] = {}; }
             this.se.required_vms[ea.environment][template] = val;
@@ -317,6 +317,7 @@ export class NewScheduledEventComponent implements OnInit {
 
   ngOnChanges() {
     if (this.event) {
+      this.simpleMode = false;
       this.se = this.event;
       this.eventDetails.setValue({
         'event_name': this.se.event_name,
@@ -354,6 +355,10 @@ export class NewScheduledEventComponent implements OnInit {
           )
         }
       )
+      this.checkEnvironments();
+
+      this.wizard.navService.goTo(this.wizard.pages.last, true);
+      this.wizard.pages.first.makeCurrent();
     } else {
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
