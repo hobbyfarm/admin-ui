@@ -203,10 +203,6 @@ export class HomeComponent implements OnInit {
               )
             }
           });
-                  
-          // Get all users that do not have active Sessions in this Event, but have the corresponding Access Code
-          // this.users.filter(user => !this.currentProgress.map(p => p.username).includes(user.email))
-
           this.filter()
         }
       );   
