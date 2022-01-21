@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProgressService } from 'src/app/data/progress.service';
 import { Progress, ProgressCount } from 'src/app/data/progress';
 import { UserService } from '../data/user.service';
@@ -9,6 +9,7 @@ import { ScenarioService } from '../data/scenario.service';
 import { Scenario } from '../data/scenario';
 import { Course } from '../data/course';
 import { CourseService } from '../data/course.service';
+import { EventUserListComponent } from './event-user-list/event-user-list.component';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +23,9 @@ export class HomeComponent implements OnInit {
   public filteredProgress: Progress[] = [];
   public callInterval: any;
   public circleVisible: boolean = true; 
+
+  public users: User[];
+ 
 
   public callDelay: number = 10;
   public callDelayOptions: number[] = [10, 30, 60, 120, 300];
@@ -40,6 +44,8 @@ export class HomeComponent implements OnInit {
   public userFilter: string = "";
   public scenarioList: Set<string> = new Set<string>();
   public scenarioFilterList: Set<string> = new Set<string>();
+
+  @ViewChild("userList") userList: EventUserListComponent;
   
   constructor(
     public userService: UserService,
@@ -142,6 +148,10 @@ export class HomeComponent implements OnInit {
     this.filter()
   }
 
+  openUserList() {    
+    this.userList.openModal();
+  }
+
   refresh() {    
     if(this.pauseCall){
       return;
@@ -162,18 +172,15 @@ export class HomeComponent implements OnInit {
           });
           this.currentProgress = p;
           this.scenarioList.clear();
-          this.currentProgress.forEach(element => {
-            element.username = "none"
-            element.scenario_name = "none"            
-            this.userService.getUsers().subscribe(
-              (users: User[]) => {
-                  users.forEach(user => {
-                      if(user.id == element.user){
-                          element.username = user.email
-                      }
-                  });
-              }
-            )
+
+          this.userService.getUsers().subscribe((users: User[]) => {
+            this.users = users.filter(user => user.access_codes.includes(this.selectedEvent.access_code))
+          })      
+          
+
+          this.currentProgress.forEach(element => {            
+            element.username = this.users.find(u => u.id === element.user)?.email || "none"
+            element.scenario_name = "none"
             this.scenarioService.list().subscribe(
               (scenarios: Scenario[]) => {
                   scenarios.forEach(s => {
@@ -196,6 +203,10 @@ export class HomeComponent implements OnInit {
               )
             }
           });
+                  
+          // Get all users that do not have active Sessions in this Event, but have the corresponding Access Code
+          // this.users.filter(user => !this.currentProgress.map(p => p.username).includes(user.email))
+
           this.filter()
         }
       );   
