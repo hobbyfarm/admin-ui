@@ -71,8 +71,8 @@ export class HomeComponent implements OnInit {
           this.scheduledEvents = s;
           this.activeEvents = s.filter(se => !se.finished);
           this.finishedEvents = s.filter(se => se.finished);
-          if(s.length > 0){
-            this.selectedEvent = s[0];
+          if(this.activeEvents.length > 0){
+            this.selectedEvent = this.activeEvents[0];
             this.refresh();
           }
         }
