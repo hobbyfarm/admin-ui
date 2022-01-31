@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ProgressService } from 'src/app/data/progress.service';
 import { Progress, ProgressCount } from 'src/app/data/progress';
 import { UserService } from '../data/user.service';
@@ -16,7 +16,7 @@ import { EventUserListComponent } from './event-user-list/event-user-list.compon
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   public includeFinished: boolean = false;
   public selectedEvent: ScheduledEvent;
   public currentProgress: Progress[] = [];
@@ -218,5 +218,8 @@ export class HomeComponent implements OnInit {
           })
         }
       )
+  }
+  ngOnDestroy() {
+    clearInterval(this.callInterval)
   }
 }
