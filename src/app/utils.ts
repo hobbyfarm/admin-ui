@@ -16,10 +16,10 @@ export function timeSince(date: Date,  end: Date = new Date(), series: number = 
     }
 
     for(let i = 0; i < intervalCounts.length && series > 0; i++){
-      if(intervalCounts[i] > 0){
-        text += intervalCounts[i] + " " + intervalStrings[i] + (intervalCounts[i] > 1 ? "s" : "");
+      if(intervalCounts[i] > 0 || i + 1 == intervalCounts.length){
+        text += intervalCounts[i] + " " + intervalStrings[i] + (intervalCounts[i] != 1 ? "s" : "");
         series -= 1;
-        if(series > 0){
+        if(series > 0 && i + 1 != intervalCounts.length){
           text += ", ";
         }
       }
