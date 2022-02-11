@@ -255,7 +255,7 @@
   </clr-wizard-page>
 
   <clr-wizard-page (clrWizardPageOnLoad)="setupVMSelection()" (clrWizardPageNext)="copyVMCounts()"
-    [clrWizardPageNextDisabled]="!vmCounts.valid || !simpleModeVmCounts.valid">
+    [clrWizardPageNextDisabled]="!vmCounts.valid || !simpleModeVmCounts.valid || simpleUserTotal() === 0">
     <ng-template clrPageTitle>Select Virtual Machines</ng-template>
     <clr-toggle-wrapper>
       <input type="checkbox" clrToggle [(ngModel)]="simpleMode" name="simpleMode" />
@@ -278,7 +278,7 @@
               </td>
               <td class="left">
                 <clr-input-container class="table-input">
-                  <input clrInput type="number" [formControl]="fc">
+                  <input clrInput type="number" [formControl]="fc" pattern="^[0-9]" min="0" step="1">
                   <clr-control-error *clrIfError="'max'">User count higher than max</clr-control-error>
                 </clr-input-container>
                 (max {{ maxUserCounts[selectedEnvironments[it]?.environment]}})
