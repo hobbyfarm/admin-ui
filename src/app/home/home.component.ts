@@ -10,6 +10,11 @@ import { Scenario } from '../data/scenario';
 import { Course } from '../data/course';
 import { CourseService } from '../data/course.service';
 import { EventUserListComponent } from './event-user-list/event-user-list.component';
+import { JwtHelperService } from '@auth0/angular-jwt';
+
+interface DashboardScheduledEvent extends ScheduledEvent {
+  creatorEmail?: String;
+}
 
 @Component({
   selector: 'app-home',
@@ -18,12 +23,12 @@ import { EventUserListComponent } from './event-user-list/event-user-list.compon
 })
 export class HomeComponent implements OnInit, OnDestroy {
   public includeFinished: boolean = false;
-  public selectedEvent: ScheduledEvent;
+  public selectedEvent: DashboardScheduledEvent;
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
   public callInterval: any;
   public circleVisible: boolean = true; 
-
+  public loggedInAdminEmail: string;
   public users: User[];
  
 
@@ -37,9 +42,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  public scheduledEvents: ScheduledEvent[] = [];
-  public activeEvents: ScheduledEvent[] = [];
-  public finishedEvents: ScheduledEvent[] = [];
+  public scheduledEvents: DashboardScheduledEvent[] = [];
+  public activeEvents: DashboardScheduledEvent[] = [];
+  public finishedEvents: DashboardScheduledEvent[] = [];
 
   public userFilter: string = "";
   public scenarioList: Set<string> = new Set<string>();
@@ -53,6 +58,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     public courseService: CourseService,
     public progressService: ProgressService,
     public scheduledeventService: ScheduledeventService,
+    public helper: JwtHelperService,
   ) { }
 
 
@@ -60,25 +66,43 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.callInterval = setInterval(() => {
       this.refresh();
      } , this.callDelay * 1000);
-
+     
       //Fill cache
       this.courseService.list().subscribe();
       this.userService.getUsers().subscribe();
       this.scenarioService.list().subscribe();
 
      this.scheduledeventService.list().subscribe(
-        (s: ScheduledEvent[]) => {          
+        (s: DashboardScheduledEvent[]) => {          
           this.scheduledEvents = s;
           this.activeEvents = s.filter(se => !se.finished);
-          this.finishedEvents = s.filter(se => se.finished);
+          this.finishedEvents = s.filter(se => se.finished);          
           if(this.activeEvents.length > 0){
             this.selectedEvent = this.activeEvents[0];
-            this.refresh();
-          }
+            this.refresh();          
+          }          
+          this.sortEventLists() 
         }
      )
+  }
 
+  async sortEventLists() { 
+    this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;   
+    let users = await this.userService.getUsers().toPromise()      
+    this.scheduledEvents.map((sEvent) => {
+      sEvent.creatorEmail = users.find(user => user.id == sEvent.creator)?.email 
+    })    
+      this.sortByLoggedInAdminUser(this.scheduledEvents)
+      this.sortByLoggedInAdminUser(this.activeEvents)
+      this.sortByLoggedInAdminUser(this.finishedEvents)       
+  }
 
+  sortByLoggedInAdminUser(eventArray: DashboardScheduledEvent[]) {    
+    return eventArray.sort((a, b) => {
+      if(a.creatorEmail == this.loggedInAdminEmail && b.creatorEmail != this.loggedInAdminEmail) return -1
+      if(a.creatorEmail != this.loggedInAdminEmail && b.creatorEmail == this.loggedInAdminEmail) return 1
+      else return 0
+    });
   }
 
   changeCallDelay() {
@@ -108,7 +132,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.refresh(); //also refresh when call delay has changed
   }
 
-  setScheduledEvent(ev: ScheduledEvent){
+  setScheduledEvent(ev: DashboardScheduledEvent){
     this.selectedEvent = ev;
     this.scenarioFilterList.clear()
     this.refresh();
@@ -117,7 +141,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   filter() {
     if (this.userFilter != "") {
       try {
-        this.filteredProgress = this.currentProgress.filter(prog => prog.username.match(this.userFilter))
+        this.filteredProgress = this.currentProgress.filter(prog =>  prog.username.toLowerCase().match(this.userFilter.toLowerCase())) 
+        
       }
       catch (err) {
         if (!(err instanceof SyntaxError)) {
@@ -156,7 +181,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if(this.pauseCall){
       return;
     }
-    if(!this.selectedEvent){
+    if(!this.selectedEvent){         
       return
     }
     this.progressService.list(this.selectedEvent.id, this.selectedEvent?.finished ? true : this.includeFinished).subscribe(
