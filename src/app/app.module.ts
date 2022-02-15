@@ -45,6 +45,8 @@ import { EditVmtemplateComponent } from './configuration/vmtemplates/edit-vmtemp
 import { AppConfigService } from './app-config.service';
 import { ProgressComponent } from './progress/progress.component';
 import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
+import { RbacService } from './data/rbac.service';
+import { RbacDirective } from './directives/rbac.directive';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -98,6 +100,7 @@ export function jwtOptionsFactory() {
     EditVmtemplateComponent,
     ProgressInfoComponent,
     ProgressComponent,
+    RbacDirective,
   ],
   imports: [
     BrowserModule,
@@ -129,7 +132,7 @@ export function jwtOptionsFactory() {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFn,
       multi: true,
-      deps: [AppConfigService]
+      deps: [AppConfigService, RbacService] // rbacservice listed here to initialize it before anything else
     }
   ],
   bootstrap: [RootComponent],
