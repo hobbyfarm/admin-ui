@@ -7,10 +7,10 @@
 
 <div class="header-nav">
     <a href="javascript://" class="nav-link nav-text" [routerLink]="['/home']" [routerLinkActive]="'active'">Home</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/events']" [routerLinkActive]="'active'">Scheduled Events</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/content']" [routerLinkActive]="'active'">Content Management</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/users']" [routerLinkActive]="'active'">Users</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/configuration']" [routerLinkActive]="'active'">Configuration</a>
+    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/events']" [routerLinkActive]="'active'" *rbac="['scheduledevents.list']">Scheduled Events</a>
+    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/content']" [routerLinkActive]="'active'" *rbac="['scenarios.list', 'courses.list']; op 'OR'">Content Management</a>
+    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/users']" [routerLinkActive]="'active'" *rbac="['users.list']">Users</a>
+    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/configuration']" [routerLinkActive]="'active'" *rbac="['environments.list', 'vmtemplates.list']; op 'OR'">Configuration</a>
 </div>
 
 <div class="header-actions">

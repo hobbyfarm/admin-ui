@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AppConfigService } from '../app-config.service';
+import { RbacService } from '../data/rbac.service';
 
 @Component({
   selector: '[app-header]',
@@ -17,6 +18,8 @@ export class HeaderComponent implements OnInit {
   public version = environment.version;
   public email: string = "";
 
+  public rbac: Map<string, boolean> = new Map()
+
   private config = this.configService.getConfig();
   public title = this.config.title || "HobbyFarm Administration";
   public logo = this.config.logo || '/assets/default/logo.svg';
@@ -24,7 +27,8 @@ export class HeaderComponent implements OnInit {
   constructor(
     public router: Router,
     public helper: JwtHelperService,
-    public configService: AppConfigService
+    public configService: AppConfigService,
+    public rbacService: RbacService
   ) {
     this.configService.getLogo(this.logo)
       .then((obj: string) => {
@@ -42,7 +46,6 @@ export class HeaderComponent implements OnInit {
     var tok = this.helper.decodeToken(this.helper.tokenGetter());
     this.email = tok.email;
   }
-
 
   @ViewChild("logoutmodal", { static: true }) logoutModal: ClrModal;
   @ViewChild("aboutmodal", { static: true }) aboutModal: ClrModal;
