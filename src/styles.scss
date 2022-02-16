@@ -67,3 +67,11 @@ clr-stack-view.compact {
     height: unset;
     margin: 0 0 0 0;
 }
+
+// .clr_select_disabled > div.datagrid-row-master > div:first-child {
+//     display: none;
+// }
+
+clr-datagrid.clr_disable_selection div.datagrid-row-master > div:first-child  {
+    display: none;
+}
