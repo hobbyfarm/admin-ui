@@ -7,6 +7,7 @@ import { ScheduledeventService } from '../data/scheduledevent.service';
 import { ScenarioService } from '../data/scenario.service';
 import { CourseService } from '../data/course.service';
 import { combineLatest } from 'rxjs';
+import { RbacService } from '../data/rbac.service';
 
 @Component({
   selector: 'app-home',
@@ -38,6 +39,8 @@ export class HomeComponent implements OnInit {
   public userFilter: string = "";
   public scenarioList: Set<string> = new Set<string>();
   public scenarioFilterList: Set<string> = new Set<string>();
+
+  public rbacSuccess: boolean = false;
   
   constructor(
     public userService: UserService,
@@ -45,10 +48,26 @@ export class HomeComponent implements OnInit {
     public courseService: CourseService,
     public progressService: ProgressService,
     public scheduledeventService: ScheduledeventService,
+    public rbacService: RbacService
   ) { }
 
 
   ngOnInit() {
+    // verify rbac permissions before we display this page
+    let rbacCheck = true;
+    ["scheduledevents", "sessions"].forEach((resource: string) => {
+      ["list", "get"].forEach((verb: string) => {
+        if (!this.rbacService.Grants(resource, verb)) {
+          rbacCheck = false
+        }
+      })
+    })
+    if (!this.rbacService.Grants("sessions", "update")) {
+      rbacCheck = false
+    }
+
+    this.rbacSuccess = rbacCheck
+
     this.callInterval = setInterval(() => {
       this.refresh();
      } , this.callDelay * 1000);
