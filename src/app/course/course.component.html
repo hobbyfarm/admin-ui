@@ -15,22 +15,13 @@
 </div>
 <div class="clr-row">
     <div class="clr-col-4">
-        <clr-datagrid [(clrDgSingleSelected)]="selectedCourse" (clrDgSingleSelectedChange)="editCourse($event)" *rbac="['courses.update', 'courses.get']; op 'OR'; else course_base_grid">
+        <clr-datagrid [(clrDgSingleSelected)]="selectedCourse" (clrDgSingleSelectedChange)="editCourse($event)" [clrDisableSelection]="!selectRbac">
             <clr-dg-column>Name</clr-dg-column>
 
             <clr-dg-row *clrDgItems="let c of courses" [clrDgItem]="c" [clrDgSelectable]="!modified">
                 <clr-dg-cell>{{ c.name }}</clr-dg-cell>
             </clr-dg-row>
         </clr-datagrid>
-        <ng-template #course_base_grid>
-            <clr-datagrid>
-                <clr-dg-column>Name</clr-dg-column>
-    
-                <clr-dg-row *clrDgItems="let c of courses" [clrDgItem]="c" [clrDgSelectable]="!modified">
-                    <clr-dg-cell>{{ c.name }}</clr-dg-cell>
-                </clr-dg-row>
-            </clr-datagrid>
-        </ng-template>
     </div>
     <div class="clr-col-8">
         <clr-tabs>

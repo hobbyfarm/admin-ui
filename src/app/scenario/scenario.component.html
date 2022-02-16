@@ -29,22 +29,13 @@
 </div>
 <div class="clr-row">
   <div class="clr-col-4">
-    <clr-datagrid [clrDgSingleSelected]="unusedSelectedScenario" (clrDgSingleSelectedChange)="editScenario($event)" *rbac="['scenarios.update', 'scenarios.get']; op 'OR'; else base_grid">
+    <clr-datagrid [clrDgSingleSelected]="unusedSelectedScenario" (clrDgSingleSelectedChange)="editScenario($event)" [clrDisableSelection]="!selectRbac">
       <clr-dg-column>Name</clr-dg-column>
 
       <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
         <clr-dg-cell>{{ s.name }}</clr-dg-cell>
       </clr-dg-row>
     </clr-datagrid>
-    <ng-template #base_grid>
-      <clr-datagrid>
-        <clr-dg-column>Name</clr-dg-column>
-  
-        <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
-          <clr-dg-cell>{{ s.name }}</clr-dg-cell>
-        </clr-dg-row>
-      </clr-datagrid>
-    </ng-template>
   </div>
 
   <div class="clr-col-8">
