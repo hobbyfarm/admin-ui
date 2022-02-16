@@ -17,6 +17,8 @@ export class UserComponent implements OnInit {
 
   public selectedUser: User = new User();
 
+  public selectRbac: boolean = false;
+
   public accesscodes: string[] = [];
 
   constructor(
@@ -27,6 +29,7 @@ export class UserComponent implements OnInit {
   public idFilter: UserIdFilter = new UserIdFilter();
 
   ngOnInit() {
+    this.selectRbac = false;
     this.refresh();
   }
 

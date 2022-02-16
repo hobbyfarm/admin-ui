@@ -5,7 +5,7 @@
             <h3>User Management</h3>
             <div class="clr-row">
                 <div class="clr-col-4">
-                    <clr-datagrid [(clrDgSingleSelected)]="selectedUser">
+                    <clr-datagrid [(clrDgSingleSelected)]="selectedUser" [clrDisableSelection]="!selectRbac">
                         <clr-dg-column>
                             Email
                             <clr-dg-string-filter [clrDgStringFilter]="emailFilter"></clr-dg-string-filter>
