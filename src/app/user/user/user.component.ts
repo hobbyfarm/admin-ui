@@ -6,6 +6,7 @@ import { UserEmailFilter } from 'src/app/user-email-filter';
 import { UserIdFilter } from 'src/app/user-id-filter';
 import { EditUserComponent } from '../edit-user/edit-user.component';
 import { EditAccessCodesComponent } from '../edit-access-codes/edit-access-codes.component';
+import { RbacService } from 'src/app/data/rbac.service';
 
 @Component({
   selector: 'app-user',
@@ -22,14 +23,19 @@ export class UserComponent implements OnInit {
   public accesscodes: string[] = [];
 
   constructor(
-    public userService: UserService
+    public userService: UserService,
+    public rbacService: RbacService
   ) { }
 
   public emailFilter: UserEmailFilter = new UserEmailFilter();
   public idFilter: UserIdFilter = new UserIdFilter();
 
   ngOnInit() {
-    this.selectRbac = false;
+    ["update", "get"].forEach((verb: string) => {
+      if (this.rbacService.Grants("users", verb)) {
+        this.selectRbac = true
+      }
+    })
     this.refresh();
   }
 

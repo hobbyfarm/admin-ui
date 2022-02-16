@@ -7,7 +7,7 @@
 </clr-alert>
 <div class="clr-row">
     <div class="clr-col-4">
-        <button class="btn btn-success-outline btn-sm" (click)="newAccessCode = true">
+        <button class="btn btn-success-outline btn-sm" (click)="newAccessCode = true" *rbac="['users', 'update']">
             <clr-icon shape="plus"></clr-icon> Add Access Code
         </button>
         <ng-container *ngIf="newAccessCode">
@@ -31,7 +31,7 @@
             <clr-dg-column>Access Code</clr-dg-column>
 
             <clr-dg-row *clrDgItems="let a of user.access_codes" [clrDgItem]="a">
-                <clr-dg-action-overflow>
+                <clr-dg-action-overflow *rbac="['users', 'update']">
                     <button class="action-item" (click)="deleteAccessCode(a)">Delete</button>
                 </clr-dg-action-overflow>
                 <clr-dg-cell>{{ a }}</clr-dg-cell>
