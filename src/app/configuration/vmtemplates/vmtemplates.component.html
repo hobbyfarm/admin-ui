@@ -6,7 +6,7 @@
 </div>
 <div class="clr-row">
     <div class="clr-col">
-        <button class="btn btn-success" (click)="openNew()">
+        <button class="btn btn-success" (click)="openNew()" *rbac="['vmtemplates.create']">
             <clr-icon shape="plus"></clr-icon> New
         </button>
     </div>
@@ -19,9 +19,9 @@
             <clr-dg-column [clrDgField]="'id'">Object Id</clr-dg-column>
 
             <clr-dg-row *clrDgItems="let t of templates; let i = index">
-                <clr-dg-action-overflow>
-                    <button class="action-item" (click)="openEdit(t)">Edit</button>
-                    <button class="action-item" (click)="openDelete(t)">Delete</button>
+                <clr-dg-action-overflow *rbac="['vmtemplates.update', 'vmtemplates.delete']; op 'OR'">
+                    <button class="action-item" (click)="openEdit(t)" *rbac="['vmtemplates.update']">Edit</button>
+                    <button class="action-item" (click)="openDelete(t)" *rbac="['vmtemplates.delete']">Delete</button>
                 </clr-dg-action-overflow>
                 <clr-dg-cell>{{ t.name }}</clr-dg-cell>
                 <clr-dg-cell>{{ t.image }}</clr-dg-cell>
