@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     // verify rbac permissions before we display this page
     let rbacCheck = true;
-    ["scheduledevents", "sessions"].forEach((resource: string) => {
+    ["scheduledevents", "sessions", "progresses"].forEach((resource: string) => {
       ["list", "get"].forEach((verb: string) => {
         if (!this.rbacService.Grants(resource, verb)) {
           rbacCheck = false
