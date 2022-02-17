@@ -19,7 +19,7 @@ export class RbacService {
     public http: HttpClient
   ) {
     // when the service is built, get the rbac access for the user
-    this.http.get(environment.server + "/rbac/access")
+    this.http.get(environment.server + "/auth/access")
     .pipe(
       map((s: ServerResponse) => JSON.parse(atou(s.content)))
     ).subscribe(
