@@ -1,4 +1,4 @@
-<clr-wizard #wizard [(clrWizardOpen)]="wzOpen" clrWizardSize="xl" (clrWizardOnFinish)="save()">
+<clr-wizard #wizard [(clrWizardOpen)]="wzOpen" clrWizardSize="xl" (clrWizardOnFinish)="save()" (clrWizardOnCancel)="close()">
   <clr-wizard-title>New Scheduled Event</clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
@@ -349,7 +349,7 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page [clrWizardPageNextDisabled]="(selectedcourses.length == 0 && selectedscenarios.length == 0) || selectedEnvironments.length == 0 || !vmCounts.valid || !simpleModeVmCounts.valid || (se.start_time >= se.end_time) || !se.start_time || !se.end_time || !eventDetails.valid">
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>
       Confirm the following details before finishing:

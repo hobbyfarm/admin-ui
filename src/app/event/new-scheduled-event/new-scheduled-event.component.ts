@@ -64,6 +64,8 @@ export class NewScheduledEventComponent implements OnInit {
   public maxUserCounts: {} = {};
   public invalidSimpleEnvironments: string[] = [];
 
+  private onCloseFn: Function;
+
   constructor(
     private _fb: FormBuilder,
     public ss: ScenarioService,
@@ -316,6 +318,7 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   ngOnChanges() {
+    console.log("onChanges ran");
     if (this.event) {
       this.simpleMode = false;
       this.se = this.event;
@@ -599,6 +602,16 @@ export class NewScheduledEventComponent implements OnInit {
     this.vmCounts = new FormGroup({});
   }
 
+  public close(){
+    if(this.onCloseFn){
+      this.onCloseFn();
+    }
+  }
+
+  public setOnCloseFn(fn: Function){
+    this.onCloseFn = fn;
+  }
+
   public save() {
     this.saving = true;
     if (this.event) {
@@ -622,6 +635,7 @@ export class NewScheduledEventComponent implements OnInit {
           }
         )
     }
+    this.close();
   }
 
 }
