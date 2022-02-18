@@ -7,6 +7,11 @@ span.access-code{
   cursor: pointer;
 }
 
+.nav-group{
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 ul > li.selected{
     background-color: #eaeaea;
     font-weight: bold;
