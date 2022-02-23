@@ -64,16 +64,8 @@
                     </div>            
                 </div>            
             </div>
-            <div class="clr-col-3">
-                <div class="countdown-container">
-                    <label for ="countdown">Refresh rate</label>
-                    <div id="countdown" (click)="changeCallDelay()">
-                        <div id="countdown-number">{{callDelay}}s</div>
-                        <svg>
-                            <circle *ngIf="circleVisible" id="countdownCircle" r="18" cx="20" cy="20"></circle>
-                        </svg>
-                    </div>
-                </div>
+            <div class="clr-col-3">               
+                <timed-call [functionToCall]="refresh"></timed-call>
             </div>
         </div>
             <div class="clr-row">

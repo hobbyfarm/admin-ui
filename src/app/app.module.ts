@@ -45,6 +45,7 @@ import { EditVmtemplateComponent } from './configuration/vmtemplates/edit-vmtemp
 import { AppConfigService } from './app-config.service';
 import { ProgressComponent } from './progress/progress.component';
 import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
+import { TimedCallComponent } from './timed-call/timed-call.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -98,6 +99,7 @@ export function jwtOptionsFactory() {
     EditVmtemplateComponent,
     ProgressInfoComponent,
     ProgressComponent,
+    TimedCallComponent,
   ],
   imports: [
     BrowserModule,
