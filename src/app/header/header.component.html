@@ -10,7 +10,7 @@
     <a href="javascript://" class="nav-link nav-text" [routerLink]="['/events']" [routerLinkActive]="'active'" *rbac="['scheduledevents.list']">Scheduled Events</a>
     <a href="javascript://" class="nav-link nav-text" [routerLink]="['/content']" [routerLinkActive]="'active'" *rbac="['scenarios.list', 'courses.list']; op 'OR'">Content Management</a>
     <a href="javascript://" class="nav-link nav-text" [routerLink]="['/users']" [routerLinkActive]="'active'" *rbac="['users.list']">Users</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/configuration']" [routerLinkActive]="'active'" *rbac="['environments.list', 'vmtemplates.list']; op 'OR'">Configuration</a>
+    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/configuration']" [routerLinkActive]="'active'" *ngIf="configurationRbac">Configuration</a>
 </div>
 
 <div class="header-actions">
