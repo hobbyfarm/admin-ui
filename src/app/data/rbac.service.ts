@@ -10,7 +10,6 @@ import { ServerResponse } from './serverresponse';
   providedIn: 'root'
 })
 export class RbacService {
-  private static apiGroup: string = "hobbyfarm.io"
   private static all: string = "*"
 
   private userAccess: AccessSet
@@ -27,9 +26,9 @@ export class RbacService {
     )
   }
 
-  public Grants(resource: string, verb: string): boolean {
+  public Grants(resource: string, verb: string, apiGroup: string = "hobbyfarm.io"): boolean {
     let allowed = false;
-    [RbacService.all, RbacService.apiGroup].forEach((a) => {
+    [RbacService.all, apiGroup].forEach((a) => {
       [RbacService.all, resource].forEach((r) => {
         [RbacService.all, verb].forEach((v) => {
           let key = "/" + a + "/" + r + "/" + v
