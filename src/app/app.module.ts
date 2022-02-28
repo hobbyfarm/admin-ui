@@ -48,6 +48,7 @@ import { ProgressInfoComponent } from './progress/progress-info/progress-info.co
 import { RbacService } from './data/rbac.service';
 import { RbacDirective } from './directives/rbac.directive';
 import { ClarityDisableSelectionDirective } from './directives/clarity-disable-selection.directive';
+import { RolesComponent } from './configuration/roles/roles/roles.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -103,6 +104,7 @@ export function jwtOptionsFactory() {
     ProgressComponent,
     RbacDirective,
     ClarityDisableSelectionDirective,
+    RolesComponent,
   ],
   imports: [
     BrowserModule,
