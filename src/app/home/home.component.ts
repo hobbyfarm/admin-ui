@@ -4,10 +4,7 @@ import { Progress, ProgressCount } from 'src/app/data/progress';
 import { UserService } from '../data/user.service';
 import { ScheduledEvent } from '../data/scheduledevent';
 import { ScheduledeventService } from '../data/scheduledevent.service';
-import { User } from '../data/user';
 import { ScenarioService } from '../data/scenario.service';
-import { Scenario } from '../data/scenario';
-import { Course } from '../data/course';
 import { CourseService } from '../data/course.service';
 import { combineLatest } from 'rxjs';
 
@@ -162,31 +159,18 @@ export class HomeComponent implements OnInit {
       // sort progress by start date, latest first
       progressList.sort((a, b) => Number(b.started) - Number(a.started));
 
-      this.currentProgress = progressList;
-      this.scenarioList.clear();
-
-      this.currentProgress.forEach(element => {
-        element.username = "none"
-        element.scenario_name = "none"
-        users.forEach(user => {
-          if (user.id == element.user) {
-            element.username = user.email
-          }
-        });
-        scenarios.forEach(s => {
-          if (s.id == element.scenario) {
-            element.scenario_name = s.name
-            this.scenarioList.add(s.name)
-          }
-        });
-        if (element.course && element.course != "") {
-          courses.forEach(c => {
-            if (c.id == element.course) {
-              element.course_name = c.name
-            }
-          });
-        }
-      });
+      const userMap = new Map(users.map(u => [u.id, u.email]));
+      const courseMap = new Map(courses.map(c => [c.id, c.name]));
+      const scenarioMap = new Map(scenarios.map(s => [s.id, s.name]));
+      
+      this.currentProgress = progressList.map((element) => ({
+        ...element,
+        username: userMap.get(element.user) ?? "none",
+        scenario_name: scenarioMap.get(element.scenario) ?? "none",
+        course_name: courseMap.get(element.course) ?? '',
+      }));
+      
+      this.scenarioList = new Set(this.currentProgress.map(p => p.scenario_name));
 
       this.filter()
     });
