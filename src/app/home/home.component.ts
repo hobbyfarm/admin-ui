@@ -152,14 +152,9 @@ export class HomeComponent implements OnInit {
     this.progressService.list(this.selectedEvent.id, this.selectedEvent?.finished ? true : this.includeFinished).subscribe(
       (p: Progress[]) =>
         {
-          p.sort(function(a, b) {
-            var keyA = a.started,
-              keyB = b.started;
-            // Compare the 2 dates
-            if (keyA < keyB) return 1;
-            if (keyA > keyB) return -1;
-            return 0;
-          });
+          // sort progress by start date, latest first
+          p.sort((a, b) => Number(b.started) - Number(a.started));
+          
           this.currentProgress = p;
           this.scenarioList.clear();
           this.currentProgress.forEach(element => {
