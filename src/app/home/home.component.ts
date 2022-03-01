@@ -200,16 +200,10 @@ export class HomeComponent implements OnInit {
         }
       );   
 
-      this.progressService.count().subscribe(
-        (c: ProgressCount) => {
-          this.scheduledEvents.forEach(se => {
-            if(c[se.id]){
-              se.activeSessions = c[se.id];
-            }else{
-              se.activeSessions = 0;
-            }
-          })
-        }
-      )
+    this.progressService.count().subscribe((c: ProgressCount) => {
+      this.scheduledEvents.forEach((se) => {
+        se.activeSessions = c[se.id] || 0;
+      });
+    });
   }
 }
