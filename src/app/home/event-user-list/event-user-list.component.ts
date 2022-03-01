@@ -3,14 +3,16 @@ import { ClrModal } from '@clr/angular';
 import { Progress } from 'src/app/data/progress';
 import { User } from 'src/app/data/user';
 
+interface userListUser extends User {
+  numberOfSessions?: number;
+  activeScenarioName?: string;
+}
+
 @Component({
   selector: 'event-user-list',
-  templateUrl: './event-user-list.component.html',
-  styleUrls: ['./event-user-list.component.scss']
+  templateUrl: './event-user-list.component.html'  
 })
 export class EventUserListComponent implements OnInit {
-
-  public userListOpen: boolean = false;
 
   @ViewChild("userListModal") userListModal: ClrModal;
 
@@ -24,30 +26,33 @@ export class EventUserListComponent implements OnInit {
   public filterName: Function;
 
   @Output() nameClickedEvent = new EventEmitter<string>();
+  
+  public userListUsers: userListUser[] = [];
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   public listFilterName(username) {
     this.nameClickedEvent.emit(username);
-    this.userListOpen = false
+    this.userListModal.close()
   }
 
   public openModal(): void {
+    this.userListUsers = []
+    this.users.forEach(user => {
+      let newUser: userListUser = user;
+      newUser.activeScenarioName = this.getUsersActiveProgressName(user);
+      newUser.numberOfSessions = this.getUsersProgress(user);
+      this.userListUsers.push(newUser)
+    })
     this.userListModal.open();
   }
 
-  get open() {
-    return this.userListOpen;
-  }
-  
-  set open(value: boolean) {
-    this.userListOpen = value;    
+  getUsersActiveProgressName(user) {
+    let scenarioName = this.progress.filter(p => p.user === user.id && p.finished === false)[0]?.scenario_name    
+    return scenarioName ?? "0"
   }
 
-  getUsersProgress(user) { 
+  getUsersProgress(user) {
     return this.progress.filter(p => p.user === user.id).length
   }
 

@@ -1,4 +1,4 @@
-<clr-modal #userListModal [(clrModalOpen)]="open" [clrModalSize]="'lg'">
+<clr-modal #userListModal clrModalSize="lg">
     <h3 class="modal-title">List of all registered users</h3>
     <div class="modal-body">
         <table class="table table-compact">
@@ -6,13 +6,15 @@
                 <tr>
                     <th>User</th>
                     <th>Number of Sessions</th>
+                    <th>Active Session</th>
                     <th>Show Sessions</th>
                 </tr>
             </thead>
             <tbody>                
-                <tr *ngFor="let u of users">
+                <tr *ngFor="let u of userListUsers">
                     <td>{{u.email}}</td>
-                    <td>{{getUsersProgress(u)}}</td>
+                    <td>{{u.numberOfSessions}}</td>
+                    <td>{{u.activeScenarioName}}</td>
                     <td (click)="listFilterName(u.email)"><clr-icon shape="child-arrow"></clr-icon></td>
                 </tr>                
             </tbody>
@@ -20,6 +22,6 @@
         
     </div>
     <div class="modal-footer">
-        <button class="btn btn-outline" (click)="open = false">Close</button>
+        <button class="btn btn-outline" (click)="this.userListModal.close()">Close</button>
     </div>
 </clr-modal>

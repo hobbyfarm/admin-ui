@@ -64,12 +64,12 @@
                     </div>            
                 </div>            
             </div>
-            <div class="clr-col-1" >
-                <div class="userlistIcon">                
+            <div class="clr-col buttonCol" >
+                <button class="btn btn-link userlistIcon">
                     <clr-icon (click)="openUserList()" shape="users" class="is-solid" size="48"></clr-icon>{{users?.length}}
-                </div>
-        </div>                        
-            <div class="clr-col-2">
+                </button>
+            </div>                        
+            <div class="clr-col">
                 <div class="countdown-container">
                     <label for ="countdown">Refresh rate</label>
                     <div id="countdown" (click)="changeCallDelay()">

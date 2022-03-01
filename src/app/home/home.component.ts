@@ -66,7 +66,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.callInterval = setInterval(() => {
       this.refresh();
      } , this.callDelay * 1000);
-     
+
       //Fill cache
       this.courseService.list().subscribe();
       this.userService.getUsers().subscribe();
@@ -76,10 +76,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         (s: DashboardScheduledEvent[]) => {          
           this.scheduledEvents = s;
           this.activeEvents = s.filter(se => !se.finished);
-          this.finishedEvents = s.filter(se => se.finished);          
+          this.finishedEvents = s.filter(se => se.finished);
           if(this.activeEvents.length > 0){
             this.selectedEvent = this.activeEvents[0];
-            this.refresh();          
+            this.refresh();
           }          
           this.sortEventLists() 
         }
@@ -98,11 +98,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   sortByLoggedInAdminUser(eventArray: DashboardScheduledEvent[]) {    
-    return eventArray.sort((a, b) => {
-      if(a.creatorEmail == this.loggedInAdminEmail && b.creatorEmail != this.loggedInAdminEmail) return -1
-      if(a.creatorEmail != this.loggedInAdminEmail && b.creatorEmail == this.loggedInAdminEmail) return 1
-      else return 0
-    });
+    const isCreatedByMe = (e: DashboardScheduledEvent) => Number(e.creatorEmail === this.loggedInAdminEmail);
+    return eventArray.sort((a, b) => isCreatedByMe(b) - isCreatedByMe(a));
   }
 
   changeCallDelay() {
@@ -141,7 +138,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   filter() {
     if (this.userFilter != "") {
       try {
-        this.filteredProgress = this.currentProgress.filter(prog =>  prog.username.toLowerCase().match(this.userFilter.toLowerCase())) 
+        const pattern = new RegExp(this.userFilter, 'i');
+        this.filteredProgress = this.currentProgress.filter(prog =>  pattern.test(prog.username)) 
         
       }
       catch (err) {
@@ -181,7 +179,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if(this.pauseCall){
       return;
     }
-    if(!this.selectedEvent){         
+    if(!this.selectedEvent){
       return
     }
     this.progressService.list(this.selectedEvent.id, this.selectedEvent?.finished ? true : this.includeFinished).subscribe(

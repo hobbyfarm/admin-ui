@@ -49,10 +49,15 @@ clr-row.selected{
     background-color: #f0f0f0;
 }
 
-.userlistIcon{
-  float: right;
-  padding-top: 2em;
-  cursor: pointer;
+.userlistIcon{  
+  color: #666666;  
+}
+.userlistIcon:hover{  
+  color: #3a3a3a;
+}
+
+.buttonCol{
+  text-align: right;
 }
 
 .countdown-container{
