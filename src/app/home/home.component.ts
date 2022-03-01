@@ -9,6 +9,7 @@ import { ScenarioService } from '../data/scenario.service';
 import { Scenario } from '../data/scenario';
 import { Course } from '../data/course';
 import { CourseService } from '../data/course.service';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -149,51 +150,46 @@ export class HomeComponent implements OnInit {
     if(!this.selectedEvent){
       return
     }
-    this.progressService.list(this.selectedEvent.id, this.selectedEvent?.finished ? true : this.includeFinished).subscribe(
-      (p: Progress[]) =>
-        {
-          // sort progress by start date, latest first
-          p.sort((a, b) => Number(b.started) - Number(a.started));
-          
-          this.currentProgress = p;
-          this.scenarioList.clear();
-          this.currentProgress.forEach(element => {
-            element.username = "none"
-            element.scenario_name = "none"            
-            this.userService.getUsers().subscribe(
-              (users: User[]) => {
-                  users.forEach(user => {
-                      if(user.id == element.user){
-                          element.username = user.email
-                      }
-                  });
-              }
-            )
-            this.scenarioService.list().subscribe(
-              (scenarios: Scenario[]) => {
-                  scenarios.forEach(s => {
-                      if(s.id == element.scenario){
-                          element.scenario_name = s.name
-                          this.scenarioList.add(s.name)
-                      }
-                  });
-              }
-            )
-            if(element.course && element.course != ""){
-              this.courseService.list().subscribe(
-                (courses: Course[]) => {
-                    courses.forEach(c => {
-                        if(c.id == element.course){
-                            element.course_name = c.name
-                        }
-                    });
-                }
-              )
+
+    const includeFinished = this.selectedEvent.finished || this.includeFinished;
+
+    combineLatest([
+      this.progressService.list(this.selectedEvent.id, includeFinished),
+      this.userService.getUsers(),
+      this.scenarioService.list(),
+      this.courseService.list(),
+    ]).subscribe(([progressList, users, scenarios, courses]) => {
+      // sort progress by start date, latest first
+      progressList.sort((a, b) => Number(b.started) - Number(a.started));
+
+      this.currentProgress = progressList;
+      this.scenarioList.clear();
+
+      this.currentProgress.forEach(element => {
+        element.username = "none"
+        element.scenario_name = "none"
+        users.forEach(user => {
+          if (user.id == element.user) {
+            element.username = user.email
+          }
+        });
+        scenarios.forEach(s => {
+          if (s.id == element.scenario) {
+            element.scenario_name = s.name
+            this.scenarioList.add(s.name)
+          }
+        });
+        if (element.course && element.course != "") {
+          courses.forEach(c => {
+            if (c.id == element.course) {
+              element.course_name = c.name
             }
           });
-          this.filter()
         }
-      );   
+      });
+
+      this.filter()
+    });
 
     this.progressService.count().subscribe((c: ProgressCount) => {
       this.scheduledEvents.forEach((se) => {
