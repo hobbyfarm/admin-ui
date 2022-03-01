@@ -32,8 +32,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   public users: User[];
  
 
-  public callDelay: number = 10;
-  public callDelayOptions: number[] = [10, 30, 60, 120, 300];
   public pauseCall: boolean = false; // Stop refreshing if we are looking at a progress
   public pause = (pause: boolean) => {
     this.pauseCall = pause;
@@ -63,10 +61,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.callInterval = setInterval(() => {
-      this.refresh();
-     } , this.callDelay * 1000);
-
       //Fill cache
       this.courseService.list().subscribe();
       this.userService.getUsers().subscribe();
@@ -100,33 +94,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   sortByLoggedInAdminUser(eventArray: DashboardScheduledEvent[]) {    
     const isCreatedByMe = (e: DashboardScheduledEvent) => Number(e.creatorEmail === this.loggedInAdminEmail);
     return eventArray.sort((a, b) => isCreatedByMe(b) - isCreatedByMe(a));
-  }
-
-  changeCallDelay() {
-    var index = this.callDelayOptions.indexOf(this.callDelay);  
-    if (index < this.callDelayOptions.length - 1) {
-      this. callDelay = this.callDelayOptions[index + 1];
-    } else {
-      this.callDelay = this.callDelayOptions[0];
-    }        
-  
-    clearInterval(this.callInterval);
-    this.callInterval = setInterval(() => {
-      this.refresh();
-     } , this.callDelay * 1000);
-
-    //Reload the Circle to refresh the Animation
-    this.circleVisible = false;
-    setTimeout(() => {      
-      this.circleVisible = true;           
-    },0);
-
-    setTimeout(() => {
-      var circle = document.getElementById('countdownCircle');
-      circle.style.animationDuration = this.callDelay+'s';
-    },0);
-    
-    this.refresh(); //also refresh when call delay has changed
   }
 
   setScheduledEvent(ev: DashboardScheduledEvent){
