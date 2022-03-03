@@ -10,7 +10,7 @@ export class IntervalTimer implements OnInit, OnDestroy {
 
   // Output to emit an Event everytime the Timer reaches 0
   @Output()
-  intervalTimerEvent: EventEmitter<any> = new EventEmitter()
+  intervalElapsed: EventEmitter<void> = new EventEmitter()
 
   // Optional parameter to define the interval times that are needed in the parent Component. This overwrites the default of 10, 30, 60, 120 and 300 seconds if provided
   @Input()
@@ -30,12 +30,13 @@ export class IntervalTimer implements OnInit, OnDestroy {
     function* cycle<T>(array: T[]){
       while (true) yield* array;
     } 
-    this.delayOptions = cycle(this.delayOptionsArray)    
-    this.currentCallDelay = this.delayOptions.next().value;
-    // Establish timeout interval, get the named reference for it to update it later
-    this.callInterval = setInterval(() => {
-      this.intervalTimerEvent.emit(null);
-     } , this.currentCallDelay * 1000);
+    this.delayOptions = cycle(this.delayOptionsArray) 
+    this.changeDelay();
+  }
+
+  onTimerClick() {
+    this.changeDelay();
+    this.intervalElapsed.emit()
   }
 
 
@@ -46,7 +47,7 @@ export class IntervalTimer implements OnInit, OnDestroy {
     clearInterval(this.callInterval);
 
     this.callInterval = setInterval(() => {
-      this.intervalTimerEvent.emit(null);
+      this.intervalElapsed.emit();
      } , this.currentCallDelay * 1000);
 
      //Reload the Circle to refresh the Animation
@@ -54,8 +55,6 @@ export class IntervalTimer implements OnInit, OnDestroy {
     setTimeout(() => {      
       this.circleVisible = true;
     },0);
-    // Emit the timer Event on click
-    this.intervalTimerEvent.emit(null);
   }
 
   ngOnDestroy(): void {    

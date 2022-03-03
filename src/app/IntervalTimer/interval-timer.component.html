@@ -1,6 +1,6 @@
 <div class="countdown-container">
     <p>{{label}}</p>
-    <div class="countdown" (click)="changeDelay()">
+    <div class="countdown" (click)="onTimerClick()">
         <div class="countdown-number">{{currentCallDelay}}s</div>
         <svg>
             <circle *ngIf="circleVisible" [style.animationDuration]="currentCallDelay + 's'" r="18" cx="20" cy="20"></circle>
