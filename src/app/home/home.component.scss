@@ -12,20 +12,15 @@ span.access-code{
   overflow-x: hidden;
 }
 
-.nav-event-name-short{
-  width: 80%;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  padding: 0 0 0 10px;
-}
-
-.nav-event-name-long{
+.nav-event-name {
   width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   padding: 0 0 0 10px;
+}
+.nav-event-name.short {
+  width: 80%;
 }
 
 ul > li.selected{
