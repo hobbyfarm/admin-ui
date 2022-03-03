@@ -8,14 +8,20 @@
                 <label for="activeEventsToggle">Active Events</label>
                 <ul class="nav-list">
                     <li *ngFor="let se of activeEvents" (click)="setScheduledEvent(se)" [ngClass]="{'selected' : selectedEvent == se}">
-                        {{se.event_name}} <span *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble">{{se.activeSessions}}</span>
+                    <div class="clr-row">
+                        <div [ngClass]="se.activeSessions != undefined && se.activeSessions != 0 ? 'nav-event-name-short' : 'nav-event-name-long'">{{se.event_name}}</div> 
+                        <div *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble ">{{se.activeSessions}}</div>
+                    </div>
                     </li>
                 </ul>
                 <input id="finishedEventsToggle" type="checkbox" checked="!checked" />
                 <label for="finishedEventsToggle">Finished Events</label>
                 <ul class="nav-list">
                     <li *ngFor="let se of finishedEvents" (click)="setScheduledEvent(se)" [ngClass]="{'selected' : selectedEvent == se}">
-                        {{se.event_name}} <span *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble">{{se.activeSessions}}</span>
+                        <div class="clr-row">
+                            <div [ngClass]="se.activeSessions != undefined && se.activeSessions != 0 ? 'nav-event-name-short' : 'nav-event-name-long'">{{se.event_name}}</div> 
+                            <div *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble ">{{se.activeSessions}}</div>
+                        </div>
                     </li>
                 </ul>
             </section>
