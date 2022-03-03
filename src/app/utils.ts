@@ -1,27 +1,29 @@
-export function timeSince(date: Date, end: Date = new Date()) {
-
+export function timeSince(date: Date,  end: Date = new Date(), series: number = 2,) {
     var seconds: number = Math.floor((end.getTime() - date.getTime()) / 1000);
-  
-    var interval = seconds / 31536000;
-  
-    if (interval > 1) {
-      return Math.floor(interval) + " year(s)";
+    var intervals = [31536000, 2592000, 86400, 3600, 60, 1];
+    var intervalCounts = [0,0,0,0,0,0];
+    var intervalStrings = ["year", "month", "day", "hour", "minute", "second"];
+    var text = "";
+
+    for(let i = 0; i < intervals.length; i++){
+      let interval = seconds / intervals[i];
+      if (interval > 1) {
+        let count = Math.floor(interval)
+        intervalCounts[i] = count;
+        seconds -= count * intervals[i];
+        continue;
+      }
     }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      return Math.floor(interval) + " month(s)";
+
+    for(let i = 0; i < intervalCounts.length && series > 0; i++){
+      if(intervalCounts[i] > 0 || i + 1 == intervalCounts.length){
+        text += intervalCounts[i] + " " + intervalStrings[i] + (intervalCounts[i] != 1 ? "s" : "");
+        series -= 1;
+        if(series > 0 && i + 1 != intervalCounts.length){
+          text += ", ";
+        }
+      }
     }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      return Math.floor(interval) + " day(s)";
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      return Math.floor(interval) + " hour(s)";
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      return Math.floor(interval) + " minute(s)";
-    }
-    return Math.floor(seconds) + " second(s)";
-  }
+
+    return text;
+}
