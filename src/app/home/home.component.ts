@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProgressService } from 'src/app/data/progress.service';
 import { Progress, ProgressCount } from 'src/app/data/progress';
 import { UserService } from '../data/user.service';
@@ -21,7 +21,7 @@ interface DashboardScheduledEvent extends ScheduledEvent {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   public includeFinished: boolean = false;
   public selectedEvent: DashboardScheduledEvent;
   public currentProgress: Progress[] = [];
@@ -83,7 +83,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   async sortEventLists() { 
     this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;   
     let users = await this.userService.getUsers().toPromise()      
-    this.scheduledEvents.map((sEvent) => {
+    this.scheduledEvents.forEach((sEvent) => {
       sEvent.creatorEmail = users.find(user => user.id == sEvent.creator)?.email 
     })    
       this.sortByLoggedInAdminUser(this.scheduledEvents)
@@ -142,7 +142,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.userList.openModal();
   }
 
-  refresh() {    
+  refresh() {
     if(this.pauseCall){
       return;
     }
@@ -208,8 +208,5 @@ export class HomeComponent implements OnInit, OnDestroy {
           })
         }
       )
-  }
-  ngOnDestroy() {
-    clearInterval(this.callInterval)
   }
 }

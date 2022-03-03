@@ -3,7 +3,7 @@ import { ClrModal } from '@clr/angular';
 import { Progress } from 'src/app/data/progress';
 import { User } from 'src/app/data/user';
 
-interface userListUser extends User {
+interface UserListUser extends User {
   numberOfSessions?: number;
   activeScenarioName?: string;
 }
@@ -12,7 +12,7 @@ interface userListUser extends User {
   selector: 'event-user-list',
   templateUrl: './event-user-list.component.html'  
 })
-export class EventUserListComponent implements OnInit {
+export class EventUserListComponent {
 
   @ViewChild("userListModal") userListModal: ClrModal;
 
@@ -22,34 +22,27 @@ export class EventUserListComponent implements OnInit {
   @Input()
   public progress: Progress[]; 
 
-  @Input()
-  public filterName: Function;
-
-  @Output() nameClickedEvent = new EventEmitter<string>();
+  @Output() userSelected = new EventEmitter<User>();
   
-  public userListUsers: userListUser[] = [];
+  public userListUsers: UserListUser[] = [];
 
-  ngOnInit(): void {}
-
-  public listFilterName(username) {
-    this.nameClickedEvent.emit(username);
+  public onUserSelect(user) {
+    this.userSelected.emit(user);
     this.userListModal.close()
   }
 
   public openModal(): void {
-    this.userListUsers = []
-    this.users.forEach(user => {
-      let newUser: userListUser = user;
-      newUser.activeScenarioName = this.getUsersActiveProgressName(user);
-      newUser.numberOfSessions = this.getUsersProgress(user);
-      this.userListUsers.push(newUser)
-    })
+    this.userListUsers = this.users.map(user => ({
+      ...user,
+      activeScenarioName: this.getUsersActiveProgressName(user),
+      numberOfSessions: this.getUsersProgress(user),
+    }))
     this.userListModal.open();
   }
 
   getUsersActiveProgressName(user) {
-    let scenarioName = this.progress.filter(p => p.user === user.id && p.finished === false)[0]?.scenario_name    
-    return scenarioName ?? "0"
+    let scenarioName = this.progress.filter(p => p.user === user.id && p.finished === false)[0]?.scenario_name
+    return scenarioName ?? ''
   }
 
   getUsersProgress(user) {

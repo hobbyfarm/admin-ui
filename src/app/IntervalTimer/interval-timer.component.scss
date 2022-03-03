@@ -2,7 +2,7 @@
     float:right;
   }
   
-  #countdown {    
+  .countdown {    
       position: relative;
       height: 40px;
       width: 40px;
@@ -11,7 +11,7 @@
       margin: 2px auto;
   }
     
-  #countdown-number {
+  .countdown-number {
       color: black;
       display: inline-block;
       line-height: 40px;

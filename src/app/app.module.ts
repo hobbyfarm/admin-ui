@@ -46,7 +46,7 @@ import { AppConfigService } from './app-config.service';
 import { ProgressComponent } from './progress/progress.component';
 import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
 import { EventUserListComponent } from './home/event-user-list/event-user-list.component';
-import { TimedCallComponent } from './timed-call/timed-call.component';
+import { IntervalTimer } from './IntervalTimer/interval-timer.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -101,7 +101,7 @@ export function jwtOptionsFactory() {
     ProgressInfoComponent,
     ProgressComponent,
     EventUserListComponent,
-    TimedCallComponent,
+    IntervalTimer,
   ],
   imports: [
     BrowserModule,
