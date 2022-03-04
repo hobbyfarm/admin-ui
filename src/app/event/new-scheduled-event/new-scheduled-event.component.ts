@@ -318,7 +318,6 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   ngOnChanges() {
-    console.log("onChanges ran");
     if (this.event) {
       this.simpleMode = false;
       this.se = this.event;
@@ -610,6 +609,30 @@ export class NewScheduledEventComponent implements OnInit {
 
   public setOnCloseFn(fn: Function){
     this.onCloseFn = fn;
+  }
+
+  public isFinishWizardDisabled(){
+    //No course or scenario selected
+    if((this.selectedcourses.length == 0 && this.selectedscenarios.length == 0)){
+      return true;
+    }
+
+    //no environment selected
+    if(this.selectedEnvironments.length == 0){
+      return true;
+    }
+
+    //vm count is valid
+    if(!this.simpleMode && !this.vmCounts.valid || this.simpleMode && !this.simpleModeVmCounts.valid){
+      return true;
+    }
+
+    //valid VM details
+    if(( this.se.start_time >= this.se.end_time) || !this.se.start_time || !this.se.end_time || !this.eventDetails.valid){
+      return true;
+    }
+
+    return false;
   }
 
   public save() {

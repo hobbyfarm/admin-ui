@@ -349,7 +349,7 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="(selectedcourses.length == 0 && selectedscenarios.length == 0) || selectedEnvironments.length == 0 || !vmCounts.valid || !simpleModeVmCounts.valid || (se.start_time >= se.end_time) || !se.start_time || !se.end_time || !eventDetails.valid">
+  <clr-wizard-page [clrWizardPageNextDisabled]="isFinishWizardDisabled()">
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>
       Confirm the following details before finishing:
