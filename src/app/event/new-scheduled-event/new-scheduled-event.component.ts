@@ -112,7 +112,7 @@ export class NewScheduledEventComponent implements OnInit {
     return (control: AbstractControl): { [key: string]: any } | null => {
       if (!control.value || this.scheduledEvents.filter(el => el.access_code === control.value && (!this.event || this.event.access_code !== control.value)).length > 0) {
         return {
-          notUnqiue: true
+          notUnique: true
         };
       }
       return null;
@@ -123,7 +123,7 @@ export class NewScheduledEventComponent implements OnInit {
     return (control: AbstractControl): { [key: string]: any } | null => {
       if (!control.value || this.scheduledEvents.filter(el => el.event_name === control.value && (!this.event || this.event.event_name !== control.value)).length > 0) {
         return {
-          notUnqiue: true
+          notUnique: true
         };
       }
       return null;
