@@ -4,13 +4,11 @@ import { Progress, ProgressCount } from 'src/app/data/progress';
 import { UserService } from '../data/user.service';
 import { ScheduledEvent } from '../data/scheduledevent';
 import { ScheduledeventService } from '../data/scheduledevent.service';
-import { User } from '../data/user';
 import { ScenarioService } from '../data/scenario.service';
-import { Scenario } from '../data/scenario';
-import { Course } from '../data/course';
 import { CourseService } from '../data/course.service';
 import { EventUserListComponent } from './event-user-list/event-user-list.component';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { combineLatest } from 'rxjs';
 
 interface DashboardScheduledEvent extends ScheduledEvent {
   creatorEmail?: String;
@@ -149,64 +147,40 @@ export class HomeComponent implements OnInit {
     if(!this.selectedEvent){
       return
     }
-    this.progressService.list(this.selectedEvent.id, this.selectedEvent?.finished ? true : this.includeFinished).subscribe(
-      (p: Progress[]) =>
-        {
-          p.sort(function(a, b) {
-            var keyA = a.started,
-              keyB = b.started;
-            // Compare the 2 dates
-            if (keyA < keyB) return 1;
-            if (keyA > keyB) return -1;
-            return 0;
-          });
-          this.currentProgress = p;
-          this.scenarioList.clear();
 
-          this.userService.getUsers().subscribe((users: User[]) => {
-            this.users = users.filter(user => user.access_codes.includes(this.selectedEvent.access_code))
-          })      
-          
+    const includeFinished = this.selectedEvent.finished || this.includeFinished;
 
-          this.currentProgress.forEach(element => {            
-            element.username = this.users.find(u => u.id === element.user)?.email || "none"
-            element.scenario_name = "none"
-            this.scenarioService.list().subscribe(
-              (scenarios: Scenario[]) => {
-                  scenarios.forEach(s => {
-                      if(s.id == element.scenario){
-                          element.scenario_name = s.name
-                          this.scenarioList.add(s.name)
-                      }
-                  });
-              }
-            )
-            if(element.course && element.course != ""){
-              this.courseService.list().subscribe(
-                (courses: Course[]) => {
-                    courses.forEach(c => {
-                        if(c.id == element.course){
-                            element.course_name = c.name
-                        }
-                    });
-                }
-              )
-            }
-          });
-          this.filter()
-        }
-      );   
+    combineLatest([
+      this.progressService.list(this.selectedEvent.id, includeFinished),
+      this.userService.getUsers(),
+      this.scenarioService.list(),
+      this.courseService.list(),
+    ]).subscribe(([progressList, users, scenarios, courses]) => {
+      // sort progress by start date, latest first
+      progressList.sort((a, b) => Number(b.started) - Number(a.started));
 
-      this.progressService.count().subscribe(
-        (c: ProgressCount) => {
-          this.scheduledEvents.forEach(se => {
-            if(c[se.id]){
-              se.activeSessions = c[se.id];
-            }else{
-              se.activeSessions = 0;
-            }
-          })
-        }
-      )
+      const userMap = new Map(users.map(u => [u.id, u.email]));
+      const courseMap = new Map(courses.map(c => [c.id, c.name]));
+      const scenarioMap = new Map(scenarios.map(s => [s.id, s.name]));
+      
+      this.currentProgress = progressList.map((element) => ({
+        ...element,
+        username: userMap.get(element.user) ?? "none",
+        scenario_name: scenarioMap.get(element.scenario) ?? "none",
+        course_name: courseMap.get(element.course) ?? '',
+      }));
+      
+      this.users = users.filter(user => user.access_codes.includes(this.selectedEvent.access_code));
+      
+      this.scenarioList = new Set(this.currentProgress.map(p => p.scenario_name));
+
+      this.filter()
+    });
+
+    this.progressService.count().subscribe((c: ProgressCount) => {
+      this.scheduledEvents.forEach((se) => {
+        se.activeSessions = c[se.id] || 0;
+      });
+    });
   }
 }
