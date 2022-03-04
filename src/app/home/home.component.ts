@@ -9,6 +9,7 @@ import { CourseService } from '../data/course.service';
 import { EventUserListComponent } from './event-user-list/event-user-list.component';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { combineLatest } from 'rxjs';
+import { User } from '../data/user';
 
 interface DashboardScheduledEvent extends ScheduledEvent {
   creatorEmail?: String;
