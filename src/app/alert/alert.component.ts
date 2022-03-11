@@ -5,7 +5,6 @@ import { ClrAlertType } from '../clr-alert-type';
 @Component({
   selector: 'alert',
   templateUrl: './alert.component.html',
-  styleUrls: ['./alert.component.scss']
 })
 export class AlertComponent implements OnInit {
   public isClosed: boolean = true;

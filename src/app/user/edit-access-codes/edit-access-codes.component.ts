@@ -8,7 +8,6 @@ import { UserService } from 'src/app/data/user.service';
 @Component({
   selector: 'edit-access-codes',
   templateUrl: './edit-access-codes.component.html',
-  styleUrls: ['./edit-access-codes.component.scss']
 })
 export class EditAccessCodesComponent implements OnInit, OnChanges {
   @Input()

@@ -10,7 +10,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'new-course',
   templateUrl: './new-course.component.html',
-  styleUrls: ['./new-course.component.scss']
 })
 export class NewCourseComponent implements OnInit {
   @Output()

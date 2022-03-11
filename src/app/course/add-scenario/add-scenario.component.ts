@@ -5,7 +5,6 @@ import { ClrModal } from '@clr/angular';
 @Component({
   selector: 'add-scenario',
   templateUrl: './add-scenario.component.html',
-  styleUrls: ['./add-scenario.component.scss']
 })
 export class AddScenarioComponent implements OnInit {
   public addOpen: boolean = false;

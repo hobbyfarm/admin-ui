@@ -6,7 +6,6 @@ import { timeSince } from 'src/app/utils';
 @Component({
   selector: 'progress-info',
   templateUrl: './progress-info.component.html',
-  styleUrls: ['./progress-info.component.scss']
 })
 export class ProgressInfoComponent implements OnInit{
   public infoOpen: boolean = false;

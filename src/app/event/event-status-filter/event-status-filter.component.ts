@@ -6,7 +6,6 @@ import { ScheduledEvent } from 'src/app/data/scheduledevent';
 @Component({
   selector: 'event-status-filter',
   templateUrl: './event-status-filter.component.html',
-  styleUrls: ['./event-status-filter.component.scss']
 })
 export class EventStatusFilterComponent implements OnInit, ClrDatagridFilterInterface<ScheduledEvent> {
   enabled: boolean = true;
