@@ -15,7 +15,6 @@ import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewScheduledEventComponent } from './event/new-scheduled-event/new-scheduled-event.component';
-import { AtobPipe } from './atob.pipe';
 import { ScenarioService } from './data/scenario.service';
 import { DlDateTimePickerDateModule, DlDateTimePickerModule} from 'angular-bootstrap-datetimepicker';
 import { ScenarioComponent } from './scenario/scenario.component';
@@ -73,7 +72,6 @@ export function jwtOptionsFactory() {
     EventComponent,
     LoginComponent,
     NewScheduledEventComponent,
-    AtobPipe,
     ScenarioComponent,
     UserComponent,
     ConfigurationComponent,
