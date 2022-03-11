@@ -52,6 +52,8 @@ export class CourseComponent implements OnInit {
 
   public courseDetailsActive: boolean = true;
 
+  public seeExamples = false;
+
   constructor(
     public courseService: CourseService,
     public scenarioService: ScenarioService,
