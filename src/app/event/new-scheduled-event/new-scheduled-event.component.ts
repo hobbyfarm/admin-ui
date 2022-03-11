@@ -11,7 +11,7 @@ import { Environment } from 'src/app/data/environment';
 import { from, of } from 'rxjs';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
-import {FormGroup, FormControl, Validators, FormArray, ValidatorFn, ValidationErrors, FormBuilder, AbstractControl} from '@angular/forms';
+import {FormGroup, FormControl, Validators, FormArray, ValidatorFn, FormBuilder, AbstractControl} from '@angular/forms';
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 

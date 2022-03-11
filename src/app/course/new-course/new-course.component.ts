@@ -1,6 +1,5 @@
-import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { KeepaliveValidator } from 'src/app/validators/keepalive.validator';
+import { Component, Output, EventEmitter } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { CourseService } from 'src/app/data/course.service';
 import { Course } from 'src/app/data/course';
 import { ServerResponse } from 'src/app/data/serverresponse';

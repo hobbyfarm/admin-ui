@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { ClrModal } from '@clr/angular';
 import { Progress } from 'src/app/data/progress';
 import { timeSince } from 'src/app/utils';

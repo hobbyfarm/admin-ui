@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { environment } from 'src/environments/environment';
 import { switchMap, catchError, tap } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { atou } from '../unicode';
 import { User } from './user';
 
