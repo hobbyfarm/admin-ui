@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { KeepaliveValidator } from 'src/app/validators/keepalive.validator';
 import { CourseService } from 'src/app/data/course.service';
@@ -11,7 +11,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   selector: 'new-course',
   templateUrl: './new-course.component.html',
 })
-export class NewCourseComponent implements OnInit {
+export class NewCourseComponent {
   @Output()
   public added: EventEmitter<boolean> = new EventEmitter(null);
 
@@ -28,9 +28,6 @@ export class NewCourseComponent implements OnInit {
   constructor(
     public courseService: CourseService
   ) { }
-
-  ngOnInit(): void {
-  }
 
   setupForm(fg: FormGroup) {
     this.form = fg;

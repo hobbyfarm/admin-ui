@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ClrModal } from '@clr/angular';
 import { ServerResponse } from 'src/app/data/serverresponse';
@@ -10,7 +10,7 @@ import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-
   selector: 'edit-user',
   templateUrl: './edit-user.component.html',
 })
-export class EditUserComponent implements OnInit, OnChanges {
+export class EditUserComponent implements OnChanges {
   @Input()
   public user: User = new User();
 
@@ -28,9 +28,6 @@ export class EditUserComponent implements OnInit, OnChanges {
   constructor(
     public userService: UserService
   ) { }
-
-  ngOnInit(): void {
-  }
 
   ngOnChanges(): void {
     this.reset();

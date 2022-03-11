@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Input, ViewChild, OnDestroy } from '@angular/core';
 import { ClrModal } from '@clr/angular';
 import { Progress } from 'src/app/data/progress';
 import { timeSince } from 'src/app/utils';
@@ -7,7 +7,7 @@ import { timeSince } from 'src/app/utils';
   selector: 'progress-info',
   templateUrl: './progress-info.component.html',
 })
-export class ProgressInfoComponent implements OnInit{
+export class ProgressInfoComponent {
   public infoOpen: boolean = false;
 
   public selectedScenarios = [];
@@ -21,14 +21,6 @@ export class ProgressInfoComponent implements OnInit{
   public timeSince = timeSince;
 
   @ViewChild("infoModal") infoModal: ClrModal;
-
-  constructor(
-  ) { 
-    
-  }
-
-  ngOnInit(): void {
-  }
 
   public openModal(): void {
     this.infoModal.open();
