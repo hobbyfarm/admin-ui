@@ -36,7 +36,7 @@
             <clr-tab>
                 <button [disabled]="!selectedCourse" clrTabLink id="virtualMachinesLink">Virtual Machines</button>
                 <clr-tab-content id="virtualMachinesContent" *clrIfActive>
-                    <vmset [(vms)]="editVirtualMachines" (modified)="setModified()"></vmset>
+                    <vmset [vms]="editVirtualMachines" (modified)="setModified()"></vmset>
                 </clr-tab-content>
             </clr-tab>
             <clr-tab>
