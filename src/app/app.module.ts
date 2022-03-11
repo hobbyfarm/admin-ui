@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClarityModule } from '@clr/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RootComponent } from './root/root.component';
 import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './header/header.component';
 import { EventComponent } from './event/event.component';
@@ -69,7 +68,6 @@ export function jwtOptionsFactory() {
 @NgModule({
   declarations: [
     AppComponent,
-    RootComponent,
     HomeComponent,
     HeaderComponent,
     EventComponent,
@@ -132,7 +130,7 @@ export function jwtOptionsFactory() {
       deps: [AppConfigService]
     }
   ],
-  bootstrap: [RootComponent],
+  bootstrap: [AppComponent],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ]
