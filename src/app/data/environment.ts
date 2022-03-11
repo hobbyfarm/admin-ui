@@ -3,8 +3,8 @@ export class Environment {
     display_name: string;
     dnssuffix: string;
     provider: string;
-    // template_mapping: Map<string,Map<string, string>>; // "{ ubuntu1604-docker1: { "image": "ubuntu1604-docker1-base" } }"
-    template_mapping: {};
+    // e.g. "{ ubuntu1604-docker1: { "image": "ubuntu1604-docker1-base" } }"
+    template_mapping: Record<string, Record<string, string>>;
     environment_specifics: {};
     ip_translation_map: {};
     ws_endpoint: string;
