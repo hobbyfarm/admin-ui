@@ -175,7 +175,7 @@ export class NewScheduledEventComponent implements OnInit {
         continue;
       }
       var initVal = this.se.required_vms[ea.environment]?.[template] ?? 0; // so we don't blow away old input values when rebuilding this form
-      var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(ea.available_count[template])]);
+      var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(ea.available_count[template]), Validators.min(1)]);
       newFormGroup.addControl(template, newControl);
   }
 
@@ -199,7 +199,7 @@ export class NewScheduledEventComponent implements OnInit {
       if (this.simpleUserCounts[ea.environment]) {
         initVal = this.simpleUserCounts[ea.environment] || 0; // so we don't blow away old input values when rebuilding this form
       }
-      var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(this.maxUserCounts[ea.environment])]);
+      var newControl = new FormControl(initVal, [Validators.pattern(/-?\d+/), Validators.max(this.maxUserCounts[ea.environment]), Validators.min(1)]);
       (this.simpleModeVmCounts.get('envs') as FormArray).push(newControl);
     }
   }
