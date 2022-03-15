@@ -1,1 +1,82 @@
-<p>roles works!</p>
+<div class="clr-row">
+    <div class="clr-col">
+        <h3>Roles</h3>
+    </div>
+</div>
+<div class="clr-row">
+    <div class="clr-col">
+        <button class="btn btn-success" (click)="openNewRole()">
+            <clr-icon shape="plus"></clr-icon> New
+        </button>
+    </div>
+</div>
+<div class="clr-row">
+    <div class="clr-col">
+        <i>Use <clr-icon shape="angle right"></clr-icon> to expand role.</i>
+        <clr-datagrid>
+            <clr-dg-column>Name</clr-dg-column>
+            <clr-dg-column>Rules</clr-dg-column>
+
+            <clr-dg-row *clrDgItems="let r of roles; let roleIndex = index">
+                <clr-dg-action-overflow>
+                    <button class="action-item">Edit</button>
+                    <button class="action-item">Delete</button>
+                </clr-dg-action-overflow>
+                <clr-dg-cell>{{ r.name }}</clr-dg-cell>
+                <clr-dg-cell>{{ r.rules?.length }} </clr-dg-cell>
+
+                <clr-dg-row-detail *clrIfExpanded>  
+                    <div>
+                        <div class="clr-row">
+                            <button class="btn btn-sm btn-success" (click)="new(roleIndex)">New Rule</button>
+                        </div>
+                        <div class="clr-row">
+                            <table class="table table-compact">
+                                <thead>
+                                    <tr>
+                                        <th>API Groups</th>
+                                        <th>Resources</th>
+                                        <th>Verbs</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let rule of r.rules; let ruleIndex = index">
+                                        <td>
+                                            <span class="label label-purple" *ngFor="let apiGroup of rule?.apiGroups">{{ apiGroup }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="label label-purple" *ngFor="let resource of rule?.resources">{{ resource }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="label label-purple" *ngFor="let verb of rule?.verbs">{{ verb }}</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary btn-table" (click)="edit(roleIndex, ruleIndex)">Edit</button>
+                                            <button class="btn btn-sm btn-danger btn-table" (click)="delete('rule', roleIndex, ruleIndex)" *ngIf="r.rules.length > 1">Delete</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>  
+                </clr-dg-row-detail>
+            </clr-dg-row>
+        </clr-datagrid>
+    </div>
+</div>
+
+<edit-rule #editRuleModal [rule]="editingRule" (saved)="saveRule()"></edit-rule>
+
+<new-role #newRoleModal [role]="newRole"></new-role>
+
+<clr-modal #deleteModal>
+    <h3 class="modal-title">Delete {{ deletingObject }}</h3>
+    <div class="modal-body">
+        Are you sure you want to delete this {{ deletingObject }}? This operation cannot be undone.
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-danger" (click)="doDelete()">Delete</button>
+        <button class="btn btn-success-outline" (click)="deleteModal.close()">Cancel</button>
+    </div>
+</clr-modal>

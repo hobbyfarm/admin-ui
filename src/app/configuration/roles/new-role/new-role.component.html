@@ -1,0 +1,16 @@
+<clr-modal #modal [(clrModalOpen)]="modalOpen">
+    <h3 class="modal-title">Create Role</h3>
+    <div class="modal-body">
+        <form clrForm #nameForm>
+            <clr-input-container>
+                <label>Role Name</label>
+                <input clrInput placeholder="Role name" name="name" [(ngModel)]="role.name" />
+            </clr-input-container>
+        </form>
+        <rule-form [rule]="rule"></rule-form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" (click)="save()">Save</button>
+        <button class="btn btn-danger-outline" (click)="modal.close()">Cancel</button>
+    </div>
+</clr-modal>

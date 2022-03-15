@@ -1,0 +1,76 @@
+<form clrForm [formGroup]="ruleForm">
+    <clr-combobox-container>
+        <label>API Groups</label>
+        <clr-combobox formControlName="apiGroups" name="apiGroups" clrMulti="true" required>
+            <ng-container *clrOptionSelected="let apiSelected">
+                {{ apiSelected }}
+            </ng-container>
+            <clr-options>
+                <clr-option *clrOptionItems="let apiGroup of apiGroups" [clrValue]="apiGroup">
+                    <clr-icon shape="node-group"></clr-icon> {{ apiGroup }}
+                </clr-option>
+            </clr-options>
+        </clr-combobox>
+        <clr-control-error>API group is required.</clr-control-error>
+        <clr-control-helper>
+            <div class="clr-row">
+                <div class="clr-col">
+                    <a href="javascript://" (click)="clearField('api')">Clear API Groups</a>
+                </div>
+                <div class="clr-col">
+                    <a href="javascript://" (click)="addAll('api')">Add All API Groups</a>
+                </div>
+            </div>
+        </clr-control-helper>
+    </clr-combobox-container>
+
+    <clr-combobox-container>
+        <label>Resources</label>
+        <clr-combobox formControlName="resources" name="resources" clrMulti="true">
+            <ng-container *clrOptionSelected="let resourceSelected">
+                {{ resourceSelected }}
+            </ng-container>
+            <clr-options>
+                <clr-option *clrOptionItems="let resource of resources" [clrValue]="resource">
+                    <clr-icon shape="node"></clr-icon> {{ resource }}
+                </clr-option>
+            </clr-options>
+        </clr-combobox>
+        <clr-control-error>Resource is required.</clr-control-error>
+        <clr-control-helper>
+            <div class="clr-row">
+                <div class="clr-col">
+                    <a href="javascript://" (click)="clearField('resources')">Clear Resources</a>
+                </div>
+                <div class="clr-col">
+                    <a href="javascript://" (click)="addAll('resources')">Add All Resources</a>
+                </div>
+            </div>
+        </clr-control-helper>
+    </clr-combobox-container>
+
+    <clr-combobox-container>
+        <label>Verbs</label>
+        <clr-combobox formControlName="verbs" name="verbs" clrMulti="true">
+            <ng-container *clrOptionSelected="let verbSelected">
+                {{ verbSelected }}
+            </ng-container>
+            <clr-options>
+                <clr-option *clrOptionItems="let verb of verbs" [clrValue]="verb">
+                    <clr-icon shape="bolt"></clr-icon> {{ verb }}
+                </clr-option>
+            </clr-options>
+        </clr-combobox>
+        <clr-control-error>Verb is required.</clr-control-error>
+        <clr-control-helper>
+            <div class="clr-row">
+                <div class="clr-col">
+                    <a href="javascript://" (click)="clearField('verbs')">Clear Verbs</a>
+                </div>
+                <div class="clr-col">
+                    <a href="javascript://" (click)="addAll('verbs')">Add All Verbs</a>
+                </div>
+            </div>
+        </clr-control-helper>
+    </clr-combobox-container>
+</form>
