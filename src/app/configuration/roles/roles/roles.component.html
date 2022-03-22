@@ -19,8 +19,7 @@
 
             <clr-dg-row *clrDgItems="let r of roles; let roleIndex = index">
                 <clr-dg-action-overflow>
-                    <button class="action-item">Edit</button>
-                    <button class="action-item">Delete</button>
+                    <button class="action-item" (click)="delete('role', roleIndex)">Delete</button>
                 </clr-dg-action-overflow>
                 <clr-dg-cell>{{ r.name }}</clr-dg-cell>
                 <clr-dg-cell>{{ r.rules?.length }} </clr-dg-cell>
@@ -68,7 +67,7 @@
 
 <edit-rule #editRuleModal [rule]="editingRule" (saved)="saveRule()"></edit-rule>
 
-<new-role #newRoleModal [role]="newRole"></new-role>
+<new-role #newRoleModal [role]="newRole" (saved)="refresh()"></new-role>
 
 <clr-modal #deleteModal>
     <h3 class="modal-title">Delete {{ deletingObject }}</h3>

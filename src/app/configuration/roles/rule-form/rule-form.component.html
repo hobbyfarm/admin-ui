@@ -1,7 +1,7 @@
-<form clrForm [formGroup]="ruleForm">
+<form clrForm [formGroup]="form">
     <clr-combobox-container>
         <label>API Groups</label>
-        <clr-combobox formControlName="apiGroups" name="apiGroups" clrMulti="true" required>
+        <clr-combobox #apiGroupsCombobox formControlName="apiGroups" name="apiGroups" clrMulti="true">
             <ng-container *clrOptionSelected="let apiSelected">
                 {{ apiSelected }}
             </ng-container>

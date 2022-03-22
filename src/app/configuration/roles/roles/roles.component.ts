@@ -11,6 +11,7 @@ import { NewRoleComponent } from '../new-role/new-role.component';
   templateUrl: './roles.component.html',
   styleUrls: ['./roles.component.scss']
 })
+
 export class RolesComponent implements OnInit {
   public roles: Role[] = [];
 
@@ -29,6 +30,10 @@ export class RolesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.refresh();
+  }
+
+  public refresh(): void {
     this.roleService.list()
     .subscribe(
       (r: Role[]) => this.roles = r,
@@ -64,17 +69,8 @@ export class RolesComponent implements OnInit {
     this.newRoleModal.open();
   }
 
-  public saveRole() {
-    this.roleService.create(this.newRole)
-    .subscribe(
-      (a: any) => {
-        console.log("success");
-        this.roles.push(this.newRole);
-      }
-    )
-  }
-
   public saveRule() {
+    console.log(this.editingRule);
     this.roles[this.editingRoleIndex].rules[this.editingRuleIndex] = this.editingRule;
     
     this.roleService.update(this.roles[this.editingRoleIndex])
