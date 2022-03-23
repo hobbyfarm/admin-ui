@@ -10,7 +10,7 @@ import { ScheduledEvent } from 'src/app/data/scheduledevent';
 export class EventStatusFilterComponent implements ClrDatagridFilterInterface<ScheduledEvent> {
   enabled: boolean = true;
 
-  constructor(private filterContainer: ClrDatagridFilter) {
+  constructor(filterContainer: ClrDatagridFilter) {
     filterContainer.setFilter(this);
   }
 
