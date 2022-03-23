@@ -14,6 +14,7 @@
     "noImplicitAny": false,
     // end strict mode WIP
 
+    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "declaration": false,
