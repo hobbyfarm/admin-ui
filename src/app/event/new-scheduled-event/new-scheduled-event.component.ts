@@ -11,7 +11,7 @@ import { Environment } from 'src/app/data/environment';
 import { from, of } from 'rxjs';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
-import {FormGroup, FormControl, Validators, FormArray, ValidatorFn, ValidationErrors, FormBuilder, AbstractControl} from '@angular/forms';
+import {FormGroup, FormControl, Validators, FormArray, ValidatorFn, FormBuilder, AbstractControl} from '@angular/forms';
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 
@@ -53,8 +53,6 @@ export class NewScheduledEventComponent implements OnInit {
   public simpleMode: boolean = true;
 
   public validTimes: boolean = false;
-
-  public vmtotals: Map<string, number> = new Map();
 
   public selectedscenarios: Scenario[] = [];
   public selectedcourses: Course[] = [];
@@ -139,14 +137,6 @@ export class NewScheduledEventComponent implements OnInit {
 
   public getTemplates(env: string) {
     return Object.keys(this.keyedEnvironments.get(env).template_mapping);
-  }
-
-  public getTotals() {
-    return Object.entries(this.vmtotals);
-  }
-
-  public getVMCount(env: string, template: string) {
-    return this.se.required_vms[env] ? this.se.required_vms[env][template] : 0;
   }
 
   public setupVMSelection() {

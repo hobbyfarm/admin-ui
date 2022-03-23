@@ -7,7 +7,6 @@ import { ClrModal, ClrDatagridSortOrder } from '@clr/angular';
 @Component({
   selector: 'app-event',
   templateUrl: './event.component.html',
-  styleUrls: ['./event.component.scss']
 })
 export class EventComponent implements OnInit {
   public events: ScheduledEvent[] = [];

@@ -7,7 +7,6 @@ import { ScenarioService } from '../data/scenario.service';
 @Component({
   selector: 'app-printable',
   templateUrl: './printable.component.html',
-  styleUrls: ['./printable.component.scss']
 })
 export class PrintableComponent implements OnInit {
 

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpParameterCodec, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { map, switchMap, catchError, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Course } from './course';
 import { Scenario } from './scenario';
 import { ScenarioService } from './scenario.service';
