@@ -45,8 +45,10 @@ import { EditVmtemplateComponent } from './configuration/vmtemplates/edit-vmtemp
 import { AppConfigService } from './app-config.service';
 import { ProgressComponent } from './progress/progress.component';
 import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
-import { EventUserListComponent } from './home/event-user-list/event-user-list.component';
+import { EventUserListComponent } from './dashboards/progress-dashboard/event-user-list/event-user-list.component';
 import { IntervalTimer } from './IntervalTimer/interval-timer.component';
+import { ProgressDashboardComponent } from './dashboards/progress-dashboard/progress-dashboard.component';
+import { DashboardsComponent } from './dashboards/dashboards.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -102,6 +104,8 @@ export function jwtOptionsFactory() {
     ProgressComponent,
     EventUserListComponent,
     IntervalTimer,
+    ProgressDashboardComponent,
+    DashboardsComponent
   ],
   imports: [
     BrowserModule,

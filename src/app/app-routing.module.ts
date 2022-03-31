@@ -12,6 +12,8 @@ import { ContentComponent } from './content/content.component';
 import { CourseComponent } from './course/course.component';
 import { PrintableComponent } from './printable/printable.component';
 import { VmtemplatesComponent } from './configuration/vmtemplates/vmtemplates.component';
+import { DashboardsComponent } from './dashboards/dashboards.component';
+
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -19,6 +21,13 @@ const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+    canActivate: [
+      AuthGuard
+    ]
+  },
+  {
+    path: 'dashboards',
+    component: DashboardsComponent,
     canActivate: [
       AuthGuard
     ]
