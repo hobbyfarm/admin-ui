@@ -75,7 +75,8 @@ export class NewScheduledEventComponent implements OnInit {
   public eventDetails: FormGroup = new FormGroup({
     'event_name': new FormControl(this.se.event_name, [
       Validators.required,
-      Validators.minLength(4)
+      Validators.minLength(4),
+      this.uniqueEventName()
     ]),
     'description': new FormControl(this.se.description, [
       Validators.required,
@@ -111,7 +112,18 @@ export class NewScheduledEventComponent implements OnInit {
     return (control: AbstractControl): { [key: string]: any } | null => {
       if (!control.value || this.scheduledEvents.filter(el => el.access_code === control.value && (!this.event || this.event.access_code !== control.value)).length > 0) {
         return {
-          notUnqiue: true
+          notUnique: true
+        };
+      }
+      return null;
+    };
+  }
+
+  public uniqueEventName(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      if (!control.value || this.scheduledEvents.filter(el => el.event_name === control.value && (!this.event || this.event.event_name !== control.value)).length > 0) {
+        return {
+          notUnique: true
         };
       }
       return null;
