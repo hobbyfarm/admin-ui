@@ -11,11 +11,9 @@ export class ConfigurationComponent implements OnInit {
   public rolesRbac: boolean = false;
 
   constructor(
-    private rbacService: RbacService
   ) { }
 
   ngOnInit() {
-    this.rolesRbac = this.rbacService.Grants('roles', 'list', 'rbac.authorization.k8s.io')
   }
 
 }

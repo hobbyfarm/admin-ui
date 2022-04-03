@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     if (this.rbacService.Grants('environments', 'list') || this.rbacService.Grants('vmtemplates', 'list') || 
-    this.rbacService.Grants('roles', 'list', 'rbac.authorization.k8s.io')) {
+    this.rbacService.Grants('roles', 'list')) {
       this.configurationRbac = true;
     }
 

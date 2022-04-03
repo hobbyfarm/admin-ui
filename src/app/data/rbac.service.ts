@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { atou } from '../unicode';
 import { AccessSet } from './accessset';
+import { hobbyfarmApiGroup, rbacApiGroup } from './rbac';
 import { ServerResponse } from './serverresponse';
 
 @Injectable({
@@ -26,7 +27,14 @@ export class RbacService {
     )
   }
 
-  public Grants(resource: string, verb: string, apiGroup: string = "hobbyfarm.io"): boolean {
+  public Grants(resource: string, verb: string): boolean {
+    var apiGroup
+    if (resource == "roles" || resource == "rolebindings") {
+      apiGroup = rbacApiGroup
+    } else {
+      apiGroup = hobbyfarmApiGroup
+    }
+
     let allowed = false;
     [RbacService.all, apiGroup].forEach((a) => {
       [RbacService.all, resource].forEach((r) => {

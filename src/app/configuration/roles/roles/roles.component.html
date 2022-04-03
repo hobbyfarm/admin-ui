@@ -5,7 +5,7 @@
 </div>
 <div class="clr-row">
     <div class="clr-col">
-        <button class="btn btn-success" (click)="openNewRole()">
+        <button class="btn btn-success" (click)="openNewRole()" *rbac="['roles.create']">
             <clr-icon shape="plus"></clr-icon> New
         </button>
     </div>
@@ -18,7 +18,7 @@
             <clr-dg-column>Rules</clr-dg-column>
 
             <clr-dg-row *clrDgItems="let r of roles; let roleIndex = index">
-                <clr-dg-action-overflow>
+                <clr-dg-action-overflow *rbac="['roles.delete']">
                     <button class="action-item" (click)="delete('role', roleIndex)">Delete</button>
                 </clr-dg-action-overflow>
                 <clr-dg-cell>{{ r.name }}</clr-dg-cell>
@@ -27,7 +27,7 @@
                 <clr-dg-row-detail *clrIfExpanded>  
                     <div>
                         <div class="clr-row">
-                            <button class="btn btn-sm btn-success" (click)="new(roleIndex)">New Rule</button>
+                            <button class="btn btn-sm btn-success" (click)="new(roleIndex)" *rbac="['roles.update']">New Rule</button>
                         </div>
                         <div class="clr-row">
                             <table class="table table-compact">
@@ -36,7 +36,7 @@
                                         <th>API Groups</th>
                                         <th>Resources</th>
                                         <th>Verbs</th>
-                                        <th>Actions</th>
+                                        <th *rbac="['roles.update']">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -50,7 +50,7 @@
                                         <td>
                                             <span class="label label-purple" *ngFor="let verb of rule?.verbs">{{ verb }}</span>
                                         </td>
-                                        <td>
+                                        <td *rbac="['roles.update']">
                                             <button class="btn btn-sm btn-primary btn-table" (click)="edit(roleIndex, ruleIndex)">Edit</button>
                                             <button class="btn btn-sm btn-danger btn-table" (click)="delete('rule', roleIndex, ruleIndex)" *ngIf="r.rules.length > 1">Delete</button>
                                         </td>
