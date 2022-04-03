@@ -51,13 +51,15 @@ export class RolesComponent implements OnInit {
   public edit(roleIndex: number, ruleIndex: number): void {
     this.editingRoleIndex = roleIndex;
     this.editingRuleIndex = ruleIndex;
-    this.editingRule = this.roles[roleIndex].rules[ruleIndex];
+
+    this.editingRule = Object.create(this.roles[roleIndex].rules[ruleIndex])
+
     this.editModal.open(true);
   }
 
   public new(roleIndex: number): void {
     this.editingRoleIndex = roleIndex;
-    this.editingRuleIndex = this.roles[roleIndex].rules.length
+    this.editingRuleIndex = this.roles[roleIndex].rules.length;
 
     this.editingRule = new Rule();
 
