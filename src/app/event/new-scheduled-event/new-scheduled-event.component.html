@@ -1,4 +1,4 @@
-<clr-wizard #wizard [(clrWizardOpen)]="wzOpen" clrWizardSize="xl" (clrWizardOnFinish)="save()">
+<clr-wizard #wizard [(clrWizardOpen)]="wzOpen" clrWizardSize="xl" (clrWizardOnFinish)="save()" (clrWizardOnCancel)="close()">
   <clr-wizard-title>New Scheduled Event</clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
@@ -350,7 +350,7 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page [clrWizardPageNextDisabled]="isFinishWizardDisabled()">
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>
       Confirm the following details before finishing:
