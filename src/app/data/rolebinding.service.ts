@@ -16,6 +16,15 @@ export class RolebindingService {
     public http: HttpClient
   ) { }
 
+  public listForUser(user: string) : Observable<RoleBinding[]> {
+    return this.http.get<ServerResponse>(environment.server + "/a/user/"  + user + "/rolebindings")
+    .pipe(
+      switchMap((s: ServerResponse) => {
+        return of(JSON.parse(atou(s.content)))
+      })
+    )
+  }
+
   public list(): Observable<RoleBinding[]> {
     return this.http.get<ServerResponse>(environment.server + "/a/rolebindings/list")
     .pipe(

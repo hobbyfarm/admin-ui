@@ -52,6 +52,8 @@ import { RolesComponent } from './configuration/roles/roles/roles.component';
 import { EditRuleComponent } from './configuration/roles/edit-rule/edit-rule.component';
 import { NewRoleComponent } from './configuration/roles/new-role/new-role.component';
 import { RuleFormComponent } from './configuration/roles/rule-form/rule-form.component';
+import { RolebindingsComponent } from './user/rolebindings/rolebindings.component';
+import { NewRoleBindingComponent } from './user/new-role-binding/new-role-binding.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -111,6 +113,8 @@ export function jwtOptionsFactory() {
     EditRuleComponent,
     NewRoleComponent,
     RuleFormComponent,
+    RolebindingsComponent,
+    NewRoleBindingComponent,
   ],
   imports: [
     BrowserModule,
