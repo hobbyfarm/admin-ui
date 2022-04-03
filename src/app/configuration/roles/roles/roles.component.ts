@@ -72,13 +72,12 @@ export class RolesComponent implements OnInit {
   }
 
   public saveRule() {
-    console.log(this.editingRule);
     this.roles[this.editingRoleIndex].rules[this.editingRuleIndex] = this.editingRule;
     
     this.roleService.update(this.roles[this.editingRoleIndex])
     .subscribe(
       (a: any) => {
-        console.log("success!");
+        
       }
     )
   }
