@@ -18,13 +18,26 @@ export class RbacService {
   constructor(
     public http: HttpClient
   ) {
-    // when the service is built, get the rbac access for the user
-    this.http.get(environment.server + "/auth/access")
+    // only load an access set if the hobbyfarm token is in place
+    // otherwise we would be loading an empty access set
+    if (localStorage.getItem("hobbyfarm_admin_token")?.length > 0) {
+      this.LoadAccessSet(); 
+    }
+  }
+
+  // async because we want to ensure that callers of this method
+  // can wait for its completion. This is especially important in 
+  // login.component, because we don't want to navigate the user to
+  // the home page before we have completed setting up rbac.
+  public async LoadAccessSet(): Promise<boolean> {
+    await this.http.get(environment.server + "/auth/access")
     .pipe(
       map((s: ServerResponse) => JSON.parse(atou(s.content)))
-    ).subscribe(
+    ).toPromise().then(
       (as: AccessSet) => this.userAccess = as
     )
+
+    return true
   }
 
   public Grants(resource: string, verb: string): boolean {
