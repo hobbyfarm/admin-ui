@@ -19,7 +19,7 @@ export class DeleteConfirmationComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  open(): void {
+  public open(): void {
     this.modal.open();
   }
 
