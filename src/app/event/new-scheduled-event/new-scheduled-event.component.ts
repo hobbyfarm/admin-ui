@@ -64,6 +64,8 @@ export class NewScheduledEventComponent implements OnInit {
   public maxUserCounts: {} = {};
   public invalidSimpleEnvironments: string[] = [];
 
+  private onCloseFn: Function;
+
   constructor(
     private _fb: FormBuilder,
     public ss: ScenarioService,
@@ -75,7 +77,8 @@ export class NewScheduledEventComponent implements OnInit {
   public eventDetails: FormGroup = new FormGroup({
     'event_name': new FormControl(this.se.event_name, [
       Validators.required,
-      Validators.minLength(4)
+      Validators.minLength(4),
+      this.uniqueEventName()
     ]),
     'description': new FormControl(this.se.description, [
       Validators.required,
@@ -111,7 +114,18 @@ export class NewScheduledEventComponent implements OnInit {
     return (control: AbstractControl): { [key: string]: any } | null => {
       if (!control.value || this.scheduledEvents.filter(el => el.access_code === control.value && (!this.event || this.event.access_code !== control.value)).length > 0) {
         return {
-          notUnqiue: true
+          notUnique: true
+        };
+      }
+      return null;
+    };
+  }
+
+  public uniqueEventName(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      if (!control.value || this.scheduledEvents.filter(el => el.event_name === control.value && (!this.event || this.event.event_name !== control.value)).length > 0) {
+        return {
+          notUnique: true
         };
       }
       return null;
@@ -224,7 +238,7 @@ export class NewScheduledEventComponent implements OnInit {
       this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
         // for each template, get the count.
         this.getTemplates(ea.environment).forEach((template: string) => {
-          var val = this.vmCounts.get(ea.environment).get(template).value;
+          var val = this.vmCounts.get(ea.environment)?.get(template)?.value ?? 0;
           if (val != 0) { // only map vm counts that are not 0 (instead of using >0 so that -1 is allowable)
             if (!this.se.required_vms[ea.environment]) { this.se.required_vms[ea.environment] = {}; }
             this.se.required_vms[ea.environment][template] = val;
@@ -317,6 +331,7 @@ export class NewScheduledEventComponent implements OnInit {
 
   ngOnChanges() {
     if (this.event) {
+      this.simpleMode = false;
       this.se = this.event;
       this.eventDetails.setValue({
         'event_name': this.se.event_name,
@@ -354,6 +369,10 @@ export class NewScheduledEventComponent implements OnInit {
           )
         }
       )
+      this.checkEnvironments();
+
+      this.wizard.navService.goTo(this.wizard.pages.last, true);
+      this.wizard.pages.first.makeCurrent();
     } else {
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
@@ -594,6 +613,40 @@ export class NewScheduledEventComponent implements OnInit {
     this.vmCounts = new FormGroup({});
   }
 
+  public close(){
+    if(this.onCloseFn){
+      this.onCloseFn();
+    }
+  }
+
+  public setOnCloseFn(fn: Function){
+    this.onCloseFn = fn;
+  }
+
+  public isFinishWizardDisabled(){
+    //No course or scenario selected
+    if((this.selectedcourses.length == 0 && this.selectedscenarios.length == 0)){
+      return true;
+    }
+
+    //no environment selected
+    if(this.selectedEnvironments.length == 0){
+      return true;
+    }
+
+    //vm count is valid
+    if(!this.simpleMode && !this.vmCounts.valid || this.simpleMode && !this.simpleModeVmCounts.valid){
+      return true;
+    }
+
+    //valid VM details
+    if(( this.se.start_time >= this.se.end_time) || !this.se.start_time || !this.se.end_time || !this.eventDetails.valid){
+      return true;
+    }
+
+    return false;
+  }
+
   public save() {
     this.saving = true;
     if (this.event) {
@@ -617,6 +670,7 @@ export class NewScheduledEventComponent implements OnInit {
           }
         )
     }
+    this.close();
   }
 
 }
