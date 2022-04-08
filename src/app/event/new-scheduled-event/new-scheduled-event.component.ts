@@ -132,13 +132,14 @@ export class NewScheduledEventComponent implements OnInit {
   private validateNonZeroFormControl(): ValidatorFn {
     return (control: AbstractControl) => {
       const formArray = control as FormArray;
-      formArray.controls.forEach((control: AbstractControl) => {
-        // check if at least one environment has a value > 0
-        if (control.value > 0) {
-          // formcontrol is valid
-          return null;
+      const allEnvironmentsZero = !formArray.controls.some(
+        (control: AbstractControl) => {
+          return control.value > 0;
         }
-      });
+      );
+      if (!allEnvironmentsZero) {
+        return null;
+      }
       // if validation fails -> return an "error"-object
       return {
         allEnvironmentsZero: true,
@@ -229,17 +230,20 @@ export class NewScheduledEventComponent implements OnInit {
   private validateAdvancedVmPage(): ValidatorFn {
     return (control: AbstractControl) => {
       const formGroup = control as FormGroup;
-      const environmentFormGroups = Object.values(formGroup.controls) as FormGroup[];
+      const environmentFormGroups = Object.values(
+        formGroup.controls
+      ) as FormGroup[];
       let requiredVmCountSatisfied = true;
       for (let template in this.requiredVmCounts) {
         const requiredVmCount: number = this.requiredVmCounts[template];
         let currentVmCount = 0;
         environmentFormGroups.forEach((fg: FormGroup) => {
-          if(Object.keys(fg.controls).includes(template)) {
-            currentVmCount += fg.controls[template].value
+          if (Object.keys(fg.controls).includes(template)) {
+            currentVmCount += fg.controls[template].value;
           }
-        })
-        requiredVmCountSatisfied = requiredVmCountSatisfied && (currentVmCount >= requiredVmCount);
+        });
+        requiredVmCountSatisfied =
+          requiredVmCountSatisfied && currentVmCount >= requiredVmCount;
       }
 
       if (!requiredVmCountSatisfied) {
