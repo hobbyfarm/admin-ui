@@ -116,7 +116,7 @@ export class NewScheduledEventComponent implements OnInit {
   public vmCounts: FormGroup = new FormGroup({});
 
   public simpleModeVmCounts: FormGroup = this._fb.group({
-    envs: this._fb.array([]),
+    envs: this._fb.array([], this.validateNonZeroFormControl()),
   });
 
   public copyEventDetails() {
@@ -127,6 +127,23 @@ export class NewScheduledEventComponent implements OnInit {
       !this.eventDetails.get("restricted_bind").value; // opposite, since restricted_bind: enabled really means disable_restriction: false
     this.se.on_demand = this.eventDetails.get("on_demand").value;
     this.se.printable = this.eventDetails.get("printable").value;
+  }
+
+  private validateNonZeroFormControl(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const formArray = control as FormArray;
+      formArray.controls.forEach((control: AbstractControl, _index: number) => {
+        // check if at least one environment has a value > 0
+        if (control.value > 0) {
+          // formcontrol is valid
+          return null;
+        }
+      });
+      // if validation fails -> return an "error"-object
+      return {
+        allEnvironmentsZero: true,
+      };
+    };
   }
 
   public uniqueAccessCode(): ValidatorFn {
@@ -198,7 +215,7 @@ export class NewScheduledEventComponent implements OnInit {
     // reset
     this.vmCounts = new FormGroup({});
     this.simpleModeVmCounts = this._fb.group({
-      envs: this._fb.array([]),
+      envs: this._fb.array([], this.validateNonZeroFormControl()),
     });
     // Steps: 1. get selected environments.
     // 2. For each environment, if it is supported in that environment, add an input for the vmtype in the scenario
@@ -221,7 +238,7 @@ export class NewScheduledEventComponent implements OnInit {
       var newControl = new FormControl(initVal, [
         Validators.pattern(/-?\d+/),
         Validators.max(ea.available_count[template]),
-        Validators.min(1),
+        // Validators.min(1),
       ]);
       newFormGroup.addControl(template, newControl);
     }
@@ -254,7 +271,7 @@ export class NewScheduledEventComponent implements OnInit {
       var newControl = new FormControl(initVal, [
         Validators.pattern(/-?\d+/),
         Validators.max(this.maxUserCounts[ea.environment]),
-        Validators.min(1),
+        // Validators.min(1),
       ]);
       (this.simpleModeVmCounts.get("envs") as FormArray).push(newControl);
     }
