@@ -76,7 +76,7 @@ export class NewScheduledEventComponent implements OnInit {
   public selectedcourses: Course[] = [];
 
   public simpleUserCounts: {} = {};
-  public requiredVmCounts: {} = {};
+  public requiredVmCounts: { [key: string]: number } = {};
   public maxUserCounts: {} = {};
   public invalidSimpleEnvironments: string[] = [];
 
@@ -113,7 +113,7 @@ export class NewScheduledEventComponent implements OnInit {
     printable: new FormControl(false),
   });
 
-  public vmCounts: FormGroup = new FormGroup({});
+  public vmCounts: FormGroup = new FormGroup({}, this.validateAdvancedVmPage());
 
   public simpleModeVmCounts: FormGroup = this._fb.group({
     envs: this._fb.array([], this.validateNonZeroFormControl()),
@@ -132,7 +132,7 @@ export class NewScheduledEventComponent implements OnInit {
   private validateNonZeroFormControl(): ValidatorFn {
     return (control: AbstractControl) => {
       const formArray = control as FormArray;
-      formArray.controls.forEach((control: AbstractControl, _index: number) => {
+      formArray.controls.forEach((control: AbstractControl) => {
         // check if at least one environment has a value > 0
         if (control.value > 0) {
           // formcontrol is valid
@@ -213,7 +213,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.calculateRequiredVms();
     this.maxUserCount();
     // reset
-    this.vmCounts = new FormGroup({});
+    this.vmCounts = new FormGroup({}, this.validateAdvancedVmPage());
     this.simpleModeVmCounts = this._fb.group({
       envs: this._fb.array([], this.validateNonZeroFormControl()),
     });
@@ -224,6 +224,31 @@ export class NewScheduledEventComponent implements OnInit {
       this.setupSimpleVMPage(ea);
       this.setupAdvancedVMPage(ea);
     });
+  }
+
+  private validateAdvancedVmPage(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const formGroup = control as FormGroup;
+      const environmentFormGroups = Object.values(formGroup.controls) as FormGroup[];
+      let requiredVmCountSatisfied = true;
+      for (let template in this.requiredVmCounts) {
+        const requiredVmCount: number = this.requiredVmCounts[template];
+        let currentVmCount = 0;
+        environmentFormGroups.forEach((fg: FormGroup) => {
+          if(Object.keys(fg.controls).includes(template)) {
+            currentVmCount += fg.controls[template].value
+          }
+        })
+        requiredVmCountSatisfied = requiredVmCountSatisfied && (currentVmCount >= requiredVmCount);
+      }
+
+      if (!requiredVmCountSatisfied) {
+        return {
+          requiredVmCountSatisfied: true,
+        };
+      }
+      return null;
+    };
   }
 
   public setupAdvancedVMPage(ea: EnvironmentAvailability) {
@@ -238,7 +263,6 @@ export class NewScheduledEventComponent implements OnInit {
       var newControl = new FormControl(initVal, [
         Validators.pattern(/-?\d+/),
         Validators.max(ea.available_count[template]),
-        // Validators.min(1),
       ]);
       newFormGroup.addControl(template, newControl);
     }
@@ -271,7 +295,6 @@ export class NewScheduledEventComponent implements OnInit {
       var newControl = new FormControl(initVal, [
         Validators.pattern(/-?\d+/),
         Validators.max(this.maxUserCounts[ea.environment]),
-        // Validators.min(1),
       ]);
       (this.simpleModeVmCounts.get("envs") as FormArray).push(newControl);
     }
@@ -699,7 +722,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.startDate = this.startTime = this.endDate = this.endTime = "";
     this.wizard.reset();
     this.wizard.open();
-    this.vmCounts = new FormGroup({});
+    this.vmCounts = new FormGroup({}, this.validateAdvancedVmPage());
   }
 
   public close() {
