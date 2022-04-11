@@ -1,4 +1,61 @@
 <div class="main-container">
-    <header class="header header-7" app-header></header>  
-    <progress-dashboard class="progress-dashboard"></progress-dashboard>
+    <header class="header header-7" app-header></header>
+    <div class="content-container">
+        <nav class="sidenav"> 
+            <section class="nav-group collapsible">
+                <input id="activeEventsToggle" type="checkbox" />
+                <label for="activeEventsToggle">Active Events</label>
+                <ul class="nav-list">
+                    <li *ngFor="let se of activeEvents" (click)="setScheduledEvent(se)"
+                        [ngClass]="{'selected' : selectedEvent == se}">
+                        <div class="clr-row">
+                            <div class="nav-event-name" [class.short]="!!se.activeSessions">{{se.event_name}}</div>
+                            <div *ngIf="se.activeSessions != undefined && se.activeSessions != 0"
+                                class="active-sessions-bubble ">{{se.activeSessions}}</div>
+                        </div>
+                    </li>
+                </ul>
+                <input id="finishedEventsToggle" type="checkbox" checked="!checked" />
+                <label for="finishedEventsToggle">Finished Events</label>
+                <ul class="nav-list">
+                    <li *ngFor="let se of finishedEvents" (click)="setScheduledEvent(se)"
+                        [ngClass]="{'selected' : selectedEvent == se}">
+                        <div class="clr-row">
+                            <div class="nav-event-name" [class.short]="!!se.activeSessions">{{se.event_name}}</div>
+                            <div *ngIf="se.activeSessions != undefined && se.activeSessions != 0"
+                                class="active-sessions-bubble ">{{se.activeSessions}}</div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+        </nav>
+        <div class="content-area">
+            <h3 *ngIf="sessionDashboardActive">Sessions for {{selectedEvent?.event_name}}</h3>
+            <h3 *ngIf="vmDashboardActive">VMs for {{selectedEvent?.event_name}}</h3>
+            <span class="additional-info">AC: <span class="access-code">{{selectedEvent?.access_code}}</span> &#8226; Until
+                {{selectedEvent?.end_time | date:'MMM d, y, HH:mm'}} <span>&#8226; Created by {{ selectedEvent?.creatorEmail
+                    }}</span></span>
+            <clr-tabs>
+                <clr-tab>
+                    <button clrTabLink>Sessions</button>
+                    <ng-template [(clrIfActive)]="sessionDashboardActive">
+                    <clr-tab-content *clrIfActive>  
+    <progress-dashboard class="progress-dashboard" [selectedEvent]="selectedEvent"></progress-dashboard>
+</clr-tab-content>
+</ng-template>
+</clr-tab>
+<clr-tab>
+    <button clrTabLink>VMs</button>
+    <ng-template [(clrIfActive)]="vmDashboardActive">
+    <clr-tab-content *clrIfActive>
+        <div class="content-area">
+            <vm-dashboard [selectedEvent]="selectedEvent"></vm-dashboard>
+        </div>
+    </clr-tab-content>
+</ng-template>
+</clr-tab>
+</clr-tabs>
+</div>
+</div>
+
 </div>  

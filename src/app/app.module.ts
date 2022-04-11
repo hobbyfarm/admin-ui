@@ -49,6 +49,7 @@ import { EventUserListComponent } from './dashboards/progress-dashboard/event-us
 import { IntervalTimer } from './IntervalTimer/interval-timer.component';
 import { ProgressDashboardComponent } from './dashboards/progress-dashboard/progress-dashboard.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
+import { VmDashboardComponent } from './dashboards/vm-dashboard/vm-dashboard.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -105,7 +106,8 @@ export function jwtOptionsFactory() {
     EventUserListComponent,
     IntervalTimer,
     ProgressDashboardComponent,
-    DashboardsComponent
+    DashboardsComponent,
+    VmDashboardComponent
   ],
   imports: [
     BrowserModule,

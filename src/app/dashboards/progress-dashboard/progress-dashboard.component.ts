@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, SimpleChanges } from '@angular/core';
 import { ProgressService } from 'src/app/data/progress.service';
 import { Progress, ProgressCount } from 'src/app/data/progress';
 import { UserService } from '../../data/user.service';
@@ -11,9 +11,6 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { combineLatest } from 'rxjs';
 import { User } from '../../data/user';
 
-interface DashboardScheduledEvent extends ScheduledEvent {
-  creatorEmail?: String;
-}
 
 @Component({
   selector: 'progress-dashboard',
@@ -22,16 +19,14 @@ interface DashboardScheduledEvent extends ScheduledEvent {
 })
 export class ProgressDashboardComponent implements OnInit {
 
-  public sessionDashboardActive: boolean = true;
-  public vmDashboardActive: boolean = false;
+  @Input()
+  selectedEvent: ScheduledEvent;
 
-  public includeFinished: boolean = false;
-  public selectedEvent: DashboardScheduledEvent;
+  public includeFinished: boolean = false;  
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
   public callInterval: any;
-  public circleVisible: boolean = true; 
-  public loggedInAdminEmail: string;
+  public circleVisible: boolean = true;  
   public users: User[];
  
 
@@ -43,9 +38,9 @@ export class ProgressDashboardComponent implements OnInit {
     }
   }
 
-  public scheduledEvents: DashboardScheduledEvent[] = [];
-  public activeEvents: DashboardScheduledEvent[] = [];
-  public finishedEvents: DashboardScheduledEvent[] = [];
+  // public scheduledEvents: DashboardScheduledEvent[] = [];
+  // public activeEvents: DashboardScheduledEvent[] = [];
+  // public finishedEvents: DashboardScheduledEvent[] = [];
 
   public userFilter: string = "";
   public scenarioList: Set<string> = new Set<string>();
@@ -64,46 +59,34 @@ export class ProgressDashboardComponent implements OnInit {
 
 
   ngOnInit() {
-      //Fill cache
-      this.courseService.list().subscribe();
-      this.userService.getUsers().subscribe();
-      this.scenarioService.list().subscribe();
-
-     this.scheduledeventService.list().subscribe(
-        (s: DashboardScheduledEvent[]) => {          
-          this.scheduledEvents = s;
-          this.activeEvents = s.filter(se => !se.finished);
-          this.finishedEvents = s.filter(se => se.finished);
-          if(this.activeEvents.length > 0){
-            this.selectedEvent = this.activeEvents[0];
-            this.refresh();
-          }          
-          this.sortEventLists() 
-        }
-     )
+    this.refresh()      
   }
 
-  async sortEventLists() { 
-    this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;   
-    let users = await this.userService.getUsers().toPromise()      
-    this.scheduledEvents.forEach((sEvent) => {
-      sEvent.creatorEmail = users.find(user => user.id == sEvent.creator)?.email 
-    })    
-      this.sortByLoggedInAdminUser(this.scheduledEvents)
-      this.sortByLoggedInAdminUser(this.activeEvents)
-      this.sortByLoggedInAdminUser(this.finishedEvents)       
+  ngOnChanges() {
+    this.refresh()
   }
 
-  sortByLoggedInAdminUser(eventArray: DashboardScheduledEvent[]) {    
-    const isCreatedByMe = (e: DashboardScheduledEvent) => Number(e.creatorEmail === this.loggedInAdminEmail);
-    return eventArray.sort((a, b) => isCreatedByMe(b) - isCreatedByMe(a));
-  }
+  // async sortEventLists() { 
+  //   this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;   
+  //   let users = await this.userService.getUsers().toPromise()      
+  //   this.scheduledEvents.forEach((sEvent) => {
+  //     sEvent.creatorEmail = users.find(user => user.id == sEvent.creator)?.email 
+  //   })    
+  //     this.sortByLoggedInAdminUser(this.scheduledEvents)
+  //     this.sortByLoggedInAdminUser(this.activeEvents)
+  //     this.sortByLoggedInAdminUser(this.finishedEvents)       
+  // }
 
-  setScheduledEvent(ev: DashboardScheduledEvent){
-    this.selectedEvent = ev;
-    this.scenarioFilterList.clear()
-    this.refresh();
-  }  
+  // sortByLoggedInAdminUser(eventArray: DashboardScheduledEvent[]) {    
+  //   const isCreatedByMe = (e: DashboardScheduledEvent) => Number(e.creatorEmail === this.loggedInAdminEmail);
+  //   return eventArray.sort((a, b) => isCreatedByMe(b) - isCreatedByMe(a));
+  // }
+
+  // setScheduledEvent(ev: DashboardScheduledEvent){
+  //   this.selectedEvent = ev;
+  //   this.scenarioFilterList.clear()
+  //   this.refresh();
+  // }  
 
   filter() {
     if (this.userFilter != "") {
@@ -182,11 +165,11 @@ export class ProgressDashboardComponent implements OnInit {
       this.filter()
     });
 
-    this.progressService.count().subscribe((c: ProgressCount) => {
-      this.scheduledEvents.forEach((se) => {
-        se.activeSessions = c[se.id] || 0;
-      });
-    });
+    // this.progressService.count().subscribe((c: ProgressCount) => {
+    //   this.scheduledEvents.forEach((se) => {
+    //     se.activeSessions = c[se.id] || 0;
+    //   });
+    // });
   }
 
 }
