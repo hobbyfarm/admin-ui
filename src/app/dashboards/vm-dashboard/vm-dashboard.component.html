@@ -1,31 +1,29 @@
 
-<div *ngFor="let vm of vms">
-<div class="card">    
-    
-    <div class="card-header">
-        {{vm.public_ip}} {{vm.environment_id}}
-    </div>
-    <div class="card-block">
-        <div class="card-text">
-            <div><clr-icon shape="play" solid></clr-icon> {{vm.id}}</div>
-            <div ><clr-icon shape="layers" solid></clr-icon> {{vm.vm_template_id}}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.status }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.tfstate }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.vm_template_id }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.keypair_name }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.vm_claim_id }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.user }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.allocated }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.tainted }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.private_ip }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.environment_id }}</div>
-            <div ><clr-icon shape="number-list"></clr-icon> {{ vm.ws_endpoint }}</div>
-        </div>
-    </div>
-    <div class="card-footer">
-        <button class="btn btn-outline"  >More Info?</button>
-        <button class="btn btn-danger-outline" >Some fancy Action?</button>
-    </div>
 
-</div>
+
+<div class="clr-row">
+    <div class="clr-col">
+        <clr-datagrid>
+            <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
+            <clr-dg-column [clrDgField]="'vm_template_id'">VM-Template</clr-dg-column>
+            <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
+            <clr-dg-column [clrDgField]="'user'">User</clr-dg-column>
+            <clr-dg-column [clrDgField]="'allocated'">Allocated</clr-dg-column>
+            <clr-dg-column [clrDgField]="'tainted'">Tainted</clr-dg-column>
+            <clr-dg-column [clrDgField]="'environment_id'">Environment</clr-dg-column>
+
+            <clr-dg-row *clrDgItems="let vm of vms">
+                <clr-dg-cell>{{ vm.public_ip }}</clr-dg-cell>
+                <clr-dg-cell>{{ vm.vm_template_id }}</clr-dg-cell>
+                <clr-dg-cell>{{ vm.status }}</clr-dg-cell>
+                <clr-dg-cell>{{ vm.user }}</clr-dg-cell>
+                <clr-dg-cell>{{ vm.allocated }}</clr-dg-cell>
+                <clr-dg-cell>{{ vm.tainted }}</clr-dg-cell>
+                <clr-dg-cell>{{ vm.environment_id }}</clr-dg-cell>
+            </clr-dg-row>
+        </clr-datagrid>
+    </div>
+    <div class="clr-col-1">
+        <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
+    </div>
 </div>
