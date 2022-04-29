@@ -14,7 +14,7 @@ import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 })
 export class EditVmtemplateComponent implements OnInit, OnChanges {
   public templateDetails: FormGroup;
-  public countMap: FormGroup;
+  public configMap: FormGroup;
   public buttonsDisabled: boolean = false;
 
   @Input()
@@ -48,7 +48,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
 
   private _build() {
-    this.buildCountMap();
+    this.buildConfigMap();
     this.buildTemplateDetails();
   }
 
@@ -63,8 +63,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     })
   }
 
-  public buildCountMap() {
-    this.countMap = this._fb.group({
+  public buildConfigMap() {
+    this.configMap = this._fb.group({
       mappings: this._fb.array([
         this._fb.group({
           key: ['', Validators.required],
@@ -74,35 +74,35 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     })
   }
 
-  public prepareCountMap() {
-    // differs from buildCountMap() in that we are copying existing values
+  public prepareConfigMap() {
+    // differs from buildConfigMap() in that we are copying existing values
     // into the form
-    var countKeys = Object.keys(this.editTemplate.count_map)
-    this.countMap = this._fb.group({
+    var configKeys = Object.keys(this.editTemplate.config_map)
+    this.configMap = this._fb.group({
       mappings: this._fb.array([])
     });
 
-    for (var i = 0; i < countKeys.length; i++) {
-      this.newCountMapping(countKeys[i], this.editTemplate.count_map[countKeys[i]]);
+    for (var i = 0; i < configKeys.length; i++) {
+      this.newConfigMapping(configKeys[i], this.editTemplate.config_map[configKeys[i]]);
     }
   }
 
   public fixNullValues() {
-    if (this.editTemplate.count_map == null) {
-      this.editTemplate.count_map = {};
+    if (this.editTemplate.config_map == null) {
+      this.editTemplate.config_map = {};
     }
   }
 
-  public newCountMapping(key: string = '', value: string = '') {
+  public newConfigMapping(key: string = '', value: string = '') {
     var newGroup = this._fb.group({
       key: [key, Validators.required],
       value: [value, Validators.required]
     });
-    (this.countMap.get('mappings') as FormArray).push(newGroup)
+    (this.configMap.get('mappings') as FormArray).push(newGroup)
   }
 
-  public deleteCountMapping(mappingIndex: number) {
-    (this.countMap.get('mappings') as FormArray).removeAt(mappingIndex);
+  public deleteConfigMapping(mappingIndex: number) {
+    (this.configMap.get('mappings') as FormArray).removeAt(mappingIndex);
   }
 
   public copyTemplateDetails() {
@@ -114,17 +114,17 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     this.template.resources.storage = this.templateDetails.get('storage').value;
   }
 
-  public copyCountMap() {
-    this.template.count_map = {};
-    for (var i = 0; i < (this.countMap.get('mappings') as FormArray).length; i++) {
-      var key = (this.countMap.get(['mappings', i]) as FormGroup).get('key').value;
-      var value = (this.countMap.get(['mappings', i]) as FormGroup).get('value').value
-      this.template.count_map[key] = value;
+  public copyConfigMap() {
+    this.template.config_map = {};
+    for (var i = 0; i < (this.configMap.get('mappings') as FormArray).length; i++) {
+      var key = (this.configMap.get(['mappings', i]) as FormGroup).get('key').value;
+      var value = (this.configMap.get(['mappings', i]) as FormGroup).get('value').value
+      this.template.config_map[key] = value;
     }
   }
 
   public copyTemplate() {
-    this.copyCountMap();
+    this.copyConfigMap();
     this.copyTemplateDetails();
   }
 
@@ -162,7 +162,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   private _prepare() {
     this.buildTemplateDetails(true);
-    this.prepareCountMap();
+    this.prepareConfigMap();
   }
 
   ngOnChanges() {
@@ -171,7 +171,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       this._prepare();
     } else {
       this.buildTemplateDetails();
-      this.buildCountMap();
+      this.buildConfigMap();
     }
   }
 }
