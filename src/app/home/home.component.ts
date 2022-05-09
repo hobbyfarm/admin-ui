@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProgressService } from 'src/app/data/progress.service';
 import { Progress, ProgressCount } from 'src/app/data/progress';
 import { UserService } from '../data/user.service';
@@ -6,7 +6,14 @@ import { ScheduledEvent } from '../data/scheduledevent';
 import { ScheduledeventService } from '../data/scheduledevent.service';
 import { ScenarioService } from '../data/scenario.service';
 import { CourseService } from '../data/course.service';
+import { EventUserListComponent } from './event-user-list/event-user-list.component';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { combineLatest } from 'rxjs';
+import { User } from '../data/user';
+
+interface DashboardScheduledEvent extends ScheduledEvent {
+  creatorEmail?: String;
+}
 
 @Component({
   selector: 'app-home',
@@ -15,14 +22,15 @@ import { combineLatest } from 'rxjs';
 })
 export class HomeComponent implements OnInit {
   public includeFinished: boolean = false;
-  public selectedEvent: ScheduledEvent;
+  public selectedEvent: DashboardScheduledEvent;
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
   public callInterval: any;
   public circleVisible: boolean = true; 
+  public loggedInAdminEmail: string;
+  public users: User[];
+ 
 
-  public callDelay: number = 10;
-  public callDelayOptions: number[] = [10, 30, 60, 120, 300];
   public pauseCall: boolean = false; // Stop refreshing if we are looking at a progress
   public pause = (pause: boolean) => {
     this.pauseCall = pause;
@@ -31,13 +39,15 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  public scheduledEvents: ScheduledEvent[] = [];
-  public activeEvents: ScheduledEvent[] = [];
-  public finishedEvents: ScheduledEvent[] = [];
+  public scheduledEvents: DashboardScheduledEvent[] = [];
+  public activeEvents: DashboardScheduledEvent[] = [];
+  public finishedEvents: DashboardScheduledEvent[] = [];
 
   public userFilter: string = "";
   public scenarioList: Set<string> = new Set<string>();
   public scenarioFilterList: Set<string> = new Set<string>();
+
+  @ViewChild("userList") userList: EventUserListComponent;
   
   constructor(
     public userService: UserService,
@@ -45,62 +55,47 @@ export class HomeComponent implements OnInit {
     public courseService: CourseService,
     public progressService: ProgressService,
     public scheduledeventService: ScheduledeventService,
+    public helper: JwtHelperService,
   ) { }
 
 
   ngOnInit() {
-    this.callInterval = setInterval(() => {
-      this.refresh();
-     } , this.callDelay * 1000);
-
       //Fill cache
       this.courseService.list().subscribe();
       this.userService.getUsers().subscribe();
       this.scenarioService.list().subscribe();
 
      this.scheduledeventService.list().subscribe(
-        (s: ScheduledEvent[]) => {          
+        (s: DashboardScheduledEvent[]) => {          
           this.scheduledEvents = s;
           this.activeEvents = s.filter(se => !se.finished);
           this.finishedEvents = s.filter(se => se.finished);
           if(this.activeEvents.length > 0){
             this.selectedEvent = this.activeEvents[0];
             this.refresh();
-          }
+          }          
+          this.sortEventLists() 
         }
      )
-
-
   }
 
-  changeCallDelay() {
-    var index = this.callDelayOptions.indexOf(this.callDelay);  
-    if (index < this.callDelayOptions.length - 1) {
-      this. callDelay = this.callDelayOptions[index + 1];
-    } else {
-      this.callDelay = this.callDelayOptions[0];
-    }        
-  
-    clearInterval(this.callInterval);
-    this.callInterval = setInterval(() => {
-      this.refresh();
-     } , this.callDelay * 1000);
-
-    //Reload the Circle to refresh the Animation
-    this.circleVisible = false;
-    setTimeout(() => {      
-      this.circleVisible = true;           
-    },0);
-
-    setTimeout(() => {
-      var circle = document.getElementById('countdownCircle');
-      circle.style.animationDuration = this.callDelay+'s';
-    },0);
-    
-    this.refresh(); //also refresh when call delay has changed
+  async sortEventLists() { 
+    this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;   
+    let users = await this.userService.getUsers().toPromise()      
+    this.scheduledEvents.forEach((sEvent) => {
+      sEvent.creatorEmail = users.find(user => user.id == sEvent.creator)?.email 
+    })    
+      this.sortByLoggedInAdminUser(this.scheduledEvents)
+      this.sortByLoggedInAdminUser(this.activeEvents)
+      this.sortByLoggedInAdminUser(this.finishedEvents)       
   }
 
-  setScheduledEvent(ev: ScheduledEvent){
+  sortByLoggedInAdminUser(eventArray: DashboardScheduledEvent[]) {    
+    const isCreatedByMe = (e: DashboardScheduledEvent) => Number(e.creatorEmail === this.loggedInAdminEmail);
+    return eventArray.sort((a, b) => isCreatedByMe(b) - isCreatedByMe(a));
+  }
+
+  setScheduledEvent(ev: DashboardScheduledEvent){
     this.selectedEvent = ev;
     this.scenarioFilterList.clear()
     this.refresh();
@@ -109,7 +104,9 @@ export class HomeComponent implements OnInit {
   filter() {
     if (this.userFilter != "") {
       try {
-        this.filteredProgress = this.currentProgress.filter(prog => prog.username.match(this.userFilter))
+        const pattern = new RegExp(this.userFilter, 'i');
+        this.filteredProgress = this.currentProgress.filter(prog =>  pattern.test(prog.username)) 
+        
       }
       catch (err) {
         if (!(err instanceof SyntaxError)) {
@@ -140,7 +137,11 @@ export class HomeComponent implements OnInit {
     this.filter()
   }
 
-  refresh() {    
+  openUserList() {    
+    this.userList.openModal();
+  }
+
+  refresh() {
     if(this.pauseCall){
       return;
     }
@@ -169,6 +170,8 @@ export class HomeComponent implements OnInit {
         scenario_name: scenarioMap.get(element.scenario) ?? "none",
         course_name: courseMap.get(element.course) ?? '',
       }));
+      
+      this.users = users.filter(user => user.access_codes.includes(this.selectedEvent.access_code));
       
       this.scenarioList = new Set(this.currentProgress.map(p => p.scenario_name));
 

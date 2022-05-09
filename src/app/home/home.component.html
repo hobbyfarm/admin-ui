@@ -8,21 +8,27 @@
                 <label for="activeEventsToggle">Active Events</label>
                 <ul class="nav-list">
                     <li *ngFor="let se of activeEvents" (click)="setScheduledEvent(se)" [ngClass]="{'selected' : selectedEvent == se}">
-                        {{se.event_name}} <span *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble">{{se.activeSessions}}</span>
+                        <div class="clr-row">
+                            <div class="nav-event-name" [class.short]="!!se.activeSessions">{{se.event_name}}</div> 
+                            <div *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble ">{{se.activeSessions}}</div>
+                        </div>
                     </li>
                 </ul>
                 <input id="finishedEventsToggle" type="checkbox" checked="!checked" />
                 <label for="finishedEventsToggle">Finished Events</label>
                 <ul class="nav-list">
                     <li *ngFor="let se of finishedEvents" (click)="setScheduledEvent(se)" [ngClass]="{'selected' : selectedEvent == se}">
-                        {{se.event_name}} <span *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble">{{se.activeSessions}}</span>
+                        <div class="clr-row">
+                            <div class="nav-event-name" [class.short]="!!se.activeSessions">{{se.event_name}}</div> 
+                            <div *ngIf="se.activeSessions != undefined && se.activeSessions != 0" class="active-sessions-bubble ">{{se.activeSessions}}</div>
+                        </div>
                     </li>
                 </ul>
             </section>
         </nav>
         <div class="content-area">
             <h3>Active Sessions for {{selectedEvent?.event_name}}</h3>
-            <span class="additional-info">AC: <span class="access-code">{{selectedEvent?.access_code}}</span> &#8226; Until {{selectedEvent?.end_time | date:'MMM d, y, HH:mm'}}</span>
+            <span class="additional-info">AC: <span class="access-code">{{selectedEvent?.access_code}}</span> &#8226; Until {{selectedEvent?.end_time | date:'MMM d, y, HH:mm'}} <span>&#8226; Created by {{ selectedEvent?.creatorEmail }}</span></span>
             <div class="clr-row clr-align-items-center clr-justify-content-between">
             <div class="card clr-col-9">
                 <div class="clr-row clr-align-items-center">
@@ -63,18 +69,15 @@
                         <button class="btn btn-icon btn-warning" (click)="removeFilter()"><clr-icon shape="trash"></clr-icon> Clear Filter</button> 
                     </div>            
                 </div>            
-            </div>
-            <div class="clr-col-3">
-                <div class="countdown-container">
-                    <label for ="countdown">Refresh rate</label>
-                    <div id="countdown" (click)="changeCallDelay()">
-                        <div id="countdown-number">{{callDelay}}s</div>
-                        <svg>
-                            <circle *ngIf="circleVisible" id="countdownCircle" r="18" cx="20" cy="20"></circle>
-                        </svg>
-                    </div>
-                </div>
-            </div>
+            </div>        
+            <div class="clr-col buttonCol" >
+                <button class="btn btn-link userlistIcon">
+                    <clr-icon (click)="openUserList()" shape="users" class="is-solid" size="48"></clr-icon>{{users?.length}}
+                </button>
+            </div>                        
+            <div class="clr-col"> 
+                <interval-timer (intervalElapsed)="refresh()"></interval-timer>
+            </div>      
         </div>
             <div class="clr-row">
                 <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
@@ -92,3 +95,5 @@
               </ng-template>                     
         </div>
     </div>
+
+    <event-user-list #userList [users]="users" [progress]="currentProgress" (userSelected)="filterName($event.email)"></event-user-list>

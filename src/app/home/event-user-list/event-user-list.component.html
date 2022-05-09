@@ -1,0 +1,27 @@
+<clr-modal #userListModal clrModalSize="lg">
+    <h3 class="modal-title">List of all registered users</h3>
+    <div class="modal-body">
+        <table class="table table-compact">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Number of Sessions</th>
+                    <th>Active Session</th>
+                    <th>Show Sessions</th>
+                </tr>
+            </thead>
+            <tbody>                
+                <tr *ngFor="let u of userListUsers">
+                    <td>{{u.email}}</td>
+                    <td>{{u.numberOfSessions}}</td>
+                    <td>{{u.activeScenarioName}}</td>
+                    <td (click)="onUserSelect(u)"><clr-icon shape="child-arrow"></clr-icon></td>
+                </tr>                
+            </tbody>
+        </table>
+        
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline" (click)="this.userListModal.close()">Close</button>
+    </div>
+</clr-modal>
