@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit} from '@angular/core';
 import { ScheduledEvent } from '../data/scheduledevent';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ScheduledeventService } from '../data/scheduledevent.service';
@@ -16,7 +16,7 @@ interface DashboardScheduledEvent extends ScheduledEvent {
   templateUrl: './dashboards.component.html',
   styleUrls: ['./dashboards.component.scss']
 })
-export class DashboardsComponent implements OnInit{
+export class DashboardsComponent implements OnInit, OnDestroy{
   public sessionDashboardActive: boolean = true;
   public vmDashboardActive: boolean = false;
   public selectedEvent: DashboardScheduledEvent;
@@ -25,6 +25,7 @@ export class DashboardsComponent implements OnInit{
   public scheduledEvents: DashboardScheduledEvent[] = [];
   public activeEvents: DashboardScheduledEvent[] = [];
   public finishedEvents: DashboardScheduledEvent[] = [];
+  public updateInterval: any;
 
   constructor(    
     public scheduledeventService: ScheduledeventService,
@@ -44,7 +45,10 @@ export class DashboardsComponent implements OnInit{
           
         }          
         this.sortEventLists()
-        this.setActiveSessionsCount() 
+        this.updateInterval = setInterval(() => {
+          this.setActiveSessionsCount() 
+         } , 10 * 1000); 
+        
       }
    )
 }
@@ -74,5 +78,8 @@ setActiveSessionsCount(){
     });
 }
 
+ngOnDestroy(): void {    
+  clearInterval(this.updateInterval)
+}
 
 }

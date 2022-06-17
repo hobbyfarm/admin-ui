@@ -13,6 +13,8 @@ import { CourseComponent } from './course/course.component';
 import { PrintableComponent } from './printable/printable.component';
 import { VmtemplatesComponent } from './configuration/vmtemplates/vmtemplates.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
+import { StepComponent } from './step/step.component';
+import { TerminalComponent } from './step/terminal.component';
 
 
 const routes: Routes = [
@@ -80,6 +82,11 @@ const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'session/:session/steps/:step',
+    component: StepComponent,
+  },
+  { path: 'terminal', component: TerminalComponent },
   {
     path: 'scenario/:scenario/printable',
     component: PrintableComponent,

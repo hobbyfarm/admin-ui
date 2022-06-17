@@ -13,4 +13,5 @@ export class VirtualMachine {
     hostname: string = "";
     tfstate: string = "";
     ws_endpoint: string = "";
+    vm_set_id: string = "";
 }

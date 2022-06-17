@@ -13,36 +13,26 @@ import { atou } from '../unicode';
 @Injectable({
     providedIn: 'root'
   })
-  export class VmService {
+  export class VmSetService {
   
     constructor(
       public http: HttpClient
     ) { }
   
     public list() {
-      return this.http.get(environment.server + '/a/vm')
+      return this.http.get(environment.server + '/a/vmset')
       .pipe(
         switchMap((s: ServerResponse) => {
           return of(JSON.parse(atou(s.content)))
         })
       )
     }
-    public listByScheduledEvent(id: String) {
-        
-        return this.http.get(environment.server + '/a/vm/' + id )
+    public getVMSetByScheduledEvent(id: String) {        
+        return this.http.get(environment.server + '/a/vmset/' + id )
         .pipe(
           switchMap((s: ServerResponse) => {
             return of(JSON.parse(atou(s.content)))
           })
         )
-      }
-
-    public getVmById(id: number) {
-        return this.http.get(environment.server + '/vm?' + id )
-        .pipe(
-          switchMap((s: ServerResponse) => {
-            return of(JSON.parse(atou(s.content)))
-          })
-        )
-    }
+      }  
 }

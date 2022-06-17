@@ -16,9 +16,34 @@
             <div *ngIf="progress.finished" title="{{progress.started}}-{{progress.last_update}}"><clr-icon shape="clock"></clr-icon> {{  timeSince(progress.started, progress.last_update) }}</div>
         </div>
     </div>
+
+    
+
+
     <div class="card-footer">
-        <button class="btn btn-outline" (click)="openInfo()" >Info</button>
-        <button class="btn btn-danger-outline" (click)="terminateSession()" [disabled]="progress.finished" >Terminate Session</button>
+
+        <clr-dropdown>
+            <button class="dropdown-toggle btn btn-primary" clrDropdownTrigger>
+                Actions
+                <clr-icon shape="caret down"></clr-icon>
+            </button>
+            <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
+                <div class="dropdown-item " (click)="openInfo()" clrDropdownItem>Info</div>                
+                <div class="dropdown-item"  (click)="openTerminalWindow()" clrDropdownItem>Join Session</div>
+                <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
+                <div class="dropdown-item " (click)="terminateSession()" clrDropdownItem>Terminate Session</div>
+            </clr-dropdown-menu>
+        </clr-dropdown>
+
+
+        <!-- <button class="btn btn-outline" (click)="openInfo()" >Info</button>
+        <button
+      class="btn btn-outline"
+      (click)="openTerminalWindow()"
+    >
+      >_
+    </button>
+        <button class="btn btn-danger-outline" (click)="terminateSession()" [disabled]="progress.finished" >Terminate Session</button> -->
     </div>
 </div>
 

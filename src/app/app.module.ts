@@ -50,6 +50,20 @@ import { IntervalTimer } from './IntervalTimer/interval-timer.component';
 import { ProgressDashboardComponent } from './dashboards/progress-dashboard/progress-dashboard.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
 import { VmDashboardComponent } from './dashboards/vm-dashboard/vm-dashboard.component';
+import { StepComponent } from './step/step.component';
+import { CtrService } from './step/ctr.service';
+import { SessionService } from './step/session.service';
+import { GargantuaClientFactory } from './step/gargantua.service';
+import { StepService } from './step/step.service';
+import { SettingsService } from './step/settings.service';
+import { VMService } from './step/vm.service';
+import { VMClaimService } from './step/vmclaim.service';
+import { HfMarkdownComponent } from './step/hf-markdown.component';
+import { AngularSplitModule } from 'angular-split';
+import { DynamicHooksModule } from 'ngx-dynamic-hooks';
+import { CtrComponent } from './step/ctr.component';
+import { TerminalComponent } from './step/terminal.component';
+import { ProgressService } from './step/progress.service'
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -105,9 +119,13 @@ export function jwtOptionsFactory() {
     ProgressComponent,
     EventUserListComponent,
     IntervalTimer,
-    ProgressDashboardComponent,
+    ProgressDashboardComponent, 
     DashboardsComponent,
-    VmDashboardComponent
+    VmDashboardComponent,
+    StepComponent,
+    HfMarkdownComponent,
+    TerminalComponent,
+    CtrComponent
   ],
   imports: [
     BrowserModule,
@@ -115,6 +133,7 @@ export function jwtOptionsFactory() {
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    AngularSplitModule,
     DlDateTimePickerDateModule,
     LMarkdownEditorModule,
     DlDateTimePickerModule,
@@ -126,6 +145,13 @@ export function jwtOptionsFactory() {
         useFactory: jwtOptionsFactory
       }
     }),
+    DynamicHooksModule.forRoot({
+      globalOptions: {
+        sanitize: false,
+        convertHTMLEntities: false,
+      },
+      globalParsers: [{ component: CtrComponent }],
+    }),
     BrowserAnimationsModule,
     DragulaModule.forRoot(),
     MarkdownModule.forRoot({
@@ -134,7 +160,15 @@ export function jwtOptionsFactory() {
   ],
   providers: [
     ScenarioService,
+    CtrService,
+    SessionService,    
+    StepService,
+    VMService,
+    VMClaimService,
+    SettingsService,
+    GargantuaClientFactory,
     AppConfigService,
+    ProgressService,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFn,

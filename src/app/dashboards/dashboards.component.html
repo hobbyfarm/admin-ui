@@ -29,7 +29,7 @@
                 </ul>
             </section>
         </nav>
-        <div class="content-area">
+        <div *ngIf="selectedEvent" class="content-area">
             <h3 *ngIf="sessionDashboardActive">Sessions for {{selectedEvent?.event_name}}</h3>
             <h3 *ngIf="vmDashboardActive">VMs for {{selectedEvent?.event_name}}</h3>
             <span class="additional-info">AC: <span class="access-code">{{selectedEvent?.access_code}}</span> &#8226; Until

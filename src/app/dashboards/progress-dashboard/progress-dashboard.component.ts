@@ -37,11 +37,7 @@ export class ProgressDashboardComponent implements OnInit {
       this.refresh(); //refresh if unpaused
     }
   }
-
-  // public scheduledEvents: DashboardScheduledEvent[] = [];
-  // public activeEvents: DashboardScheduledEvent[] = [];
-  // public finishedEvents: DashboardScheduledEvent[] = [];
-
+  
   public userFilter: string = "";
   public scenarioList: Set<string> = new Set<string>();
   public scenarioFilterList: Set<string> = new Set<string>();
@@ -66,27 +62,6 @@ export class ProgressDashboardComponent implements OnInit {
     this.refresh()
   }
 
-  // async sortEventLists() { 
-  //   this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;   
-  //   let users = await this.userService.getUsers().toPromise()      
-  //   this.scheduledEvents.forEach((sEvent) => {
-  //     sEvent.creatorEmail = users.find(user => user.id == sEvent.creator)?.email 
-  //   })    
-  //     this.sortByLoggedInAdminUser(this.scheduledEvents)
-  //     this.sortByLoggedInAdminUser(this.activeEvents)
-  //     this.sortByLoggedInAdminUser(this.finishedEvents)       
-  // }
-
-  // sortByLoggedInAdminUser(eventArray: DashboardScheduledEvent[]) {    
-  //   const isCreatedByMe = (e: DashboardScheduledEvent) => Number(e.creatorEmail === this.loggedInAdminEmail);
-  //   return eventArray.sort((a, b) => isCreatedByMe(b) - isCreatedByMe(a));
-  // }
-
-  // setScheduledEvent(ev: DashboardScheduledEvent){
-  //   this.selectedEvent = ev;
-  //   this.scenarioFilterList.clear()
-  //   this.refresh();
-  // }  
 
   filter() {
     if (this.userFilter != "") {
