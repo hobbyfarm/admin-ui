@@ -1,4 +1,4 @@
-<clr-wizard #wizard [(clrWizardOpen)]="wzOpen" clrWizardSize="xl" (clrWizardOnFinish)="save()">
+<clr-wizard #wizard [(clrWizardOpen)]="wzOpen" clrWizardSize="xl" (clrWizardOnFinish)="save()" (clrWizardOnCancel)="close()">
   <clr-wizard-title>New Scheduled Event</clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
@@ -14,6 +14,7 @@
         <input clrInput type="text" placeholder="Event name" name="event_name" formControlName="event_name" required />
         <clr-control-error *clrIfError="'required'">Event name is required</clr-control-error>
         <clr-control-error *clrIfError="'minlength'">Event name must be longer than 4 characters</clr-control-error>
+        <clr-control-error *clrIfError="'notUnique'">Event name must be unique</clr-control-error>
       </clr-input-container>
       <clr-input-container>
         <label>Description</label>
@@ -35,7 +36,7 @@
             <li>start and end with an alphanumber character</li>
           </ul>
         </clr-control-error>
-        <clr-control-error *clrIfError="'notUnqiue'">Access code is already in use</clr-control-error>
+        <clr-control-error *clrIfError="'notUnique'">Access code is already in use</clr-control-error>
       </clr-input-container>
       <clr-toggle-container>
         <clr-toggle-wrapper>
@@ -255,7 +256,7 @@
   </clr-wizard-page>
 
   <clr-wizard-page (clrWizardPageOnLoad)="setupVMSelection()" (clrWizardPageNext)="copyVMCounts()"
-    [clrWizardPageNextDisabled]="!vmCounts.valid || !simpleModeVmCounts.valid">
+    [clrWizardPageNextDisabled]="!vmCounts.valid && !simpleMode || !simpleModeVmCounts.valid && simpleMode">
     <ng-template clrPageTitle>Select Virtual Machines</ng-template>
     <clr-toggle-wrapper>
       <input type="checkbox" clrToggle [(ngModel)]="simpleMode" name="simpleMode" />
@@ -278,7 +279,7 @@
               </td>
               <td class="left">
                 <clr-input-container class="table-input">
-                  <input clrInput type="number" [formControl]="fc">
+                  <input clrInput type="number" [formControl]="fc" pattern="^[0-9]*$" min="0" step="1">
                   <clr-control-error *clrIfError="'max'">User count higher than max</clr-control-error>
                 </clr-input-container>
                 (max {{ maxUserCounts[selectedEnvironments[it]?.environment]}})
@@ -337,7 +338,7 @@
                 <td>{{ controlName }}</td>
                 <td>
                   <clr-input-container class="table-input">
-                    <input clrInput type="number" [formControlName]="controlName">
+                    <input clrInput type="number" [formControlName]="controlName" pattern="^[0-9]*$" min="0" step="1">
                     <clr-control-error *clrIfError="'max'">VM count higher than max</clr-control-error>
                   </clr-input-container>
                 </td>
@@ -349,7 +350,7 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page [clrWizardPageNextDisabled]="isFinishWizardDisabled()">
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>
       Confirm the following details before finishing:
