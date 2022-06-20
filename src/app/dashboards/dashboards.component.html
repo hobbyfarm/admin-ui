@@ -11,8 +11,8 @@
                         <div class="clr-row">
                             <div class="nav-event-name" [class.short]="!!se.activeSessions">{{se.event_name}}</div>
                             <div *ngIf="se.activeSessions != undefined && se.activeSessions != 0"
-                                class="active-sessions-bubble ">{{se.activeSessions}}</div>
-                        </div>
+                                class="active-sessions-bubble ">{{se.activeSessions}} / {{se.provisionedVMs}}</div>
+                            </div>
                     </li>
                 </ul>
                 <input id="finishedEventsToggle" type="checkbox" checked="!checked" />

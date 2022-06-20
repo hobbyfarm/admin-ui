@@ -5,9 +5,11 @@ import { ScheduledeventService } from '../data/scheduledevent.service';
 import { UserService } from '../data/user.service';
 import { ProgressService } from 'src/app/data/progress.service';
 import { ProgressCount } from 'src/app/data/progress';
+import { VmService } from '../data/vm.service';
 
 interface DashboardScheduledEvent extends ScheduledEvent {
   creatorEmail?: String;
+  provisionedVMs?: Number;
 }
 
 
@@ -29,6 +31,7 @@ export class DashboardsComponent implements OnInit, OnDestroy{
 
   constructor(    
     public scheduledeventService: ScheduledeventService,
+    public vmService: VmService,
     public helper: JwtHelperService,
     public userService: UserService,
     public progressService: ProgressService,
@@ -45,12 +48,13 @@ export class DashboardsComponent implements OnInit, OnDestroy{
           
         }          
         this.sortEventLists()
+        this.setActiveSessionsCount()
         this.updateInterval = setInterval(() => {
           this.setActiveSessionsCount() 
          } , 10 * 1000); 
         
       }
-   )
+   )   
 }
 async sortEventLists() { 
   this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;   
@@ -74,6 +78,9 @@ setActiveSessionsCount(){
   this.progressService.count().subscribe((c: ProgressCount) => {
       this.scheduledEvents.forEach((se) => {
         se.activeSessions = c[se.id] || 0;
+        this.vmService.listByScheduledEvent(se.id).subscribe((vmList) => {
+          se.provisionedVMs = vmList.length || 0;          
+        })
       });
     });
 }

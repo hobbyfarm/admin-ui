@@ -77,10 +77,11 @@ export class VmDashboardComponent implements OnInit {
       if (this.vms.filter(vm => vm.vm_set_id == "").length > 0) {        
         this.emptyVMset.setVMs = this.vms.filter(vm => vm.vm_set_id == "")
         this.emptyVMset.count = this.emptyVMset.setVMs.length
-        this.emptyVMset.provisioned = this.emptyVMset.setVMs.filter(vm => vm.status == "running").length        
+        this.emptyVMset.available = this.emptyVMset.setVMs.filter(vm => vm.status == "running").length
+        this.emptyVMset.environment = this.vms.filter(vm => vm.vm_set_id == "")[0]?.environment_id  
         this.vmSets.push(this.emptyVMset)        
       }
-      this.cd.detectChanges() //The async Code above updates values after Angulars usual changedetection so we have to call this Method to prevent Errors
+      this.cd.detectChanges() //The async Code above updates values after Angulars usual change-detection so we call this Method to prevent Errors
     });    
   }
 
