@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ResourceClient, GargantuaClientFactory } from './gargantua.service';
-import { VMClaim } from './VMClaim';
+import { VMClaim } from './vmclaim';
 
 @Injectable()
 export class VMClaimService extends ResourceClient<any> {
