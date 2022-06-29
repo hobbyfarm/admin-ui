@@ -1,3 +1,9 @@
+.sidenav {
+  width: 100%;
+  max-width: 100vw;
+  border: none;
+}
+
 .progress-dashboard {
   height: 100%;
 }
@@ -20,14 +26,22 @@ overflow-x: hidden;
 }
 
 .nav-event-name {
-width: 100%;
+max-width: 100%;
 text-overflow: ellipsis;
 overflow: hidden;
 white-space: nowrap;
 padding: 0 0 0 10px;
 }
 .nav-event-name.short {
-width: 80%;
+  max-width: 75%;
+}
+
+.activeInfo {
+  max-width: 25%;
+}
+
+.label {
+  float: right;
 }
 
 ul > li.selected{
@@ -42,13 +56,6 @@ ul.nav-list > li {
 
 ul.nav-list > li:first-child {
   margin-top: 5px;
-}
-
-li .active-sessions-bubble{
-  margin-right: 10px;
-  background-color: white;
-  padding: 0 10px;
-  border-radius: 100%;
 }
 
 .filter-selected{
