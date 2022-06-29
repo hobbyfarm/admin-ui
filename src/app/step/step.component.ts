@@ -73,7 +73,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     new QueryList();
   @ViewChildren('tabcontent') private tabContents: QueryList<ClrTabContent> =
     new QueryList();
-  @ViewChildren('tab') private tabs: QueryList<ClrTab> = new QueryList();
+  @ViewChildren('tab') private tabs: QueryList<ClrTab>;
   @ViewChild('pausemodal', { static: true }) private pauseModal: ClrModal;
   @ViewChild('contentdiv', { static: false }) private contentDiv: ElementRef;
 
@@ -206,20 +206,13 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {      
-    this.activateFirstTab(new Date())
-    // this.tabs.changes.pipe(first()).subscribe((tabs: QueryList<ClrTab>) => {
-    //   tabs.first.tabLink.activate();
-    // });
-  }
-
-  activateFirstTab(start: Date) {
-    var timeDiff: number = new Date().getTime() - start.getTime()
-    if (!this.tabs.first) {
-      timeDiff < 10000 && setTimeout(() => this.activateFirstTab(start), 1000) 
-    } else {
-      this.tabs.first.tabLink.activate()
-    }    
+  ngAfterViewInit() {     
+    const sub = this.tabs.changes.subscribe((tabs: QueryList<ClrTab>) => {
+      if (tabs.first) {
+        tabs.first.tabLink.activate();
+        sub.unsubscribe();
+      }
+    })
   }
 
   ngOnDestroy() {
