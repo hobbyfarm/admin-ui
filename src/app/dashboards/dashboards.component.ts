@@ -51,7 +51,7 @@ export class DashboardsComponent implements OnInit, OnDestroy{
         this.setActiveSessionsCount()
         this.updateInterval = setInterval(() => {
           this.setActiveSessionsCount() 
-         } , 10 * 1000); 
+         } , 30 * 1000); 
         
       }
    )   
