@@ -42,13 +42,17 @@ export class VmDashboardComponent implements OnInit {
   public vmSets: dashboardVmSet[] = [];
   public emptyVMset: dashboardVmSet = {
     ...new VmSet(),
-    base_name: "No VMSet",
+    base_name: "Dynmaic",
     stepOpen: false
   }
   public selectedVM: VirtualMachine = new VirtualMachine();
   public openPanels: Set<String> = new Set()
 
   ngOnInit(): void {    
+    this.getVmList()
+  }
+
+  ngOnChanges() {
     this.getVmList()
   }
 
@@ -65,13 +69,14 @@ export class VmDashboardComponent implements OnInit {
       const userMap = new Map(users.map(u => [u.id, u.email]));
       this.vms = vmList.map((vm) => ({
         ...vm,
-        user: userMap.get(vm.user) ?? 'none',
+        user: userMap.get(vm.user) ?? '-',
       }))
 
       this.vmSets = vmSet.map((set) => ({
         ...set,
         setVMs: this.vms.filter(vm => vm.vm_set_id === set.id),
-        stepOpen: this.openPanels.has(set.base_name)
+        stepOpen: this.openPanels.has(set.base_name),
+        available: this.vms.filter(vm => vm.vm_set_id === set.id && vm.status == "running").length    
       })
       )
       if (this.vms.filter(vm => vm.vm_set_id == "").length > 0) {        

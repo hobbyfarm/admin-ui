@@ -30,7 +30,7 @@
 
                                 <clr-dg-row *clrDgItems="let vm of set.setVMs">
                                     <clr-dg-cell class="dashboardCell"><button
-                                            [disabled]="!vm.allocated" class="btn btn-sm  btn-primary dashboardCell"
+                                            [disabled]="!vm.allocated" class="btn btn-sm  btn-primary dashboardCell joinButton"
                                             (click)="openUsersTerminal(vm)">>_</button></clr-dg-cell>
                                     <clr-dg-cell class="dashboardCell">
                                         <span *ngIf="vm.status === 'running'" class="badge badge-success">{{ vm.status
