@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RbacService } from '../data/rbac.service';
 
 @Component({
   selector: 'app-configuration',
@@ -7,7 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ConfigurationComponent implements OnInit {
 
-  constructor() { }
+  public rolesRbac: boolean = false;
+
+  constructor(
+  ) { }
 
   ngOnInit() {
   }
