@@ -13,6 +13,7 @@ import { cloneDeep } from 'lodash-es';
 import { ServerResponse } from '../data/serverresponse';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
+import { RbacService } from '../data/rbac.service';
 
 @Component({
   selector: 'app-course',
@@ -52,10 +53,13 @@ export class CourseComponent implements OnInit {
 
   public courseDetailsActive: boolean = true;
 
+  public selectRbac: boolean = false;
+
   constructor(
     public courseService: CourseService,
     public scenarioService: ScenarioService,
-    public dragulaService: DragulaService
+    public dragulaService: DragulaService,
+    public rbacService: RbacService
   ) {
     dragulaService.destroy('scenarios');
     dragulaService.createGroup('scenarios', {
@@ -72,6 +76,12 @@ export class CourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    ["update", "get"].forEach((verb: string) => {
+      if (this.rbacService.Grants("courses", verb)) {
+        this.selectRbac = true;
+      }
+    })
+
     this.refresh();
     this.scenarioService.list()
       .subscribe((s: Scenario[]) => this.scenarios = s)

@@ -19,7 +19,7 @@
       <h3>Scheduled Events</h3>
       <div class="clr-row">
         <div class="clr-col">
-          <button class="btn btn-success" (click)="openNew()">
+          <button class="btn btn-success" (click)="openNew()" *rbac="['scheduledevents.create']">
             <clr-icon shape="plus"></clr-icon> New
           </button>
         </div>
@@ -40,9 +40,9 @@
             </clr-dg-column>
 
             <clr-dg-row *clrDgItems="let se of events">
-              <clr-dg-action-overflow>
-                <button class="action-item" (click)="openDelete(se)">Delete</button>
-                <button class="action-item" (click)="openEdit(se)">Edit</button>
+              <clr-dg-action-overflow *rbac="['scheduledevents.delete', 'scheduledevents.update']; op 'OR'">
+                <button class="action-item" (click)="openDelete(se)" *rbac="['scheduledevents.delete']">Delete</button>
+                <button class="action-item" (click)="openEdit(se)" *rbac="['scheduledevents.update']">Edit</button>
               </clr-dg-action-overflow>
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
               <clr-dg-cell>{{ se.start_time | date:'long' }}</clr-dg-cell>
