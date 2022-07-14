@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpParameterCodec, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { map, switchMap, catchError, tap } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Course } from './course';
 import { Scenario } from './scenario';
 import { ScenarioService } from './scenario.service';
 import { atou } from '../unicode';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 
 @Injectable({
@@ -37,12 +37,12 @@ export class CourseService {
             c.virtualmachines.forEach((v: Object) => {
               v = new Map(Object.entries(v))
             })
-            c.scenarios.forEach((s) => {
-              this.scenarioService.list().subscribe((sc: Scenario[]) => { 
-                sc = sc.filter(sc => sc.id == String(s))
-                c.scenarios.push(sc[0]);
+            this.scenarioService.list().subscribe((sc: Scenario[]) => {
+              c.scenarios.forEach((s) => {
+                  sc = sc.filter(sc => sc.id == String(s))
+                  c.scenarios.push(sc[0]);
               })
-            });
+            })
             c.categories = c.categories ?? [];
             c.scenarios = c.scenarios.filter(x => typeof x != 'string');
             c.scenarios.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
@@ -62,6 +62,21 @@ export class CourseService {
         )
       )
     }
+  }
+
+  public getCourseById(id: String) {
+    return this.http.get(environment.server + "/course/" + id)
+      .pipe(
+        map((s: ServerResponse) => {          
+          let response: Course =  JSON.parse(atou(s.content));
+          response.name = atou(response.name)
+          response.description = atou(response.description)
+          return response
+        }),
+        catchError((e: HttpErrorResponse) => {
+          return throwError(e.error);
+        })
+      )
   }
 
   public set(list: Course[]){
