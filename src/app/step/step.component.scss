@@ -77,10 +77,14 @@ table {
   flex: 0 1 40px;
 }
 
-#scenario-name {
+.scenario-info {
   text-align: center;
-  padding-bottom: 1rem;
 }
+
+.bold {
+  font-weight: bold;
+}
+
 .card-text {
   padding-bottom: 2rem;
 }

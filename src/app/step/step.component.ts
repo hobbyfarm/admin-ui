@@ -42,6 +42,8 @@ import { ShellService } from './shell.service';
 import { atou } from '../unicode';
 import { ProgressService } from './progress.service';
 import { HfMarkdownRenderContext } from './hf-markdown.component';
+import { UserService } from '../data/user.service';
+import { CourseService } from '../data/course.service';
 
 @Component({
   selector: 'app-step',
@@ -68,6 +70,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public pauseLastUpdated: Date = new Date();
   public pauseRemainingString = ''; 
+  public username: String = "";
+  public courseName: String = "";
 
   @ViewChildren('term') private terms: QueryList<TerminalComponent> =
     new QueryList();
@@ -88,6 +92,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     private vmService: VMService,
     private shellService: ShellService,
     private progressService: ProgressService,
+    private userService: UserService,
+    private courseService: CourseService,
   ) {}
 
   handleStepContentClick(e: MouseEvent) {
@@ -125,6 +131,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         tap((s: Scenario) => {
           this.scenario = s;
           this._loadStep();
+          this._loadUser()
+          this._loadCourse()
         }),
         switchMap(() => {
           return from(this.session.vm_claim);
@@ -150,7 +158,9 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         for (const [k, v] of this.vms) {
           vmInfo[k.toLowerCase()] = v;
         }
-        this.mdContext = { vmInfo };
+        this.mdContext = { vmInfo };     
+        
+        // console.log(this.session, this.scenario)
       });
 
     // setup keepalive
@@ -203,16 +213,16 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.shellService.watch().subscribe((ss: Map<string, string>) => {
       this.shellStatus = ss;
-    });
+    });    
   }
 
-  ngAfterViewInit() {     
+  ngAfterViewInit() { 
     const sub = this.tabs.changes.subscribe((tabs: QueryList<ClrTab>) => {
       if (tabs.first) {
         tabs.first.tabLink.activate();
         sub.unsubscribe();
       }
-    })
+    })    
   }
 
   ngOnDestroy() {
@@ -242,6 +252,20 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         this.step = s;
         this.stepcontent = atou(s.content);
       });
+  }
+
+  private _loadUser() {
+    this.userService.getUserByID(this.session.user).subscribe((user) => 
+    this.username = user.email
+    )
+  }
+
+  private _loadCourse() {
+    console.log(this.session.course)
+    this.courseService.getCourseById(this.session.course).subscribe((course) => {
+      console.log(course)
+      this.courseName = course.name
+    })
   }
 
   private sendProgressUpdate() {

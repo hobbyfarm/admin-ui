@@ -20,7 +20,7 @@ import { atou } from '../unicode';
     ) { }
   
     public list() {
-      return this.http.get(environment.server + '/a/vm')
+      return this.http.get(environment.server + '/a/vm/list')
       .pipe(
         switchMap((s: ServerResponse) => {
           return of(JSON.parse(atou(s.content)))
@@ -29,7 +29,7 @@ import { atou } from '../unicode';
     }
     public listByScheduledEvent(id: String) {
         
-        return this.http.get(environment.server + '/a/vm/' + id )
+        return this.http.get(environment.server + '/a/vm/scheduledevent/' + id )
         .pipe(
           switchMap((s: ServerResponse) => {
             return of(JSON.parse(atou(s.content)))
@@ -44,5 +44,14 @@ import { atou } from '../unicode';
             return of(JSON.parse(atou(s.content)))
           })
         )
+    }
+
+    public count() {
+      return this.http.get(environment.server + "/a/vm/count")
+      .pipe(
+        switchMap((s : ServerResponse) => {
+          return of(JSON.parse(atou(s.content)))
+        })
+      )
     }
 }
