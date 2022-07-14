@@ -158,9 +158,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         for (const [k, v] of this.vms) {
           vmInfo[k.toLowerCase()] = v;
         }
-        this.mdContext = { vmInfo };     
-        
-        // console.log(this.session, this.scenario)
+        this.mdContext = { vmInfo };
       });
 
     // setup keepalive
@@ -261,9 +259,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private _loadCourse() {
-    console.log(this.session.course)
     this.courseService.getCourseById(this.session.course).subscribe((course) => {
-      console.log(course)
       this.courseName = course.name
     })
   }
