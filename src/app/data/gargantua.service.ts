@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { ServerResponse } from './ServerResponse';
+import { ServerResponse } from '../step/ServerResponse';
 import { atou } from '../unicode';
 import { environment } from 'src/environments/environment';
 

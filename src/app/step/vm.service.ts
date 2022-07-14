@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ResourceClient, GargantuaClientFactory } from './gargantua.service';
+import { ResourceClient, GargantuaClientFactory } from '../data/gargantua.service';
 import { VirtualMachine as VM } from '../data/virtualmachine';
 
 @Injectable()

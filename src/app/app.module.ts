@@ -50,19 +50,19 @@ import { IntervalTimer } from './IntervalTimer/interval-timer.component';
 import { ProgressDashboardComponent } from './dashboards/progress-dashboard/progress-dashboard.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
 import { VmDashboardComponent } from './dashboards/vm-dashboard/vm-dashboard.component';
-import { StepComponent } from './step/step.component';
-import { CtrService } from './step/ctr.service';
-import { SessionService } from './step/session.service';
-import { GargantuaClientFactory } from './step/gargantua.service';
-import { StepService } from './step/step.service';
-import { SettingsService } from './step/settings.service';
+import { StepComponent } from './step/step-component/step.component';
+import { CtrService } from './data/ctr.service';
+import { SessionService } from './data/session.service';
+import { GargantuaClientFactory } from './data/gargantua.service';
+import { StepService } from './data/step.service';
+import { SettingsService } from './data/settings.service';
 import { VMService } from './step/vm.service';
-import { VMClaimService } from './step/vmclaim.service';
+import { VMClaimService } from './data/vmclaim.service';
 import { HfMarkdownComponent } from './step/hf-markdown.component';
 import { AngularSplitModule } from 'angular-split';
 import { DynamicHooksModule } from 'ngx-dynamic-hooks';
 import { CtrComponent } from './step/ctr.component';
-import { TerminalComponent } from './step/terminal.component';
+import { TerminalComponent } from './step/terminal/terminal.component';
 import { ProgressService } from './step/progress.service'
 
 const appInitializerFn = (appConfig: AppConfigService) => {

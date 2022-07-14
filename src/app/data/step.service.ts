@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ResourceClient, GargantuaClientFactory } from './gargantua.service';
-import { Step } from './Step';
+import { Step } from './step';
 
 @Injectable()
 export class StepService {

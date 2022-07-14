@@ -9,7 +9,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Step } from './Step';
+import { Step } from '../../data/step';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   switchMap,
@@ -22,28 +22,28 @@ import {
   map,
   toArray,
 } from 'rxjs/operators';
-import { TerminalComponent } from './terminal.component';
+import { TerminalComponent } from '../terminal/terminal.component';
 import { ClrTabContent, ClrTab, ClrModal } from '@clr/angular';
-import { ServerResponse } from './ServerResponse';
-import { Scenario } from '../data/scenario';
-import { Session } from './Session';
+import { ServerResponse } from '../ServerResponse';
+import { Scenario } from '../../data/scenario';
+import { Session } from '../../data/Session';
 import { from, of, throwError, iif } from 'rxjs';
-import { VMClaim } from './vmclaim';
-import { VMClaimVM } from './vmclaimvm';
-import { VirtualMachine as VM } from '../data/virtualmachine';
-import { CtrService } from './ctr.service';
-import { CodeExec } from './CodeExec';
-import { SessionService } from './session.service';
-import { ScenarioService } from '../data/scenario.service';
-import { StepService } from './step.service';
-import { VMClaimService } from './vmclaim.service';
-import { VMService } from './vm.service';
-import { ShellService } from './shell.service';
-import { atou } from '../unicode';
-import { ProgressService } from './progress.service';
-import { HfMarkdownRenderContext } from './hf-markdown.component';
-import { UserService } from '../data/user.service';
-import { CourseService } from '../data/course.service';
+import { VMClaim } from '../../data/vmclaim';
+import { VMClaimVM } from '../../data/vmclaimvm';
+import { VirtualMachine as VM } from '../../data/virtualmachine';
+import { CtrService } from '../../data/ctr.service';
+import { CodeExec } from '../CodeExec';
+import { SessionService } from '../../data/session.service';
+import { ScenarioService } from '../../data/scenario.service';
+import { StepService } from '../../data/step.service';
+import { VMClaimService } from '../../data/vmclaim.service';
+import { VMService } from '../vm.service';
+import { ShellService } from '../../data/shell.service';
+import { atou } from '../../unicode';
+import { ProgressService } from '../progress.service';
+import { HfMarkdownRenderContext } from '../hf-markdown.component';
+import { UserService } from '../../data/user.service';
+import { CourseService } from '../../data/course.service';
 
 @Component({
   selector: 'app-step',
@@ -259,6 +259,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private _loadCourse() {
+    if (!this.session.course) return
     this.courseService.getCourseById(this.session.course).subscribe((course) => {
       this.courseName = course.name
     })

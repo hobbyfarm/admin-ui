@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { CtrService } from './ctr.service';
+import { CtrService } from '../data/ctr.service';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector

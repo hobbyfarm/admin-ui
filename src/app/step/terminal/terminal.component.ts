@@ -12,14 +12,14 @@ import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon, ITerminalDimensions } from 'xterm-addon-fit';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { CtrService } from './ctr.service';
-import { CodeExec } from './CodeExec';
-import { ShellService } from './shell.service';
+import { CtrService } from '../../data/ctr.service';
+import { CodeExec } from '../CodeExec';
+import { ShellService } from '../../data/shell.service';
 import { environment } from 'src/environments/environment';
 import { HostListener } from '@angular/core';
 import { interval, Subscription, timer } from 'rxjs';
-import { themes } from './terminal-themes/themes';
-import { SettingsService } from './settings.service';
+import { themes } from '../terminal-themes/themes';
+import { SettingsService } from '../../data/settings.service';
 
 const WS_CODE_NORMAL_CLOSURE = 1000;
 

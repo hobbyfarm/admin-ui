@@ -6,7 +6,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import {
   extractResponseContent,
   GargantuaClientFactory,
-} from './gargantua.service';
+} from '../data/gargantua.service';
 
 @Injectable()
 export class ProgressService {

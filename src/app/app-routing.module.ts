@@ -13,8 +13,8 @@ import { CourseComponent } from './course/course.component';
 import { PrintableComponent } from './printable/printable.component';
 import { VmtemplatesComponent } from './configuration/vmtemplates/vmtemplates.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
-import { StepComponent } from './step/step.component';
-import { TerminalComponent } from './step/terminal.component';
+import { StepComponent } from './step/step-component/step.component';
+import { TerminalComponent } from './step/terminal/terminal.component';
 
 
 const routes: Routes = [

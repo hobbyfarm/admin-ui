@@ -9,11 +9,11 @@ import {
   switchMap,
   tap,
 } from 'rxjs/operators';
-import { themes } from './terminal-themes/themes';
+import { themes } from '../step/terminal-themes/themes';
 import {
   extractResponseContent,
   GargantuaClientFactory,
-} from './gargantua.service';
+} from '../data/gargantua.service';
 
 export interface Settings {
   terminal_theme: typeof themes[number]['id'];
