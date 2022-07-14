@@ -87,6 +87,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
+  setDashboardActive(value: String) {
+    if (value == "session") {
+      this.vmDashboardActive = false
+      this.sessionDashboardActive = true      
+    }
+    if (value == "vm") {
+      this.sessionDashboardActive = false
+      this.vmDashboardActive = true           
+    }
+  }
+
   ngOnDestroy(): void {
     clearInterval(this.updateInterval)
   }
