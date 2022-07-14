@@ -139,12 +139,6 @@ export class ProgressDashboardComponent implements OnInit {
 
       this.filter()
     });
-
-    // this.progressService.count().subscribe((c: ProgressCount) => {
-    //   this.scheduledEvents.forEach((se) => {
-    //     se.activeSessions = c[se.id] || 0;
-    //   });
-    // });
   }
 
 }
