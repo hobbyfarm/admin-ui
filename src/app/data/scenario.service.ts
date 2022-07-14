@@ -92,6 +92,8 @@ export class ScenarioService {
         });
         s.categories = s.categories ?? [];
         s.tags = s.tags ?? [];
+        //Admin Route in Garg ("/a/scenario") returns Scenarios without StepCount
+        s.stepcount = s.steps.length
         return s;
       })
     )
