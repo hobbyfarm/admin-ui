@@ -14,13 +14,15 @@
                                     <div class="nav-event-name clr-col-11" [class.short]="true">{{se.event_name}}
                                     </div>
                                     <div class="activeInfo clr-col-12">
-                                        <span class="label">
+                                        <span *ngIf="!!se.activeSessions" class="label tooltip tooltip-sm tooltip-left"  role="tooltip" aria-haspopup="true">
                                             <clr-icon shape="users"></clr-icon>
                                             <span class="badge " [class.badge-info]="!!se.activeSessions">{{se.activeSessions}}</span>
+                                            <span class="tooltip-content">Active Sessions</span>
                                         </span>
-                                        <span class="label">
+                                        <span *ngIf="!!se.provisionedVMs" class="label tooltip tooltip-sm tooltip-left" role="tooltip" aria-haspopup="true">
                                             <clr-icon shape="rack-server"></clr-icon>
                                             <span class="badge badge-info" [class.badge-info]="!!se.provisionedVMs">{{se.provisionedVMs}}</span>
+                                            <span class="tooltip-content">Provisioned VMs</span>
                                         </span>
                                     </div>
                                 </div>
