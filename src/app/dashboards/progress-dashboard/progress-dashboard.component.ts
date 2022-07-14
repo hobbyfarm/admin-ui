@@ -114,13 +114,21 @@ export class ProgressDashboardComponent implements OnInit {
     const includeFinished = this.selectedEvent.finished || this.includeFinished;
 
     combineLatest([
-      this.progressService.list(this.selectedEvent.id, includeFinished),
+      this.progressService.list(this.selectedEvent.id, true),
       this.userService.getUsers(),
       this.scenarioService.list(),
       this.courseService.list(),
     ]).subscribe(([progressList, users, scenarios, courses]) => {
+
+      const usersWithProgress: String[] = progressList.map(prog => prog.user)
+      
+      if (!includeFinished) {
+        progressList = progressList.filter(prog => !prog.finished)
+      }
+      
       // sort progress by start date, latest first
       progressList.sort((a, b) => Number(b.started) - Number(a.started));
+      
 
       const userMap = new Map(users.map(u => [u.id, u.email]));
       const courseMap = new Map(courses.map(c => [c.id, c.name]));
@@ -132,8 +140,9 @@ export class ProgressDashboardComponent implements OnInit {
         scenario_name: scenarioMap.get(element.scenario) ?? "none",
         course_name: courseMap.get(element.course) ?? '',
       }));
-      
-      this.users = users.filter(user => user.access_codes.includes(this.selectedEvent.access_code));
+      this.users = users.filter(
+        user => user.access_codes.includes(this.selectedEvent.access_code) || usersWithProgress.includes(user.id)
+        ) ;     
       
       this.scenarioList = new Set(this.currentProgress.map(p => p.scenario_name));
 
