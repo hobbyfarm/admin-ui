@@ -87,7 +87,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  setDashboardActive(value: String) {
+  setActiveDashboard(event: DashboardScheduledEvent, value: String) {
+    this.setScheduledEvent(event)
     if (value == "session") {
       this.vmDashboardActive = false
       this.sessionDashboardActive = true      
