@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { NewVmComponent } from './new-vm/new-vm.component';
 
 @Component({
@@ -6,7 +6,7 @@ import { NewVmComponent } from './new-vm/new-vm.component';
   templateUrl: './vmset.component.html',
   styleUrls: ['./vmset.component.scss']
 })
-export class VmsetComponent implements OnInit {
+export class VmsetComponent {
   @Input()
   public vms: {}[] = []; // because JSONifying Maps is hard
 
@@ -28,11 +28,6 @@ export class VmsetComponent implements OnInit {
   public addingIndex: number; 
 
   @ViewChild("newvm") newVmModal: NewVmComponent;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
 
   openAddVm(i: number) {
     this.addingIndex = i;

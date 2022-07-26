@@ -10,7 +10,6 @@ import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 @Component({
   selector: 'edit-vmtemplate-wizard',
   templateUrl: './edit-vmtemplate.component.html',
-  styleUrls: ['./edit-vmtemplate.component.scss']
 })
 export class EditVmtemplateComponent implements OnInit, OnChanges {
   public templateDetails: FormGroup;

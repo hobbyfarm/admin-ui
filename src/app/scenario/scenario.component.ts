@@ -8,7 +8,7 @@ import { deepCopy } from '../deepcopy';
 import { VmtemplateService } from '../data/vmtemplate.service';
 import { VMTemplate } from '../data/vmtemplate';
 import { VirtualMachine } from '../data/virtualmachine';
-import { FormGroup, FormControl, Validators, ValidatorFn, ValidationErrors } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { KeepaliveValidator } from '../validators/keepalive.validator';
 import { RbacService } from '../data/rbac.service';
 

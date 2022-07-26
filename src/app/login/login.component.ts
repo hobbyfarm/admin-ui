@@ -15,10 +15,6 @@ export class LoginComponent {
   public email: string = "";
   public password: string = "";
   public error: string = "";
-  public success: string = "";
-  public accesscode: string = "";
-
-  public loginactive: boolean = false;
 
   private config = this.configService.getConfig();
   public logo;
@@ -40,31 +36,6 @@ export class LoginComponent {
       let fi = <HTMLLinkElement>document.querySelector("#favicon")
       fi.href = this.config.favicon;
     }
-  }
-
-  public register() {
-    this.error = "";
-    let body = new HttpParams()
-      .set("email", this.email)
-      .set("password", this.password)
-      .set("access_code", this.accesscode);
-
-    this.http.post(environment.server + "/auth/registerwithaccesscode", body)
-      .subscribe(
-        (s: ServerResponse) => {
-          this.success = "Success! User created. Please login.";
-          this.loginactive = true;
-        },
-        (e: HttpErrorResponse) => {
-          if (e.error instanceof ErrorEvent) {
-            // frontend, maybe network?
-            this.error = e.error.error;
-          } else {
-            // backend
-            this.error = e.error.message;
-          }
-        }
-      )
   }
 
   public login() {

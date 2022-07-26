@@ -4,9 +4,8 @@ import { RbacService } from '../data/rbac.service';
 @Component({
   selector: 'app-configuration',
   templateUrl: './configuration.component.html',
-  styleUrls: ['./configuration.component.scss']
 })
-export class ConfigurationComponent implements OnInit {
+export class ConfigurationComponent {
 
   public rolesRbac: boolean = false;
 

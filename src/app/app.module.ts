@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClarityModule } from '@clr/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RootComponent } from './root/root.component';
 import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './header/header.component';
 import { EventComponent } from './event/event.component';
@@ -16,7 +15,6 @@ import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewScheduledEventComponent } from './event/new-scheduled-event/new-scheduled-event.component';
-import { AtobPipe } from './atob.pipe';
 import { ScenarioService } from './data/scenario.service';
 import { DlDateTimePickerDateModule, DlDateTimePickerModule} from 'angular-bootstrap-datetimepicker';
 import { ScenarioComponent } from './scenario/scenario.component';
@@ -80,13 +78,11 @@ export function jwtOptionsFactory() {
 @NgModule({
   declarations: [
     AppComponent,
-    RootComponent,
     HomeComponent,
     HeaderComponent,
     EventComponent,
     LoginComponent,
     NewScheduledEventComponent,
-    AtobPipe,
     ScenarioComponent,
     UserComponent,
     ConfigurationComponent,
@@ -153,7 +149,7 @@ export function jwtOptionsFactory() {
       deps: [AppConfigService, RbacService] // rbacservice listed here to initialize it before anything else
     }
   ],
-  bootstrap: [RootComponent],
+  bootstrap: [AppComponent],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ]

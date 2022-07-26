@@ -70,8 +70,6 @@ export class NewScheduledEventComponent implements OnInit {
 
   public validTimes: boolean = false;
 
-  public vmtotals: Map<string, number> = new Map();
-
   public selectedscenarios: Scenario[] = [];
   public selectedcourses: Course[] = [];
 
@@ -200,14 +198,6 @@ export class NewScheduledEventComponent implements OnInit {
 
   public getTemplates(env: string) {
     return Object.keys(this.keyedEnvironments.get(env).template_mapping);
-  }
-
-  public getTotals() {
-    return Object.entries(this.vmtotals);
-  }
-
-  public getVMCount(env: string, template: string) {
-    return this.se.required_vms[env] ? this.se.required_vms[env][template] : 0;
   }
 
   public setupVMSelection() {
