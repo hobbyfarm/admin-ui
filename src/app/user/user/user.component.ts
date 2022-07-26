@@ -3,9 +3,6 @@ import { UserService } from 'src/app/data/user.service';
 import { User } from 'src/app/data/user';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { UserEmailFilter } from 'src/app/user-email-filter';
-import { UserIdFilter } from 'src/app/user-id-filter';
-import { EditUserComponent } from '../edit-user/edit-user.component';
-import { EditAccessCodesComponent } from '../edit-access-codes/edit-access-codes.component';
 import { RbacService } from 'src/app/data/rbac.service';
 
 @Component({
