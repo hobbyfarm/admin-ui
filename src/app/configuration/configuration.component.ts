@@ -5,7 +5,7 @@ import { RbacService } from '../data/rbac.service';
   selector: 'app-configuration',
   templateUrl: './configuration.component.html',
 })
-export class ConfigurationComponent {}
+export class ConfigurationComponent {
 
   public rolesRbac: boolean = false;
 
