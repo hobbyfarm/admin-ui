@@ -75,6 +75,7 @@ export class EventComponent implements OnInit {
 
   public openEdit(se: ScheduledEvent) {
     this.editingEvent = se;
+    this.wizard.setOnCloseFn(()=>{this.editingEvent = null})
     this.wizard.open();
   }
 

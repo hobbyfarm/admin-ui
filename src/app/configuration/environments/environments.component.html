@@ -5,7 +5,7 @@
 </div>
 <div class="clr-row">
     <div class="clr-col">
-        <button class="btn btn-success" (click)="openNew()">
+        <button class="btn btn-success" (click)="openNew()" *rbac="['environments.create']">
             <clr-icon shape="plus"></clr-icon> New
         </button>
     </div>
@@ -18,9 +18,9 @@
             <clr-dg-column>Object Id</clr-dg-column>
 
             <clr-dg-row *clrDgItems="let e of environments; let i = index">
-                <clr-dg-action-overflow>
-                    <button class="action-item" (click)="openUpdate(i)">Edit</button>
-                    <button class="action-item" disabled>Delete</button>
+                <clr-dg-action-overflow *rbac="['environments.update', 'environments.delete']; op 'OR'">
+                    <button class="action-item" (click)="openUpdate(i)" *rbac="['environments.update']">Edit</button>
+                    <button class="action-item" disabled *rbac="['environments.delete']">Delete</button>
                 </clr-dg-action-overflow>
                 <clr-dg-cell>{{ e.display_name }}</clr-dg-cell>
                 <clr-dg-cell>{{ e.provider }}</clr-dg-cell>

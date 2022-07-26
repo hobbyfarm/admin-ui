@@ -13,6 +13,18 @@ export class VmsetComponent {
   @Output()
   public modified: EventEmitter<boolean> = new EventEmitter(false);
 
+  @Input()
+  public createRbac : string[] = [];
+
+  @Input()
+  public createRbacOp : string = 'OR';
+
+  @Input()
+  public deleteRbac : string[] = [];
+
+  @Input()
+  public deleteRbacOp : string = 'OR';
+
   public addingIndex: number; 
 
   @ViewChild("newvm") newVmModal: NewVmComponent;

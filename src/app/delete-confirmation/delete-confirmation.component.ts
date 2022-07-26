@@ -13,7 +13,10 @@ export class DeleteConfirmationComponent {
 
   @ViewChild("modal") modal: ClrModal;
 
-  open(): void {
+  ngOnInit(): void {
+  }
+
+  public open(): void {
     this.modal.open();
   }
 

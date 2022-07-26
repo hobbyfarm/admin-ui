@@ -7,6 +7,22 @@ span.access-code{
   cursor: pointer;
 }
 
+.nav-group{
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.nav-event-name {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 0 0 10px;
+}
+.nav-event-name.short {
+  width: 80%;
+}
+
 ul > li.selected{
     background-color: #eaeaea;
     font-weight: bold;
@@ -22,7 +38,6 @@ ul.nav-list > li:first-child {
 }
 
 li .active-sessions-bubble{
-    float: right;
     margin-right: 10px;
     background-color: white;
     padding: 0 10px;
@@ -42,6 +57,12 @@ li .active-sessions-bubble{
 
 clr-row.selected{
     background-color: #f0f0f0;
+}
+
+
+.buttonCol{
+  text-align: right;
+  margin-top: 1.2rem;
 }
 
 .countdown-container{

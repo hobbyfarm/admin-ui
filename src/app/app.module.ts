@@ -43,6 +43,17 @@ import { EditVmtemplateComponent } from './configuration/vmtemplates/edit-vmtemp
 import { AppConfigService } from './app-config.service';
 import { ProgressComponent } from './progress/progress.component';
 import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
+import { EventUserListComponent } from './home/event-user-list/event-user-list.component';
+import { IntervalTimer } from './IntervalTimer/interval-timer.component';
+import { RbacService } from './data/rbac.service';
+import { RbacDirective } from './directives/rbac.directive';
+import { ClarityDisableSelectionDirective } from './directives/clarity-disable-selection.directive';
+import { RolesComponent } from './configuration/roles/roles/roles.component';
+import { EditRuleComponent } from './configuration/roles/edit-rule/edit-rule.component';
+import { NewRoleComponent } from './configuration/roles/new-role/new-role.component';
+import { RuleFormComponent } from './configuration/roles/rule-form/rule-form.component';
+import { RolebindingsComponent } from './user/rolebindings/rolebindings.component';
+import { NewRoleBindingComponent } from './user/new-role-binding/new-role-binding.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -94,6 +105,16 @@ export function jwtOptionsFactory() {
     EditVmtemplateComponent,
     ProgressInfoComponent,
     ProgressComponent,
+    EventUserListComponent,
+    IntervalTimer,
+    RbacDirective,
+    ClarityDisableSelectionDirective,
+    RolesComponent,
+    EditRuleComponent,
+    NewRoleComponent,
+    RuleFormComponent,
+    RolebindingsComponent,
+    NewRoleBindingComponent,
   ],
   imports: [
     BrowserModule,
@@ -125,7 +146,7 @@ export function jwtOptionsFactory() {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFn,
       multi: true,
-      deps: [AppConfigService]
+      deps: [AppConfigService, RbacService] // rbacservice listed here to initialize it before anything else
     }
   ],
   bootstrap: [AppComponent],

@@ -5,7 +5,7 @@
             <h3>User Management</h3>
             <div class="clr-row">
                 <div class="clr-col-4">
-                    <clr-datagrid [(clrDgSingleSelected)]="selectedUser">
+                    <clr-datagrid [(clrDgSingleSelected)]="selectedUser" [clrDisableSelection]="!selectRbac">
                         <clr-dg-column>
                             Email
                             <clr-dg-string-filter [clrDgStringFilter]="emailFilter"></clr-dg-string-filter>
@@ -43,6 +43,16 @@
                                     </clr-tab-content>
                                 </ng-template>
                             </clr-tab>
+                            <ng-container *rbac="['rolebindings.list']">
+                                <clr-tab>
+                                    <button clrTabLink>Role Bindings</button>
+                                    <ng-template [(clrIfActive)]="roleBindingsActive">
+                                        <clr-tab-content>
+                                            <rolebindings [user]="selectedUser"></rolebindings>
+                                        </clr-tab-content>
+                                    </ng-template>
+                                </clr-tab>
+                            </ng-container>
                         </clr-tabs>
                     </ng-container>
                 </div>
