@@ -148,7 +148,7 @@
   <clr-wizard-page>
     <ng-template clrPageTitle>Select Course(s)</ng-template>
     <i>Expand a row to view scenarios within that course</i>
-    <clr-datagrid [clrDgSelected]="selectedcourses" (clrDgSelectedChange)="coursesSelected($event)">
+    <clr-datagrid [clrDgSelected]="selectedcourses" (clrDgSelectedChange)="coursesSelected($event)"  [clrDgPreserveSelection]="true">
       <clr-dg-column>Id</clr-dg-column>
       <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
       <clr-dg-column [clrDgField]="'description'">Description</clr-dg-column>
@@ -178,7 +178,7 @@
 
   <clr-wizard-page [clrWizardPageNextDisabled]="selectedcourses.length == 0 && selectedscenarios.length == 0">
     <ng-template clrPageTitle>Select Scenario(s)</ng-template>
-    <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)">
+    <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)"  [clrDgPreserveSelection]="true">
       <clr-dg-column>Id</clr-dg-column>
       <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
       <clr-dg-column [clrDgField]="'description'">Description</clr-dg-column>
