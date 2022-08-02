@@ -10,9 +10,14 @@
                             Email
                             <clr-dg-string-filter [clrDgStringFilter]="emailFilter"></clr-dg-string-filter>
                         </clr-dg-column>
+                        <clr-dg-column>
+                            Access Codes
+                            <clr-dg-string-filter [clrDgStringFilter]="accescodeFilter"></clr-dg-string-filter>
+                        </clr-dg-column>
 
                         <clr-dg-row *clrDgItems="let u of users" [clrDgItem]="u">
                             <clr-dg-cell>{{ u.email }}</clr-dg-cell>
+                            <clr-dg-cell>{{ u.access_codes }}</clr-dg-cell>
                         </clr-dg-row>
 
                         <clr-dg-footer>

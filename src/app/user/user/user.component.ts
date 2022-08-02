@@ -4,8 +4,8 @@ import { User } from 'src/app/data/user';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { UserEmailFilter } from 'src/app/user-email-filter';
 import { UserIdFilter } from 'src/app/user-id-filter';
-import { EditUserComponent } from '../edit-user/edit-user.component';
-import { EditAccessCodesComponent } from '../edit-access-codes/edit-access-codes.component';
+import { UserAccesscodeFilter } from 'src/app/user-accescode-filter'
+
 
 @Component({
   selector: 'app-user',
@@ -25,6 +25,7 @@ export class UserComponent implements OnInit {
 
   public emailFilter: UserEmailFilter = new UserEmailFilter();
   public idFilter: UserIdFilter = new UserIdFilter();
+  public accescodeFilter: UserAccesscodeFilter = new UserAccesscodeFilter();
 
   ngOnInit() {
     this.refresh();
