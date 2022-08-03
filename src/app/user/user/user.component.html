@@ -29,19 +29,15 @@
                         <clr-tabs>
                             <clr-tab>
                                 <button clrTabLink>Basic Info</button>
-                                <ng-template [(clrIfActive)]="basicInfoActive">
-                                    <clr-tab-content>
-                                        <edit-user (deleted)="refresh()" [user]="selectedUser"></edit-user>
-                                    </clr-tab-content>
-                                </ng-template>
+                                <clr-tab-content *clrIfActive>
+                                    <edit-user (deleted)="refresh()" [user]="selectedUser"></edit-user>
+                                </clr-tab-content>
                             </clr-tab>
                             <clr-tab>
                                 <button clrTabLink>Access Codes</button>
-                                <ng-template [(clrIfActive)]="accessCodesActive">
-                                    <clr-tab-content>
-                                        <edit-access-codes [user]="selectedUser"></edit-access-codes>
-                                    </clr-tab-content>
-                                </ng-template>
+                                <clr-tab-content *clrIfActive>
+                                    <edit-access-codes [user]="selectedUser"></edit-access-codes>
+                                </clr-tab-content>
                             </clr-tab>
                             <ng-container *rbac="['rolebindings.list']">
                                 <clr-tab>

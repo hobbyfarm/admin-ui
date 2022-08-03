@@ -76,7 +76,7 @@
           <button class="btn btn-link" clrSignpostTrigger>Set Start Time</button>
           <clr-signpost-content *clrIfOpen #startTimeSignpost>
             <dl-date-time-picker (change)="setStartTime($event)" startView="day" maxView="year" minView="minute"
-              minuteStep="30"></dl-date-time-picker>
+              [minuteStep]="30"></dl-date-time-picker>
           </clr-signpost-content>
         </clr-signpost>
       </div>
@@ -93,7 +93,7 @@
           <button class="btn btn-link" clrSignpostTrigger>Set End Time</button>
           <clr-signpost-content *clrIfOpen #endTimeSignpost>
             <dl-date-time-picker (change)="setEndTime($event)" startView="day" maxView="year" minView="minute"
-              minuteStep="30"></dl-date-time-picker>
+              [minuteStep]="30"></dl-date-time-picker>
           </clr-signpost-content>
         </clr-signpost>
       </div>

@@ -30,5 +30,5 @@
         </clr-datagrid>
     </div>
 </div>
-<edit-vmtemplate-wizard [(editTemplate)]="editTemplate" (event)="refresh()" #editTemplateWizard></edit-vmtemplate-wizard>
+<edit-vmtemplate-wizard [editTemplate]="editTemplate" (event)="refresh()" #editTemplateWizard></edit-vmtemplate-wizard>
 <delete-confirmation #deleteConfirmation (delete)="doDelete()"></delete-confirmation>

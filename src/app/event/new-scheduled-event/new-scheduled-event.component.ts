@@ -709,7 +709,7 @@ export class NewScheduledEventComponent implements OnInit {
       on_demand: true,
       printable: false,
     });
-    this.se.required_vms = new Map();
+    this.se.required_vms = {};
     this.selectedEnvironments = [];
     this.selectedscenarios = [];
     this.selectedcourses = [];

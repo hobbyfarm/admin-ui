@@ -11,6 +11,7 @@ export function QuicksetValidator(control: FormGroup): ValidationErrors | null {
             return { 'invalidNumber': true };
         }
     }
+    return null;
 
     function isInt(n: any) {
         // Fallback for IE: n % 1 === 0 
