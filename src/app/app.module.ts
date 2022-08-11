@@ -47,6 +47,7 @@ import { ProgressComponent } from './progress/progress.component';
 import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
 import { EventUserListComponent } from './home/event-user-list/event-user-list.component';
 import { IntervalTimer } from './IntervalTimer/interval-timer.component';
+import { DeleteProcessModalComponent } from './user/user/delete-process-modal/delete-process-modal.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -90,7 +91,8 @@ export function jwtOptionsFactory() {
     AddScenarioComponent,
     VmsetComponent,
     NewVmComponent,
-    DeleteConfirmationComponent,
+    DeleteConfirmationComponent,    
+    DeleteProcessModalComponent,
     EventStatusFilterComponent,
     EditUserComponent,
     EditAccessCodesComponent,

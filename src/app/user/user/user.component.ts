@@ -5,6 +5,9 @@ import { ServerResponse } from 'src/app/data/serverresponse';
 import { UserEmailFilter } from 'src/app/user-email-filter';
 import { UserIdFilter } from 'src/app/user-id-filter';
 import { UserAccesscodeFilter } from 'src/app/user-accescode-filter'
+import { DeleteProcessModalComponent } from './delete-process-modal/delete-process-modal.component';
+import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-confirmation.component';
+
 
 
 @Component({
@@ -15,9 +18,13 @@ import { UserAccesscodeFilter } from 'src/app/user-accescode-filter'
 export class UserComponent implements OnInit {
   public users: User[] = [];
 
-  public selectedUser: User = new User();
+  public selectedUser: User;
+  public selectedUsers: User[] = [];  
 
   public accesscodes: string[] = [];
+
+  @ViewChild('deleteconfirm') deleteConfirmModal: DeleteConfirmationComponent;
+  @ViewChild('deleteprocess') deleteProcessModal: DeleteProcessModalComponent;
 
   constructor(
     public userService: UserService
@@ -31,8 +38,8 @@ export class UserComponent implements OnInit {
     this.refresh();
   }
 
-  refresh() {
-    this.userService.getUsers()
+  refresh(force?: boolean) {
+    this.userService.getUsers(force)
       .subscribe(
         (u: User[]) => {
           this.users = u;
@@ -41,6 +48,23 @@ export class UserComponent implements OnInit {
           // do something about failure
         }
       )
+  }
+
+  setSelectedUser(u: User) {
+    this.selectedUser = u
+  }
+
+  deleteMultiple() {
+    this.deleteConfirmModal.open();
+  }
+
+  doDeleteMultiple() {
+    this.deleteProcessModal.open()
+  }
+
+  doOnDeleteCompletion() {    
+      this.selectedUsers = []
+      this.refresh(true)
   }
 
 }
