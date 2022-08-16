@@ -583,7 +583,7 @@ export class NewScheduledEventComponent implements OnInit {
         }),
         concatMap((e: Environment) => {
           return this.es.available(
-            e.display_name,
+            e.name,
             this.se.start_time,
             this.se.end_time
           );
