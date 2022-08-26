@@ -22,7 +22,7 @@ export class RolesComponent implements OnInit {
 
   public newRole: Role = new Role();
 
-  public deletingObject: string;
+  public deletingObject: 'rule' | 'role';
 
   constructor(
     private roleService: RoleService,
@@ -82,10 +82,25 @@ export class RolesComponent implements OnInit {
     )
   }
 
-  public delete(deletingObject: string, roleIndex: number, ruleIndex: number): void {
+  /**
+   * Prepare deletion of a rule
+   * @param deletingObject Type of object to delete (rule or role)
+   * @param roleIndex Index of current role
+   * @param ruleIndex Index of the rule to be deleted
+   */
+  public deleteRule(deletingObject: 'rule' | 'role', roleIndex: number, ruleIndex: number): void {
+    this.editingRuleIndex = ruleIndex; 
+    this.delete(deletingObject, roleIndex);
+  }
+
+  /**
+   * Prepare deletion of role (or rule if called via deleteRule())
+   * @param deletingObject Type of object to delete (rule or role)
+   * @param roleIndex Index of the role to be deleted (or modified if called via deleteRule())
+   */
+  public delete(deletingObject: 'rule' | 'role', roleIndex: number): void {
     this.deletingObject = deletingObject;
     this.editingRoleIndex = roleIndex;
-    this.editingRuleIndex = ruleIndex; 
 
     this.deleteModal.open();
   }
