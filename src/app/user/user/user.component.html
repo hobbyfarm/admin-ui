@@ -42,7 +42,7 @@
                             <ng-container *rbac="['rolebindings.list']">
                                 <clr-tab>
                                     <button clrTabLink>Role Bindings</button>
-                                    <ng-template [(clrIfActive)]="roleBindingsActive">
+                                    <ng-template *clrIfActive>
                                         <clr-tab-content>
                                             <rolebindings [user]="selectedUser"></rolebindings>
                                         </clr-tab-content>
