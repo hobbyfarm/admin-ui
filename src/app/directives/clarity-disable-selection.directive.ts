@@ -6,7 +6,7 @@ import { Directive, ElementRef, Input, OnChanges, SimpleChanges } from '@angular
 export class ClarityDisableSelectionDirective implements OnChanges {
 
   @Input('clrDisableSelection')
-  private disabled: boolean
+  disabled: boolean
 
   constructor(private elementRef: ElementRef) { }
 
