@@ -81,7 +81,7 @@
                     keepalive
                     period.
                     Valid
-                    periods: 1m to 48h inclusive.</span>
+                    periods: at least 1m.</span>
                 </div>
               </div>
               <clr-input-container>
@@ -124,7 +124,9 @@
             </a>
             <button class="btn btn-danger-outline">Delete</button>
             <button class="btn btn-success" (click)="savescenario()"
-              [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
+              [disabled]="!this.selectedscenario.steps 
+                          || !this.selectedscenario.virtualmachines 
+                          || editScenarioForm.invalid && (editScenarioForm.dirty || editScenarioForm.touched)">Save</button>
           </clr-tab-content>
         </clr-tab>
         <clr-tab>
