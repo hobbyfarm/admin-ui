@@ -1,3 +1,18 @@
+.isMultiSelected {
+    border: #d8e3e9 2px solid !important;
+}
+
+
+
 .isSingleSelected {
-    background-color: #CCFBFF;
+    border: #54cbf2 solid 2px !important;
+}
+
+
+.userRow {
+    border: #fff 2px solid;
+}
+
+.userRow:hover{
+    border: #e8e8e8 2px solid;
 }
