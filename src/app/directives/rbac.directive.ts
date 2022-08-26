@@ -1,6 +1,4 @@
-import { NgIfContext } from '@angular/common';
-import { Directive, ElementRef, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { resourceUsage } from 'process';
+import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
 import { RbacService } from '../data/rbac.service';
 
 @Directive({
@@ -14,7 +12,6 @@ export class RbacDirective implements OnInit {
   private elseRef: TemplateRef<any>;
 
   constructor(
-    private element: ElementRef,
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef,
     private rbacService: RbacService
