@@ -57,24 +57,28 @@ export class RbacDirective implements OnInit {
     }
   }
   
-  private checkPermission(): boolean {
+  private async checkPermission(): Promise<boolean> {
     let hasPermission = false;
 
     for (const checkPermission of this.permissions) {
       // resource.verb
       let split = checkPermission.split('.')
-      if (this.rbacService.Grants(split[0], split[1])) {
-        hasPermission = true;
-
-        if (this.logcalOp === 'OR') {
-          break;
-        }
-      } else {
-        hasPermission = false;
-        if (this.logcalOp === 'AND') {
-          break;
-        }
+      hasPermission = await this.rbacService.Grants(split[0], split[1]);
+      if ((hasPermission && this.logcalOp === 'OR') || (!hasPermission && this.logcalOp === 'AND')) {
+        break;
       }
+      // if (this.rbacService.Grants(split[0], split[1])) {
+      //   hasPermission = true;
+
+      //   if (this.logcalOp === 'OR') {
+      //     break;
+      //   }
+      // } else {
+      //   hasPermission = false;
+      //   if (this.logcalOp === 'AND') {
+      //     break;
+      //   }
+      // }
     }
 
     return hasPermission;

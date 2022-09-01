@@ -25,5 +25,6 @@ export const resources: string[] = [
     "rolebindings"
 ]
 
-export const rbacApiGroup: string = "rbac.authorization.k8s.io";
-export const hobbyfarmApiGroup: string = "hobbyfarm.io";
+export type ApiGroup = "rbac.authorization.k8s.io" | "hobbyfarm.io";
+export const rbacApiGroup: ApiGroup = "rbac.authorization.k8s.io";
+export const hobbyfarmApiGroup: ApiGroup = "hobbyfarm.io";

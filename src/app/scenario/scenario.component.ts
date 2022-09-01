@@ -388,11 +388,11 @@ export class ScenarioComponent implements OnInit {
   }
 
   ngOnInit() {
-    ["update", "get"].forEach((verb: string) => {
-      if (this.rbacService.Grants('scenarios', verb)) {
-        this.selectRbac = true;
-      }
-    })
+    // same question as in course component ... isn't it sufficient to check for "get"???...
+    // because our rbac directive is handling if the user can update scenario elements???
+    this.rbacService.Grants("scenarios", "get").then((allowed: boolean) => {
+      this.selectRbac = allowed;
+    });
 
     this.scenarioService.list()
       .subscribe(

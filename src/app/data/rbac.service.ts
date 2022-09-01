@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { atou } from '../unicode';
 import { AccessSet } from './accessset';
-import { hobbyfarmApiGroup, rbacApiGroup } from './rbac';
+import { ApiGroup, hobbyfarmApiGroup, rbacApiGroup } from './rbac';
 import { ServerResponse } from './serverresponse';
 
 @Injectable({
@@ -13,7 +14,7 @@ import { ServerResponse } from './serverresponse';
 export class RbacService {
   private static all: string = "*"
 
-  private userAccess: AccessSet
+  private userAccess: Promise<AccessSet>;
 
   constructor(
     public http: HttpClient
@@ -21,7 +22,11 @@ export class RbacService {
     // only load an access set if the hobbyfarm token is in place
     // otherwise we would be loading an empty access set
     if (localStorage.getItem("hobbyfarm_admin_token")?.length > 0) {
-      this.LoadAccessSet(); 
+      this.userAccess = this.LoadAccessSet(); 
+    } else {
+      this.userAccess = new Promise<AccessSet>(resolve => {
+        resolve(null);
+      })
     }
   }
 
@@ -29,37 +34,44 @@ export class RbacService {
   // can wait for its completion. This is especially important in 
   // login.component, because we don't want to navigate the user to
   // the home page before we have completed setting up rbac.
-  public async LoadAccessSet(): Promise<boolean> {
-    await this.http.get(environment.server + "/auth/access")
+  public LoadAccessSet(): Promise<AccessSet> {
+    return this.http.get(environment.server + "/auth/access")
     .pipe(
-      map((s: ServerResponse) => JSON.parse(atou(s.content)))
-    ).toPromise().then(
-      (as: AccessSet) => this.userAccess = as
-    )
-
-    return true
+      map((s: ServerResponse) => {
+        const accessSet: AccessSet = JSON.parse(atou(s.content));
+        return accessSet;
+      })
+    ).toPromise(); // deprecated since rsjx version 7 => replace with lastValueFrom when upgrading
   }
 
-  public Grants(resource: string, verb: string): boolean {
-    var apiGroup
+  public async Grants(resource: string, verb: string): Promise<boolean> {
+    let apiGroup : ApiGroup;
     if (resource == "roles" || resource == "rolebindings") {
-      apiGroup = rbacApiGroup
+      apiGroup = rbacApiGroup;
     } else {
-      apiGroup = hobbyfarmApiGroup
+      apiGroup = hobbyfarmApiGroup;
     }
 
     let allowed = false;
-    [RbacService.all, apiGroup].forEach((a) => {
-      [RbacService.all, resource].forEach((r) => {
-        [RbacService.all, verb].forEach((v) => {
-          let key = "/" + a + "/" + r + "/" + v
-          if (this.userAccess.access[key]) {
-            allowed = true
-          }
+    return this.userAccess.then((accessSet: AccessSet) => {
+      if(accessSet) {
+        [RbacService.all, apiGroup].forEach((a) => {
+          [RbacService.all, resource].forEach((r) => {
+            [RbacService.all, verb].forEach((v) => {
+              const key = "/" + a + "/" + r + "/" + v
+              // this.userAccess.pipe(filter(object => object != null)).subscribe(object => {
+              //   if(object && object.access[key]) {
+              //     allowed = true;
+              //   }
+              // })
+              if(accessSet.access[key]) {
+                allowed = true;
+              }
+            })
+          })
         })
-      })
+      }
+      return allowed;
     })
-    return allowed
   }
-  
 }

@@ -64,19 +64,9 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     // verify rbac permissions before we display this page
-    let rbacCheck = true;
-    ["scheduledevents", "sessions", "progresses"].forEach((resource: string) => {
-      ["list", "get"].forEach((verb: string) => {
-        if (!this.rbacService.Grants(resource, verb)) {
-          rbacCheck = false
-        }
-      })
-    })
-    if (!this.rbacService.Grants("sessions", "update")) {
-      rbacCheck = false
-    }
-
-    this.rbacSuccess = rbacCheck
+    this.setRbacCheck().then((rbacCheck: boolean) => {
+      this.rbacSuccess = rbacCheck;
+    });
 
     //Fill cache
     this.courseService.list().subscribe();
@@ -97,9 +87,33 @@ export class HomeComponent implements OnInit {
     )
   }
 
+  /**
+   * 
+   * @returns true if all grants are successful; else false
+   */
+  async setRbacCheck() {
+    let rbacCheck = true;
+    outerForLoop:
+    for(let resource of ["scheduledevents", "sessions", "progresses"]) {
+      for(let verb of ["list", "get"]) {
+        const allowed: boolean = await this.rbacService.Grants(resource, verb);
+        if(!allowed) {
+          rbacCheck = false;
+          break outerForLoop;
+        }
+      }
+    }
+    // only if rbacCheck is still true...
+    if (rbacCheck) {
+      // ...check if we also have permissions to update sessions
+      rbacCheck = await this.rbacService.Grants("sessions", "update");
+    }
+    return rbacCheck;
+  }
+
   async sortEventLists() {
     this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;
-    let users = await this.userService.getUsers().toPromise()
+    let users = await this.userService.getUsers().toPromise() // toPromise() is deprecated since rsjx version 7 => replace with lastValueFrom when upgrading
     this.scheduledEvents.forEach((sEvent) => {
       sEvent.creatorEmail = users.find(user => user.id == sEvent.creator)?.email
     })
