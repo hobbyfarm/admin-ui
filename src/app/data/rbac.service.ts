@@ -22,7 +22,7 @@ export class RbacService {
     // only load an access set if the hobbyfarm token is in place
     // otherwise we would be loading an empty access set
     if (localStorage.getItem("hobbyfarm_admin_token")?.length > 0) {
-      this.userAccess = this.LoadAccessSet(); 
+      this.LoadAccessSet(); 
     } else {
       this.userAccess = new Promise<AccessSet>(resolve => {
         resolve(null);
@@ -35,13 +35,14 @@ export class RbacService {
   // login.component, because we don't want to navigate the user to
   // the home page before we have completed setting up rbac.
   public LoadAccessSet(): Promise<AccessSet> {
-    return this.http.get(environment.server + "/auth/access")
+    this.userAccess = this.http.get(environment.server + "/auth/access")
     .pipe(
       map((s: ServerResponse) => {
         const accessSet: AccessSet = JSON.parse(atou(s.content));
         return accessSet;
       })
     ).toPromise(); // deprecated since rsjx version 7 => replace with lastValueFrom when upgrading
+    return this.userAccess;
   }
 
   public async Grants(resource: string, verb: string): Promise<boolean> {
