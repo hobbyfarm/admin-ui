@@ -38,8 +38,9 @@ export class RbacDirective implements OnInit {
     this.elseRef = val;
   }
 
-  private updateView() {
-    if (this.checkPermission()) {
+  private async updateView() {
+    const hasPermission: boolean = await this.checkPermission();
+    if (hasPermission) {
       if (this.isHidden) {
         if (this.elseRef) {
           this.viewContainer.clear();
@@ -67,18 +68,6 @@ export class RbacDirective implements OnInit {
       if ((hasPermission && this.logcalOp === 'OR') || (!hasPermission && this.logcalOp === 'AND')) {
         break;
       }
-      // if (this.rbacService.Grants(split[0], split[1])) {
-      //   hasPermission = true;
-
-      //   if (this.logcalOp === 'OR') {
-      //     break;
-      //   }
-      // } else {
-      //   hasPermission = false;
-      //   if (this.logcalOp === 'AND') {
-      //     break;
-      //   }
-      // }
     }
 
     return hasPermission;
