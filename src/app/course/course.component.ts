@@ -77,18 +77,10 @@ export class CourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Old Code:
-
-    // ["update", "get"].forEach((verb: string) => {
-    //   if (this.rbacService.Grants("courses", verb)) {
-    //     this.selectRbac = true;
-    //   }
-    // })
-
-    // isn't it sufficient to check for "get"???...
-    // because our rbac directive is handling if the user can update course elements???
-    this.rbacService.Grants("courses", "get").then((allowed: boolean) => {
-      this.selectRbac = allowed;
+    // Enable permission to list courses if either "get" or "update" on courses is granted
+    this.rbacService.Grants("courses", "get").then(async (allowedGet: boolean) => {
+      const allowedUpdate: boolean = await this.rbacService.Grants("courses", "update");
+      this.selectRbac = allowedGet || allowedUpdate;
     });
 
     this.refresh();

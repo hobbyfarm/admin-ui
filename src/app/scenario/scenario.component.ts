@@ -388,10 +388,10 @@ export class ScenarioComponent implements OnInit {
   }
 
   ngOnInit() {
-    // same question as in course component ... isn't it sufficient to check for "get"???...
-    // because our rbac directive is handling if the user can update scenario elements???
-    this.rbacService.Grants("scenarios", "get").then((allowed: boolean) => {
-      this.selectRbac = allowed;
+    // Enable permission to list courses if either "get" or "update" on courses is granted
+    this.rbacService.Grants("scenarios", "get").then(async (allowedGet: boolean) => {
+      const allowedUpdate: boolean = await this.rbacService.Grants("scenarios", "update");
+      this.selectRbac = allowedGet || allowedUpdate;
     });
 
     this.scenarioService.list()

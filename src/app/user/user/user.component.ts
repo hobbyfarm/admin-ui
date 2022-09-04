@@ -26,10 +26,10 @@ export class UserComponent implements OnInit {
   public emailFilter: UserEmailFilter = new UserEmailFilter();
 
   ngOnInit() {
-    // isn't it sufficient to check for "get"???...
-    // because our rbac directive is handling if the user can update user properties???
-    this.rbacService.Grants("users", "get").then((allowed: boolean) => {
-      this.selectRbac = allowed;
+    // Enable permission to list users if either "get" or "update" on users is granted
+    this.rbacService.Grants("users", "get").then(async (allowedGet: boolean) => {
+      const allowedUpdate: boolean = await this.rbacService.Grants("users", "update");
+      this.selectRbac = allowedGet || allowedUpdate;
       // only load users if access is granted
       if(this.selectRbac) {
         this.refresh();
