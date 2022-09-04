@@ -50,7 +50,7 @@ export class LoginComponent {
           // should have a token here
           // persist it
           localStorage.setItem("hobbyfarm_admin_token", s.message) // not b64 from authenticate
-
+          // load the access set in rbac
           this.rbacService.LoadAccessSet().then(
             () => this.router.navigateByUrl("/home")
           )
