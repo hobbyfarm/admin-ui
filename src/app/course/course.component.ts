@@ -77,11 +77,11 @@ export class CourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    ["update", "get"].forEach((verb: string) => {
-      if (this.rbacService.Grants("courses", verb)) {
-        this.selectRbac = true;
-      }
-    })
+    // Enable permission to list courses if either "get" or "update" on courses is granted
+    this.rbacService.Grants("courses", "get").then(async (allowedGet: boolean) => {
+      const allowedUpdate: boolean = await this.rbacService.Grants("courses", "update");
+      this.selectRbac = allowedGet || allowedUpdate;
+    });
 
     this.refresh();
     this.scenarioService.list()

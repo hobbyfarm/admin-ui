@@ -1,6 +1,4 @@
-import { NgIfContext } from '@angular/common';
-import { Directive, ElementRef, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { resourceUsage } from 'process';
+import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
 import { RbacService } from '../data/rbac.service';
 
 @Directive({
@@ -14,7 +12,6 @@ export class RbacDirective implements OnInit {
   private elseRef: TemplateRef<any>;
 
   constructor(
-    private element: ElementRef,
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef,
     private rbacService: RbacService
@@ -41,8 +38,9 @@ export class RbacDirective implements OnInit {
     this.elseRef = val;
   }
 
-  private updateView() {
-    if (this.checkPermission()) {
+  private async updateView() {
+    const hasPermission: boolean = await this.checkPermission();
+    if (hasPermission) {
       if (this.isHidden) {
         if (this.elseRef) {
           this.viewContainer.clear();
@@ -60,23 +58,15 @@ export class RbacDirective implements OnInit {
     }
   }
   
-  private checkPermission(): boolean {
+  private async checkPermission(): Promise<boolean> {
     let hasPermission = false;
 
     for (const checkPermission of this.permissions) {
       // resource.verb
       let split = checkPermission.split('.')
-      if (this.rbacService.Grants(split[0], split[1])) {
-        hasPermission = true;
-
-        if (this.logcalOp === 'OR') {
-          break;
-        }
-      } else {
-        hasPermission = false;
-        if (this.logcalOp === 'AND') {
-          break;
-        }
+      hasPermission = await this.rbacService.Grants(split[0], split[1]);
+      if ((hasPermission && this.logcalOp === 'OR') || (!hasPermission && this.logcalOp === 'AND')) {
+        break;
       }
     }
 

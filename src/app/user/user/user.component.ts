@@ -26,12 +26,15 @@ export class UserComponent implements OnInit {
   public emailFilter: UserEmailFilter = new UserEmailFilter();
 
   ngOnInit() {
-    ["update", "get"].forEach((verb: string) => {
-      if (this.rbacService.Grants("users", verb)) {
-        this.selectRbac = true
+    // Enable permission to list users if either "get" or "update" on users is granted
+    this.rbacService.Grants("users", "get").then(async (allowedGet: boolean) => {
+      const allowedUpdate: boolean = await this.rbacService.Grants("users", "update");
+      this.selectRbac = allowedGet || allowedUpdate;
+      // only load users if access is granted
+      if(this.selectRbac) {
+        this.refresh();
       }
-    })
-    this.refresh();
+    });
   }
 
   refresh() {
