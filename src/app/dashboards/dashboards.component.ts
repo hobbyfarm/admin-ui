@@ -6,6 +6,7 @@ import { UserService } from '../data/user.service';
 import { ProgressService } from 'src/app/data/progress.service';
 import { ProgressCount } from 'src/app/data/progress';
 import { VmService } from '../data/vm.service';
+import { RbacService } from '../data/rbac.service';
 
 interface DashboardScheduledEvent extends ScheduledEvent {
   creatorEmail?: String;
@@ -29,15 +30,25 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   public finishedEvents: DashboardScheduledEvent[] = [];
   public updateInterval: any;
 
+  public rbacSuccess: boolean = false;
+
   constructor(
     public scheduledeventService: ScheduledeventService,
     public vmService: VmService,
     public helper: JwtHelperService,
     public userService: UserService,
     public progressService: ProgressService,
+    public rbacService: RbacService
   ) { }
 
   ngOnInit() {
+
+    // verify rbac permissions before we display this page
+    this.setRbacCheck().then((rbacCheck: boolean) => {
+      this.rbacSuccess = rbacCheck;
+    });
+
+
     this.scheduledeventService.list().subscribe(
       (s: DashboardScheduledEvent[]) => {
         this.scheduledEvents = s;
@@ -56,6 +67,32 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       }
     )
   }
+
+
+  /**
+   * 
+   * @returns true if all grants are successful; else false
+   */
+   async setRbacCheck() {
+    let rbacCheck = true;
+    outerForLoop:
+    for(let resource of ["scheduledevents", "sessions", "progresses", "virtualmachines", "virtualmachinesets", "users"]) {
+      for(let verb of ["list", "get"]) {
+        const allowed: boolean = await this.rbacService.Grants(resource, verb);
+        if(!allowed) {
+          rbacCheck = false;
+          break outerForLoop;
+        }
+      }
+    }
+    // only if rbacCheck is still true...
+    if (rbacCheck) {
+      // ...check if we also have permissions to update sessions
+      rbacCheck = await this.rbacService.Grants("sessions", "update");
+    }
+    return rbacCheck;
+  }
+
   async sortEventLists() {
     this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;
     let users = await this.userService.getUsers().toPromise()

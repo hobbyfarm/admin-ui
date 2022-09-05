@@ -1,5 +1,6 @@
 <div class="main-container">
     <header class="header header-7" app-header></header>
+    <ng-container *ngIf="rbacSuccess">
     <div class="content-container">
         <as-split unit="percent" direction="horizontal">
             <as-split-area [size]="20" class="split-area-1">
@@ -77,5 +78,6 @@
             </as-split-area>
         </as-split>
     </div>
+</ng-container>
 
 </div>
