@@ -29,9 +29,9 @@
             </button>
             <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
                 <div class="dropdown-item " (click)="openInfo()" clrDropdownItem>Info</div>                
-                <div class="dropdown-item"  (click)="openTerminalWindow()" clrDropdownItem>Join Session</div>
+                <div class="dropdown-item"  (click)="openTerminalWindow()" [disabled]="progress.finished" clrDropdownItem>Join Session</div>
                 <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
-                <div class="dropdown-item " (click)="terminateSession()" clrDropdownItem>Terminate Session</div>
+                <div class="dropdown-item " (click)="terminateSession()" [disabled]="progress.finished" clrDropdownItem>Terminate Session</div>
             </clr-dropdown-menu>
         </clr-dropdown>
 
