@@ -3,10 +3,10 @@
     <div class="content-container">
         <nav class="sidenav">
             <section class="sidenav-content">
-                <a href="javascript://" [routerLink]="['scenarios']" [routerLinkActive]="'active'" class="nav-link">
+                <a href="javascript://" [routerLink]="['scenarios']" [routerLinkActive]="'active'" class="nav-link" *rbac="['scenarios.list']">
                     Scenarios
                 </a>
-                <a href="javascript://" [routerLink]="['courses']" [routerLinkActive]="'active'" class="nav-link">
+                <a href="javascript://" [routerLink]="['courses']" [routerLinkActive]="'active'" class="nav-link" *rbac="['courses.list']">
                     Courses
                 </a>
             </section>

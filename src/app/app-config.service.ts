@@ -9,7 +9,7 @@ export class AppConfigService {
 
   loadAppConfig() {
     return this.http.get('/config.json')
-      .toPromise()
+      .toPromise() // deprecated since rsjx version 7 => replace with lastValueFrom when upgrading
       .then(data => {
         this.appConfig = data;
       });
@@ -19,7 +19,7 @@ export class AppConfigService {
     const headers = new HttpHeaders();
     headers.set('Accept', '*')
     return this.http.get(logoPath, {headers, responseType: 'text'})
-    .toPromise()
+    .toPromise() // deprecated since rsjx version 7 => replace with lastValueFrom when upgrading
   }
 
   getConfig() {

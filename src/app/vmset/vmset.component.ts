@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { NewVmComponent } from './new-vm/new-vm.component';
 
 @Component({
@@ -6,21 +6,28 @@ import { NewVmComponent } from './new-vm/new-vm.component';
   templateUrl: './vmset.component.html',
   styleUrls: ['./vmset.component.scss']
 })
-export class VmsetComponent implements OnInit {
+export class VmsetComponent {
   @Input()
   public vms: {}[] = []; // because JSONifying Maps is hard
 
   @Output()
-  public modified: EventEmitter<boolean> = new EventEmitter(false);
+  public vmsChange: EventEmitter<{}[]> = new EventEmitter<{}[]>();
+
+  @Input()
+  public createRbac : string[] = [];
+
+  @Input()
+  public createRbacOp : string = 'OR';
+
+  @Input()
+  public deleteRbac : string[] = [];
+
+  @Input()
+  public deleteRbacOp : string = 'OR';
 
   public addingIndex: number; 
 
   @ViewChild("newvm") newVmModal: NewVmComponent;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
 
   openAddVm(i: number) {
     this.addingIndex = i;
@@ -28,22 +35,22 @@ export class VmsetComponent implements OnInit {
   }
 
   addVM(vm: [string, string]) {
-    this.modified.emit(true);
     this.vms[this.addingIndex][vm[0]] = vm[1];
+    this.vmsChange.emit(this.vms);
   }
 
   deleteVM(setIndex: number, key: string) {
-    this.modified.emit(true);
     delete this.vms[setIndex][key];
+    this.vmsChange.emit(this.vms);
   }
 
   addVMSet() {
-    this.modified.emit(true);
     this.vms.push({});
+    this.vmsChange.emit(this.vms);
   }
 
   deleteVMSet(i: number) {
-    this.modified.emit(true);
     this.vms.splice(i, 1);
+    this.vmsChange.emit(this.vms);
   }
 }

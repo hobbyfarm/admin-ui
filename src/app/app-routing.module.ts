@@ -15,7 +15,7 @@ import { VmtemplatesComponent } from './configuration/vmtemplates/vmtemplates.co
 import { DashboardsComponent } from './dashboards/dashboards.component';
 import { StepComponent } from './step/step-component/step.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
-
+import { RolesComponent } from './configuration/roles/roles/roles.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -79,6 +79,10 @@ const routes: Routes = [
       {
         path: 'vmtemplates',
         component: VmtemplatesComponent
+      },
+      {
+        path: 'roles',
+        component: RolesComponent
       }
     ]
   },
@@ -97,7 +101,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

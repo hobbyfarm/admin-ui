@@ -1,0 +1,17 @@
+<clr-modal #modal [(clrModalOpen)]="modalOpen">
+    <h3 class="modal-title">Create Role</h3>
+    <div class="modal-body">
+        <form clrForm [formGroup]="form">
+            <clr-input-container>
+                <label>Role Name</label>
+                <input clrInput placeholder="Role name" name="name" formControlName="name" />
+                <clr-control-error>This field is required</clr-control-error>
+            </clr-input-container>
+        </form>
+        <rule-form [rule]="rule" (valid)="ruleFormValid($event)"></rule-form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" (click)="save()" [disabled]="formValid">Save</button>
+        <button class="btn btn-danger-outline" (click)="modal.close()">Cancel</button>
+    </div>
+</clr-modal>

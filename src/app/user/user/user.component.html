@@ -5,7 +5,7 @@
             <h3>User Management</h3>
             <div class="clr-row">
                 <div class="clr-col-4">
-                    <clr-datagrid [(clrDgSingleSelected)]="selectedUser">
+                    <clr-datagrid [(clrDgSingleSelected)]="selectedUser" [clrDisableSelection]="!selectRbac">
                         <clr-dg-column>
                             Email
                             <clr-dg-string-filter [clrDgStringFilter]="emailFilter"></clr-dg-string-filter>
@@ -29,20 +29,24 @@
                         <clr-tabs>
                             <clr-tab>
                                 <button clrTabLink>Basic Info</button>
-                                <ng-template [(clrIfActive)]="basicInfoActive">
-                                    <clr-tab-content>
-                                        <edit-user (deleted)="refresh()" [user]="selectedUser"></edit-user>
-                                    </clr-tab-content>
-                                </ng-template>
+                                <clr-tab-content *clrIfActive>
+                                    <edit-user (deleted)="refresh()" [user]="selectedUser"></edit-user>
+                                </clr-tab-content>
                             </clr-tab>
                             <clr-tab>
                                 <button clrTabLink>Access Codes</button>
-                                <ng-template [(clrIfActive)]="accessCodesActive">
-                                    <clr-tab-content>
-                                        <edit-access-codes [user]="selectedUser"></edit-access-codes>
-                                    </clr-tab-content>
-                                </ng-template>
+                                <clr-tab-content *clrIfActive>
+                                    <edit-access-codes [user]="selectedUser"></edit-access-codes>
+                                </clr-tab-content>
                             </clr-tab>
+                            <ng-container *rbac="['rolebindings.list']">
+                                <clr-tab>
+                                    <button clrTabLink>Role Bindings</button>
+                                    <clr-tab-content *clrIfActive>
+                                        <rolebindings [user]="selectedUser"></rolebindings>
+                                    </clr-tab-content>
+                                </clr-tab>
+                            </ng-container>
                         </clr-tabs>
                     </ng-container>
                 </div>

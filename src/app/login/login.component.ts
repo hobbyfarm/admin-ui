@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ServerResponse } from '../data/serverresponse';
 import { environment } from 'src/environments/environment';
 import { AppConfigService } from '../app-config.service';
+import { RbacService } from '../data/rbac.service';
 
 @Component({
   selector: 'app-login',
@@ -14,10 +15,6 @@ export class LoginComponent {
   public email: string = "";
   public password: string = "";
   public error: string = "";
-  public success: string = "";
-  public accesscode: string = "";
-
-  public loginactive: boolean = false;
 
   private config = this.configService.getConfig();
   public logo;
@@ -26,7 +23,8 @@ export class LoginComponent {
   constructor(
     public http: HttpClient,
     public router: Router,
-    public configService: AppConfigService
+    public configService: AppConfigService,
+    private rbacService: RbacService
   ) {
     if (this.config.login && this.config.login.logo) {
       this.logo = this.config.login.logo
@@ -38,31 +36,6 @@ export class LoginComponent {
       let fi = <HTMLLinkElement>document.querySelector("#favicon")
       fi.href = this.config.favicon;
     }
-  }
-
-  public register() {
-    this.error = "";
-    let body = new HttpParams()
-      .set("email", this.email)
-      .set("password", this.password)
-      .set("access_code", this.accesscode);
-
-    this.http.post(environment.server + "/auth/registerwithaccesscode", body)
-      .subscribe(
-        (s: ServerResponse) => {
-          this.success = "Success! User created. Please login.";
-          this.loginactive = true;
-        },
-        (e: HttpErrorResponse) => {
-          if (e.error instanceof ErrorEvent) {
-            // frontend, maybe network?
-            this.error = e.error.error;
-          } else {
-            // backend
-            this.error = e.error.message;
-          }
-        }
-      )
   }
 
   public login() {
@@ -77,9 +50,10 @@ export class LoginComponent {
           // should have a token here
           // persist it
           localStorage.setItem("hobbyfarm_admin_token", s.message) // not b64 from authenticate
-
-          // redirect to the scenarios page
-          this.router.navigateByUrl("/home")
+          // load the access set in rbac
+          this.rbacService.LoadAccessSet().then(
+            () => this.router.navigateByUrl("/home")
+          )
         },
         (e: HttpErrorResponse) => {
           if (e.error instanceof ErrorEvent) {

@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClarityModule } from '@clr/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RootComponent } from './root/root.component';
 import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './header/header.component';
 import { EventComponent } from './event/event.component';
@@ -16,7 +15,6 @@ import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewScheduledEventComponent } from './event/new-scheduled-event/new-scheduled-event.component';
-import { AtobPipe } from './atob.pipe';
 import { ScenarioService } from './data/scenario.service';
 import { DlDateTimePickerDateModule, DlDateTimePickerModule} from 'angular-bootstrap-datetimepicker';
 import { ScenarioComponent } from './scenario/scenario.component';
@@ -64,6 +62,16 @@ import { DynamicHooksModule } from 'ngx-dynamic-hooks';
 import { CtrComponent } from './step/ctr.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
 import { ProgressService } from './step/progress.service'
+import { RbacService } from './data/rbac.service';
+import { RbacDirective } from './directives/rbac.directive';
+import { ClarityDisableSelectionDirective } from './directives/clarity-disable-selection.directive';
+import { RolesComponent } from './configuration/roles/roles/roles.component';
+import { EditRuleComponent } from './configuration/roles/edit-rule/edit-rule.component';
+import { NewRoleComponent } from './configuration/roles/new-role/new-role.component';
+import { RuleFormComponent } from './configuration/roles/rule-form/rule-form.component';
+import { RolebindingsComponent } from './user/rolebindings/rolebindings.component';
+import { NewRoleBindingComponent } from './user/new-role-binding/new-role-binding.component';
+import { AtobPipe } from './atob.pipe';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -87,14 +95,13 @@ export function jwtOptionsFactory() {
 
 @NgModule({
   declarations: [
+    AtobPipe,
     AppComponent,
-    RootComponent,
     HomeComponent,
     HeaderComponent,
     EventComponent,
     LoginComponent,
     NewScheduledEventComponent,
-    AtobPipe,
     ScenarioComponent,
     UserComponent,
     ConfigurationComponent,
@@ -125,7 +132,15 @@ export function jwtOptionsFactory() {
     StepComponent,
     HfMarkdownComponent,
     TerminalComponent,
-    CtrComponent
+    CtrComponent,
+    RbacDirective,
+    ClarityDisableSelectionDirective,
+    RolesComponent,
+    EditRuleComponent,
+    NewRoleComponent,
+    RuleFormComponent,
+    RolebindingsComponent,
+    NewRoleBindingComponent,
   ],
   imports: [
     BrowserModule,
@@ -173,10 +188,10 @@ export function jwtOptionsFactory() {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFn,
       multi: true,
-      deps: [AppConfigService]
+      deps: [AppConfigService, RbacService] // rbacservice listed here to initialize it before anything else
     }
   ],
-  bootstrap: [RootComponent],
+  bootstrap: [AppComponent],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ]

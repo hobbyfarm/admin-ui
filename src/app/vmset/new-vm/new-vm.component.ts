@@ -7,7 +7,6 @@ import { ClrModal } from '@clr/angular';
 @Component({
   selector: 'new-vm',
   templateUrl: './new-vm.component.html',
-  styleUrls: ['./new-vm.component.scss']
 })
 export class NewVmComponent implements OnInit {
   public modalOpen: boolean = false;
