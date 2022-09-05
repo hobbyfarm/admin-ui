@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ClrModal } from '@clr/angular';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { User } from 'src/app/data/user';
 import { UserService } from 'src/app/data/user.service';
@@ -25,12 +24,21 @@ export class EditUserComponent implements OnInit, OnChanges {
   public saving: boolean = false;
 
   @ViewChild('deleteconfirm') deleteConfirmModal: DeleteConfirmationComponent;
+  @ViewChild('userDetails') userDetails: ElementRef;
 
   constructor(
     public userService: UserService
   ) { }
 
   ngOnInit(): void {
+    this.userDetailsForm.valueChanges.subscribe(event => {
+      if (!this.userDetailsForm.dirty) {
+        this.userDetails.nativeElement.animate([ { opacity: 1, easing: 'ease-out' },
+      { opacity: 0.1, easing: 'ease-in' },
+      { opacity: 0 } ],
+    200);
+      }      
+    })
   }
 
   ngOnChanges(): void {
