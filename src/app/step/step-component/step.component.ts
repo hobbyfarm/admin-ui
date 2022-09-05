@@ -248,6 +248,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
       .get(this.scenario.id, this.stepnumber)
       .subscribe((s: Step) => {
         this.step = s;
+        this.step.title = atou(s.title)
         this.stepcontent = atou(s.content);
       });
   }

@@ -71,7 +71,6 @@ import { NewRoleComponent } from './configuration/roles/new-role/new-role.compon
 import { RuleFormComponent } from './configuration/roles/rule-form/rule-form.component';
 import { RolebindingsComponent } from './user/rolebindings/rolebindings.component';
 import { NewRoleBindingComponent } from './user/new-role-binding/new-role-binding.component';
-import { AtobPipe } from './atob.pipe';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -95,7 +94,6 @@ export function jwtOptionsFactory() {
 
 @NgModule({
   declarations: [
-    AtobPipe,
     AppComponent,
     HomeComponent,
     HeaderComponent,
