@@ -1,0 +1,10 @@
+<clr-modal #modal [(clrModalOpen)]="modalOpen">
+    <h3 class="modal-title">{{ edit ? "Edit" : "Create" }} Rule</h3>
+    <div class="modal-body">
+        <rule-form [rule]="rule" (valid)="formValid = $event"></rule-form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success" (click)="save()" [disabled]="!formValid">Save</button>
+        <button class="btn btn-danger-outline" (click)="modalOpen = false">Cancel</button>
+    </div>
+</clr-modal>

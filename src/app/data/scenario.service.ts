@@ -7,7 +7,7 @@ import { Scenario } from './scenario';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
 import { atou, utoa } from '../unicode';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 
 class CustomEncoder implements HttpParameterCodec {
   encodeKey(key: string): string {

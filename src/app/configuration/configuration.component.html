@@ -3,10 +3,12 @@
     <div class="content-container">
         <nav class="sidenav">
             <section class="sidenav-content">
-                <a href="javascript://" class="nav-link" [routerLink]="['environments']" [routerLinkActive]="'active'">
+                <a href="javascript://" class="nav-link" [routerLink]="['environments']" [routerLinkActive]="'active'" *rbac="['environments.list']">
                     Environments</a>
-                <a href="javascript://" class="nav-link" [routerLink]="['vmtemplates']" [routerLinkActive]="'active'">
+                <a href="javascript://" class="nav-link" [routerLink]="['vmtemplates']" [routerLinkActive]="'active'" *rbac="['vmtemplates.list']">
                     VM Templates</a>
+                <a href="javascript://" class="nav-link" [routerLink]="['roles']" [routerLinkActive]="'active'" *rbac="['roles.list']">
+                    Roles</a>
             </section>
         </nav>
         <div class="content-area">

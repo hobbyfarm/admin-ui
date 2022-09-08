@@ -22,14 +22,14 @@
 <h3>Scenarios</h3>
 <div class="clr-row">
   <div class="clr-col">
-    <button class="btn btn-success" (click)="openNewScenario()">
+    <button class="btn btn-success" (click)="openNewScenario()" *rbac="['scenarios.create']">
       <clr-icon shape="plus"></clr-icon> New Scenario
     </button>
   </div>
 </div>
 <div class="clr-row">
   <div class="clr-col-4">
-    <clr-datagrid [clrDgSingleSelected]="unusedSelectedScenario" (clrDgSingleSelectedChange)="editScenario($event)">
+    <clr-datagrid [clrDgSingleSelected]="unusedSelectedScenario" (clrDgSingleSelectedChange)="editScenario($event)" [clrDisableSelection]="!selectRbac">
       <clr-dg-column>Name</clr-dg-column>
 
       <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
@@ -98,22 +98,22 @@
             <clr-stack-view>
               <clr-stack-header>
                 Virtual Machines
-                <button class="stack-action btn btn-sm btn-link" (click)="addVMSet()">Add VM Set</button>
+                <button class="stack-action btn btn-sm btn-link" (click)="addVMSet()" *rbac="['scenarios.update']">Add VM Set</button>
               </clr-stack-header>
               <clr-stack-block *ngFor="let vmset of selectedscenario.virtualmachines; let i = index">
                 <clr-stack-label>Virtual Machine Set {{ i+1 }} </clr-stack-label>
                 <clr-stack-content>
-                  <button class="btn btn-sm btn-link btn-link-stack" (click)="deleteVMSet(i)">Delete VM
+                  <button class="btn btn-sm btn-link btn-link-stack" (click)="deleteVMSet(i)" *rbac="['scenarios.update']">Delete VM
                     Set</button>
                 </clr-stack-content>
                 <clr-stack-block *ngFor="let item of vmset | keyvalue">
                   <clr-stack-label>{{ item.key }}</clr-stack-label>
                   <clr-stack-content>{{ item.value }} <button class="btn btn-sm btn-link btn-link-stack"
-                      (click)="deleteVM(i, item.key)">Delete
+                      (click)="deleteVM(i, item.key)" *rbac="['scenarios.update']">Delete
                       VM</button></clr-stack-content>
                 </clr-stack-block>
                 <clr-stack-block>
-                  <clr-stack-label><button class="btn btn-sm btn-link btn-link-stack" (click)="openCreateVM(i)">New
+                  <clr-stack-label><button class="btn btn-sm btn-link btn-link-stack" (click)="openCreateVM(i)" *rbac="['scenarios.update']">New
                       VM</button>
                   </clr-stack-label>
                 </clr-stack-block>
@@ -122,17 +122,17 @@
             <a [routerLink]="['/scenario', selectedscenario.id, 'printable']" target="_blank">
               <button class="btn btn-info-outline">Print</button>
             </a>
-            <button class="btn btn-danger-outline">Delete</button>
+            <button class="btn btn-danger-outline" *rbac="['scenarios.delete']">Delete</button>
             <button class="btn btn-success" (click)="savescenario()"
               [disabled]="!this.selectedscenario.steps 
                           || !this.selectedscenario.virtualmachines 
-                          || editScenarioForm.invalid && (editScenarioForm.dirty || editScenarioForm.touched)">Save</button>
+                          || editScenarioForm.invalid && (editScenarioForm.dirty || editScenarioForm.touched)" *rbac="['scenarios.update']">Save</button>
           </clr-tab-content>
         </clr-tab>
         <clr-tab>
           <button clrTabLink="stepsLink">Steps</button>
           <clr-tab-content id="stepsContent" *clrIfActive>
-            <button class="btn btn-success-outline btn-sm" (click)="openNewStep()">
+            <button class="btn btn-success-outline btn-sm" (click)="openNewStep()" *rbac="['scenarios.update']">
               <clr-icon shape="plus"></clr-icon> New Step
             </button>
             <clr-datagrid>
@@ -140,7 +140,7 @@
               <clr-dg-column>Title</clr-dg-column>
 
               <clr-dg-row *clrDgItems="let s of selectedscenario.steps; let i = index">
-                <clr-dg-action-overflow>
+                <clr-dg-action-overflow *rbac="['scenarios.update']">
                   <button class="action-item" *ngIf="i > 0" (click)="moveStepUp(i)">Move Up</button>
                   <button class="action-item" *ngIf="i < selectedscenario.steps.length-1" (click)="moveStepDown(i)">Move
                     Down</button>
@@ -152,14 +152,16 @@
                 <clr-dg-cell>{{ s.title }}</clr-dg-cell>
               </clr-dg-row>
             </clr-datagrid>
-            <button class="btn btn-success" (click)="savescenario()" *ngIf="scenarioTainted"
+            <ng-container *ngIf="scenarioTainted">
+              <button class="btn btn-success" (click)="savescenario()" *rbac="['scenarios.update']"
               [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
+            </ng-container>
           </clr-tab-content>
         </clr-tab>
         <clr-tab>
           <button clrTabLink>Categories</button>
           <clr-tab-content id="categoriesContent" *clrIfActive>
-            <button class="btn btn-success-outline btn-sm" (click)="newCategory = true">
+            <button class="btn btn-success-outline btn-sm" (click)="newCategory = true" *rbac="['scenarios.update']">
               <clr-icon shape="plus"></clr-icon> Add Category
             </button>
             <ng-container *ngIf="newCategory">
@@ -173,7 +175,7 @@
                       
                   </clr-input-container>
                   <div class="col-md-2">
-                      <button class="btn btn-success btn-sm" [disabled]="!newCategoryForm.valid"
+                      <button class="btn btn-success btn-sm" [disabled]="!newCategoryForm.valid" *rbac="['scenarios.update']"
                           (click)="addCategory()">Add</button>
                   </div>
               </form>
@@ -181,20 +183,20 @@
             <clr-datagrid class="datagrid-compact">
               <clr-dg-column>Category</clr-dg-column>
               <clr-dg-row *clrDgItems="let a of selectedscenario.categories" [clrDgItem]="a"> 
-                  <clr-dg-action-overflow>
+                  <clr-dg-action-overflow *rbac="['scenarios.update']">
                       <button class="action-item" (click)="deleteCategory(a)">Delete</button>
                   </clr-dg-action-overflow>
                   <clr-dg-cell>{{ a }}</clr-dg-cell>
               </clr-dg-row>
             </clr-datagrid>
             <button class="btn btn-success" (click)="savescenario()"
-              [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
+              [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines" *rbac="['scenarios.update']">Save</button>
           </clr-tab-content>
         </clr-tab>
         <clr-tab>
           <button clrTabLink>Tags</button>
           <clr-tab-content id="tagsContent" *clrIfActive>
-            <button class="btn btn-success-outline btn-sm" (click)="newTag = true">
+            <button class="btn btn-success-outline btn-sm" (click)="newTag = true" *rbac="['scenarios.update']">
               <clr-icon shape="plus"></clr-icon> Add Tag
             </button>
             <ng-container *ngIf="newTag">
@@ -207,7 +209,7 @@
                       <clr-control-error *clrIfError="'required'">Tag required.</clr-control-error>
                   </clr-input-container>
                   <div class="col-md-2">
-                      <button class="btn btn-success btn-sm" [disabled]="!newTagForm.valid"
+                      <button class="btn btn-success btn-sm" [disabled]="!newTagForm.valid" *rbac="['scenarios.update']"
                           (click)="addTag()">Add</button>
                   </div>
               </form>
@@ -215,13 +217,13 @@
             <clr-datagrid class="datagrid-compact">
               <clr-dg-column>Tag</clr-dg-column>
               <clr-dg-row *clrDgItems="let a of selectedscenario.tags" [clrDgItem]="a"> 
-                  <clr-dg-action-overflow>
+                  <clr-dg-action-overflow *rbac="['scenarios.update']">
                       <button class="action-item" (click)="deleteTag(a)">Delete</button>
                   </clr-dg-action-overflow>
                   <clr-dg-cell>{{ a }}</clr-dg-cell>
               </clr-dg-row>
             </clr-datagrid>
-            <button class="btn btn-success" (click)="savescenario()"
+            <button class="btn btn-success" (click)="savescenario()" *rbac="['scenarios.update']"
               [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
           </clr-tab-content>
         </clr-tab>
@@ -386,7 +388,7 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-danger-outline" (click)="cancelEdit()">Cancel</button>
-    <button class="btn btn-success" (click)="saveStep()">Save</button>
+    <button class="btn btn-success" (click)="saveStep()" *rbac="['scenarios.update']">Save</button>
   </div>
 </clr-modal>
 <clr-modal #deletevmsetmodal [(clrModalOpen)]="deleteVMSetOpen">
@@ -399,7 +401,7 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-success-outline" (click)="deleteVMSetOpen = false">Cancel</button>
-    <button class="btn btn-danger" (click)="doDeleteVMSet()">Delete</button>
+    <button class="btn btn-danger" (click)="doDeleteVMSet()" *rbac="['scenarios.update']">Delete</button>
   </div>
 </clr-modal>
 
@@ -412,7 +414,7 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-success-outline" (click)="deleteStepOpen = false">Cancel</button>
-    <button class="btn btn-danger" (click)="doDeleteStep()">Delete</button>
+    <button class="btn btn-danger" (click)="doDeleteStep()" *rbac="['scenarios.update']">Delete</button>
   </div>
 </clr-modal>
 
@@ -437,7 +439,7 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-danger-outline" (click)="createVMOpen = false">Cancel</button>
-    <button class="btn btn-success" (click)="addVM()" [disabled]="!vmform.valid">Add</button>
+    <button class="btn btn-success" (click)="addVM()" [disabled]="!vmform.valid" *rbac="['scenarios.update']">Add</button>
   </div>
 </clr-modal>
 
@@ -495,6 +497,6 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-danger-outline" (click)="newScenarioOpen = false">Cancel</button>
-    <button class="btn btn-success" (click)="addNewScenario()" [disabled]="!scenarioDetails.valid">Save</button>
+    <button class="btn btn-success" (click)="addNewScenario()" [disabled]="!scenarioDetails.valid" *rbac="['scenarios.update']">Save</button>
   </div>
 </clr-modal>
