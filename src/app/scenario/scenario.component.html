@@ -154,7 +154,9 @@
             </clr-datagrid>
             <ng-container *ngIf="scenarioTainted">
               <button class="btn btn-success" (click)="savescenario()" *rbac="['scenarios.update']"
-              [disabled]="!this.selectedscenario.steps || !this.selectedscenario.virtualmachines">Save</button>
+              [disabled]="!this.selectedscenario.steps 
+              || !this.selectedscenario.virtualmachines 
+              || editScenarioForm.invalid && (editScenarioForm.dirty || editScenarioForm.touched)">Save</button>
             </ng-container>
           </clr-tab-content>
         </clr-tab>
