@@ -102,7 +102,6 @@ export class EventComponent implements OnInit {
           event.scenarioNames = scenarioList.filter(scenario => event.scenarios.includes(scenario.id)).map(sc => sc.name)
         }
       })
-      console.log(this.events)
     })
   }
 
