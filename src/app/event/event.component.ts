@@ -3,13 +3,24 @@ import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { NewScheduledEventComponent } from './new-scheduled-event/new-scheduled-event.component';
 import { ClrModal, ClrDatagridSortOrder } from '@clr/angular';
+import { CourseService } from '../data/course.service';
+import { combineLatest } from 'rxjs';
+import { ScenarioService } from '../data/scenario.service';
+import { UserService } from '../data/user.service';
+
+
+interface extendedScheduledEvent extends ScheduledEvent {
+  creatorEmail?: String;
+  courseNames?: String[];
+  scenarioNames?: String[];
+}
 
 @Component({
   selector: 'app-event',
   templateUrl: './event.component.html',
 })
 export class EventComponent implements OnInit {
-  public events: ScheduledEvent[] = [];
+  public events: extendedScheduledEvent[] = [];
 
   public deleteopen: boolean = false;
 
@@ -25,7 +36,10 @@ export class EventComponent implements OnInit {
   public descSort = ClrDatagridSortOrder.DESC;
 
   constructor(
-    public seService: ScheduledeventService
+    public seService: ScheduledeventService,
+    public courseService: CourseService,
+    public scenarioService: ScenarioService,
+    public userService: UserService
   ) {
 
   }
@@ -34,11 +48,7 @@ export class EventComponent implements OnInit {
   @ViewChild("deletemodal", { static: true }) deletemodal: ClrModal;
 
   ngOnInit() {
-    this.seService.list().subscribe(
-      (se: ScheduledEvent[]) => {
-        this.events = se;
-      }
-    );
+    this.refresh()
   }
 
   public openDelete(se: ScheduledEvent) {
@@ -80,11 +90,20 @@ export class EventComponent implements OnInit {
   }
 
   public refresh() {
-    this.seService.list(true).subscribe(
-      (se: ScheduledEvent[]) => {
-        this.events = se;
-      }
-    );
+    combineLatest([this.seService.list(true), this.courseService.list(), this.scenarioService.list(), this.userService.getUsers()]).subscribe(([seList, courseList, scenarioList, userList]) => {
+      this.events = seList
+      this.events.forEach(event => {
+        event.creatorEmail = userList.filter(u => u.id == event.creator)[0]?.email
+        if (event.courses) {
+          event.courseNames = courseList.filter(course => event.courses.includes(course.id)).map(c => c.name)
+
+        }
+        if (event.scenarios) {
+          event.scenarioNames = scenarioList.filter(scenario => event.scenarios.includes(scenario.id)).map(sc => sc.name)
+        }
+      })
+      console.log(this.events)
+    })
   }
 
   public newupdated() {
