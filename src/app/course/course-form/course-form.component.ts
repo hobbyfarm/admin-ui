@@ -95,7 +95,7 @@ export class CourseFormComponent implements OnInit {
     'pause_duration': new FormControl(1, [
       Validators.required,
       Validators.min(1),
-      Validators.max(48)
+      Validators.pattern('^[0-9]+$')
     ])
   }, { validators: KeepaliveValidator })
 
