@@ -137,27 +137,7 @@
   </div>
 </clr-modal>
 
-<clr-modal #pausemodal [(clrModalOpen)]="pauseOpen" [clrModalClosable]="false">
-  <h3 class="modal-title">Scenario Paused</h3>
-  <div class="modal-body">
-    <p>
-      This scenario has been paused. If you do nothing, the scenario will
-      automatically resume in
-      {{ pauseRemainingString }}
-    </p>
-    <p>
-      <span class="clr-subtext"
-        >Last updated at {{ pauseLastUpdated | date: 'medium' }}</span
-      >
-    </p>
-    <br />
-  </div>
-  <div class="modal-footer">
-    <button class="btn" (click)="resume()">
-      <clr-icon shape="play" class="is-solid"></clr-icon> Resume Scenario
-    </button>
-  </div>
-</clr-modal>
+
 
 <clr-modal
   #sessionExpiredModal

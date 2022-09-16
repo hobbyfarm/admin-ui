@@ -162,43 +162,43 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
     // setup keepalive
-    this.ssService
-      .keepalive(sessionId)
-      .pipe(
-        repeatWhen((obs) => {
-          return obs.pipe(delay(60000));
-        }),
-        retryWhen((errors) =>
-          errors.pipe(
-            concatMap((e: HttpErrorResponse) =>
-              iif(
-                () => {
-                  if (e.status != 202) {
-                    this.sessionExpired = true;
-                  }
-                  return e.status > 0;
-                },
-                throwError(e),
-                of(e).pipe(delay(10000)),
-              ),
-            ),
-          ),
-        ),
-      )
-      .subscribe((s: ServerResponse) => {
-        if (s.type == 'paused') {
-          // need to display the paused modal
-          // construct the time remaining
-          this._updatePauseRemaining(s.message);
-          this.pauseLastUpdated = new Date();
+    // this.ssService
+    //   .keepalive(sessionId)
+    //   .pipe(
+    //     repeatWhen((obs) => {
+    //       return obs.pipe(delay(60000));
+    //     }),
+    //     retryWhen((errors) =>
+    //       errors.pipe(
+    //         concatMap((e: HttpErrorResponse) =>
+    //           iif(
+    //             () => {
+    //               if (e.status != 202) {
+    //                 this.sessionExpired = true;
+    //               }
+    //               return e.status > 0;
+    //             },
+    //             throwError(e),
+    //             of(e).pipe(delay(10000)),
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   )
+    //   .subscribe((s: ServerResponse) => {
+    //     if (s.type == 'paused') {
+    //       // need to display the paused modal
+    //       // construct the time remaining
+    //       this._updatePauseRemaining(s.message);
+    //       this.pauseLastUpdated = new Date();
 
-          if (!this.pauseModal._open) {
-            this.pauseModal.open();
-          }
-        } else {
-          this.pauseOpen = false;
-        }
-      });
+    //       if (!this.pauseModal._open) {
+    //         this.pauseModal.open();
+    //       }
+    //     } else {
+    //       this.pauseOpen = false;
+    //     }
+    //   });
 
     this.ctr.getCodeStream().subscribe((c: CodeExec) => {
       // watch for tab changes
@@ -268,9 +268,9 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private sendProgressUpdate() {
     // Subscribe needed to actually call update
-    this.progressService
-      .update(this.session.id, this.stepnumber + 1)
-      .subscribe();
+    // this.progressService
+    //   .update(this.session.id, this.stepnumber + 1)
+    //   .subscribe();
   }
 
   goPrevious() {
@@ -308,38 +308,38 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigateByUrl('/home');
   }
 
-  public pause() {
-    this.ssService
-      .pause(this.session.id)
-      .pipe(
-        switchMap(() => {
-          // if successful, hit the keepalive endpoint to update time.
-          return this.ssService.keepalive(this.session.id);
-        }),
-      )
-      .subscribe(
-        (s: ServerResponse) => {
-          // all should have been successful, so just update time and open modal.
-          this._updatePauseRemaining(s.message);
-          this.pauseModal.open();
-        },
-        () => {
-          // failure! what now?
-        },
-      );
-  }
+  // public pause() {
+  //   this.ssService
+  //     .pause(this.session.id)
+  //     .pipe(
+  //       switchMap(() => {
+  //         // if successful, hit the keepalive endpoint to update time.
+  //         return this.ssService.keepalive(this.session.id);
+  //       }),
+  //     )
+  //     .subscribe(
+  //       (s: ServerResponse) => {
+  //         // all should have been successful, so just update time and open modal.
+  //         this._updatePauseRemaining(s.message);
+  //         this.pauseModal.open();
+  //       },
+  //       () => {
+  //         // failure! what now?
+  //       },
+  //     );
+  // }
 
-  public resume() {
-    this.ssService.resume(this.session.id).subscribe(
-      () => {
-        // successful means we're resumed
-        this.pauseOpen = false;
-      },
-      () => {
-        // something went wrong
-      },
-    );
-  }
+  // public resume() {
+  //   this.ssService.resume(this.session.id).subscribe(
+  //     () => {
+  //       // successful means we're resumed
+  //       this.pauseOpen = false;
+  //     },
+  //     () => {
+  //       // something went wrong
+  //     },
+  //   );
+  // }
 
   public dragEnd() {
     // For each tab...

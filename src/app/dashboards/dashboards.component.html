@@ -1,6 +1,6 @@
 <div class="main-container">
     <header class="header header-7" app-header></header>
-    <ng-container *ngIf="rbacSuccess">
+    <!-- <ng-container *ngIf="rbacSuccess"> -->
     <div class="content-container">
         <as-split unit="percent" direction="horizontal">
             <as-split-area [size]="20" class="split-area-1">
@@ -15,14 +15,20 @@
                                     <div class="nav-event-name clr-col-11" [class.short]="true">{{se.event_name}}
                                     </div>
                                     <div class="activeInfo clr-col-12">
-                                        <span *ngIf="!!se.activeSessions" (click)="setActiveDashboard(se, 'session')" class="label tooltip tooltip-sm tooltip-left"  role="tooltip" aria-haspopup="true">
+                                        <span *ngIf="!!se.activeSessions" (click)="setActiveDashboard(se, 'session')"
+                                            class="label tooltip tooltip-sm tooltip-left" role="tooltip"
+                                            aria-haspopup="true">
                                             <clr-icon shape="users"></clr-icon>
-                                            <span class="badge " [class.badge-info]="!!se.activeSessions">{{se.activeSessions}}</span>
+                                            <span class="badge "
+                                                [class.badge-info]="!!se.activeSessions">{{se.activeSessions}}</span>
                                             <span class="tooltip-content">Active Sessions</span>
                                         </span>
-                                        <span *ngIf="!!se.provisionedVMs" (click)="setActiveDashboard(se, 'vm')" class="label tooltip tooltip-sm tooltip-left" role="tooltip" aria-haspopup="true">
+                                        <span *ngIf="!!se.provisionedVMs" (click)="setActiveDashboard(se, 'vm')"
+                                            class="label tooltip tooltip-sm tooltip-left" role="tooltip"
+                                            aria-haspopup="true">
                                             <clr-icon shape="rack-server"></clr-icon>
-                                            <span class="badge badge-info" [class.badge-info]="!!se.provisionedVMs">{{se.provisionedVMs}}</span>
+                                            <span class="badge badge-info"
+                                                [class.badge-info]="!!se.provisionedVMs">{{se.provisionedVMs}}</span>
                                             <span class="tooltip-content">Provisioned VMs</span>
                                         </span>
                                     </div>
@@ -35,8 +41,9 @@
                             <li *ngFor="let se of finishedEvents" (click)="setScheduledEvent(se)"
                                 [ngClass]="{'selected' : selectedEvent == se}">
                                 <div class="clr-row">
-                                    <div class="nav-event-name clr-col-12" [class.short]="!(!!se.activeSessions)">{{se.event_name}}
-                                    </div>                                    
+                                    <div class="nav-event-name clr-col-12" [class.short]="!(!!se.activeSessions)">
+                                        {{se.event_name}}
+                                    </div>
                                 </div>
                             </li>
                         </ul>
@@ -45,39 +52,43 @@
             </as-split-area>
             <as-split-area [size]="80" class="split-area-2">
                 <div *ngIf="selectedEvent" class="content-area">
-                    <h3 *ngIf="sessionDashboardActive">Sessions for {{selectedEvent?.event_name}}</h3>
-                    <h3 *ngIf="vmDashboardActive">VMs for {{selectedEvent?.event_name}}</h3>
-                    <span class="additional-info">AC: <span class="access-code">{{selectedEvent?.access_code}}</span>
-                        &#8226;
+                    <h3 *ngIf="sessionDashboardActive && rbacSuccessSessions">Sessions for {{selectedEvent?.event_name}}</h3>
+                    <h3 *ngIf="vmDashboardActive &&rbacSuccessVms">VMs for {{selectedEvent?.event_name}}</h3>
+                    <span class="additional-info"><ng-container *rbac="['accesscodes.get']">AC: <span class="access-code">{{selectedEvent?.access_code}}</span>
+                        &#8226;</ng-container>
                         Until
                         {{selectedEvent?.end_time | date:'MMM d, y, HH:mm'}} <span>&#8226; Created by {{
                             selectedEvent?.creatorEmail
                             }}</span></span>
                     <clr-tabs>
-                        <clr-tab>
-                            <button clrTabLink>Sessions</button>
-                            <ng-template [(clrIfActive)]="sessionDashboardActive">
-                                <clr-tab-content *clrIfActive>
-                                    <progress-dashboard class="progress-dashboard" [selectedEvent]="selectedEvent">
-                                    </progress-dashboard>
-                                </clr-tab-content>
-                            </ng-template>
-                        </clr-tab>
-                        <clr-tab>
-                            <button clrTabLink>VMs</button>
-                            <ng-template [(clrIfActive)]="vmDashboardActive">
-                                <clr-tab-content *clrIfActive>
-                                    <div class="content-area">
-                                        <vm-dashboard [selectedEvent]="selectedEvent"></vm-dashboard>
-                                    </div>
-                                </clr-tab-content>
-                            </ng-template>
-                        </clr-tab>
+                        <ng-container *ngIf="rbacSuccessSessions">
+                            <clr-tab>
+                                <button clrTabLink>Sessions</button>
+                                <ng-template [(clrIfActive)]="sessionDashboardActive">
+                                    <clr-tab-content *clrIfActive>
+                                        <progress-dashboard class="progress-dashboard" [selectedEvent]="selectedEvent">
+                                        </progress-dashboard>
+                                    </clr-tab-content>
+                                </ng-template>
+                            </clr-tab>
+                        </ng-container>
+                        <ng-container *ngIf="rbacSuccessVms">
+                            <clr-tab>
+                                <button clrTabLink>VMs</button>
+                                <ng-template [(clrIfActive)]="vmDashboardActive">
+                                    <clr-tab-content *clrIfActive>
+                                        <div class="content-area">
+                                            <vm-dashboard [selectedEvent]="selectedEvent"></vm-dashboard>
+                                        </div>
+                                    </clr-tab-content>
+                                </ng-template>
+                            </clr-tab>
+                        </ng-container>
                     </clr-tabs>
                 </div>
             </as-split-area>
         </as-split>
     </div>
-</ng-container>
+    <!-- </ng-container> -->
 
 </div>

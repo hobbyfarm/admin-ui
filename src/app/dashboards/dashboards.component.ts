@@ -30,7 +30,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   public finishedEvents: DashboardScheduledEvent[] = [];
   public updateInterval: any;
 
-  public rbacSuccess: boolean = false;
+  public rbacSuccessSessions: boolean = false;
+  public rbacSuccessVms: boolean = false;
 
   constructor(
     public scheduledeventService: ScheduledeventService,
@@ -44,9 +45,21 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     // verify rbac permissions before we display this page
-    this.setRbacCheck().then((rbacCheck: boolean) => {
-      this.rbacSuccess = rbacCheck;
+    this.setRbacCheck(
+      ["scheduledevents", "sessions", "progresses", "users"],
+      ["list", "get"]
+    ).then((rbacCheckSessions: boolean) => {
+      if (rbacCheckSessions) {
+        // ...check if we also have permissions to update sessions
+        this.setRbacCheck(["sessions"], ["update"]).then((rbacCheckSessions) => {
+          this.rbacSuccessSessions = rbacCheckSessions;
+        })
+      }
     });
+
+    this.setRbacCheck(["virtualmachines", "virtualmachinesets", "users"], ["list", "get"]).then((rbacCheck: boolean) => {
+      this.rbacSuccessVms = rbacCheck
+    })
 
 
     this.scheduledeventService.list().subscribe(
@@ -73,22 +86,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
    * 
    * @returns true if all grants are successful; else false
    */
-   async setRbacCheck() {
+  async setRbacCheck(resources: string[], verbs: string[]) {
     let rbacCheck = true;
     outerForLoop:
-    for(let resource of ["scheduledevents", "sessions", "progresses", "virtualmachines", "virtualmachinesets", "users"]) {
-      for(let verb of ["list", "get"]) {
+    for (let resource of resources) {
+      for (let verb of verbs) {
         const allowed: boolean = await this.rbacService.Grants(resource, verb);
-        if(!allowed) {
+        if (!allowed) {
           rbacCheck = false;
           break outerForLoop;
         }
       }
-    }
-    // only if rbacCheck is still true...
-    if (rbacCheck) {
-      // ...check if we also have permissions to update sessions
-      rbacCheck = await this.rbacService.Grants("sessions", "update");
     }
     return rbacCheck;
   }
@@ -128,11 +136,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.setScheduledEvent(event)
     if (value == "session") {
       this.vmDashboardActive = false
-      this.sessionDashboardActive = true      
+      this.sessionDashboardActive = true
     }
     if (value == "vm") {
       this.sessionDashboardActive = false
-      this.vmDashboardActive = true           
+      this.vmDashboardActive = true
     }
   }
 
