@@ -10,24 +10,18 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Step } from '../../data/step';
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   switchMap,
   concatMap,
-  first,
-  repeatWhen,
-  delay,
-  retryWhen,
   tap,
   map,
   toArray,
 } from 'rxjs/operators';
 import { TerminalComponent } from '../terminal/terminal.component';
 import { ClrTabContent, ClrTab, ClrModal } from '@clr/angular';
-import { ServerResponse } from '../ServerResponse';
 import { Scenario } from '../../data/scenario';
 import { Session } from '../../data/Session';
-import { from, of, throwError, iif } from 'rxjs';
+import { from } from 'rxjs';
 import { VMClaim } from '../../data/vmclaim';
 import { VMClaimVM } from '../../data/vmclaimvm';
 import { VirtualMachine as VM } from '../../data/virtualmachine';
@@ -40,7 +34,6 @@ import { VMClaimService } from '../../data/vmclaim.service';
 import { VMService } from '../vm.service';
 import { ShellService } from '../../data/shell.service';
 import { atou } from '../../unicode';
-import { ProgressService } from '../progress.service';
 import { HfMarkdownRenderContext } from '../hf-markdown.component';
 import { UserService } from '../../data/user.service';
 import { CourseService } from '../../data/course.service';
@@ -91,7 +84,6 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     private vmClaimService: VMClaimService,
     private vmService: VMService,
     private shellService: ShellService,
-    private progressService: ProgressService,
     private userService: UserService,
     private courseService: CourseService,
   ) {}
@@ -152,7 +144,6 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe((entries) => {
         this.vms = new Map(entries);
-        this.sendProgressUpdate();
 
         const vmInfo: HfMarkdownRenderContext['vmInfo'] = {};
         for (const [k, v] of this.vms) {
@@ -160,45 +151,6 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.mdContext = { vmInfo };
       });
-
-    // setup keepalive
-    // this.ssService
-    //   .keepalive(sessionId)
-    //   .pipe(
-    //     repeatWhen((obs) => {
-    //       return obs.pipe(delay(60000));
-    //     }),
-    //     retryWhen((errors) =>
-    //       errors.pipe(
-    //         concatMap((e: HttpErrorResponse) =>
-    //           iif(
-    //             () => {
-    //               if (e.status != 202) {
-    //                 this.sessionExpired = true;
-    //               }
-    //               return e.status > 0;
-    //             },
-    //             throwError(e),
-    //             of(e).pipe(delay(10000)),
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   )
-    //   .subscribe((s: ServerResponse) => {
-    //     if (s.type == 'paused') {
-    //       // need to display the paused modal
-    //       // construct the time remaining
-    //       this._updatePauseRemaining(s.message);
-    //       this.pauseLastUpdated = new Date();
-
-    //       if (!this.pauseModal._open) {
-    //         this.pauseModal.open();
-    //       }
-    //     } else {
-    //       this.pauseOpen = false;
-    //     }
-    //   });
 
     this.ctr.getCodeStream().subscribe((c: CodeExec) => {
       // watch for tab changes
@@ -227,11 +179,6 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     this.terms.forEach((term) => {
       term.mutationObserver.disconnect();
     });
-  }
-
-  private _updatePauseRemaining(t: string) {
-    // truncate to minute precision if at least 1m remaining
-    this.pauseRemainingString = t.replace(/m\d+(?:\.\d+)?s.*/, 'm');
   }
 
   goNext() {
@@ -264,13 +211,6 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     this.courseService.getCourseById(this.session.course).subscribe((course) => {
       this.courseName = course.name
     })
-  }
-
-  private sendProgressUpdate() {
-    // Subscribe needed to actually call update
-    // this.progressService
-    //   .update(this.session.id, this.stepnumber + 1)
-    //   .subscribe();
   }
 
   goPrevious() {
@@ -308,38 +248,6 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigateByUrl('/home');
   }
 
-  // public pause() {
-  //   this.ssService
-  //     .pause(this.session.id)
-  //     .pipe(
-  //       switchMap(() => {
-  //         // if successful, hit the keepalive endpoint to update time.
-  //         return this.ssService.keepalive(this.session.id);
-  //       }),
-  //     )
-  //     .subscribe(
-  //       (s: ServerResponse) => {
-  //         // all should have been successful, so just update time and open modal.
-  //         this._updatePauseRemaining(s.message);
-  //         this.pauseModal.open();
-  //       },
-  //       () => {
-  //         // failure! what now?
-  //       },
-  //     );
-  // }
-
-  // public resume() {
-  //   this.ssService.resume(this.session.id).subscribe(
-  //     () => {
-  //       // successful means we're resumed
-  //       this.pauseOpen = false;
-  //     },
-  //     () => {
-  //       // something went wrong
-  //     },
-  //   );
-  // }
 
   public dragEnd() {
     // For each tab...

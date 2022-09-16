@@ -127,11 +127,11 @@
   <div class="modal-footer">
     <button class="btn btn-outline" (click)="finishOpen = false">Cancel</button>
     <div *ngIf="shouldKeepVmOnFinish" style="display: inline-block">
-      <button class="btn btn-danger-outline" (click)="actuallyFinish(true)">
+      <button class="btn btn-danger-outline" (click)="actuallyFinish(true)" *rbac="['sessions.update']">
         Force
       </button>
     </div>
-    <button class="btn btn-danger-outline" (click)="actuallyFinish()">
+    <button class="btn btn-danger-outline" (click)="actuallyFinish()" *rbac="['sessions.update']">
       Terminate Session
     </button>
   </div>
