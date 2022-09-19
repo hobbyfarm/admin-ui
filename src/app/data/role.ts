@@ -1,10 +1,12 @@
+import { ApiGroup, Resource, Verb } from './rbac';
+
 export class Role {
     name: string;
     rules: Rule[];
 }
 
 export class Rule {
-    verbs: string[];
-    apiGroups: string[];
-    resources: string[];
+    verbs: Verb[];
+    apiGroups: ApiGroup[];
+    resources: Resource[];
 }

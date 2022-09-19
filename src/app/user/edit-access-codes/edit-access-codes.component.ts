@@ -47,7 +47,7 @@ export class EditAccessCodesComponent implements OnChanges {
 
     this.user.access_codes.splice(acIndex, 1);
 
-    this.userService.saveUser(this.user.id, "", "", null, this.user.access_codes)
+    this.userService.saveUser(this.user.id, "", "", this.user.access_codes)
     .subscribe(
       (s: ServerResponse) => {
         this.alertText = "Access code deleted";
@@ -67,7 +67,7 @@ export class EditAccessCodesComponent implements OnChanges {
   saveAccessCode() {
     this.user.access_codes.push(this.newAccessCodeForm.get("access_code").value);
 
-    this.userService.saveUser(this.user.id, "", "", null, this.user.access_codes)
+    this.userService.saveUser(this.user.id, "", "", this.user.access_codes)
     .subscribe(
       (s: ServerResponse) => {
         this.alertText = "Access code saved";

@@ -1,4 +1,5 @@
 import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
+import { isResource, isVerb } from '../data/rbac';
 import { RbacService } from '../data/rbac.service';
 
 @Directive({
@@ -63,8 +64,10 @@ export class RbacDirective implements OnInit {
 
     for (const checkPermission of this.permissions) {
       // resource.verb
-      let split = checkPermission.split('.')
-      hasPermission = await this.rbacService.Grants(split[0], split[1]);
+      const split: string[] = checkPermission.split('.');
+      if(isResource(split[0]) && isVerb(split[1])) {
+        hasPermission = await this.rbacService.Grants(split[0], split[1]);
+      }
       if ((hasPermission && this.logcalOp === 'OR') || (!hasPermission && this.logcalOp === 'AND')) {
         break;
       }

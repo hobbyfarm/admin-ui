@@ -52,7 +52,7 @@ export class ScenarioComponent implements OnInit {
   public newTag: boolean = false;
 
   public newScenario: Scenario = new Scenario();
-  
+
   public vmProps: string[] = Object.keys(new VirtualMachine());
 
   public selectRbac: boolean = false;
@@ -91,7 +91,7 @@ export class ScenarioComponent implements OnInit {
     'pause_duration': new FormControl(1, [
       Validators.required,
       Validators.min(1),
-      Validators.max(48)
+      Validators.pattern('^[0-9]+$')
     ])
   }, { validators: KeepaliveValidator })
 
@@ -113,7 +113,7 @@ export class ScenarioComponent implements OnInit {
     'pause_duration': new FormControl(1, [
       Validators.required,
       Validators.min(1),
-      Validators.max(48)
+      Validators.pattern('^[0-9]+$')
     ])
   }, { validators: KeepaliveValidator })
 
@@ -291,7 +291,7 @@ export class ScenarioComponent implements OnInit {
     this.selectedscenario.pause_duration = this.editScenarioForm.get("pause_duration").value + "h";
     this.selectedscenario.name = this.editScenarioForm.get("scenario_name").value;
     this.selectedscenario.description = this.editScenarioForm.get("scenario_description").value;
-    
+
     this.scenarioService.update(this.selectedscenario)
       .subscribe(
         (s: ServerResponse) => {
@@ -333,38 +333,38 @@ export class ScenarioComponent implements OnInit {
     this.selectedscenario.steps.splice(i + 1, 0, obj);
   }
 
-  deleteCategory(category: string){
-    this.selectedscenario.categories.forEach((element,index)=>{
-      if(element==category) this.selectedscenario.categories.splice(index,1);
+  deleteCategory(category: string) {
+    this.selectedscenario.categories.forEach((element, index) => {
+      if (element == category) this.selectedscenario.categories.splice(index, 1);
     });
   }
 
-  addCategory(){
+  addCategory() {
     let categories = this.newCategoryForm.get("category").value
-    categories = categories.split(","); 
+    categories = categories.split(",");
     categories.forEach(category => {
       category = category.replace(/\s/g, ""); //remove all whitespaces
-      if(category != "" && !this.selectedscenario.categories.includes(category)){
-        this.selectedscenario.categories.push(category); 
+      if (category != "" && !this.selectedscenario.categories.includes(category)) {
+        this.selectedscenario.categories.push(category);
       }
     });
     this.newCategoryForm.reset();
     this.newCategory = false;
   }
 
-  deleteTag(tag: string){
-    this.selectedscenario.tags.forEach((element,index)=>{
-      if(element==tag) this.selectedscenario.tags.splice(index,1);
+  deleteTag(tag: string) {
+    this.selectedscenario.tags.forEach((element, index) => {
+      if (element == tag) this.selectedscenario.tags.splice(index, 1);
     });
   }
 
-  addTag(){
+  addTag() {
     let tags = this.newTagForm.get("tag").value
-    tags = tags.split(","); 
+    tags = tags.split(",");
     tags.forEach(tag => {
       tag = tag.replace(/\s/g, ""); //remove all whitespaces
-      if(tag != "" && !this.selectedscenario.tags.includes(tag)){
-        this.selectedscenario.tags.push(tag); 
+      if (tag != "" && !this.selectedscenario.tags.includes(tag)) {
+        this.selectedscenario.tags.push(tag);
       }
     });
     this.newTagForm.reset();
@@ -388,10 +388,9 @@ export class ScenarioComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Enable permission to list courses if either "get" or "update" on courses is granted
-    this.rbacService.Grants("scenarios", "get").then(async (allowedGet: boolean) => {
-      const allowedUpdate: boolean = await this.rbacService.Grants("scenarios", "update");
-      this.selectRbac = allowedGet || allowedUpdate;
+    // "Get" Permission on scenarios is required to load step content
+    this.rbacService.Grants("scenarios", "get").then((allowed: boolean) => {
+      this.selectRbac = allowed;
     });
 
     this.scenarioService.list()
@@ -399,12 +398,15 @@ export class ScenarioComponent implements OnInit {
         (s: Scenario[]) => this.scenarios = s
       )
 
-    this.vmTemplateService.list()
-      .subscribe(
-        (v: VMTemplate[]) => {
-          this.vmtemplates = v;
-        }
-      )
+    this.rbacService.Grants("virtualmachinesets", "list").then((listVmSets: boolean) => {
+      if (listVmSets) {
+        this.vmTemplateService.list()
+          .subscribe(
+            (v: VMTemplate[]) => {
+              this.vmtemplates = v;
+            }
+          )
+      }
+    })
   }
-
 }

@@ -1,4 +1,4 @@
-import { Component, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angular/core';
 import { ClrModal } from '@clr/angular';
 
 @Component({
@@ -10,6 +10,11 @@ export class DeleteConfirmationComponent {
 
   @Output()
   public delete: EventEmitter<boolean> = new EventEmitter(null);
+
+  @Input()
+  public message: String = "Are you sure you wish to delete this object?"
+
+  constructor() { }
 
   @ViewChild("modal") modal: ClrModal;
 

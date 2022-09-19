@@ -28,10 +28,11 @@
         <div class="clr-col">
           <clr-datagrid>
             <clr-dg-column [clrDgField]="'event_name'">Name</clr-dg-column>
+            <clr-dg-column [clrDgField]="'creatorEmail'" *rbac="['users.list']">Creator</clr-dg-column>
             <clr-dg-column [clrDgField]="'start_time'" [clrDgSortOrder]="descSort">Start</clr-dg-column>
             <clr-dg-column [clrDgField]="'end_time'">End</clr-dg-column>
-            <clr-dg-column [clrDgField]="'courses'">Courses</clr-dg-column>
-            <clr-dg-column [clrDgField]="'scenarios'">Scenarios</clr-dg-column>
+            <clr-dg-column [clrDgField]="'courses'" *rbac="['courses.list']">Courses</clr-dg-column>
+            <clr-dg-column [clrDgField]="'scenarios'" *rbac="['scenarios.list']">Scenarios</clr-dg-column>
             <clr-dg-column>
               Status
               <clr-dg-filter>
@@ -45,13 +46,16 @@
                 <button class="action-item" (click)="openEdit(se)" *rbac="['scheduledevents.update']">Edit</button>
               </clr-dg-action-overflow>
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
+              <clr-dg-cell *rbac="['users.list']">{{ se.creatorEmail ? se.creatorEmail : "...loading" }}</clr-dg-cell>
               <clr-dg-cell>{{ se.start_time | date:'long' }}</clr-dg-cell>
               <clr-dg-cell>{{ se.end_time | date:'long' }}</clr-dg-cell>
-              <clr-dg-cell>
-                <span class="label" *ngFor="let c of se.courses">{{ c }}</span>
+              <clr-dg-cell *rbac="['courses.list']">
+                <ng-container *ngIf="se.courses && !se.courseNames">...loading</ng-container>
+                <span class="label" *ngFor="let c of se.courseNames">{{ c }}</span>
               </clr-dg-cell>
-              <clr-dg-cell>
-                <span class="label" *ngFor="let s of se.scenarios">{{ s }}</span>
+              <clr-dg-cell *rbac="['scenarios.list']">
+                <ng-container *ngIf="se.scenarios && !se.scenarioNames">...loading</ng-container>
+                <span class="label" *ngFor="let s of se.scenarioNames">{{ s }}</span>
               </clr-dg-cell>
               <clr-dg-cell>
                 <ng-container *ngIf="se.active && se.provisioned && !se.finished && se.ready">

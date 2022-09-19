@@ -5,17 +5,25 @@
             <h3>User Management</h3>
             <div class="clr-row">
                 <div class="clr-col-4">
-                    <clr-datagrid [(clrDgSingleSelected)]="selectedUser" [clrDisableSelection]="!selectRbac">
+                    <clr-datagrid  [(clrDgSelected)]="selectedUsers" [clrDgPreserveSelection]="true" [clrDisableSelection]="!selectRbac">
                         <clr-dg-column>
                             Email
                             <clr-dg-string-filter [clrDgStringFilter]="emailFilter"></clr-dg-string-filter>
                         </clr-dg-column>
+                        <clr-dg-column>
+                            Access Codes
+                            <clr-dg-string-filter [clrDgStringFilter]="accescodeFilter"></clr-dg-string-filter>
+                        </clr-dg-column>
 
-                        <clr-dg-row *clrDgItems="let u of users" [clrDgItem]="u">
+                        <clr-dg-row *clrDgItems="let u of users" [clrDgItem]="u" (click)="setSelectedUser(u)" [class.isSingleSelected]="u == selectedUser" class="userRow" [class.isMultiSelected]="selectedUsers.includes(u)">
                             <clr-dg-cell>{{ u.email }}</clr-dg-cell>
+                            <clr-dg-cell>{{ u.access_codes }}</clr-dg-cell>
                         </clr-dg-row>
 
                         <clr-dg-footer>
+                            <clr-dg-action-bar>
+                                <button type="button" class="btn btn-sm btn-secondary btn-danger-outline" [disabled]="selectedUsers.length < 1" (click)="deleteMultiple()" *rbac="['users.delete']"><clr-icon shape="close"></clr-icon> Delete selected</button>
+                            </clr-dg-action-bar>
                             <clr-dg-pagination #pagination [clrDgPageSize]="10">
                                 <clr-dg-page-size [clrPageSizeOptions]="[10, 20, 50]">Users per page</clr-dg-page-size>
                                 {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
@@ -54,3 +62,5 @@
         </div>
     </div>
 </div>
+<delete-confirmation #deleteconfirm [message] = '"Are you sure you wish to delete these objects?"' (delete)="doDeleteMultiple()"></delete-confirmation>
+<delete-process-modal #deleteprocess (done)="doOnDeleteCompletion()" [selectedUsers]="selectedUsers"></delete-process-modal>

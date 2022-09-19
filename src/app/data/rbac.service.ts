@@ -5,7 +5,7 @@ import { filter, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { atou } from '../unicode';
 import { AccessSet } from './accessset';
-import { ApiGroup, hobbyfarmApiGroup, rbacApiGroup } from './rbac';
+import { ApiGroup, hobbyfarmApiGroup, rbacApiGroup, Resource, Verb } from './rbac';
 import { ServerResponse } from './serverresponse';
 
 @Injectable({
@@ -45,7 +45,7 @@ export class RbacService {
     return this.userAccess;
   }
 
-  public async Grants(resource: string, verb: string): Promise<boolean> {
+  public async Grants(resource: Resource, verb: Verb): Promise<boolean> {
     let apiGroup : ApiGroup;
     if (resource == "roles" || resource == "rolebindings") {
       apiGroup = rbacApiGroup;

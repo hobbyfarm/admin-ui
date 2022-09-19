@@ -1,4 +1,4 @@
-export const verbs: string[] = [
+export const verbs: Verb[] = [
     "list",
     "get",
     "create",
@@ -7,7 +7,7 @@ export const verbs: string[] = [
     "watch"
 ]
 
-export const resources: string[] = [
+export const resources: Resource[] = [
     "virtualmachines",
     "virtualmachineclaims",
     "virtualmachinetemplates",
@@ -25,6 +25,12 @@ export const resources: string[] = [
     "rolebindings"
 ]
 
+export type Resource = "virtualmachines" | "virtualmachineclaims" | "virtualmachinetemplates" | "environments" |
+    "virtualmachinesets" | "courses" | "scenarios" | "sessions" | "progresses" | "accesscodes" | "users" |
+    "scheduledevents" | "dynamicbindrequests" | "roles" | "rolebindings"| "*";
+export const isResource = (x: any): x is Resource => [...resources, "*"].includes(x);
+export type Verb = "list" | "get" | "create" | "update" | "delete" | "watch" | "*";
+export const isVerb = (x: any): x is Verb => [...verbs, "*"].includes(x);
 export type ApiGroup = "rbac.authorization.k8s.io" | "hobbyfarm.io";
 export const rbacApiGroup: ApiGroup = "rbac.authorization.k8s.io";
 export const hobbyfarmApiGroup: ApiGroup = "hobbyfarm.io";

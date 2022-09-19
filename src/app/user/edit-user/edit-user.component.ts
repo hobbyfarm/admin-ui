@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { User } from 'src/app/data/user';
@@ -23,10 +23,22 @@ export class EditUserComponent implements OnChanges {
   public saving: boolean = false;
 
   @ViewChild('deleteconfirm') deleteConfirmModal: DeleteConfirmationComponent;
+  @ViewChild('userDetails') userDetails: ElementRef;
 
   constructor(
     public userService: UserService
   ) { }
+
+  ngOnInit(): void {
+    this.userDetailsForm.valueChanges.subscribe(event => {
+      if (!this.userDetailsForm.dirty) {
+        this.userDetails.nativeElement.animate([ { opacity: 1, easing: 'ease-out' },
+      { opacity: 0.1, easing: 'ease-in' },
+      { opacity: 0 } ],
+    200);
+      }      
+    })
+  }
 
   ngOnChanges(): void {
     this.reset();
@@ -38,14 +50,12 @@ export class EditUserComponent implements OnChanges {
       Validators.email
     ]),
     'password': new FormControl(""),
-    'admin': new FormControl(true)
   });
 
   public reset(): void {
     this.userDetailsForm.reset({
       'email': this.user.email,
       'password': "",
-      'admin': this.user.admin
     });
     this.alertText = "";
     this.alertClosed = true;
@@ -55,7 +65,6 @@ export class EditUserComponent implements OnChanges {
     this.saving = true;
     var email = this.userDetailsForm.get("email").value;
     var password = this.userDetailsForm.get("password").value;
-    var admin = this.userDetailsForm.get("admin").value;
 
     if (email == null) {
       email = "";
@@ -65,7 +74,7 @@ export class EditUserComponent implements OnChanges {
       password = "";
     }
 
-    this.userService.saveUser(this.user.id, email, password, admin)
+    this.userService.saveUser(this.user.id, email, password)
       .subscribe(
         (s: ServerResponse) => {
           this.alertText = "User updated";
