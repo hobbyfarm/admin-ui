@@ -42,7 +42,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.rbacService.Grants('environments', 'list').then(async (listEnvironments: boolean) => {
-      const listVmTemplates: boolean = await this.rbacService.Grants('vmtemplates', 'list');
+      const listVmTemplates: boolean = await this.rbacService.Grants('virtualmachinetemplates', 'list');
       const listRoles: boolean = await this.rbacService.Grants('roles', 'list');
       return listEnvironments || listVmTemplates || listRoles;
     }).then((configRbac: boolean) => {

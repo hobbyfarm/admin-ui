@@ -36,10 +36,10 @@
             <clr-tab>
                 <button [disabled]="!selectedCourse" clrTabLink id="virtualMachinesLink">Virtual Machines</button>
                 <clr-tab-content id="virtualMachinesContent" *clrIfActive>
-                    <vmset [(vms)]="editVirtualMachines" (vmsChange)="setModified()" [createRbac]="['courses.update']" [deleteRbac]="['courses.update']"></vmset>
+                    <vmset [(vms)]="editVirtualMachines" (vmsChange)="setModified()" [updateRbac]="updateRbac"></vmset>
                 </clr-tab-content>
             </clr-tab>
-            <clr-tab>
+            <clr-tab *ngIf="listScenarios">
                 <button [disabled]="!selectedCourse" clrTabLink id="scenariosLink">Scenarios</button>
                 <clr-tab-content id="scenariosContent" *clrIfActive>
                     <button class="btn btn-sm btn-success-outline" *rbac="['courses.edit']" (click)="openAdd()">Add Scenario</button>
@@ -87,7 +87,7 @@
                       </clr-datagrid>
                 </clr-tab-content>
             </clr-tab>
-            <clr-tab>
+            <clr-tab *ngIf="listScenarios">
                 <button [disabled]="!selectedCourse" clrTabLink id="categoriesLink">Dynamic Scenarios</button>
                 <clr-tab-content id="categoriesContent" *clrIfActive>
                     <p>
@@ -165,7 +165,7 @@
         </clr-tabs>
         <button class="btn btn-outline" (click)="discardChanges()" *ngIf="modified">Discard Changes</button>
         <button class="btn btn-danger-outline" (click)="delete()" *rbac="['courses.delete']">Delete</button>
-        <button class="btn btn-success" [disabled]="!editForm?.valid" *rbac="['courses.update']" (click)="saveCourse()">Save</button>
+        <button class="btn btn-success" [disabled]="!editForm?.valid" *ngIf="updateRbac" (click)="saveCourse()">Save</button>
     </div>
 </div>
 <new-course #newCourse (added)="refresh()"></new-course>

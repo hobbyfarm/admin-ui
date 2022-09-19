@@ -11,6 +11,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { combineLatest } from 'rxjs';
 import { User } from '../data/user';
 import { RbacService } from '../data/rbac.service';
+import { Resource, Verb } from '../data/rbac';
 
 interface DashboardScheduledEvent extends ScheduledEvent {
   creatorEmail?: String;
@@ -66,7 +67,6 @@ export class HomeComponent implements OnInit {
     // verify rbac permissions before we display this page
     this.setRbacCheck().then((rbacCheck: boolean) => {
       this.rbacSuccess = rbacCheck;
-    });
 
     //Fill cache
     this.courseService.list().subscribe();
@@ -85,6 +85,7 @@ export class HomeComponent implements OnInit {
         this.sortEventLists()
       }
     )
+    });
   }
 
   /**
@@ -93,9 +94,11 @@ export class HomeComponent implements OnInit {
    */
   async setRbacCheck() {
     let rbacCheck = true;
+    const resources: Resource[] = ["scheduledevents", "sessions", "progresses"];
+    const verbs: Verb[] = ["list", "get"];
     outerForLoop:
-    for(let resource of ["scheduledevents", "sessions", "progresses"]) {
-      for(let verb of ["list", "get"]) {
+    for(let resource of resources) {
+      for(let verb of verbs) {
         const allowed: boolean = await this.rbacService.Grants(resource, verb);
         if(!allowed) {
           rbacCheck = false;
@@ -106,7 +109,10 @@ export class HomeComponent implements OnInit {
     // only if rbacCheck is still true...
     if (rbacCheck) {
       // ...check if we also have permissions to update sessions
-      rbacCheck = await this.rbacService.Grants("sessions", "update");
+      const rbacCheckSessionsUpdate: boolean = await this.rbacService.Grants("sessions", "update");
+      // ...and permissions to list scenarios
+      const rbacCheckScenariosList: boolean = await this.rbacService.Grants("scenarios", "list");
+      rbacCheck = rbacCheckSessionsUpdate && rbacCheckScenariosList;
     }
     return rbacCheck;
   }

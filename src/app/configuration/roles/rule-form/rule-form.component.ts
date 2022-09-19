@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ClrCombobox } from '@clr/angular';
 import { FormControlStatus } from 'src/app/data/formstatus';
-import { hobbyfarmApiGroup, rbacApiGroup, resources, verbs } from 'src/app/data/rbac';
+import { ApiGroup, hobbyfarmApiGroup, rbacApiGroup, Resource, resources, Verb, verbs } from 'src/app/data/rbac';
 import { Rule } from 'src/app/data/role';
 
 @Component({
@@ -45,9 +45,9 @@ export class RuleFormComponent implements OnInit {
     verbs: this.verbControl
   })
 
-  public verbs: string[] = verbs;
-  public resources: string[] = resources;
-  public apiGroups: string[] = [
+  public verbs: Verb[] = verbs;
+  public resources: Resource[] = resources;
+  public apiGroups: ApiGroup[] = [
     hobbyfarmApiGroup,
     rbacApiGroup
   ]
@@ -56,7 +56,7 @@ export class RuleFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.resourceControl.valueChanges.subscribe(
-      (resources: string[]) => {
+      (resources: Resource[]) => {
         this.resourceSelected(resources)
       }
     )
@@ -78,23 +78,23 @@ export class RuleFormComponent implements OnInit {
 
   @ViewChild("apiGroupsCombobox") apiGroupsComobox: ClrCombobox<string>;
 
-  public resourceSelected(resources: string[]) {
+  public resourceSelected(resources: Resource[]) {
     if (resources == null || this.apiGroupControl.value == null) {
       return
     }
 
-    resources.forEach((r: string) => {
+    resources.forEach((r: Resource) => {
       if (r == "roles" || r == "rolebindings") {
-        if ((this.apiGroupControl.value as Array<string>).find((ag: string) => ag == rbacApiGroup) == undefined) {
-          let groups = (this.apiGroupControl.value as Array<string>)
+        if ((this.apiGroupControl.value as Array<ApiGroup>).find((ag: ApiGroup) => ag == rbacApiGroup) == undefined) {
+          let groups = (this.apiGroupControl.value as Array<ApiGroup>)
           groups.push(rbacApiGroup)
           this.apiGroupControl.setValue(groups, {
             emitEvent: false
           })
         }
       } else {
-        if ((this.apiGroupControl.value as Array<string>).find((ag: string) => ag == hobbyfarmApiGroup) == undefined) {
-          let groups = (this.apiGroupControl.value as Array<string>)
+        if ((this.apiGroupControl.value as Array<ApiGroup>).find((ag: ApiGroup) => ag == hobbyfarmApiGroup) == undefined) {
+          let groups = (this.apiGroupControl.value as Array<ApiGroup>)
           groups.push(hobbyfarmApiGroup)
           this.apiGroupControl.setValue(groups, {
             emitEvent: false

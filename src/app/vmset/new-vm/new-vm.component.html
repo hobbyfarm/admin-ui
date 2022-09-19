@@ -19,6 +19,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-danger-outline" (click)="modalOpen = false">Cancel</button>
-        <button class="btn btn-success" (click)="addVM()" [disabled]="!vmform.valid">Add</button>
+        <button class="btn btn-success" (click)="addVM()" [disabled]="!vmform.valid || listVms">Add</button>
     </div>
 </clr-modal>

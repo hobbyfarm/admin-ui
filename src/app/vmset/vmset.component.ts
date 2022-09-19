@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
+import { RbacService } from '../data/rbac.service';
 import { NewVmComponent } from './new-vm/new-vm.component';
 
 @Component({
@@ -6,7 +7,7 @@ import { NewVmComponent } from './new-vm/new-vm.component';
   templateUrl: './vmset.component.html',
   styleUrls: ['./vmset.component.scss']
 })
-export class VmsetComponent {
+export class VmsetComponent implements OnInit {
   @Input()
   public vms: {}[] = []; // because JSONifying Maps is hard
 
@@ -14,20 +15,27 @@ export class VmsetComponent {
   public vmsChange: EventEmitter<{}[]> = new EventEmitter<{}[]>();
 
   @Input()
-  public createRbac : string[] = [];
+  public updateRbac : boolean;
 
-  @Input()
-  public createRbacOp : string = 'OR';
+  public addingIndex: number;
 
-  @Input()
-  public deleteRbac : string[] = [];
+  public allowedAddVm: boolean = false;
 
-  @Input()
-  public deleteRbacOp : string = 'OR';
+  private newVmModal: NewVmComponent;
 
-  public addingIndex: number; 
+  @ViewChild('newvm', { static: false }) set content(content: NewVmComponent) {
+     if(content) {
+          this.newVmModal = content;
+     }
+  }
 
-  @ViewChild("newvm") newVmModal: NewVmComponent;
+  constructor(public rbacService: RbacService) {}
+
+  ngOnInit(): void {
+    this.rbacService.Grants("virtualmachinetemplates", "list").then((addVm: boolean) => {
+      this.allowedAddVm = addVm;
+    });
+  }
 
   openAddVm(i: number) {
     this.addingIndex = i;
