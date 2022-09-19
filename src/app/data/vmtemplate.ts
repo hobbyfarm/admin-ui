@@ -7,5 +7,5 @@ export class VMTemplate {
         memory: number;
         storage: number;
     };
-    count_map: any;
+    config_map: any;
 }

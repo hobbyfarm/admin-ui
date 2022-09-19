@@ -1,16 +1,27 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { NewScheduledEventComponent } from './new-scheduled-event/new-scheduled-event.component';
 import { ClrModal, ClrDatagridSortOrder } from '@clr/angular';
+import { CourseService } from '../data/course.service';
+import { ScenarioService } from '../data/scenario.service';
+import { UserService } from '../data/user.service';
+import { RbacService } from '../data/rbac.service';
+import { Subscription } from 'rxjs';
+
+
+interface extendedScheduledEvent extends ScheduledEvent {
+  creatorEmail?: String;
+  courseNames?: String[];
+  scenarioNames?: String[];
+}
 
 @Component({
   selector: 'app-event',
   templateUrl: './event.component.html',
-  styleUrls: ['./event.component.scss']
 })
-export class EventComponent implements OnInit {
-  public events: ScheduledEvent[] = [];
+export class EventComponent implements OnInit, OnDestroy {
+  public events: extendedScheduledEvent[] = [];
 
   public deleteopen: boolean = false;
 
@@ -25,8 +36,15 @@ export class EventComponent implements OnInit {
 
   public descSort = ClrDatagridSortOrder.DESC;
 
+  private scenarioSubscription: Subscription; 
+
+
   constructor(
-    public seService: ScheduledeventService
+    public seService: ScheduledeventService,
+    public courseService: CourseService,
+    public scenarioService: ScenarioService,
+    public userService: UserService,
+    public rbacService: RbacService
   ) {
 
   }
@@ -35,12 +53,12 @@ export class EventComponent implements OnInit {
   @ViewChild("deletemodal", { static: true }) deletemodal: ClrModal;
 
   ngOnInit() {
-    this.seService.list().subscribe(
-      (se: ScheduledEvent[]) => {
-        this.events = se;
-      }
-    );
+    this.seService.list().subscribe(se => {
+      this.events = se
+      this.updateFields()
+    })   
   }
+
 
   public openDelete(se: ScheduledEvent) {
     this.deletingevent = se;
@@ -81,15 +99,49 @@ export class EventComponent implements OnInit {
   }
 
   public refresh() {
-    this.seService.list(true).subscribe(
-      (se: ScheduledEvent[]) => {
-        this.events = se;
-      }
-    );
+    this.seService.list(true).subscribe(se => {
+      this.events = se
+      this.updateFields()
+    })
+  }
+
+  public async updateFields() {
+    if (await this.rbacService.Grants("courses", "list")) {
+      this.courseService.list().subscribe(courseList => {
+        this.events.forEach(se => {
+          if (se.courses) {
+            se.courseNames = courseList.filter(course => se.courses.includes(course.id)).map(c => c.name)
+          }
+        }
+        )
+      })
+    }
+
+    if (await this.rbacService.Grants("scenarios", "list")) {
+      this.scenarioSubscription = this.scenarioService.list().subscribe(scenarioList => {
+        this.events.forEach(se => {
+          if (se.scenarios) {
+            se.scenarioNames = scenarioList.filter(scenario => se.scenarios.includes(scenario.id)).map(s => s.name)
+          }
+        }
+        )
+      })
+    }
+
+    if (await this.rbacService.Grants("users", "list")) {
+      this.userService.getUsers().subscribe(users => {
+        this.events.forEach(se => {
+          se.creatorEmail = users.filter(u => u.id == se.creator)[0]?.email
+        })
+      })
+    }
   }
 
   public newupdated() {
     this.refresh();
   }
 
+  ngOnDestroy() {
+    this.scenarioSubscription.unsubscribe()
+  }
 }

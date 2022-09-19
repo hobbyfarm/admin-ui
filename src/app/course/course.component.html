@@ -8,14 +8,14 @@
 <h3>Courses</h3>
 <div class="clr-row">
     <div class="clr-col">
-        <button class="btn btn-success" (click)="openNew()">
+        <button class="btn btn-success" (click)="openNew()" *rbac="['courses.create']">
             <clr-icon shape="plus"></clr-icon> New Course
         </button>
     </div>
 </div>
 <div class="clr-row">
     <div class="clr-col-4">
-        <clr-datagrid [(clrDgSingleSelected)]="selectedCourse" (clrDgSingleSelectedChange)="editCourse($event)">
+        <clr-datagrid [(clrDgSingleSelected)]="selectedCourse" (clrDgSingleSelectedChange)="editCourse($event)" [clrDisableSelection]="!selectRbac">
             <clr-dg-column>Name</clr-dg-column>
 
             <clr-dg-row *clrDgItems="let c of courses" [clrDgItem]="c" [clrDgSelectable]="!modified">
@@ -36,13 +36,13 @@
             <clr-tab>
                 <button [disabled]="!selectedCourse" clrTabLink id="virtualMachinesLink">Virtual Machines</button>
                 <clr-tab-content id="virtualMachinesContent" *clrIfActive>
-                    <vmset [(vms)]="editVirtualMachines" (modified)="setModified()"></vmset>
+                    <vmset [(vms)]="editVirtualMachines" (vmsChange)="setModified()" [createRbac]="['courses.update']" [deleteRbac]="['courses.update']"></vmset>
                 </clr-tab-content>
             </clr-tab>
             <clr-tab>
                 <button [disabled]="!selectedCourse" clrTabLink id="scenariosLink">Scenarios</button>
                 <clr-tab-content id="scenariosContent" *clrIfActive>
-                    <button class="btn btn-sm btn-success-outline" (click)="openAdd()">Add Scenario</button>
+                    <button class="btn btn-sm btn-success-outline" *rbac="['courses.edit']" (click)="openAdd()">Add Scenario</button>
                     <table class="table table-compact">
                         <thead>
                             <tr>
@@ -95,10 +95,10 @@
                         together with all scenarios selected in the scenarios-tab which are always included.<br>
                         There is no need to update the course (or any scheduled event that includes this course) if categories of a scenario are changed.<br>
                     </p>
-                    <button class="btn btn-success-outline btn-sm" (click)="newCategory = true">
+                    <button class="btn btn-success-outline btn-sm" (click)="newCategory = true" *rbac="['courses.edit']">
                       <clr-icon shape="plus"></clr-icon> Add Query
                     </button>
-                    <button class="btn btn-success-outline btn-sm" (click)="seeExamples = !seeExamples">
+                    <button class="btn btn-success-outline btn-sm" (click)="seeExamples = !seeExamples" *rbac="['courses.edit']">
                         <clr-icon shape="plus"></clr-icon> Example Queries
                     </button>
                     <ng-container *ngIf="seeExamples">
@@ -164,8 +164,8 @@
             </clr-tab>
         </clr-tabs>
         <button class="btn btn-outline" (click)="discardChanges()" *ngIf="modified">Discard Changes</button>
-        <button class="btn btn-danger-outline" (click)="delete()">Delete</button>
-        <button class="btn btn-success" [disabled]="!editForm?.valid" (click)="saveCourse()">Save</button>
+        <button class="btn btn-danger-outline" (click)="delete()" *rbac="['courses.delete']">Delete</button>
+        <button class="btn btn-success" [disabled]="!editForm?.valid" *rbac="['courses.update']" (click)="saveCourse()">Save</button>
     </div>
 </div>
 <new-course #newCourse (added)="refresh()"></new-course>

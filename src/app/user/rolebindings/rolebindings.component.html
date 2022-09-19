@@ -1,0 +1,24 @@
+<div class="clr-row">
+    <div class="clr-col">
+        <button class="btn btn-success" (click)="openNew()" *rbac="['rolebindings.create']"><clr-icon shape="plus"></clr-icon> New Role Binding</button>
+    </div>
+</div>
+<div class="clr-row">
+    <div class="clr-col-6">
+        <clr-datagrid>
+            <clr-dg-column>Role</clr-dg-column>
+
+            <clr-dg-row *clrDgItems="let rb of rolebindings; let i = index" [clrDgItem]="rb">
+                <clr-dg-action-overflow *rbac="['rolebindings.delete']">
+                    <button class="action-item" (click)="delete(i)">Delete</button>
+                </clr-dg-action-overflow>
+                <clr-dg-cell>
+                    {{ rb.role }}
+                </clr-dg-cell>
+            </clr-dg-row>
+        </clr-datagrid>
+    </div>
+</div>
+
+<delete-confirmation #deleteconfirmation (delete)="doDelete()"></delete-confirmation>
+<new-role-binding #newrolebinding [user]="user" (saved)="refresh()"></new-role-binding>

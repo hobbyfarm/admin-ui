@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { ClrWizard } from '@clr/angular';
-import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Environment } from 'src/app/data/environment';
+import { VMTemplate } from 'src/app/data/vmtemplate';
 import { EnvironmentService } from 'src/app/data/environment.service';
+import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { ServerResponse } from 'src/app/data/serverresponse';
 
 @Component({
@@ -14,7 +16,9 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   public environmentDetails: FormGroup;
   public environmentSpecifics: FormGroup;
   public templateMappings: FormGroup;
+  public templateSelection: FormGroup;
   public ipMapping: FormGroup;
+  public VMTemplates: VMTemplate[] = [];
 
   @Input()
   public updateEnv: Environment;
@@ -26,7 +30,8 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   constructor(
     private _fb: FormBuilder,
-    private envService: EnvironmentService
+    private envService: EnvironmentService,
+    private vmTemplateService: VmtemplateService
   ) { }
 
 
@@ -52,6 +57,12 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
         })
       ])
     });
+  }
+
+  public buildVMTSelection(){
+    this.templateSelection = this._fb.group({
+      vmt_select: ['', [Validators.required]],
+    })
   }
 
   public buildIpMapping() {
@@ -153,6 +164,38 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this._build();
+    this.refreshVMTemplates();
+  }
+
+  private refreshVMTemplates(){
+    this.vmTemplateService.list()
+    .subscribe(
+      (vm: VMTemplate[]) => this.VMTemplates = vm
+    )
+  }
+
+  public getValidVMTemplates(){
+    let vmtList = this.VMTemplates;
+    let selectedVMTs = []
+    for (var i = 0; i < (this.templateMappings.get('templates') as FormArray).length; i++) { // i = index of template
+      selectedVMTs.push(this.templateMappings.get(['templates', i, 'template']).value);
+    }
+
+    vmtList = vmtList.filter(obj => {return !selectedVMTs.includes(obj.id)});
+
+    let selectionValid = false;
+
+    vmtList.forEach(vmt => {
+      if(vmt.id == this.templateSelection.get('vmt_select').value){
+          selectionValid = true;
+      }
+    });
+
+    if(!selectionValid && vmtList.length > 0){
+      this.templateSelection.get('vmt_select').setValue(vmtList[0]?.id);
+    }
+    
+    return vmtList;
   }
 
   private _build() {
@@ -160,6 +203,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this.buildEnvironmentSpecifics();
     this.buildIpMapping();
     this.buildTemplateMapping();
+    this.buildVMTSelection()
   }
 
   private _prepare() {
@@ -231,9 +275,13 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     }
   }
 
+  public hasTemplateSelection(){
+    return this.templateSelection.get('vmt_select').value != ""; 
+  }
+
   public newTemplateMapping() {
     var newGroup = this._fb.group({
-      template: ['', Validators.required],
+      template: [this.templateSelection.get('vmt_select').value, Validators.required],
       params: this._fb.array([
         this._fb.group({
           key: ['', Validators.required],

@@ -7,7 +7,7 @@ import { Scenario } from './scenario';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
 import { atou, utoa } from '../unicode';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 class CustomEncoder implements HttpParameterCodec {
   encodeKey(key: string): string {
@@ -33,15 +33,19 @@ class CustomEncoder implements HttpParameterCodec {
 export class ScenarioService {
   private cachedScenarioList: Scenario[] = []
   private fetchedList = false;
+  private startedFetchedList = false;
+  private bh: BehaviorSubject<Scenario[]> = new BehaviorSubject(this.cachedScenarioList);
+
 
   constructor(
     public http: HttpClient
   ) { }
 
   public list(force=false) {
-    if (!force && this.fetchedList)  {
-      return of(this.cachedScenarioList);
+    if (!force && (this.fetchedList || this.startedFetchedList))  {
+      return this.bh.asObservable();
     }else {
+      this.startedFetchedList = true
       return this.http.get(environment.server + "/a/scenario/list")
       .pipe(
         map((s: ServerResponse) => {
@@ -74,6 +78,7 @@ export class ScenarioService {
   public set(list: Scenario[]){
     this.cachedScenarioList = list;
     this.fetchedList = true;
+    this.bh.next(list);
   }
 
   public get(id: string) {

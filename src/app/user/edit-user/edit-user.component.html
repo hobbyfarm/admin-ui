@@ -30,8 +30,8 @@
 </div>
 <div class="clr-row">
     <div class="clr-col">
-        <button class="btn btn-success" (click)="saveDetails()" [disabled]="saving">Save</button>
-        <button class="btn btn-danger-outline" (click)="delete()">Delete</button>
+        <button class="btn btn-success" (click)="saveDetails()" [disabled]="saving" *rbac="['users.update']">Save</button>
+        <button class="btn btn-danger-outline" (click)="delete()" *rbac="['users.delete']">Delete</button>
     </div>
 </div>
 <delete-confirmation #deleteconfirm (delete)="doDelete()"></delete-confirmation>

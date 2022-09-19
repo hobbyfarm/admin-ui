@@ -4,9 +4,8 @@ import { ClrModal } from '@clr/angular';
 @Component({
   selector: 'delete-confirmation',
   templateUrl: './delete-confirmation.component.html',
-  styleUrls: ['./delete-confirmation.component.scss']
 })
-export class DeleteConfirmationComponent implements OnInit {
+export class DeleteConfirmationComponent {
   public modalOpen: boolean = false;
 
   @Output()
@@ -22,7 +21,7 @@ export class DeleteConfirmationComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  open(): void {
+  public open(): void {
     this.modal.open();
   }
 

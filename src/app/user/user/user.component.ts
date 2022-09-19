@@ -3,11 +3,10 @@ import { UserService } from 'src/app/data/user.service';
 import { User } from 'src/app/data/user';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { UserEmailFilter } from 'src/app/user-email-filter';
-import { UserIdFilter } from 'src/app/user-id-filter';
 import { UserAccesscodeFilter } from 'src/app/user-accescode-filter'
 import { DeleteProcessModalComponent } from './delete-process-modal/delete-process-modal.component';
 import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-confirmation.component';
-
+import { RbacService } from 'src/app/data/rbac.service';
 
 
 @Component({
@@ -21,21 +20,31 @@ export class UserComponent implements OnInit {
   public selectedUser: User;
   public selectedUsers: User[] = [];  
 
+  public selectRbac: boolean = false;
+
   public accesscodes: string[] = [];
 
   @ViewChild('deleteconfirm') deleteConfirmModal: DeleteConfirmationComponent;
   @ViewChild('deleteprocess') deleteProcessModal: DeleteProcessModalComponent;
 
   constructor(
-    public userService: UserService
+    public userService: UserService,
+    public rbacService: RbacService
   ) { }
 
   public emailFilter: UserEmailFilter = new UserEmailFilter();
-  public idFilter: UserIdFilter = new UserIdFilter();
   public accescodeFilter: UserAccesscodeFilter = new UserAccesscodeFilter();
 
   ngOnInit() {
-    this.refresh();
+    // Enable permission to list users if either "get" or "update" on users is granted
+    this.rbacService.Grants("users", "get").then(async (allowedGet: boolean) => {
+      const allowedUpdate: boolean = await this.rbacService.Grants("users", "update");
+      this.selectRbac = allowedGet || allowedUpdate;
+      // only load users if access is granted
+      if(this.selectRbac) {
+        this.refresh();
+      }
+    });
   }
 
   refresh(force?: boolean) {
