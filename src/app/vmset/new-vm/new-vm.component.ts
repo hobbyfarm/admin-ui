@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { VMTemplate } from 'src/app/data/vmtemplate';
@@ -12,6 +12,9 @@ export class NewVmComponent implements OnInit {
   public modalOpen: boolean = false;
   public vmtemplates: VMTemplate[] = [];
 
+  @Input()
+  public listVms: boolean;
+
   @Output()
   public vm: EventEmitter<[string, string]> = new EventEmitter(null);
 
@@ -22,14 +25,19 @@ export class NewVmComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.vmTemplateService.list()
-    .subscribe(
-      (v: VMTemplate[]) => this.vmtemplates = v
-    )
+    if(this.listVms) {
+      this.vmTemplateService.list()
+      .subscribe(
+        (v: VMTemplate[]) => this.vmtemplates = v
+      )
+    }
   }
 
   public open(): void {
     this.vmform.reset();
+    if(!this.listVms) {
+      this.vmform.disable();
+    }
     this.modal.open();
   }
 

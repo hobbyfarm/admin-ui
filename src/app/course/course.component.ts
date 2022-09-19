@@ -51,9 +51,11 @@ export class CourseComponent implements OnInit {
 
   public newCategory: boolean = false;
 
-  public courseDetailsActive: boolean = true;
+  public courseDetailsActive: boolean = false;
 
   public selectRbac: boolean = false;
+  public updateRbac: boolean = false;
+  public listScenarios: boolean = false;
   public seeExamples = false;
 
   constructor(
@@ -77,15 +79,19 @@ export class CourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Enable permission to list courses if either "get" or "update" on courses is granted
     this.rbacService.Grants("courses", "get").then(async (allowedGet: boolean) => {
       const allowedUpdate: boolean = await this.rbacService.Grants("courses", "update");
+      // Enable permission to list courses if either "get" or "update" on courses is granted
       this.selectRbac = allowedGet || allowedUpdate;
+      this.listScenarios = await this.rbacService.Grants("scenarios", "list");
+      // Enable permission to update courses
+      this.updateRbac = allowedUpdate && this.listScenarios;
     });
 
     this.refresh();
-    this.scenarioService.list()
-      .subscribe((s: Scenario[]) => this.scenarios = s)
+    if(this.listScenarios) {
+      this.scenarioService.list().subscribe((s: Scenario[]) => this.scenarios = s);
+    }
   }
 
   refresh(): void {
@@ -97,14 +103,17 @@ export class CourseComponent implements OnInit {
 
   setupForm(fg: FormGroup) {
     this.editForm = fg;
-
-    this.editForm.valueChanges.subscribe(
-      (a: any) => {
-        if (this.editForm.dirty) {
-          this.setModified();
+    if(!this.updateRbac) {
+      this.editForm.disable();
+    } else {
+      this.editForm.valueChanges.subscribe(
+        (a: any) => {
+          if (this.editForm.dirty) {
+            this.setModified();
+          }
         }
-      }
-    )
+      )
+    }
   }
 
   addSelected(s: Scenario[]) {
@@ -177,19 +186,21 @@ export class CourseComponent implements OnInit {
 
   updateDynamicScenarios(){
     this.dynamicAddedScenarios = [];
-    this.courseService.listDynamicScenarios(this.editCategories)
-    .subscribe(
-      (dynamicScenarios: String[]) => {
-        this.scenarios.forEach(scenario => {
-          if(dynamicScenarios.includes(scenario.id)){
-              this.dynamicAddedScenarios.push(scenario);
-          }
-        })
-      },
-      (e: HttpErrorResponse) => {
-        this.alertDanger('Error listing dynmamic scenarios: ' + e.error.message);
-      }
-    )
+    if(this.listScenarios) {
+      this.courseService.listDynamicScenarios(this.editCategories)
+      .subscribe(
+        (dynamicScenarios: String[]) => {
+          this.scenarios.forEach(scenario => {
+            if(dynamicScenarios.includes(scenario.id)){
+                this.dynamicAddedScenarios.push(scenario);
+            }
+          })
+        },
+        (e: HttpErrorResponse) => {
+          this.alertDanger('Error listing dynmamic scenarios: ' + e.error.message);
+        }
+      )
+    }
   }
 
   discardChanges() {
