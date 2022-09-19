@@ -3,5 +3,4 @@ export class User {
     email: string;
     password: string;
     access_codes: string[];
-    admin: boolean;
 }

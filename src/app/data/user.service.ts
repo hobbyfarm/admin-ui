@@ -43,16 +43,12 @@ export class UserService {
     this.fetchedList = true;
   }
 
-  public saveUser(id: string, email: string = "", password: string = "", admin: boolean = null, accesscodes: string[] = null)  {
+  public saveUser(id: string, email: string = "", password: string = "", accesscodes: string[] = null)  {
     var params = new HttpParams()
     .set("id", id)
     .set("email", email)
     .set("password", password);
     
-    if (admin != null) {
-      params = params.set("admin", JSON.stringify(admin));
-    }
-
     if (accesscodes != null) {
       params = params.set("accesscodes", JSON.stringify(accesscodes));
     }
