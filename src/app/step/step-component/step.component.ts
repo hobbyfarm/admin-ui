@@ -66,6 +66,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   public username: String = "";
   public courseName: String = "";
 
+  public checkInterval: any;
+
   @ViewChildren('term') private terms: QueryList<TerminalComponent> =
     new QueryList();
   @ViewChildren('tabcontent') private tabContents: QueryList<ClrTabContent> =
@@ -113,6 +115,18 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     const sessionId = paramMap.get('session')!;
     this.stepnumber = Number(paramMap.get('step') ?? 0);
 
+    this.checkInterval = setInterval(() => {
+      this.ssService.getStatus(sessionId).subscribe(
+        () => {},
+        () => {
+          this.sessionExpired = true
+          clearInterval(this.checkInterval)
+        }
+       )
+    }, 60000)
+    
+
+
     this.ssService
       .get(sessionId)
       .pipe(
@@ -150,6 +164,10 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
           vmInfo[k.toLowerCase()] = v;
         }
         this.mdContext = { vmInfo };
+      }, 
+      () => {
+        this.sessionExpired = true
+        clearInterval(this.checkInterval)
       });
 
     this.ctr.getCodeStream().subscribe((c: CodeExec) => {
@@ -179,6 +197,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     this.terms.forEach((term) => {
       term.mutationObserver.disconnect();
     });
+    clearInterval(this.checkInterval)
   }
 
   goNext() {

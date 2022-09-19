@@ -51,6 +51,11 @@ export class ResourceClient<T> {
           }),
         );
   }
+  getStatus(id: string) {
+    return this.garg.get('/' + id).pipe(
+      map(extractResponseStatus)      
+    );
+  }
 }
 
 export class ListableResourceClient<
@@ -73,3 +78,7 @@ export class ListableResourceClient<
 
 export const extractResponseContent = (s: ServerResponse) =>
   JSON.parse(atou(s.content));
+
+  export const extractResponseStatus = (s: ServerResponse) =>
+  ({'type': s.type, 
+  'status': s.status});
