@@ -80,11 +80,13 @@
                 </tr>
               </table>
               <app-terminal
+                *ngIf="!isGuacamoleTerminal(v.value.protocol)"
                 [vmname]="v.key"
                 [vmid]="v.value.id"
                 [endpoint]="v.value.ws_endpoint"
                 #term
               ></app-terminal>
+              <h3 class="guac-terminal" *ngIf="isGuacamoleTerminal(v.value.protocol)">Admin access to terminals only possible on machines that support ssh-connections</h3>
             </clr-tab-content>
           </clr-tab>
         </clr-tabs>

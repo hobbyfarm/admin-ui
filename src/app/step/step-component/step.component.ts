@@ -267,6 +267,9 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigateByUrl('/home');
   }
 
+  isGuacamoleTerminal(protocol: string): boolean {
+    return protocol !== 'ssh';
+  }
 
   public dragEnd() {
     // For each tab...

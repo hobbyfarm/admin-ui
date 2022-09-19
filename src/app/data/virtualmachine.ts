@@ -14,4 +14,5 @@ export class VirtualMachine {
     tfstate: string = "";
     ws_endpoint: string = "";
     vm_set_id: string = "";
+    protocol: string = "";
 }
