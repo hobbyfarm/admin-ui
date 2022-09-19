@@ -1,0 +1,28 @@
+<clr-modal #modal [(clrModalOpen)]="modalOpen">
+    <h3 class="modal-title">Delete Information</h3>
+    <div class="modal-body">
+        <ul>
+            <li *ngFor="let info of deleteInfo" class="info-li">
+                <span *ngIf="info.deleted">
+                    <clr-icon  shape="success-standard" class="is-solid is-success"></clr-icon>  {{info.user.email}} - {{info.message}}  
+                </span>
+                <span *ngIf="!info.deleted">
+                    <clr-icon  shape="error-standard" class="is-solid is-error"></clr-icon>  {{info.user.email}} - {{info.message}}  
+                </span>
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <div *ngIf="selectedUsers.length != deletedUsers">
+            <span class="spinner spinner-inline">
+                Deleting Users...
+            </span>
+            <span>
+                Deleting Users...
+            </span>
+        </div>
+        <button class="btn btn-success-outline" *ngIf="selectedUsers.length == deletedUsers"
+            (click)="deleteDone()">Done</button>
+
+    </div>
+</clr-modal>
