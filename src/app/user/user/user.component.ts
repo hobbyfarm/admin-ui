@@ -37,13 +37,9 @@ export class UserComponent implements OnInit {
 
   ngOnInit() {
     // Enable permission to list users if either "get" or "update" on users is granted
-    this.rbacService.Grants("users", "get").then(async (allowedGet: boolean) => {
-      const allowedUpdate: boolean = await this.rbacService.Grants("users", "update");
-      this.selectRbac = allowedGet || allowedUpdate;
-      // only load users if access is granted
-      if(this.selectRbac) {
-        this.refresh();
-      }
+    this.rbacService.Grants("users", "list").then(async (allowedGet: boolean) => {
+      this.selectRbac =  await this.rbacService.Grants("users", "get");
+      this.refresh();
     });
   }
 
@@ -60,7 +56,9 @@ export class UserComponent implements OnInit {
   }
 
   setSelectedUser(u: User) {
-    this.selectedUser = u
+    if(this.selectRbac){
+      this.selectedUser = u
+    }
   }
 
   deleteMultiple() {
