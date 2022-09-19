@@ -50,14 +50,12 @@ export class EditUserComponent implements OnChanges {
       Validators.email
     ]),
     'password': new FormControl(""),
-    'admin': new FormControl(true)
   });
 
   public reset(): void {
     this.userDetailsForm.reset({
       'email': this.user.email,
       'password': "",
-      'admin': this.user.admin
     });
     this.alertText = "";
     this.alertClosed = true;
@@ -67,7 +65,6 @@ export class EditUserComponent implements OnChanges {
     this.saving = true;
     var email = this.userDetailsForm.get("email").value;
     var password = this.userDetailsForm.get("password").value;
-    var admin = this.userDetailsForm.get("admin").value;
 
     if (email == null) {
       email = "";
@@ -77,7 +74,7 @@ export class EditUserComponent implements OnChanges {
       password = "";
     }
 
-    this.userService.saveUser(this.user.id, email, password, admin)
+    this.userService.saveUser(this.user.id, email, password)
       .subscribe(
         (s: ServerResponse) => {
           this.alertText = "User updated";

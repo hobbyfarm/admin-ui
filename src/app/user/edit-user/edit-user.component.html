@@ -14,17 +14,11 @@
                 <clr-control-error *clrIfError="'required'">Email is required</clr-control-error>
                 <clr-control-error *clrIfError="'email'">Input must be an email</clr-control-error>
             </clr-input-container>
-            <clr-input-container>
+            <clr-input-container  *rbac="['users.update']">
                 <label for="password">Password</label>
                 <input clrInput name="password" formControlName="password" type="password" />
                 <clr-control-helper>Blank leaves password unchanged.</clr-control-helper>
             </clr-input-container>
-            <clr-toggle-container>
-                <clr-toggle-wrapper>
-                    <input type="checkbox" clrToggle name="admin" value="admin" formControlName="admin" />
-                    <label>Administrator</label>
-                </clr-toggle-wrapper>
-            </clr-toggle-container>
         </form>
     </div>
 </div>
