@@ -7,6 +7,7 @@ import { ProgressService } from 'src/app/data/progress.service';
 import { ProgressCount } from 'src/app/data/progress';
 import { VmService } from '../data/vm.service';
 import { RbacService } from '../data/rbac.service';
+import { Resource, Verb } from '../data/rbac';
 
 interface DashboardScheduledEvent extends ScheduledEvent {
   creatorEmail?: String;
@@ -86,7 +87,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
    * 
    * @returns true if all grants are successful; else false
    */
-  async setRbacCheck(resources: string[], verbs: string[]) {
+  async setRbacCheck(resources: Resource[], verbs: Verb[]) {
     let rbacCheck = true;
     outerForLoop:
     for (let resource of resources) {
