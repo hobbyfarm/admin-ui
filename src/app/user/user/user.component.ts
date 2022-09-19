@@ -36,7 +36,6 @@ export class UserComponent implements OnInit {
   public accescodeFilter: UserAccesscodeFilter = new UserAccesscodeFilter();
 
   ngOnInit() {
-    // Enable permission to list users if either "get" or "update" on users is granted
     this.rbacService.Grants("users", "list").then(async (allowedGet: boolean) => {
       this.selectRbac =  await this.rbacService.Grants("users", "get");
       this.refresh();
