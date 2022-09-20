@@ -61,7 +61,7 @@ import { AngularSplitModule } from 'angular-split';
 import { DynamicHooksModule } from 'ngx-dynamic-hooks';
 import { CtrComponent } from './step/ctr.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
-import { ProgressService } from './step/progress.service'
+import { ProgressService } from './data/progress.service'
 import { RbacService } from './data/rbac.service';
 import { RbacDirective } from './directives/rbac.directive';
 import { ClarityDisableSelectionDirective } from './directives/clarity-disable-selection.directive';

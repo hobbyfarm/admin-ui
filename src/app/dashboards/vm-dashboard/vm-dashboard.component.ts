@@ -98,7 +98,7 @@ export class VmDashboardComponent implements OnInit {
     })
     if (!userId) return;
     var progress: Progress //If there is a valid User ID, get all active Progresses of that user.
-    this.progressService.list(this.selectedEvent.id, false).subscribe((progressList) => {
+    this.progressService.listByScheduledEvent(this.selectedEvent.id, false).subscribe((progressList) => {
       progress = progressList.filter((p) => 
       p.user === userId,
       )[0]

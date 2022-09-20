@@ -114,7 +114,7 @@ export class ProgressDashboardComponent implements OnInit {
     const includeFinished = this.selectedEvent.finished || this.includeFinished;
 
     combineLatest([
-      this.progressService.list(this.selectedEvent.id, true),
+      this.progressService.listByScheduledEvent(this.selectedEvent.id, true),
       this.userService.getUsers(),
       this.scenarioService.list(),
       this.courseService.list(),
