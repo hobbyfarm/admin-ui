@@ -30,6 +30,7 @@
     "@webcomponents/custom-elements": "^1.5.0",
     "@webcomponents/webcomponentsjs": "^2.0.0",
     "angular-bootstrap-datetimepicker": "^2.2.1",
+    "angular-split": "^5.0.0",
     "brace": "^0.11.1",
     "core-js": "^2.6.11",
     "font-awesome": "^4.7.0",
@@ -38,6 +39,10 @@
     "ng2-dragula": "^2.1.1",
     "ngx-markdown": "^12.1.0",
     "ngx-markdown-editor": "^2.5.0",
+    "ngx-dynamic-hooks": "^1.7.2",
+    "xterm": "^4.13.0",
+    "xterm-addon-attach": "^0.4.0",
+    "xterm-addon-fit": "^0.3.0",
     "rxjs": "^6.6.7",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"

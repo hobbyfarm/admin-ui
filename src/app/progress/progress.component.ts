@@ -5,6 +5,7 @@ import { Progress } from '../data/progress';
 import { ServerResponse } from '../data/serverresponse';
 import { ProgressInfoComponent } from './progress-info/progress-info.component';
 import { timeSince } from '../utils';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'progress-card',
@@ -25,9 +26,11 @@ export class ProgressComponent {
     public timeSince= timeSince;
 
     @ViewChild("progressInfo") progressInfo: ProgressInfoComponent;
+
     
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {
      
   }
@@ -43,6 +46,13 @@ export class ProgressComponent {
 
   openInfo() {
     this.progressInfo.openModal();
+  }
+
+  openTerminalWindow() {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree(['/session', this.progress.session, 'steps', Math.max(this.progress.current_step - 1, 0),])
+    );
+    window.open(url, '_blank');
   }
   
   public progressFilterName() {

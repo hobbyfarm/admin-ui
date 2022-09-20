@@ -43,8 +43,25 @@ import { EditVmtemplateComponent } from './configuration/vmtemplates/edit-vmtemp
 import { AppConfigService } from './app-config.service';
 import { ProgressComponent } from './progress/progress.component';
 import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
-import { EventUserListComponent } from './home/event-user-list/event-user-list.component';
+import { EventUserListComponent } from './dashboards/progress-dashboard/event-user-list/event-user-list.component';
 import { IntervalTimer } from './IntervalTimer/interval-timer.component';
+import { ProgressDashboardComponent } from './dashboards/progress-dashboard/progress-dashboard.component';
+import { DashboardsComponent } from './dashboards/dashboards.component';
+import { VmDashboardComponent } from './dashboards/vm-dashboard/vm-dashboard.component';
+import { StepComponent } from './step/step-component/step.component';
+import { CtrService } from './data/ctr.service';
+import { SessionService } from './data/session.service';
+import { GargantuaClientFactory } from './data/gargantua.service';
+import { StepService } from './data/step.service';
+import { SettingsService } from './data/settings.service';
+import { VMService } from './step/vm.service';
+import { VMClaimService } from './data/vmclaim.service';
+import { HfMarkdownComponent } from './step/hf-markdown.component';
+import { AngularSplitModule } from 'angular-split';
+import { DynamicHooksModule } from 'ngx-dynamic-hooks';
+import { CtrComponent } from './step/ctr.component';
+import { TerminalComponent } from './step/terminal/terminal.component';
+import { ProgressService } from './data/progress.service'
 import { RbacService } from './data/rbac.service';
 import { RbacDirective } from './directives/rbac.directive';
 import { ClarityDisableSelectionDirective } from './directives/clarity-disable-selection.directive';
@@ -109,6 +126,13 @@ export function jwtOptionsFactory() {
     ProgressComponent,
     EventUserListComponent,
     IntervalTimer,
+    ProgressDashboardComponent, 
+    DashboardsComponent,
+    VmDashboardComponent,
+    StepComponent,
+    HfMarkdownComponent,
+    TerminalComponent,
+    CtrComponent,
     RbacDirective,
     ClarityDisableSelectionDirective,
     RolesComponent,
@@ -124,6 +148,7 @@ export function jwtOptionsFactory() {
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    AngularSplitModule,
     DlDateTimePickerDateModule,
     LMarkdownEditorModule,
     DlDateTimePickerModule,
@@ -135,6 +160,13 @@ export function jwtOptionsFactory() {
         useFactory: jwtOptionsFactory
       }
     }),
+    DynamicHooksModule.forRoot({
+      globalOptions: {
+        sanitize: false,
+        convertHTMLEntities: false,
+      },
+      globalParsers: [{ component: CtrComponent }],
+    }),
     BrowserAnimationsModule,
     DragulaModule.forRoot(),
     MarkdownModule.forRoot({
@@ -143,7 +175,15 @@ export function jwtOptionsFactory() {
   ],
   providers: [
     ScenarioService,
+    CtrService,
+    SessionService,    
+    StepService,
+    VMService,
+    VMClaimService,
+    SettingsService,
+    GargantuaClientFactory,
     AppConfigService,
+    ProgressService,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFn,

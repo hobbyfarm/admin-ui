@@ -11,4 +11,5 @@ export class Scenario {
     tags: string[];
     keepalive_duration: string;
     pause_duration: string;
+    pauseable: boolean;
 }

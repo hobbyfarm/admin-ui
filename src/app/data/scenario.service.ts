@@ -48,7 +48,7 @@ export class ScenarioService {
       this.startedFetchedList = true
       return this.http.get(environment.server + "/a/scenario/list")
       .pipe(
-        map((s: ServerResponse) => {
+        map((s: ServerResponse) => {          
           let obj: Scenario[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
           // so now we need to go vmset-by-vmset and build maps
           obj.forEach((s: Scenario) => {
@@ -59,7 +59,7 @@ export class ScenarioService {
           return obj;
         }),
         map((sList: Scenario[]) => {
-          sList.forEach((s: Scenario) => {
+          sList.forEach((s: Scenario) => {            
             s.name = atou(s.name);
             s.description = atou(s.description);
             s.categories = s.categories ?? [];
@@ -97,6 +97,8 @@ export class ScenarioService {
         });
         s.categories = s.categories ?? [];
         s.tags = s.tags ?? [];
+        //Admin Route in Garg ("/a/scenario") returns Scenarios without StepCount
+        s.stepcount = s.steps.length
         return s;
       })
     )
