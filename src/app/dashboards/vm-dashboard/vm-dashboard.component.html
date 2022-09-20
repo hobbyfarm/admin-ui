@@ -18,7 +18,7 @@
                     <div class="clr-row">
                         <div class="clr-col">
                             <clr-datagrid>
-                                <clr-dg-column>Join Session</clr-dg-column>
+                                <clr-dg-column *rbac="['sessions.get', 'users.get', 'progresses.get', 'scenarios.get']">Join Session</clr-dg-column>
                                 <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
                                 <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
                                 <clr-dg-column [clrDgField]="'vm_template_id'">VM-Template</clr-dg-column>
@@ -29,9 +29,11 @@
                                 <clr-dg-column [clrDgField]="'hostname'">Hostname</clr-dg-column>                                
 
                                 <clr-dg-row *clrDgItems="let vm of set.setVMs">
-                                    <clr-dg-cell class="dashboardCell"><button
+                                    <clr-dg-cell class="dashboardCell" *rbac="['sessions.get', 'users.get', 'progresses.get', 'scenarios.get']"><button
                                             [disabled]="!vm.allocated" class="btn btn-sm  btn-primary dashboardCell joinButton"
-                                            (click)="openUsersTerminal(vm)">>_</button></clr-dg-cell>
+                                            (click)="openUsersTerminal(vm)" >
+                                            >_
+                                        </button></clr-dg-cell>
                                     <clr-dg-cell class="dashboardCell">
                                         <span *ngIf="vm.status === 'running'" class="badge badge-success">{{ vm.status
                                             }}</span>

@@ -72,7 +72,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
           this.selectedEvent = this.activeEvents[0];
 
         }
-        this.sortEventLists()
+        this.rbacService.Grants("users", "list").then((rbacUsers) => {
+          rbacUsers && this.sortEventLists()
+        });        
         this.setActiveSessionsCount()
         this.updateInterval = setInterval(() => {
           this.setActiveSessionsCount()
@@ -121,16 +123,21 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   setActiveSessionsCount() {
-    this.vmService.count().subscribe((countMap) => {
-      this.scheduledEvents.forEach((se) => {
-        se.provisionedVMs = countMap[se.id] || 0
+    if (this.rbacSuccessVms) {
+      this.vmService.count().subscribe((countMap) => {
+        this.scheduledEvents.forEach((se) => {
+          se.provisionedVMs = countMap[se.id] || 0
+        })
       })
-    })
-    this.progressService.count().subscribe((c: ProgressCount) => {
-      this.scheduledEvents.forEach((se) => {
-        se.activeSessions = c[se.id] || 0;
+    }
+    if (this.rbacSuccessSessions) {
+      this.progressService.count().subscribe((c: ProgressCount) => {
+        this.scheduledEvents.forEach((se) => {
+          se.activeSessions = c[se.id] || 0;
+        });
       });
-    });
+    }
+    
   }
 
   setActiveDashboard(event: DashboardScheduledEvent, value: String) {
