@@ -29,21 +29,11 @@
             </button>
             <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
                 <div class="dropdown-item " (click)="openInfo()" clrDropdownItem>Info</div>                
-                <div class="dropdown-item"  (click)="openTerminalWindow()" [disabled]="progress.finished" clrDropdownItem *rbac="['sessions.get', 'users.get', 'progresses.get', 'scenarios.get']">Join Session</div>
+                <div class="dropdown-item"  (click)="openTerminalWindow()" [disabled]="progress.finished" clrDropdownItem *rbac="['sessions.get', 'courses.get','progresses.list', 'scenarios.get', 'virtualmachineclaims.get']">Join Session</div>
                 <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
                 <div class="dropdown-item " (click)="terminateSession()" [disabled]="progress.finished" clrDropdownItem *rbac="['sessions.update']">Terminate Session</div>
             </clr-dropdown-menu>
         </clr-dropdown>
-
-
-        <!-- <button class="btn btn-outline" (click)="openInfo()" >Info</button>
-        <button
-      class="btn btn-outline"
-      (click)="openTerminalWindow()"
-    >
-      >_
-    </button>
-        <button class="btn btn-danger-outline" (click)="terminateSession()" [disabled]="progress.finished" >Terminate Session</button> -->
     </div>
 </div>
 

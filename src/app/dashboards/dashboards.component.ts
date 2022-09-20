@@ -47,18 +47,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     // verify rbac permissions before we display this page
     this.setRbacCheck(
-      ["scheduledevents", "sessions", "progresses", "users"],
+      ["scheduledevents", "sessions", "progresses", "users", "courses", "scenarios"],
       ["list", "get"]
-    ).then((rbacCheckSessions: boolean) => {
-      if (rbacCheckSessions) {
-        // ...check if we also have permissions to update sessions
-        this.setRbacCheck(["sessions"], ["update"]).then((rbacCheckSessions) => {
-          this.rbacSuccessSessions = rbacCheckSessions;
-        })
-      }
+    ).then((rbacCheckSessions: boolean) => {      
+        this.rbacSuccessSessions = rbacCheckSessions      
     });
 
-    this.setRbacCheck(["virtualmachines", "virtualmachinesets", "users"], ["list", "get"]).then((rbacCheck: boolean) => {
+    this.setRbacCheck(["scheduledevents", "virtualmachines", "virtualmachinesets", "users"], ["list", "get"]).then((rbacCheck: boolean) => {
       this.rbacSuccessVms = rbacCheck
     })
 

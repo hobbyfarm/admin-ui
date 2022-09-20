@@ -52,7 +52,6 @@ export class ProgressComponent {
     const url = this.router.serializeUrl(
       this.router.createUrlTree(['/session', this.progress.session, 'steps', Math.max(this.progress.current_step - 1, 0),])
     );
-    // this.router.navigate(['/session', this.progress.session, 'steps', this.progress.current_step])
     window.open(url, '_blank');
   }
   

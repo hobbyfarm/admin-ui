@@ -1,6 +1,5 @@
 <div class="main-container">
     <header class="header header-7" app-header></header>
-    <!-- <ng-container *ngIf="rbacSuccess"> -->
     <div class="content-container">
         <as-split unit="percent" direction="horizontal">
             <as-split-area [size]="20" class="split-area-1">
@@ -52,14 +51,24 @@
             </as-split-area>
             <as-split-area [size]="80" class="split-area-2">
                 <div *ngIf="selectedEvent" class="content-area">
-                    <h3 *ngIf="sessionDashboardActive && rbacSuccessSessions">Sessions for {{selectedEvent?.event_name}}</h3>
-                    <h3 *ngIf="vmDashboardActive &&rbacSuccessVms">VMs for {{selectedEvent?.event_name}}</h3>
-                    <span class="additional-info"><ng-container *rbac="['accesscodes.get']">AC: <span class="access-code">{{selectedEvent?.access_code}}</span>
-                        &#8226;</ng-container>
-                        Until
-                        {{selectedEvent?.end_time | date:'MMM d, y, HH:mm'}} <span>&#8226; Created by {{
-                            selectedEvent?.creatorEmail
-                            }}</span></span>
+                    <h3 *ngIf="sessionDashboardActive && rbacSuccessSessions">Sessions for {{selectedEvent?.event_name}}
+                    </h3>
+                    <h3 *ngIf="vmDashboardActive && rbacSuccessVms">VMs for {{selectedEvent?.event_name}}</h3>
+                    <span class="additional-info">
+                        <ng-container *rbac="['accesscodes.get']">
+                            AC: <span class="access-code">{{selectedEvent?.access_code}}</span>
+                            &#8226;
+                        </ng-container>
+                        <ng-container *rbac="['scheduledevents.get']">
+                            Until
+                            {{selectedEvent?.end_time | date:'MMM d, y, HH:mm'}}
+                        </ng-container>
+                        <ng-container *rbac="['scheduledevents.get', 'users.list']">
+                            <span>&#8226;
+                                Created by {{selectedEvent?.creatorEmail}}
+                            </span>
+                        </ng-container>
+                    </span>
                     <clr-tabs>
                         <ng-container *ngIf="rbacSuccessSessions">
                             <clr-tab>
@@ -89,6 +98,4 @@
             </as-split-area>
         </as-split>
     </div>
-    <!-- </ng-container> -->
-
 </div>
