@@ -43,8 +43,7 @@ export class EnvironmentsComponent implements OnInit {
   }
 
   public openUpdate(index: number) {
-    this.updateEnv = this.environments[index];
-    // this is only a partial environment, we need to get the full
+    // "this.environments[index]"" is only a partial environment, we need to get the full
     this.environmentService.get(this.environments[index].name).subscribe((e: Environment) => {
       this.updateEnv = e;
       this.editWizard.open();
