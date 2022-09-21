@@ -1,0 +1,63 @@
+<div [clrLoading]="loading">
+    <clr-stack-view>
+        <clr-stack-block>
+            <clr-stack-label>Basic Information</clr-stack-label>
+            <clr-stack-block>
+                <clr-stack-label class="stackbox-header">Option</clr-stack-label>
+                <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+            </clr-stack-block>
+            <clr-stack-block>
+                <clr-stack-label>DNS Suffix</clr-stack-label>
+                <clr-stack-content>{{ currentEnvironment.dnssuffix }}</clr-stack-content>
+            </clr-stack-block>
+            <clr-stack-block>
+                <clr-stack-label>Websocket Endpoint</clr-stack-label>
+                <clr-stack-content>{{ currentEnvironment.ws_endpoint }}</clr-stack-content>
+            </clr-stack-block>
+            <clr-stack-block>
+                <clr-stack-label>Capacity Mode</clr-stack-label>
+                <clr-stack-content>{{ currentEnvironment.capacity_mode }}</clr-stack-content>
+            </clr-stack-block>
+            <clr-stack-block>
+                <clr-stack-label>Burst Capable</clr-stack-label>
+                <clr-stack-content>{{ currentEnvironment.burst_capable }}</clr-stack-content>
+            </clr-stack-block>
+        </clr-stack-block>
+        <clr-stack-block>
+            <clr-stack-label>Environment Specifics</clr-stack-label>
+            <clr-stack-block>
+                <clr-stack-label class="stackbox-header">Key</clr-stack-label>
+                <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+            </clr-stack-block>
+            <clr-stack-block *ngFor="let item of currentEnvironment.environment_specifics | keyvalue">
+                <clr-stack-label>{{ item.key }}</clr-stack-label>
+                <clr-stack-content>{{ item.value }}</clr-stack-content>
+            </clr-stack-block>
+        </clr-stack-block>
+        <clr-stack-block>
+            <clr-stack-label>Template Mappings</clr-stack-label>
+            <clr-stack-block *ngFor="let template of currentEnvironment.template_mapping | keyvalue">
+                <clr-stack-label>{{ template.key }}</clr-stack-label>
+                <clr-stack-block>
+                    <clr-stack-label class="stackbox-header">Key</clr-stack-label>
+                    <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+                </clr-stack-block>
+                <clr-stack-block *ngFor="let item of template.value | keyvalue">
+                    <clr-stack-label>{{ item.key }}</clr-stack-label>
+                    <clr-stack-content>{{ item.value }}</clr-stack-content>
+                </clr-stack-block>
+            </clr-stack-block>
+        </clr-stack-block>
+        <clr-stack-block *ngIf="currentEnvironment.ip_translation_map">
+            <clr-stack-label>IP Mappings</clr-stack-label>
+            <clr-stack-block>
+                <clr-stack-label class="stackbox-header">From</clr-stack-label>
+                <clr-stack-content class="stackbox-header">To</clr-stack-content>
+            </clr-stack-block>
+            <clr-stack-block *ngFor="let item of currentEnvironment.ip_translation_map | keyvalue">
+                <clr-stack-label>{{ item.key }}</clr-stack-label>
+                <clr-stack-content>{{ item.value }}</clr-stack-content>
+            </clr-stack-block>
+        </clr-stack-block>
+    </clr-stack-view>
+</div>

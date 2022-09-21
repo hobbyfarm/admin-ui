@@ -17,6 +17,13 @@ export class EnvironmentService {
     public http: HttpClient
   ) { }
 
+  public get(id: string) {
+    return this.http.get(environment.server + "/a/environment/" + id)
+      .pipe(
+        map((s: ServerResponse) => JSON.parse(atou(s.content)))
+      )
+  }
+
   public list() {
     return this.http.get(environment.server + "/a/environment/list")
     .pipe(
