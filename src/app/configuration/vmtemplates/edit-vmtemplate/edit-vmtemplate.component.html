@@ -81,7 +81,7 @@
                 </ng-container>
             </tbody>
         </table>
-        <ng-container *ngIf="!configMap.valid">
+        <ng-container *ngIf="configMap && !configMap.valid">
             <span class="clr-subtext">All mappings must have key and value filled out. Complete, or remove, any entries that do not.</span>
         </ng-container>
     </clr-wizard-page>
