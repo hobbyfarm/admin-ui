@@ -18,13 +18,16 @@
             <clr-dg-column>Object Id</clr-dg-column>
 
             <clr-dg-row *clrDgItems="let e of environments; let i = index">
-                <clr-dg-action-overflow *rbac="['environments.update', 'environments.delete']; op 'OR'">
-                    <button class="action-item" (click)="openUpdate(i)" *rbac="['environments.update']">Edit</button>
+                <clr-dg-action-overflow *ngIf="showActionOverflow">
+                    <button class="action-item" (click)="openUpdate(i)" *rbac="['environments.get', 'environments.update']; op 'AND'">Edit</button>
                     <button class="action-item" disabled *rbac="['environments.delete']">Delete</button>
                 </clr-dg-action-overflow>
                 <clr-dg-cell>{{ e.display_name }}</clr-dg-cell>
                 <clr-dg-cell>{{ e.provider }}</clr-dg-cell>
                 <clr-dg-cell>{{ e.name }}</clr-dg-cell>
+                <ng-container ngProjectAs="clr-dg-row-detail" *rbac="['environments.get']">
+                    <environment-detail *clrIfExpanded [id]="e.name" ngProjectAs="clr-dg-row-detail"></environment-detail>
+                </ng-container>
             </clr-dg-row>
         </clr-datagrid>
     </div>
