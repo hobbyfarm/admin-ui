@@ -57,7 +57,7 @@ export class RolebindingsComponent implements OnInit {
   }
 
   refresh(): void {
-    this.roleBindingService.listForUser(this.user.email)
+    this.roleBindingService.listForUser(this.user.id)
     .subscribe(
       (rb: RoleBinding[]) => this.rolebindings = rb
     )

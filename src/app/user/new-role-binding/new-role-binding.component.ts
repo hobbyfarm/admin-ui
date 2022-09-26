@@ -60,7 +60,7 @@ export class NewRoleBindingComponent implements OnInit {
     this.rolebinding.name = this.user.id + "-" + this.rolebinding.role;
     this.rolebinding.subjects = [{
       kind: "User",
-      name: this.user.email
+      name: this.user.id
     }]
 
     this.roleBindingService.create(this.rolebinding)
