@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ClrDatagridSortOrder } from '@clr/angular';
 import { AlertComponent } from 'src/app/alert/alert.component';
+import { RbacService } from 'src/app/data/rbac.service';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
@@ -17,9 +18,11 @@ export class VmtemplatesComponent implements OnInit {
   public editTemplate: VMTemplate;
   public deleteTemplate: VMTemplate;
   public ascSort = ClrDatagridSortOrder.ASC;
+  public showActionOverflow: boolean = false;
 
   constructor(
-    public vmTemplateService: VmtemplateService
+    public vmTemplateService: VmtemplateService,
+    public rbacService: RbacService
   ) { }
 
   @ViewChild("editTemplateWizard") editWizard: EditVmtemplateComponent;
@@ -27,6 +30,11 @@ export class VmtemplatesComponent implements OnInit {
   @ViewChild("alert") alert: AlertComponent;
 
   ngOnInit(): void {
+    this.rbacService.Grants("virtualmachinetemplates", "get").then(async (allowGet: boolean) => {
+      const allowUpdate: boolean = await this.rbacService.Grants("virtualmachinetemplates", "update");
+      const allowDelete: boolean = await this.rbacService.Grants("virtualmachinetemplates", "delete");
+      this.showActionOverflow = allowDelete || (allowGet && allowUpdate);
+    });
     this.refresh();
   }
 
@@ -37,9 +45,12 @@ export class VmtemplatesComponent implements OnInit {
     )
   }
 
-  public openEdit(t: VMTemplate) {
-    this.editTemplate = t;
-    this.editWizard.open();
+  public openEdit(partialTemplate: VMTemplate) {
+    // "t" is only a partial VMTemplate, we need to get the full
+    this.vmTemplateService.get(partialTemplate.id).subscribe((t: VMTemplate) => {
+      this.editTemplate = t;
+      this.editWizard.open();
+    });
   }
 
   public openNew() {

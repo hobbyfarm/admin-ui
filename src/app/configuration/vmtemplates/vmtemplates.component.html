@@ -19,13 +19,16 @@
             <clr-dg-column [clrDgField]="'id'">Object Id</clr-dg-column>
 
             <clr-dg-row *clrDgItems="let t of templates; let i = index">
-                <clr-dg-action-overflow *rbac="['virtualmachinetemplates.update', 'virtualmachinetemplates.delete']; op 'OR'">
-                    <button class="action-item" (click)="openEdit(t)" *rbac="['virtualmachinetemplates.update']">Edit</button>
+                <clr-dg-action-overflow *ngIf="showActionOverflow">
+                    <button class="action-item" (click)="openEdit(t)" *rbac="['virtualmachinetemplates.get', 'virtualmachinetemplates.update']; op 'AND'">Edit</button>
                     <button class="action-item" (click)="openDelete(t)" *rbac="['virtualmachinetemplates.delete']">Delete</button>
                 </clr-dg-action-overflow>
                 <clr-dg-cell>{{ t.name }}</clr-dg-cell>
                 <clr-dg-cell>{{ t.image }}</clr-dg-cell>
                 <clr-dg-cell>{{ t.id }}</clr-dg-cell>
+                <ng-container ngProjectAs="clr-dg-row-detail" *rbac="['virtualmachinetemplates.get']">
+                    <vmtemplate-detail *clrIfExpanded [id]="t.name" ngProjectAs="clr-dg-row-detail"></vmtemplate-detail>
+                </ng-container>
             </clr-dg-row>
         </clr-datagrid>
     </div>
