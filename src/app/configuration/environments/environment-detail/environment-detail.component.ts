@@ -11,6 +11,8 @@ export class EnvironmentDetailComponent implements OnInit {
   @Input() id: string;
 
   public loading: boolean;
+  public stackBoxExpanded: boolean[] = [];
+  public templateMappingsExpanded: boolean = false;
   public currentEnvironment: Environment;
 
   constructor(public environmentService: EnvironmentService) {}
@@ -19,8 +21,31 @@ export class EnvironmentDetailComponent implements OnInit {
     this.loading = true;
     // Make the server call
     this.environmentService.get(this.id).subscribe((e: Environment) => {
+      // initialize two-way binding variables for stack block state
+      const templateMappingsCount: number = Object.keys(e.template_mapping).length;
+      for(let i = 0; i < templateMappingsCount; ++i) {
+        this.stackBoxExpanded.push(false);
+      }
+
       this.currentEnvironment = e;
       this.loading = false;
     });
   }
+
+  expandAll(event: Event) {
+    event.stopPropagation();
+    this.templateMappingsExpanded = true;
+    for(let i = 0; i < this.stackBoxExpanded.length; ++i) {
+      this.stackBoxExpanded[i] = true;
+    }
+  }
+
+  collapseAll(event: Event) {
+    event.stopPropagation();
+    this.templateMappingsExpanded = false;
+    for(let i = 0; i < this.stackBoxExpanded.length; ++i) {
+      this.stackBoxExpanded[i] = false;
+    }
+  }
+
 }
