@@ -56,7 +56,7 @@
                 </clr-stack-block>
             </clr-stack-block>
         </clr-stack-block>
-        <clr-stack-block *ngIf="currentEnvironment.ip_translation_map">
+        <clr-stack-block *ngIf="currentEnvironment.ip_translation_map && !isEmpty(currentEnvironment.ip_translation_map)">
             <clr-stack-label>IP Mappings</clr-stack-label>
             <clr-stack-block>
                 <clr-stack-label class="stackbox-header">From</clr-stack-label>

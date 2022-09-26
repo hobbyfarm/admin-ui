@@ -48,4 +48,7 @@ export class EnvironmentDetailComponent implements OnInit {
     }
   }
 
+  isEmpty(object: Object) {
+    return Object.keys(object).length == 0;
+  }
 }

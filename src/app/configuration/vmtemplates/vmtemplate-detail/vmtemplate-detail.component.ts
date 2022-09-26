@@ -23,4 +23,8 @@ export class VmTemplateDetailComponent implements OnInit {
       this.loading = false;
     });
   }
+
+  isEmpty(object: Object) {
+    return Object.keys(object).length == 0;
+  }
 }

@@ -27,7 +27,7 @@
                 <clr-stack-content>{{ currentVmTemplate.resources.storage }}</clr-stack-content>
             </clr-stack-block>
         </clr-stack-block>
-        <clr-stack-block *ngIf="currentVmTemplate.config_map">
+        <clr-stack-block *ngIf="currentVmTemplate.config_map && !isEmpty(currentVmTemplate.config_map)">
             <clr-stack-label>Config Map</clr-stack-label>
             <clr-stack-block>
                 <clr-stack-label class="stackbox-header">Key</clr-stack-label>
