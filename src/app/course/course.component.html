@@ -53,7 +53,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody *ngIf="dragScenarios" class="container" [dragula]="'scenarios'" [(dragulaModel)]="dragScenarios">
+                        <tbody class="container" [dragula]="'scenarios'" [(dragulaModel)]="dragScenarios">
                             <tr *ngFor="let s of dragScenarios; let i = index">
                                 <td>
                                     <clr-icon class="handle" shape="drag-handle" size="24"></clr-icon>
