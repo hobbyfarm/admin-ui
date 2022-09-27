@@ -142,6 +142,9 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.scenarioSubscription.unsubscribe()
+    // only if cached -> unsubscribe!
+    if(this.scenarioSubscription) {
+      this.scenarioSubscription.unsubscribe()
+    }
   }
 }
