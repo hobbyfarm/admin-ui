@@ -30,6 +30,7 @@ import {
 } from "@angular/forms";
 import { DlDateTimePickerChange } from "angular-bootstrap-datetimepicker";
 import { QuicksetValidator } from "src/app/validators/quickset.validator";
+import { RbacService } from 'src/app/data/rbac.service';
 
 @Component({
   selector: "new-scheduled-event",
@@ -85,7 +86,8 @@ export class NewScheduledEventComponent implements OnInit {
     public ss: ScenarioService,
     public cs: CourseService,
     public ses: ScheduledeventService,
-    public es: EnvironmentService
+    public es: EnvironmentService,
+    public rbacService: RbacService
   ) {}
 
   public eventDetails: FormGroup = new FormGroup({
@@ -461,7 +463,11 @@ export class NewScheduledEventComponent implements OnInit {
           }
         });
       });
-      this.checkEnvironments();
+      this.rbacService.Grants("environments", "list").then((allowListEnvironments: boolean) => {
+        if(allowListEnvironments) {
+          this.checkEnvironments();
+        }
+      })
 
       this.wizard.navService.goTo(this.wizard.pages.last, true);
       this.wizard.pages.first.makeCurrent();
@@ -492,11 +498,25 @@ export class NewScheduledEventComponent implements OnInit {
       this.se.required_vms = {};
     }
 
-    this.ss.list().subscribe((s: Scenario[]) => {
-      this.scenarios = s;
-    });
-    this.cs.list().subscribe((c: Course[]) => {
-      this.courses = c;
+    const authorizationRequests = Promise.all([
+      this.rbacService.Grants("scenarios", "list"),
+      this.rbacService.Grants("courses", "list"),
+    ])
+
+    authorizationRequests.then((permissions: [boolean, boolean]) => {
+      const allowListScenarios: boolean = permissions[0];
+      const allowListCourses: boolean = permissions[1];
+
+      if(allowListScenarios) {
+        this.ss.list().subscribe((s: Scenario[]) => {
+          this.scenarios = s;
+        });
+      }
+      if(allowListCourses) {
+        this.cs.list().subscribe((c: Course[]) => {
+          this.courses = c;
+        });
+      }
     });
     this.ses.watch().subscribe((se: ScheduledEvent[]) => {
       this.scheduledEvents = se;

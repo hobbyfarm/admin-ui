@@ -41,9 +41,9 @@
             </clr-dg-column>
 
             <clr-dg-row *clrDgItems="let se of events">
-              <clr-dg-action-overflow *rbac="['scheduledevents.delete', 'scheduledevents.update']; op 'OR'">
+              <clr-dg-action-overflow *ngIf="showActionOverflow">
                 <button class="action-item" (click)="openDelete(se)" *rbac="['scheduledevents.delete']">Delete</button>
-                <button class="action-item" (click)="openEdit(se)" *rbac="['scheduledevents.update']">Edit</button>
+                <button class="action-item" (click)="openEdit(se)" *ngIf="allowEdit">Edit</button>
               </clr-dg-action-overflow>
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
               <clr-dg-cell *rbac="['users.list']">{{ se.creatorEmail ? se.creatorEmail : "...loading" }}</clr-dg-cell>
