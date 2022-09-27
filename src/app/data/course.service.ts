@@ -44,10 +44,6 @@ export class CourseService {
             if(await this.rbacService.Grants("scenarios", "list")) {
             this.scenarioService.list().subscribe((sc: Scenario[]) => {
               tempCourse.scenarios = sc.filter((s: Scenario) => c.scenarios.includes(s.id)); 
-              // c.scenarios.forEach((s) => {
-              //     const detailedScenario: Scenario = sc.filter(sc => sc.id == String(s))[0];
-              //     c.scenarios.push(detailedScenario);
-              // })            
             })
           }
             tempCourse.id = c.id;
@@ -63,19 +59,9 @@ export class CourseService {
               return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);
             })
             courses.push(tempCourse);
-            // c.categories = c.categories ?? [];
-            // c.scenarios = c.scenarios.filter(x => typeof x != 'string');
-            // c.scenarios.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
           });
           return courses;
         }),
-        // map((cList: Course[]) => {
-        //   cList.forEach((c: Course) => {
-        //     c.name = atou(c.name);
-        //     c.description = atou(c.description);
-        //   });
-        //   return cList;
-        // }),
         tap((c: Course[]) => {
           this.set(c);
           }
