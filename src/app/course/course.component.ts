@@ -8,7 +8,6 @@ import { ScenarioService } from '../data/scenario.service';
 import { DragulaService } from 'ng2-dragula';
 import { AddScenarioComponent } from './add-scenario/add-scenario.component';
 import { CourseFormComponent } from './course-form/course-form.component';
-import { ClrTab } from '@clr/angular';
 import { cloneDeep } from 'lodash-es';
 import { ServerResponse } from '../data/serverresponse';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -25,9 +24,15 @@ export class CourseComponent implements OnInit {
 
   @ViewChild("newCourse") newCourse: NewCourseComponent;
   @ViewChild("addScenario") addScenario: AddScenarioComponent;
-  @ViewChild("courseform") courseForm: CourseFormComponent;
-  @ViewChild("detailsTab") detailsTab: ClrTab;
   @ViewChild("deleteConfirmation") deleteConfirmation: DeleteConfirmationComponent;
+
+  private courseForm: CourseFormComponent;
+
+  @ViewChild('courseform', { static: false }) set content(content: CourseFormComponent) {
+     if(content) {
+          this.courseForm = content;
+     }
+  }
 
   public selectedCourse: Course;
 
@@ -79,19 +84,32 @@ export class CourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.rbacService.Grants("courses", "get").then(async (allowedGet: boolean) => {
-      const allowedUpdate: boolean = await this.rbacService.Grants("courses", "update");
+    const authorizationRequests = Promise.all([
+      this.rbacService.Grants("courses", "get"),
+      this.rbacService.Grants("courses", "update"),
+      this.rbacService.Grants("scenarios", "list")
+    ])
+
+    authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
+      const allowedGet: boolean = permissions[0];
+      const allowedUpdate: boolean = permissions[1];
+      const allowListScenarios: boolean = permissions[2];
       // Enable permission to list courses if either "get" or "update" on courses is granted
       this.selectRbac = allowedGet || allowedUpdate;
-      this.listScenarios = await this.rbacService.Grants("scenarios", "list");
+      this.listScenarios = allowListScenarios;
       // Enable permission to update courses
       this.updateRbac = allowedUpdate && this.listScenarios;
+      return this.listScenarios;
+    }).then((allowListScenarios: boolean) => {
+      if(allowListScenarios) {
+        return this.scenarioService.list().toPromise();
+      } else {
+        return [];
+      }
+    }).then((s: Scenario[]) => {
+      this.scenarios = s;
     });
-
     this.refresh();
-    if(this.listScenarios) {
-      this.scenarioService.list().subscribe((s: Scenario[]) => this.scenarios = s);
-    }
   }
 
   refresh(): void {
@@ -106,6 +124,7 @@ export class CourseComponent implements OnInit {
     if(!this.updateRbac) {
       this.editForm.disable();
     } else {
+      this.editForm.enable();
       this.editForm.valueChanges.subscribe(
         (a: any) => {
           if (this.editForm.dirty) {
@@ -191,7 +210,7 @@ export class CourseComponent implements OnInit {
       .subscribe(
         (dynamicScenarios: String[]) => {
           this.scenarios.forEach(scenario => {
-            if(dynamicScenarios.includes(scenario.id)){
+            if(dynamicScenarios && dynamicScenarios.includes(scenario.id)){
                 this.dynamicAddedScenarios.push(scenario);
             }
           })

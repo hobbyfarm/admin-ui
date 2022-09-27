@@ -3,7 +3,7 @@ import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http'
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
 import { map, catchError, tap } from 'rxjs/operators';
-import { Course } from './course';
+import { Course, CourseApi } from './course';
 import { Scenario } from './scenario';
 import { ScenarioService } from './scenario.service';
 import { atou } from '../unicode';
@@ -32,34 +32,50 @@ export class CourseService {
       return this.http.get(environment.server + "/a/course/list")
       .pipe(
         map((s: ServerResponse) => {
-          let obj: Course[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
+          let obj: CourseApi[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
+          let courses: Course[] = [];
           // so now we need to go vmset-by-vmset and build maps
           if (obj == null) { return []; }
-          obj.forEach(async (c: Course) => {
+          obj.forEach(async (c: CourseApi) => {
             c.virtualmachines.forEach((v: Object) => {
               v = new Map(Object.entries(v))
             })
+            const tempCourse: Course = new Course();
             if(await this.rbacService.Grants("scenarios", "list")) {
             this.scenarioService.list().subscribe((sc: Scenario[]) => {
-              c.scenarios.forEach((s) => {
-                  sc = sc.filter(sc => sc.id == String(s))
-                  c.scenarios.push(sc[0]);
-              })            
+              tempCourse.scenarios = sc.filter((s: Scenario) => c.scenarios.includes(s.id)); 
+              // c.scenarios.forEach((s) => {
+              //     const detailedScenario: Scenario = sc.filter(sc => sc.id == String(s))[0];
+              //     c.scenarios.push(detailedScenario);
+              // })            
             })
           }
-            c.categories = c.categories ?? [];
-            c.scenarios = c.scenarios.filter(x => typeof x != 'string');
-            c.scenarios.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
+            tempCourse.id = c.id;
+            tempCourse.description = atou(c.description);
+            tempCourse.categories = c.categories ?? [];
+            tempCourse.keep_vm = c.keep_vm;
+            tempCourse.keepalive_duration = c.keepalive_duration;
+            tempCourse.name = atou(c.name);
+            tempCourse.pause_duration = c.pause_duration;
+            tempCourse.pauseable = c.pauseable;
+            tempCourse.virtualmachines = c.virtualmachines;
+            tempCourse.scenarios.sort((a, b) => {
+              return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);
+            })
+            courses.push(tempCourse);
+            // c.categories = c.categories ?? [];
+            // c.scenarios = c.scenarios.filter(x => typeof x != 'string');
+            // c.scenarios.sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);} );
           });
-          return obj;
+          return courses;
         }),
-        map((cList: Course[]) => {
-          cList.forEach((c: Course) => {
-            c.name = atou(c.name);
-            c.description = atou(c.description);
-          });
-          return cList;
-        }),
+        // map((cList: Course[]) => {
+        //   cList.forEach((c: Course) => {
+        //     c.name = atou(c.name);
+        //     c.description = atou(c.description);
+        //   });
+        //   return cList;
+        // }),
         tap((c: Course[]) => {
           this.set(c);
           }
