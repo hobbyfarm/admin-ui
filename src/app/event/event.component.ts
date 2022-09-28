@@ -36,6 +36,9 @@ export class EventComponent implements OnInit, OnDestroy {
 
   public descSort = ClrDatagridSortOrder.DESC;
 
+  public allowEdit: boolean = false;
+  public showActionOverflow: boolean = false;
+
   private scenarioSubscription: Subscription; 
 
 
@@ -56,7 +59,24 @@ export class EventComponent implements OnInit, OnDestroy {
     this.seService.list().subscribe(se => {
       this.events = se
       this.updateFields()
-    })   
+    })
+
+    // list permissions for the following ressources are required in order to edit scheduled events
+    const authorizationRequests = Promise.all([
+      this.rbacService.Grants("scenarios", "list"),
+      this.rbacService.Grants("courses", "list"),
+      this.rbacService.Grants("environments", "list"),
+      this.rbacService.Grants("scheduledevents", "delete"),
+    ])
+
+    authorizationRequests.then((permissions: [boolean, boolean, boolean, boolean]) => {
+      const listScenarios: boolean = permissions[0];
+      const listCourses: boolean = permissions[1];
+      const listEnvironments: boolean = permissions[2];
+      const deleteEvents: boolean = permissions[2];
+      this.allowEdit = (listScenarios || listCourses) && listEnvironments;
+      this.showActionOverflow = this.allowEdit || deleteEvents;
+    });
   }
 
 
@@ -142,6 +162,9 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.scenarioSubscription.unsubscribe()
+    // only if cached -> unsubscribe!
+    if(this.scenarioSubscription) {
+      this.scenarioSubscription.unsubscribe()
+    }
   }
 }

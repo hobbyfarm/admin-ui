@@ -30,9 +30,16 @@ export class VmtemplatesComponent implements OnInit {
   @ViewChild("alert") alert: AlertComponent;
 
   ngOnInit(): void {
-    this.rbacService.Grants("virtualmachinetemplates", "get").then(async (allowGet: boolean) => {
-      const allowUpdate: boolean = await this.rbacService.Grants("virtualmachinetemplates", "update");
-      const allowDelete: boolean = await this.rbacService.Grants("virtualmachinetemplates", "delete");
+    const authorizationRequests = Promise.all([
+      this.rbacService.Grants("virtualmachinetemplates", "get"),
+      this.rbacService.Grants("virtualmachinetemplates", "update"),
+      this.rbacService.Grants("virtualmachinetemplates", "delete")
+    ]);
+
+    authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
+      const allowGet: boolean = permissions[0];
+      const allowUpdate: boolean = permissions[1];
+      const allowDelete: boolean = permissions[2];
       this.showActionOverflow = allowDelete || (allowGet && allowUpdate);
     });
     this.refresh();

@@ -19,7 +19,7 @@ export class VmsetComponent implements OnInit {
 
   public addingIndex: number;
 
-  public allowedAddVm: boolean = false;
+  public allowedAddVm: boolean;
 
   private newVmModal: NewVmComponent;
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, ViewChild, Input } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild, Input, OnChanges } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { VMTemplate } from 'src/app/data/vmtemplate';
@@ -8,7 +8,7 @@ import { ClrModal } from '@clr/angular';
   selector: 'new-vm',
   templateUrl: './new-vm.component.html',
 })
-export class NewVmComponent implements OnInit {
+export class NewVmComponent implements OnChanges {
   public modalOpen: boolean = false;
   public vmtemplates: VMTemplate[] = [];
 
@@ -24,7 +24,7 @@ export class NewVmComponent implements OnInit {
     public vmTemplateService: VmtemplateService
   ) { }
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     if(this.listVms) {
       this.vmTemplateService.list()
       .subscribe(

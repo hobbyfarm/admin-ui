@@ -27,7 +27,7 @@
                 <clr-dg-cell>{{ t.image }}</clr-dg-cell>
                 <clr-dg-cell>{{ t.id }}</clr-dg-cell>
                 <ng-container ngProjectAs="clr-dg-row-detail" *rbac="['virtualmachinetemplates.get']">
-                    <vmtemplate-detail *clrIfExpanded [id]="t.name" ngProjectAs="clr-dg-row-detail"></vmtemplate-detail>
+                    <vmtemplate-detail *clrIfExpanded [id]="t.id" ngProjectAs="clr-dg-row-detail"></vmtemplate-detail>
                 </ng-container>
             </clr-dg-row>
         </clr-datagrid>

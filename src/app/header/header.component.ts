@@ -41,12 +41,17 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.rbacService.Grants('environments', 'list').then(async (listEnvironments: boolean) => {
-      const listVmTemplates: boolean = await this.rbacService.Grants('virtualmachinetemplates', 'list');
-      const listRoles: boolean = await this.rbacService.Grants('roles', 'list');
-      return listEnvironments || listVmTemplates || listRoles;
-    }).then((configRbac: boolean) => {
-      this.configurationRbac = configRbac;
+    const authorizationRequests = Promise.all([
+      this.rbacService.Grants('environments', 'list'),
+      this.rbacService.Grants('virtualmachinetemplates', 'list'),
+      this.rbacService.Grants('roles', 'list')
+    ])
+
+    authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
+      const listEnvironments: boolean = permissions[0];
+      const listVmTemplates: boolean = permissions[1];
+      const listRoles: boolean = permissions[2];
+      this.configurationRbac = listEnvironments || listVmTemplates || listRoles;
     });
 
     var tok = this.helper.decodeToken(this.helper.tokenGetter());

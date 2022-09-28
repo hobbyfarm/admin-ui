@@ -7,8 +7,21 @@ export class Course {
     virtualmachines: {}[];
     scenarios: Scenario[];
     categories: string[];
-    keepalive_duration: string;
-    pause_duration: string;
+    keepalive_duration?: string;
+    pause_duration?: string;
+    pauseable: boolean;
+    keep_vm: boolean;
+}
+
+export class CourseApi {
+    id: string;
+    name: string;
+    description: string;
+    virtualmachines: {}[];
+    scenarios: string[];
+    categories: string[];
+    keepalive_duration?: string;
+    pause_duration?: string;
     pauseable: boolean;
     keep_vm: boolean;
 }

@@ -6,6 +6,7 @@ import { VMTemplate } from 'src/app/data/vmtemplate';
 import { EnvironmentService } from 'src/app/data/environment.service';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { ServerResponse } from 'src/app/data/serverresponse';
+import { RbacService } from 'src/app/data/rbac.service';
 
 @Component({
   selector: 'edit-environment-wizard',
@@ -31,7 +32,8 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   constructor(
     private _fb: FormBuilder,
     private envService: EnvironmentService,
-    private vmTemplateService: VmtemplateService
+    private vmTemplateService: VmtemplateService,
+    private rbacService: RbacService,
   ) { }
 
 
@@ -164,7 +166,11 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this._build();
-    this.refreshVMTemplates();
+    this.rbacService.Grants("virtualmachinetemplates", "list").then((listVmTemplates: boolean) => {
+      if(listVmTemplates) {
+        this.refreshVMTemplates();
+      }
+    })
   }
 
   private refreshVMTemplates(){

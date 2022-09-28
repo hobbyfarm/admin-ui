@@ -16,7 +16,7 @@
                     VM</button></clr-stack-content>
         </clr-stack-block>
         <clr-stack-block *ngIf="updateRbac">
-            <clr-stack-label><button class="btn btn-sm btn-link btn-link-stack" (click)="openAddVm(i)" disabled="!allowedAddVm">New
+            <clr-stack-label><button class="btn btn-sm btn-link btn-link-stack" (click)="openAddVm(i)" [disabled]="!allowedAddVm">New
                     VM</button>
             </clr-stack-label>
             <clr-stack-content *ngIf="!allowedAddVm">

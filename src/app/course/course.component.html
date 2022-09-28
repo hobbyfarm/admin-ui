@@ -23,10 +23,10 @@
             </clr-dg-row>
         </clr-datagrid>
     </div>
-    <div class="clr-col-8">
+    <div class="clr-col-8" *ngIf="selectedCourse">
         <clr-tabs>
-            <clr-tab #detailsTab>
-                <button [disabled]="!selectedCourse" clrTabLink id="detailsLink">Course Details</button>
+            <clr-tab>
+                <button clrTabLink id="detailsLink">Course Details</button>
                 <ng-template [(clrIfActive)]="courseDetailsActive">
                     <clr-tab-content id="detailsContent">
                         <course-form #courseform [course]="selectedCourse" (formReady)="setupForm($event)"></course-form>
@@ -34,15 +34,15 @@
                 </ng-template>
             </clr-tab>
             <clr-tab>
-                <button [disabled]="!selectedCourse" clrTabLink id="virtualMachinesLink">Virtual Machines</button>
+                <button clrTabLink id="virtualMachinesLink">Virtual Machines</button>
                 <clr-tab-content id="virtualMachinesContent" *clrIfActive>
                     <vmset [(vms)]="editVirtualMachines" (vmsChange)="setModified()" [updateRbac]="updateRbac"></vmset>
                 </clr-tab-content>
             </clr-tab>
             <clr-tab *ngIf="listScenarios">
-                <button [disabled]="!selectedCourse" clrTabLink id="scenariosLink">Scenarios</button>
+                <button clrTabLink id="scenariosLink">Scenarios</button>
                 <clr-tab-content id="scenariosContent" *clrIfActive>
-                    <button class="btn btn-sm btn-success-outline" *rbac="['courses.edit']" (click)="openAdd()">Add Scenario</button>
+                    <button class="btn btn-sm btn-success-outline" *rbac="['courses.update']" (click)="openAdd()">Add Scenario</button>
                     <table class="table table-compact">
                         <thead>
                             <tr>
@@ -88,17 +88,17 @@
                 </clr-tab-content>
             </clr-tab>
             <clr-tab *ngIf="listScenarios">
-                <button [disabled]="!selectedCourse" clrTabLink id="categoriesLink">Dynamic Scenarios</button>
+                <button clrTabLink id="categoriesLink">Dynamic Scenarios</button>
                 <clr-tab-content id="categoriesContent" *clrIfActive>
                     <p>
                         Scenarios that match at least one of the queries provided are dynamically included in this course,<br>
                         together with all scenarios selected in the scenarios-tab which are always included.<br>
                         There is no need to update the course (or any scheduled event that includes this course) if categories of a scenario are changed.<br>
                     </p>
-                    <button class="btn btn-success-outline btn-sm" (click)="newCategory = true" *rbac="['courses.edit']">
+                    <button class="btn btn-success-outline btn-sm" (click)="newCategory = true" *rbac="['courses.update']">
                       <clr-icon shape="plus"></clr-icon> Add Query
                     </button>
-                    <button class="btn btn-success-outline btn-sm" (click)="seeExamples = !seeExamples" *rbac="['courses.edit']">
+                    <button class="btn btn-success-outline btn-sm" (click)="seeExamples = !seeExamples" *rbac="['courses.update']">
                         <clr-icon shape="plus"></clr-icon> Example Queries
                     </button>
                     <ng-container *ngIf="seeExamples">

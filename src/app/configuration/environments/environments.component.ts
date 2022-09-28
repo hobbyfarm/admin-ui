@@ -21,9 +21,16 @@ export class EnvironmentsComponent implements OnInit {
   @ViewChild("editEnvironmentWizard", {static: true}) editWizard: EditEnvironmentComponent;
 
   ngOnInit() {
-    this.rbacService.Grants("environments", "get").then(async (allowGet: boolean) => {
-      const allowUpdate: boolean = await this.rbacService.Grants("environments", "update");
-      const allowDelete: boolean = await this.rbacService.Grants("environments", "delete");
+    const authorizationRequests = Promise.all([
+      this.rbacService.Grants("environments", "get"),
+      this.rbacService.Grants("environments", "update"),
+      this.rbacService.Grants("environments", "delete")
+    ])
+
+    authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
+      const allowGet: boolean = permissions[0];
+      const allowUpdate: boolean = permissions[1];
+      const allowDelete: boolean = permissions[2];
       this.showActionOverflow = allowDelete || (allowGet && allowUpdate);
     });
     this.refresh();
