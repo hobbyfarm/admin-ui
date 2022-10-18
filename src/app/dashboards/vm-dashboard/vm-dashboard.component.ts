@@ -42,7 +42,7 @@ export class VmDashboardComponent implements OnInit {
   public vmSets: dashboardVmSet[] = [];
   public emptyVMset: dashboardVmSet = {
     ...new VmSet(),
-    base_name: "Dynmaic",
+    base_name: "Dynamic",
     stepOpen: false
   }
   public selectedVM: VirtualMachine = new VirtualMachine();
