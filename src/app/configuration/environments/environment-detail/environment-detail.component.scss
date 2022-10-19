@@ -2,10 +2,10 @@
     font-weight: bold;
 }
 
-::ng-deep .stack-view .stack-children .stack-block-content {
+:host ::ng-deep .stack-view .stack-children .stack-block-content {
     background-color: inherit;
 }
 
-::ng-deep .stack-view .stack-view-key {
+:host ::ng-deep .stack-view .stack-view-key {
     align-self: center;
 }

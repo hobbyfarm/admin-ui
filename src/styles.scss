@@ -75,3 +75,14 @@ clr-stack-view.compact {
 clr-datagrid.clr_disable_selection div.datagrid-row-master > div:first-child  {
     display: none;
 }
+
+.modal-body-wrapper {
+    width: 100%;
+    margin-bottom: auto;
+}
+
+/* added because the modal-body is improperly rendering at 70vh,
+overflows the modal and hence displays an unneeded scrollbar */
+.modal-body {
+    min-height: unset !important;
+}
