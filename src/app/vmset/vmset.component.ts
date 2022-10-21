@@ -19,7 +19,7 @@ export class VmsetComponent implements OnInit {
 
   public addingIndex: number;
 
-  public allowedAddVm: boolean;
+  public allowedAddVm: Promise<boolean>;
 
   private newVmModal: NewVmComponent;
 
@@ -32,9 +32,7 @@ export class VmsetComponent implements OnInit {
   constructor(public rbacService: RbacService) {}
 
   ngOnInit(): void {
-    this.rbacService.Grants("virtualmachinetemplates", "list").then((addVm: boolean) => {
-      this.allowedAddVm = addVm;
-    });
+    this.allowedAddVm = this.rbacService.Grants("virtualmachinetemplates", "list");
   }
 
   openAddVm(i: number) {
