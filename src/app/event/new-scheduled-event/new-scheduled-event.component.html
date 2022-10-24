@@ -209,7 +209,12 @@
         Please wait...
       </span>
     </ng-container>
-    <ng-container *ngIf="!checkingEnvironments">
+    <ng-container *ngIf="noEnvironmentsAvailable">
+      <span>
+        No suitable environments found.
+      </span>
+    </ng-container>
+    <ng-container *ngIf="!checkingEnvironments && !noEnvironmentsAvailable">
       <clr-datagrid [(clrDgSelected)]="selectedEnvironments">
         <clr-dg-column>
           <clr-icon shape="building"></clr-icon>&nbsp;Environment
