@@ -13,9 +13,8 @@ import { ScenarioService } from "src/app/data/scenario.service";
 import { Course } from "src/app/data/course";
 import { CourseService } from "src/app/data/course.service";
 import { EnvironmentService } from "src/app/data/environment.service";
-import { combineAll, concatMap, map, filter, tap, startWith, switchMap, endWith, defaultIfEmpty } from "rxjs/operators";
+import { combineAll, concatMap, map, filter, defaultIfEmpty } from "rxjs/operators";
 import { Environment } from "src/app/data/environment";
-import { combineLatest, from, Observable, of } from "rxjs";
 import { EnvironmentAvailability } from "src/app/data/environmentavailability";
 import { ScheduledeventService } from "src/app/data/scheduledevent.service";
 import {
@@ -31,6 +30,7 @@ import {
 import { DlDateTimePickerChange } from "angular-bootstrap-datetimepicker";
 import { QuicksetValidator } from "src/app/validators/quickset.validator";
 import { RbacService } from 'src/app/data/rbac.service';
+import { of } from "rxjs";
 
 @Component({
   selector: "new-scheduled-event",
