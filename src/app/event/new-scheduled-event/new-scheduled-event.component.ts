@@ -566,6 +566,7 @@ export class NewScheduledEventComponent implements OnInit {
   public checkEnvironments() {
     this.checkingEnvironments = true;
     this.noEnvironmentsAvailable = false;
+    this.unavailableVMTs = [];
     var templates: Map<string, boolean> = new Map();
 
     // add all chosen templates to the list
