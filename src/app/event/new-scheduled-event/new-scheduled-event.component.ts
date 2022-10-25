@@ -629,7 +629,6 @@ export class NewScheduledEventComponent implements OnInit {
         }))
 
         this.unavailableVMTs = Array.from(templates.keys());
-        console.log(this.unavailableVMTs);
 
         if (this.event) {
           // we are updating instead of creating new
