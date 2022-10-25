@@ -59,6 +59,7 @@ export class NewScheduledEventComponent implements OnInit {
   public availableEnvironments: EnvironmentAvailability[] = [];
   public checkingEnvironments: boolean = true;
   public noEnvironmentsAvailable: boolean = false;
+  public unavailableVMTs: string[] = []
   public environments: Environment[] = [];
   public keyedEnvironments: Map<string, Environment> = new Map();
   public selectedEnvironments: EnvironmentAvailability[] = [];
@@ -620,6 +621,15 @@ export class NewScheduledEventComponent implements OnInit {
         this.availableEnvironments = ea;
         this.checkingEnvironments = false;
         this.noEnvironmentsAvailable = ea.length == 0 ? true: false;
+
+        ea.forEach((e => {
+          Object.keys(e.available_count).forEach(vmt => {
+            templates.delete(vmt);
+          })
+        }))
+
+        this.unavailableVMTs = Array.from(templates.keys());
+        console.log(this.unavailableVMTs);
 
         if (this.event) {
           // we are updating instead of creating new
