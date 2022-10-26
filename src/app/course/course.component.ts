@@ -113,7 +113,7 @@ export class CourseComponent implements OnInit {
   }
 
   refresh(): void {
-    this.courseService.list()
+    this.courseService.list(true)
       .subscribe(
         (cList: Course[]) => this.courses = cList
       )
