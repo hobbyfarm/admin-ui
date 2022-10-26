@@ -209,7 +209,31 @@
         Please wait...
       </span>
     </ng-container>
-    <ng-container *ngIf="!checkingEnvironments">
+    <ng-container *ngIf="noEnvironmentsAvailable">
+      <span>
+        No suitable environments found.
+      </span>
+    </ng-container>
+    <ng-container *ngIf="unavailableVMTs.length > 0">
+      <span>
+        No suitable environments found for the following VM Templates:
+      </span>
+      <thead>
+        <tr>
+          <th class="left">ID</th>
+        </tr>
+      </thead>
+      <tbody [formGroup]="simpleModeVmCounts">
+        <ng-container *ngFor="let vmt of unavailableVMTs;">
+          <tr>
+            <td class="left">
+              {{vmt}}
+            </td>
+            </tr>
+        </ng-container>
+      </tbody>
+    </ng-container>
+    <ng-container *ngIf="!checkingEnvironments && !noEnvironmentsAvailable && unavailableVMTs.length == 0">
       <clr-datagrid [(clrDgSelected)]="selectedEnvironments">
         <clr-dg-column>
           <clr-icon shape="building"></clr-icon>&nbsp;Environment

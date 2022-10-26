@@ -13,9 +13,8 @@ import { ScenarioService } from "src/app/data/scenario.service";
 import { Course } from "src/app/data/course";
 import { CourseService } from "src/app/data/course.service";
 import { EnvironmentService } from "src/app/data/environment.service";
-import { combineAll, concatMap, map, filter } from "rxjs/operators";
+import { combineAll, concatMap, map, filter, defaultIfEmpty } from "rxjs/operators";
 import { Environment } from "src/app/data/environment";
-import { from, of } from "rxjs";
 import { EnvironmentAvailability } from "src/app/data/environmentavailability";
 import { ScheduledeventService } from "src/app/data/scheduledevent.service";
 import {
@@ -31,6 +30,7 @@ import {
 import { DlDateTimePickerChange } from "angular-bootstrap-datetimepicker";
 import { QuicksetValidator } from "src/app/validators/quickset.validator";
 import { RbacService } from 'src/app/data/rbac.service';
+import { of } from "rxjs";
 
 @Component({
   selector: "new-scheduled-event",
@@ -58,6 +58,8 @@ export class NewScheduledEventComponent implements OnInit {
 
   public availableEnvironments: EnvironmentAvailability[] = [];
   public checkingEnvironments: boolean = true;
+  public noEnvironmentsAvailable: boolean = false;
+  public unavailableVMTs: string[] = []
   public environments: Environment[] = [];
   public keyedEnvironments: Map<string, Environment> = new Map();
   public selectedEnvironments: EnvironmentAvailability[] = [];
@@ -563,6 +565,8 @@ export class NewScheduledEventComponent implements OnInit {
   // display those results
   public checkEnvironments() {
     this.checkingEnvironments = true;
+    this.noEnvironmentsAvailable = false;
+    this.unavailableVMTs = [];
     var templates: Map<string, boolean> = new Map();
 
     // add all chosen templates to the list
@@ -586,7 +590,7 @@ export class NewScheduledEventComponent implements OnInit {
       .pipe(
         concatMap((e: Environment[]) => {
           this.environments = e;
-          return from(e);
+          return e
         }),
         filter((e: Environment) => {
           // first add to keyed environment, regardless of if we use it or not
@@ -611,11 +615,21 @@ export class NewScheduledEventComponent implements OnInit {
         map((ea: EnvironmentAvailability) => {
           return of(ea);
         }),
-        combineAll()
+        combineAll(),
+        defaultIfEmpty([])
       )
       .subscribe((ea: EnvironmentAvailability[]) => {
         this.availableEnvironments = ea;
         this.checkingEnvironments = false;
+        this.noEnvironmentsAvailable = ea.length == 0 ? true: false;
+
+        ea.forEach((e => {
+          Object.keys(e.available_count).forEach(vmt => {
+            templates.delete(vmt);
+          })
+        }))
+
+        this.unavailableVMTs = Array.from(templates.keys());
 
         if (this.event) {
           // we are updating instead of creating new
