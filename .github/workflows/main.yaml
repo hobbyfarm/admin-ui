@@ -41,7 +41,7 @@ jobs:
 
     - name: Build
       run: |
-        docker build -f cicd/Dockerfile -t $app_image:${GIT_COMMIT_SHORT_HASH:-dev}
+        docker build -f cicd/Dockerfile -t $app_image:${GIT_COMMIT_SHORT_HASH:-dev} .
 
     - name: Docker Login
       if: fromJSON(env.should_push_image)
