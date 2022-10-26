@@ -56,6 +56,10 @@ export class HeaderComponent implements OnInit {
 
     var tok = this.helper.decodeToken(this.helper.tokenGetter());
     this.email = tok.email;
+
+    // Automatically logout the user after token expiration
+    const timeout = tok.exp - Date.now();
+    setTimeout(() => this.doLogout(), timeout);
   }
 
   @ViewChild("logoutmodal", { static: true }) logoutModal: ClrModal;
