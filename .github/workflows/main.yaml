@@ -27,11 +27,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
 
-    - name: Setup npm cache
-      uses: actions/setup-node@v3
+    - name: Setup node_modules cache
+      id: cache-nodemodules
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-node-modules
       with:
-        node-version: 16
-        cache: 'npm'
+        path: node_modules
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}
 
     - name: Install deps
       run: npm install
