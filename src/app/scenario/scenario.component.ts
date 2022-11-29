@@ -21,6 +21,9 @@ export class ScenarioComponent implements OnInit {
   public unusedSelectedScenario: any = {}; // only exists to satisfy a datagrid requirement
 
   public scenarios: Scenario[] = [];
+  public filteredScenarios: Scenario[] = [];
+  public category: string = "";
+  public categories: Set<string> = new Set<string>();
   public vmtemplates: VMTemplate[] = [];
   public selectedscenario: Scenario;
   public editingStep: Step = new Step();
@@ -235,7 +238,11 @@ export class ScenarioComponent implements OnInit {
 
     this.scenarioService.list()
       .subscribe(
-        (s: Scenario[]) => this.scenarios = s
+        (s: Scenario[]) => {
+          this.scenarios = s
+          this.calculateCategories();
+          this.filterScenarioList();
+        }
       )
 
     this.newScenarioModal.close();
@@ -387,6 +394,49 @@ export class ScenarioComponent implements OnInit {
     this.deleteVMSetModal.close();
   }
 
+  filterScenarioList() {
+    if (this.category == "") {
+      this.filteredScenarios = this.scenarios;
+      return;
+    }
+
+    if (this.category == "__none__") {
+      let sc = [];
+      this.scenarios.forEach(s => {
+        if (s.categories.length === 0) {
+          sc.push(s);
+          return;
+        }
+      });
+      this.filteredScenarios = sc;
+      return;
+    }
+
+    let sc = [];
+    this.scenarios.forEach(s => {
+      if (s.categories.includes(this.category)) {
+        sc.push(s);
+        return;
+      }
+    });
+    this.filteredScenarios = sc;
+  }
+
+  setCategoryFilter(category: string) {
+    this.category = category
+    this.filterScenarioList();
+  }
+
+  calculateCategories() {
+    let c = new Set<string>();
+    this.scenarios.forEach(s => {
+      console.log(s);
+      s.categories.forEach(category => c.add(category));
+    });
+    console.log(c);
+    this.categories = c;
+  }
+
   ngOnInit() {
     // "Get" Permission on scenarios is required to load step content
     this.rbacService.Grants("scenarios", "get").then((allowed: boolean) => {
@@ -395,7 +445,11 @@ export class ScenarioComponent implements OnInit {
 
     this.scenarioService.list()
       .subscribe(
-        (s: Scenario[]) => this.scenarios = s
+        (s: Scenario[]) => {
+          this.scenarios = s
+          this.calculateCategories();
+          this.filterScenarioList();
+        }
       )
 
     this.rbacService.Grants("virtualmachinesets", "list").then((listVmSets: boolean) => {
