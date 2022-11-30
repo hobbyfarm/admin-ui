@@ -32,13 +32,13 @@
 
     <clr-dropdown>
       <button class="dropdown-toggle" clrDropdownTrigger>
-        <span *ngIf="category==''">All Category</span>
+        <span *ngIf="category==''">All Categories</span>
         <span *ngIf="category=='__none__'">Without Category</span>
         <span *ngIf="category !='' && category != '__none__' ">{{category}}</span>
         <clr-icon shape="caret down"></clr-icon>
       </button>
       <clr-dropdown-menu clrPosition="bottom-left" *clrIfOpen>
-        <div class="dropdown-item" (click)="setCategoryFilter('')" clrDropdownItem>All Category</div>
+        <div class="dropdown-item" (click)="setCategoryFilter('')" clrDropdownItem>All Categories</div>
         <div class="dropdown-item" (click)="setCategoryFilter('__none__')" clrDropdownItem>Without Category</div>
         <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
         <div class="dropdown-item" *ngFor="let c of categories" (click)="setCategoryFilter(c)" clrDropdownItem>{{c}}
