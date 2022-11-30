@@ -23,7 +23,7 @@ export class ScenarioComponent implements OnInit {
   public scenarios: Scenario[] = [];
   public filteredScenarios: Scenario[] = [];
   public category: string = "";
-  public categories: Set<string> = new Set<string>();
+  public categories: string[] =[];
   public vmtemplates: VMTemplate[] = [];
   public selectedscenario: Scenario;
   public editingStep: Step = new Step();
@@ -434,7 +434,8 @@ export class ScenarioComponent implements OnInit {
     this.scenarios.forEach(s => {
       s.categories.forEach(category => c.add(category));
     });
-    this.categories = c;
+
+    this.categories = Array.from(c).sort();;
   }
 
   ngOnInit() {
