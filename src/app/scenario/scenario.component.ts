@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
-import { ClrModal } from '@clr/angular';
+import { ClrDatagridSortOrder, ClrModal } from '@clr/angular';
 import { Step } from '../data/step';
 import { ServerResponse } from '../data/serverresponse';
 import { deepCopy } from '../deepcopy';
@@ -59,6 +59,8 @@ export class ScenarioComponent implements OnInit {
   public vmProps: string[] = Object.keys(new VirtualMachine());
 
   public selectRbac: boolean = false;
+
+  public ascSort = ClrDatagridSortOrder.ASC;
 
   constructor(
     public scenarioService: ScenarioService,

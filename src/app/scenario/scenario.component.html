@@ -28,7 +28,7 @@
   </div>
 </div>
 <div class="clr-row">
-  <div class="clr-col-4">
+  <div class="clr-col-12 clr-col-md-6">
 
     <clr-dropdown>
       <button class="dropdown-toggle" clrDropdownTrigger>
@@ -41,22 +41,22 @@
         <div class="dropdown-item" (click)="setCategoryFilter('')" clrDropdownItem>All Categories</div>
         <div class="dropdown-item" (click)="setCategoryFilter('__none__')" clrDropdownItem>Without Category</div>
         <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
-        <div class="dropdown-item" *ngFor="let c of categories" (click)="setCategoryFilter(c)" clrDropdownItem>{{c}}
-          clrDropdownItem
-        </div>
+        <div class="dropdown-item" *ngFor="let c of categories" (click)="setCategoryFilter(c)" clrDropdownItem>{{c}}</div>
       </clr-dropdown-menu>
     </clr-dropdown>
 
     <clr-datagrid [clrDgSingleSelected]="unusedSelectedScenario" (clrDgSingleSelectedChange)="editScenario($event)"
       [clrDisableSelection]="!selectRbac">
-      <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
+      <clr-dg-column [clrDgField]="'id'">ID</clr-dg-column>
+      <clr-dg-column [clrDgField]="'name'" [clrDgSortOrder]="ascSort">Name</clr-dg-column>
       <clr-dg-row *clrDgItems="let s of filteredScenarios" [clrDgItem]="s">
+        <clr-dg-cell>{{ s.id }}</clr-dg-cell>
         <clr-dg-cell>{{ s.name }}</clr-dg-cell>
       </clr-dg-row>
     </clr-datagrid>
   </div>
 
-  <div class="clr-col-8">
+  <div class="clr-col-12 clr-col-md-6">
     <ng-container *ngIf="selectedscenario">
       <clr-tabs>
         <clr-tab>
