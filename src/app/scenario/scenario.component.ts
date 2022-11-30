@@ -430,10 +430,8 @@ export class ScenarioComponent implements OnInit {
   calculateCategories() {
     let c = new Set<string>();
     this.scenarios.forEach(s => {
-      console.log(s);
       s.categories.forEach(category => c.add(category));
     });
-    console.log(c);
     this.categories = c;
   }
 

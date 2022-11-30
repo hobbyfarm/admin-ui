@@ -37,11 +37,12 @@
         <span *ngIf="category !='' && category != '__none__' ">{{category}}</span>
         <clr-icon shape="caret down"></clr-icon>
       </button>
-      <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
-        <div class="dropdown-item" (click)="setCategoryFilter('')">All</div>
-        <div class="dropdown-item" (click)="setCategoryFilter('__none__')">No Category</div>
+      <clr-dropdown-menu clrPosition="bottom-left" *clrIfOpen>
+        <div class="dropdown-item" (click)="setCategoryFilter('')" clrDropdownItem>select category</div>
+        <div class="dropdown-item" (click)="setCategoryFilter('__none__')" clrDropdownItem>Without Category</div>
         <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
         <div class="dropdown-item" *ngFor="let c of categories" (click)="setCategoryFilter(c)" clrDropdownItem>{{c}}
+          clrDropdownItem
         </div>
       </clr-dropdown-menu>
     </clr-dropdown>
@@ -306,7 +307,8 @@
                 <code>vmname</code> is the name
                 of one of the VMs in the scenario. and <code>limit</code> is the maximum number of times the CTR can be
                 pressed to be executed.
-                Limit can be omitted which defaults to unlimited executions.</p>
+                Limit can be omitted which defaults to unlimited executions.
+              </p>
               <p>
                 Examples:<br />
                 <code>
