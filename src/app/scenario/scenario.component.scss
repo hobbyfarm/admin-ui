@@ -1,7 +1,18 @@
 input.full-width {
-    width: 100%;
+  width: 100%;
 }
 
 button.btn-link-stack {
-    margin: 0 0 0 0;
+  margin: 0 0 0 0;
+}
+
+hr-divider {
+  height: 15px;
+}
+
+hr {
+  width: 90%;
+  height: 1px;
+  color: grey;
+  border-top: none;
 }
