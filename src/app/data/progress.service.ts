@@ -7,6 +7,7 @@ import {
   extractResponseContent,
   GargantuaClientFactory,
 } from './gargantua.service';
+import { formatDate } from '@angular/common';
 
 @Injectable()
 export class ProgressService {
@@ -38,6 +39,22 @@ export class ProgressService {
         }),
       );
     }
+  }
+
+  public listByRange(from: Date, to: Date) {
+    const fromDateString: string = formatDate(from, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC");
+    const toDateString: string = formatDate(to, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC");
+    const params = new HttpParams()
+      .set("from", formatDate(fromDateString, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
+      .set("to", formatDate(toDateString, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
+    return this.gargAdmin.get('/range', {
+      params: params
+    }).pipe(
+      map(extractResponseContent),
+      map((pList: Progress[]) => {
+        return this.buildProgressList(pList)
+      }),
+    );
   }
 
   public listByScheduledEvent(seId: string, includeFinished: boolean = false) {
