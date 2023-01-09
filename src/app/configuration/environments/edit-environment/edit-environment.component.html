@@ -39,30 +39,6 @@
                 <clr-control-error *clrIfError="'required'">Websocket endpoint is required</clr-control-error>
                 <clr-control-error *clrIfError="'pattern'">Value must be valid IP or hostname</clr-control-error>
             </clr-input-container>
-            <clr-radio-container clrInline>
-                <label>Capacity Mode</label>
-                <clr-radio-wrapper>
-                    <input type="radio" clrRadio name="capacity_mode" required value="raw" formControlName="capacity_mode" />
-                    <label>Raw</label>
-                </clr-radio-wrapper>
-                <clr-radio-wrapper>
-                    <input type="radio" clrRadio name="capacity_mode" required value="count" formControlName="capacity_mode" />
-                    <label>Count</label>
-                </clr-radio-wrapper>
-                <clr-control-helper>
-                    Raw calculates resource usage in terms of CPU, memory, and storage. Count is number of VMs.
-                </clr-control-helper>
-                <clr-control-error *clrIfError="'required'">Capacity mode is required</clr-control-error>
-            </clr-radio-container>
-            <clr-toggle-container>
-                <label>Burst Capability</label>
-                <clr-toggle-wrapper>
-                    <input type="checkbox" clrToggle name="burst_capable" formControlName="burst_capable" /> 
-                </clr-toggle-wrapper>
-                <clr-control-helper>
-                    Burst is the ability to dynamically allocate VMs upon user request.
-                </clr-control-helper>
-            </clr-toggle-container>
         </form>
     </clr-wizard-page>
 
@@ -224,14 +200,6 @@
                 <tr>
                     <td>Websocket Endpoint</td>
                     <td>{{ env.ws_endpoint }}</td>
-                </tr>
-                <tr>
-                    <td>Capacity Mode</td>
-                    <td>{{ env.capacity_mode }}</td>
-                </tr>
-                <tr>
-                    <td>Burst Capable</td>
-                    <td>{{ env.burst_capable }}</td>
                 </tr>
             </tbody>
         </table>

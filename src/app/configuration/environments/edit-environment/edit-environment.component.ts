@@ -45,8 +45,6 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       dnssuffix: [edit ? this.updateEnv.dnssuffix : ''],
       provider: [edit ? this.updateEnv.provider : '', [Validators.required, Validators.minLength(2)]],
       ws_endpoint: [edit ? this.updateEnv.ws_endpoint : '', [Validators.required, Validators.pattern(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/)]],
-      capacity_mode: [edit ? this.updateEnv.capacity_mode : '', Validators.required],
-      burst_capable: [edit ? this.updateEnv.burst_capable : true]
     });
   }
 
@@ -234,8 +232,6 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this.env.dnssuffix = this.environmentDetails.get('dnssuffix').value;
     this.env.provider = this.environmentDetails.get('provider').value;
     this.env.ws_endpoint = this.environmentDetails.get('ws_endpoint').value;
-    this.env.capacity_mode = this.environmentDetails.get('capacity_mode').value;
-    this.env.burst_capable = (this.environmentDetails.get('burst_capable').value as boolean);
   }
 
   public newIpMapping(from: string = '', to: string = '') {

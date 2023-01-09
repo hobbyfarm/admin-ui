@@ -239,40 +239,15 @@
           <clr-icon shape="building"></clr-icon>&nbsp;Environment
         </clr-dg-column>
         <clr-dg-column>
-          <clr-icon shape="resource-pool"></clr-icon>&nbsp;Mode
-        </clr-dg-column>
-        <clr-dg-column>
           <clr-icon shape="host"></clr-icon>&nbsp;Count
         </clr-dg-column>
-        <clr-dg-column>
-          <clr-icon shape="cpu"></clr-icon>&nbsp;CPU
-        </clr-dg-column>
-        <clr-dg-column>
-          <clr-icon shape="memory"></clr-icon>&nbsp;Memory
-        </clr-dg-column>
-        <clr-dg-column>
-          <clr-icon shape="hard-drive"></clr-icon>&nbsp;Storage
-        </clr-dg-column>
-
+        
         <clr-dg-row *clrDgItems="let ea of availableEnvironments" [clrDgItem]="ea">
           <clr-dg-cell>{{ ea.environment }}</clr-dg-cell>
-          <clr-dg-cell>{{ ea.capacity_mode }}</clr-dg-cell>
           <clr-dg-cell>
-            <ng-container *ngIf="ea.capacity_mode == 'count'">
               <ng-container *ngFor="let item of ea.available_count | keyvalue">
                 <span class="label">{{ item.key }} <span class="badge badge-success">{{ item.value }}</span></span>
               </ng-container>
-            </ng-container>
-            <ng-container *ngIf="ea.capacity_mode == 'raw'"><i>n/a</i></ng-container>
-          </clr-dg-cell>
-          <clr-dg-cell>
-            {{ ea.available_capacity.cpu }} CPU
-          </clr-dg-cell>
-          <clr-dg-cell>
-            {{ ea.available_capacity.memory }} MB
-          </clr-dg-cell>
-          <clr-dg-cell>
-            {{ ea.available_capacity.storage }} GB
           </clr-dg-cell>
         </clr-dg-row>
       </clr-datagrid>
