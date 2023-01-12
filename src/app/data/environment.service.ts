@@ -58,6 +58,7 @@ export class EnvironmentService {
     .set("environment_specifics", JSON.stringify(env.environment_specifics))
     .set("ip_translation_map", JSON.stringify(env.ip_translation_map))
     .set("ws_endpoint", env.ws_endpoint)
+    .set("count_capacity", JSON.stringify(env.count_capacity))
 
     return this.http.post(environment.server + "/a/environment/create", params)
   }
@@ -71,6 +72,7 @@ export class EnvironmentService {
     .set("environment_specifics", JSON.stringify(env.environment_specifics))
     .set("ip_translation_map", JSON.stringify(env.ip_translation_map))
     .set("ws_endpoint", env.ws_endpoint)
+    .set("count_capacity", JSON.stringify(env.count_capacity))
 
     return this.http.put(environment.server + "/a/environment/" + env.name + "/update", params);
   }

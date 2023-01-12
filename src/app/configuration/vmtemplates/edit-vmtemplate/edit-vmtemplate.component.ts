@@ -161,6 +161,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     if (this.editTemplate) {
       this.fixNullValues();
       this._prepare();
+      this.wizard.navService.goTo(this.wizard.pages.last, true);
+      this.wizard.pages.first.makeCurrent();
     } else {
       this.buildTemplateDetails();
       this.buildConfigMap();

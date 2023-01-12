@@ -38,6 +38,7 @@
             </clr-stack-content>
             <clr-stack-block *ngFor="let template of currentEnvironment.template_mapping | keyvalue; let i = index" [(clrSbExpanded)]="stackBoxExpanded[i]">
                 <clr-stack-label>{{ template.key }}</clr-stack-label>
+                (Limit: {{ getLimit(template.key) }})
                 <clr-stack-block>
                     <clr-stack-label class="stackbox-header">Key</clr-stack-label>
                     <clr-stack-content class="stackbox-header">Value</clr-stack-content>
