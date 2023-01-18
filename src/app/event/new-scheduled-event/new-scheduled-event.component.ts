@@ -6,7 +6,7 @@ import {
   EventEmitter,
   Input,
 } from "@angular/core";
-import { ClrWizard, ClrSignpostContent } from "@clr/angular";
+import { ClrWizard, ClrSignpostContent, ClrDatagrid, ClrDatagridSortOrder } from "@clr/angular";
 import { ScheduledEvent } from "src/app/data/scheduledevent";
 import { Scenario } from "src/app/data/scenario";
 import { ScenarioService } from "src/app/data/scenario.service";
@@ -46,7 +46,10 @@ export class NewScheduledEventComponent implements OnInit {
 
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
+  public categories: string[] = [];
+  public selectedCategories: string[] = [];
   public scenarios: Scenario[] = [];
+  public filteredScenarios: Scenario[] = [];
   public courses: Course[] = [];
   public scheduledEvents: ScheduledEvent[] = [];
 
@@ -72,6 +75,8 @@ export class NewScheduledEventComponent implements OnInit {
   public simpleMode: boolean = true;
 
   public validTimes: boolean = false;
+
+  public ascSort = ClrDatagridSortOrder.ASC;
 
   public selectedscenarios: Scenario[] = [];
   public selectedcourses: Course[] = [];
@@ -119,6 +124,10 @@ export class NewScheduledEventComponent implements OnInit {
 
   public simpleModeVmCounts: FormGroup = this._fb.group({
     envs: this._fb.array([], this.validateNonZeroFormControl()),
+  });
+
+  public categoryFilterForm = new FormGroup({
+    categoryControl: new FormControl([], []),
   });
 
   public copyEventDetails() {
@@ -512,6 +521,8 @@ export class NewScheduledEventComponent implements OnInit {
       if(allowListScenarios) {
         this.ss.list().subscribe((s: Scenario[]) => {
           this.scenarios = s;
+          this.calculateCategories();
+          this.filterScenarioList();
         });
       }
       if(allowListCourses) {
@@ -557,6 +568,12 @@ export class NewScheduledEventComponent implements OnInit {
       ["00", "30"].forEach((min: string) => {
         this.times.push(hr + ":" + min);
       });
+    });
+  
+    this.categoryFilterForm.valueChanges.subscribe(() => {
+      this.selectedCategories =
+        this.categoryFilterForm.get('categoryControl').value ?? [];
+      this.filterScenarioList();
     });
   }
 
@@ -820,5 +837,45 @@ export class NewScheduledEventComponent implements OnInit {
       );
     }
     this.close();
+  }
+  clearCategoryFilter() {
+    this.selectedCategories = [];
+    this.categoryFilterForm.get('categoryControl').setValue([]);
+  }
+  filterScenarioList() {
+    if (this.selectedCategories.length === 0) {
+      this.filteredScenarios = this.scenarios;
+      return;
+    }
+
+    let sc = [];
+
+    if (this.selectedCategories.includes('__none__')) {
+      this.scenarios.forEach((s) => {
+        if (s.categories.length === 0) {
+          sc.push(s);
+          return;
+        }
+      });
+    }
+
+    this.scenarios.forEach((s) => {
+      let matches = s.categories.filter((element) =>
+        this.selectedCategories.includes(element)
+      );
+      if (matches.length > 0) {
+        sc.push(s);
+        return;
+      }
+    });
+    this.filteredScenarios = sc;
+  }
+  calculateCategories() {
+    let c = new Set<string>();
+    this.scenarios.forEach((s) => {
+      s.categories.forEach((category) => c.add(category));
+    });
+
+    this.categories = Array.from(c).sort();
   }
 }

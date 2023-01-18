@@ -178,12 +178,43 @@
 
   <clr-wizard-page [clrWizardPageNextDisabled]="selectedcourses.length == 0 && selectedscenarios.length == 0">
     <ng-template clrPageTitle>Select Scenario(s)</ng-template>
+    <p>The scenario filter has to be implemented</p>
+    <form clrForm [formGroup]="categoryFilterForm">
+      <clr-combobox-container>
+        <label>Category</label>
+        <clr-combobox
+          formControlName="categoryControl"
+          name="categories"
+          clrMulti="true"
+        >
+          <ng-container *clrOptionSelected="let selectedCategories">
+            {{ selectedCategories }}
+          </ng-container>
+          <clr-options>
+            <clr-option clrValue="__none__"> Without Category </clr-option>
+            <hr />
+            <clr-option *clrOptionItems="let c of categories" [clrValue]="c">
+              {{ c }}
+            </clr-option>
+          </clr-options>
+        </clr-combobox>
+        <clr-control-helper>
+          <div class="clr-row">
+            <div class="clr-col">
+              <a href="javascript://" (click)="clearCategoryFilter()"
+                >Clear categories</a
+              >
+            </div>
+          </div>
+        </clr-control-helper>
+      </clr-combobox-container>
+    </form>
     <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)"  [clrDgPreserveSelection]="true">
-      <clr-dg-column>Id</clr-dg-column>
+      <clr-dg-column [clrDgField]="'id'">Id</clr-dg-column>
       <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
       <clr-dg-column [clrDgField]="'description'">Description</clr-dg-column>
 
-      <clr-dg-row *clrDgItems="let s of scenarios" [clrDgItem]="s">
+      <clr-dg-row *clrDgItems="let s of filteredScenarios" [clrDgItem]="s">
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
         <clr-dg-cell>{{ s.name }}</clr-dg-cell>
         <clr-dg-cell>{{ s.description }}</clr-dg-cell>
