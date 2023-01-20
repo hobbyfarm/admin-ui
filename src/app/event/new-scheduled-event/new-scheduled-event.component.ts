@@ -49,6 +49,7 @@ export class NewScheduledEventComponent implements OnInit {
   public categories: string[] = [];
   public selectedCategories: string[] = [];
   public scenarios: Scenario[] = [];
+  public selectedScenario: Scenario;
   public filteredScenarios: Scenario[] = [];
   public courses: Course[] = [];
   public scheduledEvents: ScheduledEvent[] = [];
