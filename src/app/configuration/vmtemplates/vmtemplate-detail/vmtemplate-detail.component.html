@@ -38,6 +38,21 @@
                 <clr-stack-content>{{ item.value }}</clr-stack-content>
             </clr-stack-block>
         </clr-stack-block>
+        <clr-stack-block>
+            <clr-stack-label>Cloud-Init</clr-stack-label>
+            <clr-stack-block>
+                <clr-stack-label class="stackbox-header">Key</clr-stack-label>
+                <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+            </clr-stack-block>
+            <clr-stack-block>
+                <clr-stack-label>cloud-config</clr-stack-label>
+                <clr-stack-content>
+                    <textarea clrTextarea  style="width: 100%; height: 50vh;"  [(ngModel)]="cloudConfigData"  disabled></textarea>
+                </clr-stack-content>
+            </clr-stack-block>
+        </clr-stack-block>
+
+
     </clr-stack-view>
     <ng-template #noContent>
         <clr-alert [clrAlertType]="'warning'" [clrAlertClosable]="false">
@@ -49,3 +64,4 @@
         </clr-alert>
     </ng-template>
 </div>
+

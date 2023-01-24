@@ -74,6 +74,7 @@ import { NewRoleBindingComponent } from './user/new-role-binding/new-role-bindin
 import { DeleteProcessModalComponent } from './user/user/delete-process-modal/delete-process-modal.component';
 import { EnvironmentDetailComponent } from './configuration/environments/environment-detail/environment-detail.component';
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
+import { WebinterfaceFormComponent } from './configuration/vmtemplates/edit-vmtemplate/webinterface-form/webinterface-form.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -144,7 +145,8 @@ export function jwtOptionsFactory() {
     RolebindingsComponent,
     NewRoleBindingComponent,
     EnvironmentDetailComponent,
-    VmTemplateDetailComponent
+    VmTemplateDetailComponent,
+    WebinterfaceFormComponent
   ],
   imports: [
     BrowserModule,

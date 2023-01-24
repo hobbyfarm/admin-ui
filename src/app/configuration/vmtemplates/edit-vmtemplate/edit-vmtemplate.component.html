@@ -1,6 +1,6 @@
 <clr-wizard #wizard clrWizardSize="xl" [clrWizardDisableStepnav]="false">
     <clr-wizard-title>Edit VM Template</clr-wizard-title>
-    
+
     <clr-wizard-button [clrWizardButtonDisabled]="buttonsDisabled" [type]="'cancel'">Cancel</clr-wizard-button>
     <clr-wizard-button [clrWizardButtonDisabled]="buttonsDisabled" [type]="'previous'">Previous</clr-wizard-button>
     <clr-wizard-button [clrWizardButtonDisabled]="buttonsDisabled" [type]="'next'">Next</clr-wizard-button>
@@ -12,34 +12,30 @@
         <form clrForm [formGroup]="templateDetails">
             <clr-input-container>
                 <label>Name</label>
-                <input clrInput type="text" placeholder="name" name="name"
-                formControlName="name" required />
+                <input clrInput type="text" placeholder="name" name="name" formControlName="name" required />
                 <clr-control-error *clrIfError="'required'">Template name is required</clr-control-error>
-                <clr-control-error *clrIfError="'minlength'">Template name must be longer than 4 characters</clr-control-error>
+                <clr-control-error *clrIfError="'minlength'">Template name must be longer than 4
+                    characters</clr-control-error>
             </clr-input-container>
             <clr-input-container>
                 <label>Image</label>
-                <input clrInput type="text" placeholder="image" name="image" 
-                formControlName="image" required />
+                <input clrInput type="text" placeholder="image" name="image" formControlName="image" required />
                 <clr-control-error *clrIfError="'required'">Image is required</clr-control-error>
             </clr-input-container>
             <fieldset>
                 <clr-input-container>
                     <label>CPU</label>
-                    <input clrInput type="number" placeholder="1" name="cpu"
-                    formControlName="cpu" />
+                    <input clrInput type="number" placeholder="1" name="cpu" formControlName="cpu" />
                     <clr-control-helper>Number of CPUs</clr-control-helper>
                 </clr-input-container>
                 <clr-input-container>
                     <label>Memory</label>
-                    <input clrInput type="number" placeholder="1" name="memory"
-                    formControlName="memory" />
+                    <input clrInput type="number" placeholder="1" name="memory" formControlName="memory" />
                     <clr-control-helper>Memory specified in MB</clr-control-helper>
                 </clr-input-container>
                 <clr-input-container>
                     <label>Storage</label>
-                    <input clrInput type="number" placeholder="1" name="storage"
-                    formControlName="storage" />
+                    <input clrInput type="number" placeholder="1" name="storage" formControlName="storage" />
                     <clr-control-helper>Storage specified in GB</clr-control-helper>
                 </clr-input-container>
             </fieldset>
@@ -82,10 +78,61 @@
             </tbody>
         </table>
         <ng-container *ngIf="configMap && !configMap.valid">
-            <span class="clr-subtext">All mappings must have key and value filled out. Complete, or remove, any entries that do not.</span>
+            <span class="clr-subtext">All mappings must have key and value filled out. Complete, or remove, any entries
+                that do not.</span>
         </ng-container>
     </clr-wizard-page>
-    <clr-wizard-page (clrWizardPageOnLoad)="copyTemplate()" [clrWizardPagePreventDefaultNext]="true" (clrWizardPageFinish)="saveTemplate()">
+
+    <clr-wizard-page>
+        <ng-template clrPageTitle>Webinterfaces</ng-template>
+        <!-- <app-webinterface-form 
+        [cloudConfig]="cloudConfig"
+        ></app-webinterface-form> -->
+
+        
+        <button class="btn btn-table btn-link" (click)="selectWebinterfaceModalOpen = true">
+            <clr-icon shape="plus"></clr-icon> Add predefined Webinterface
+        </button>
+        <button class="btn btn-table btn-link" (click)="openNewWebinterfaceModal()">
+            <clr-icon shape="plus"></clr-icon> Add new Webinterface
+        </button>
+        <button class="btn" (click)="editCloudConfig()">Edit Cloud Config</button>
+        <table class="table table-compact">
+            <th>Name</th>
+            <th>Port</th>
+            <th>Tab</th>
+            <th>Edit</th>
+            <th>Delete</th>
+            <tbody>
+                <tr *ngFor="let interface of cloudConfig.webinterfaces | keyvalue">
+                    <td>{{ interface.value.name }}</td>
+                    <td>{{ interface.value.port }}</td>
+                    <td>{{ interface.value.hasOwnTab }}</td>
+                    <td><button class="btn btn-table btn-link" (click)="editWebinterfaceClicked(interface.value)">EDIT</button></td>
+                    <td><button class="btn btn-table btn-link" (click)="cloudConfig.webinterfaces.delete(interface.key)">DELETE</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </clr-wizard-page>
+
+    <clr-wizard-page [clrWizardPageNextDisabled]="!configMap.valid">
+        <ng-template clrPageTitle>Cloud-Init</ng-template>
+        <div [formGroup]="configMap">
+            <button class="btn" >TODO...</button>
+            <form clrForm style="width: 100%;">
+                <textarea clrTextarea style="width: 100%; height: 50vh;" name="description"
+                    [(ngModel)]="cloudConfig.cloudConfigYaml" required></textarea>
+            </form>
+            <!-- <button class="btn btn-table btn-link" >Delete</button> -->
+        </div>
+        <ng-container *ngIf="configMap && !configMap.valid">
+            <span class="clr-subtext">All mappings must have key and value filled out. Complete, or remove, any entries
+                that do not.</span>
+        </ng-container>
+    </clr-wizard-page>
+
+    <clr-wizard-page (clrWizardPageOnLoad)="copyTemplate()" [clrWizardPagePreventDefaultNext]="true"
+        (clrWizardPageFinish)="saveTemplate()">
         <ng-template clrPageTitle>Confirmation</ng-template>
         <alert #alert></alert>
         <p>Confirm the following details before finalizing</p>
@@ -138,3 +185,57 @@
         </table>
     </clr-wizard-page>
 </clr-wizard>
+
+
+<clr-modal [(clrModalOpen)]="selectWebinterfaceModalOpen">
+    <h3 class="modal-title">Choose a Webinterface</h3>
+    <div class="modal-body">
+        <select clrSelect [(ngModel)]="selectedNewInterface">
+            <option *ngFor="let interface of predefinedInterfaces" [ngValue]="interface">{{ interface.name }}</option>
+        </select>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="selectWebinterfaceModalOpen = false">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="selectModalClose()">Ok</button>
+    </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="newWebinterfaceModalOpen">
+    <h3 class="modal-title">Create a new Webinterface</h3>
+    <div class="modal-body">
+        <form clrForm [formGroup]="newWebinterfaceFormGroup">
+            <input clrInput placeholder="Name" name="input" formControlName="name"/>
+            <clr-checkbox-container>
+                <clr-checkbox-wrapper>
+                  <input type="checkbox" clrCheckbox value="hasOwnTab" name="hasOwnTab" formControlName="hasOwnTab"/>
+                  <label>Has it's own Tab in the UI</label>
+                </clr-checkbox-wrapper>                
+              </clr-checkbox-container>
+              <input type="number" clrInput placeholder="Port" name="input" formControlName="port" />
+              <textarea clrTextarea style="width: 100%; height: 50vh;" name="description" formControlName="cloudConfigString"
+                     required></textarea>
+          </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="newWebinterfaceModalOpen = false">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="newWebinterfaceClose()">Ok</button>
+    </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="editCloudConfigModalOpen" [clrModalSize]="'xl'" >
+    <h3 class="modal-title">Edit generated Cloud Config</h3>
+    <div class="modal-body">
+        <div [formGroup]="configMap">
+            <button class="btn" (click)="generateCloudConfig()">TODO...</button>
+            <form clrForm style="width: 100%;">
+                <textarea clrTextarea style="width: 100%; height: 50vh;" name="description"
+                    [(ngModel)]="cloudConfig.cloudConfigYaml" required></textarea>
+            </form>
+            
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="editCloudConfigModalOpen = false">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="editCloudConfigModalOpen = false">Ok | TODO</button>
+    </div>
+</clr-modal>
