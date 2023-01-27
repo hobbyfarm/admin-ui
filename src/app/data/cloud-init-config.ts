@@ -1,21 +1,12 @@
 import YAML from 'yaml'
-import { Webinterface } from './webinterface';
+import { VMTemplateServiceConfiguration } from './vm-template-service-configuration';
 
 
 
 export class CloudInitConfig {
     contentMap: Map<string, string[]> = new Map();
     cloudConfigYaml: string = ""
-    public webinterfaces: Map<string, Webinterface> = new Map()
-
-    getWebinterfacesWithoutConfigMap() {        
-        let result= new Map()
-        this.webinterfaces.forEach((v, k) => {
-            result.set(k,{'name':v.name, 'port': v.port, 'hasOwnTab':v.hasOwnTab, 'cloudConfigString': v.cloudConfigString})
-        })
-        console.log(result)
-        return result
-    }
+    public vmServices: Map<string, VMTemplateServiceConfiguration> = new Map()
 
     addContent(key: string, value: any) {
         if (this.contentMap.has(key)) {
@@ -29,20 +20,18 @@ export class CloudInitConfig {
         }
     }
 
-    //TODO: Remove
-    buildConfigFromText(text: string) {
-        if(!text) {
-            text = ''
-        }
-        console.log("Stringify equals raw: ", YAML.stringify(text), text)
-        // text = YAML.stringify(text)
-        let yaml = YAML.parse(text)
-        console.log("YAML Object type: ", yaml)
-        // this.contentMap = yaml
-        this.contentMap = new Map(Object.entries(yaml))
+
+    removeVMService(name: string) {
+        this.vmServices.delete(name)
+        this.buildNewYAMLFile()
     }
 
-    buildMapFromString(text) {
+    addVMService(newInterface: VMTemplateServiceConfiguration) {
+        this.vmServices.set(newInterface.name, newInterface)
+        this.buildNewYAMLFile()
+    }
+
+    buildMapFromString(text: string) {
         if(!text) {
             return new Map()
         }
@@ -51,22 +40,22 @@ export class CloudInitConfig {
     }
 
     getConfigAsString() {
+        if (this.contentMap.size < 1) {
+            return ''
+        }
         return "#cloud-config\n"+YAML.stringify(this.contentMap)        
-    }
-
-    addWebinterface(newInterface: Webinterface) {
-        this.webinterfaces.set(newInterface.name, newInterface)
-        this.buildNewYAMLFile()
-    }
+    }    
 
     buildNewYAMLFile() {   
         this.contentMap = new Map()
-        this.webinterfaces.forEach((webinterface: Webinterface) => {
-            webinterface.cloudConfigMap.forEach((value, key) => {
-                this.addContent(key, value) 
-            })            
+        this.vmServices.forEach((vmService: VMTemplateServiceConfiguration) => {
+            vmService.cloudConfigMap.forEach((value, key) => {
+                let valCopy = JSON.parse(JSON.stringify(value))
+                let keyCopy = JSON.parse(JSON.stringify(key))
+                this.addContent(keyCopy, valCopy) 
+            })  
         })
         this.cloudConfigYaml = this.getConfigAsString()
-        return this.cloudConfigYaml
+        return this.cloudConfigYaml        
     }
 }

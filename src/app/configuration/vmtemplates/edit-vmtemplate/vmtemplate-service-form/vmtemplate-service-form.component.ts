@@ -1,15 +1,14 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { VMTemplateServiceConfiguration } from 'src/app/data/vm-template-service-configuration';
 
 @Component({
-  selector: 'app-webinterface-form',
-  templateUrl: './webinterface-form.component.html',
-  styleUrls: ['./webinterface-form.component.scss']
+  selector: 'app-vmtemplate-service-form',
+  templateUrl: './vmtemplate-service-form.component.html',
+  styleUrls: ['./vmtemplate-service-form.component.scss']
 })
-export class WebinterfaceFormComponent implements OnInit {
-
+export class VMTemplateServiceFormComponent implements OnInit {
   public predefinedInterfaces: VMTemplateServiceConfiguration[] = PredefinedWebInterfaces //Placeholder until managed in Backend
 
   @Input()
@@ -100,13 +99,15 @@ export const PredefinedWebInterfaces: VMTemplateServiceConfiguration[] = //This 
     `
     },
     {
-      name: "Some other WebService", port: 8081, hasOwnTab: false, cloudConfigMap: new Map(), hasWebinterface: true,
+      name: "Test-Service without Webinterface", cloudConfigMap: new Map(), hasWebinterface: false,
       cloudConfigString:
         `#cloud-config
     runcmd:
-        - install some other Webservice
-    otherCommand:
-        - configure via cloud init
+        - touch /root/test.txt
     `
+    },
+    {
+      name: "Test-Interface without Cloud Config", port: 8081, hasOwnTab: false, hasWebinterface: true,
+      
     }
   ]
