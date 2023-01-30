@@ -1,6 +1,6 @@
 <form clrForm [formGroup]="categoryFilterForm">
   <clr-combobox-container>
-    <label>Category Test</label>
+    <label>Category</label>
     <clr-combobox
       formControlName="categoryControl"
       name="categories"
@@ -12,7 +12,7 @@
       <clr-options>
         <clr-option clrValue="__none__"> Without Category </clr-option>
         <hr />
-        <clr-option *clrOptionItems="let c of categories" [clrValue]="c">
+        <clr-option *clrOptionItems="let c of categories" [clrValue]="c" (click)="filterByCategory(selectedCategories)">
           {{ c }}
         </clr-option>
       </clr-options>

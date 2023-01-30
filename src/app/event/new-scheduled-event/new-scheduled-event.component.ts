@@ -523,7 +523,8 @@ export class NewScheduledEventComponent implements OnInit {
         this.ss.list().subscribe((s: Scenario[]) => {
           this.scenarios = s;
           this.calculateCategories();
-          this.filterScenarioList();
+          // TODO: Refactoring
+          this.filterScenarioList(this.selectedCategories);
         });
       }
       if(allowListCourses) {
@@ -571,11 +572,7 @@ export class NewScheduledEventComponent implements OnInit {
       });
     });
   
-    this.categoryFilterForm.valueChanges.subscribe(() => {
-      this.selectedCategories =
-        this.categoryFilterForm.get('categoryControl').value ?? [];
-      this.filterScenarioList();
-    });
+
   }
 
   // get all environments
@@ -843,7 +840,8 @@ export class NewScheduledEventComponent implements OnInit {
     this.selectedCategories = [];
     this.categoryFilterForm.get('categoryControl').setValue([]);
   }
-  filterScenarioList() {
+  filterScenarioList(categories: string[]) {
+    this.selectedCategories = categories;
     if (this.selectedCategories.length === 0) {
       this.filteredScenarios = this.scenarios;
       return;

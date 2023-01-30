@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ClrDatagridSortOrder } from '@clr/angular';
 import { RbacService } from '../data/rbac.service';
@@ -16,11 +16,13 @@ import { VmtemplateService } from '../data/vmtemplate.service';
 export class FilterScenariosComponent implements OnInit {
 
   @Input() public categories: string[] = [];
-  @Input() public selectedCategories: string[] = [];
+  public selectedCategories: string[] = [];
   public se: ScheduledEvent = new ScheduledEvent();
   public ascSort = ClrDatagridSortOrder.ASC;
-  @Input() public scenarios: Scenario[] = [];
-  @Input() public filteredScenarios: Scenario[] = [];
+  public scenarios: Scenario[] = [];
+  public filteredScenarios: Scenario[] = [];
+  //Working Here
+  @Output() public filterScenarioEventEmitter = new EventEmitter<string[]>()
   public selectRbac: boolean = false;
   public vmtemplates: VMTemplate[] = [];
 
@@ -33,7 +35,9 @@ export class FilterScenariosComponent implements OnInit {
   ) { }
 
 
-
+  filterByCategory(values: string[]){
+    this.filterScenarioEventEmitter.emit(values);
+  }
   clearCategoryFilter() {
     this.selectedCategories = [];
     this.categoryFilterForm.get('categoryControl').setValue([]);
@@ -87,8 +91,6 @@ export class FilterScenariosComponent implements OnInit {
 
     this.scenarioService.list().subscribe((s: Scenario[]) => {
       this.scenarios = s;
-      this.calculateCategories();
-      this.filterScenarioList();
     });
 
     this.rbacService
@@ -104,7 +106,9 @@ export class FilterScenariosComponent implements OnInit {
     this.categoryFilterForm.valueChanges.subscribe(() => {
       this.selectedCategories =
         this.categoryFilterForm.get('categoryControl').value ?? [];
-      this.filterScenarioList();
+      // this.filterScenarioList();
+      // TODO: Refactor
+      this.filterByCategory(this.selectedCategories)
     });
   }
 }

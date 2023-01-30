@@ -251,7 +251,7 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.list().subscribe((s: Scenario[]) => {
       this.scenarios = s;
       this.calculateCategories();
-      this.filterScenarioList();
+      this.filterScenarioList(this.selectedCategories);
     });
 
     this.newScenarioModal.close();
@@ -412,7 +412,8 @@ export class ScenarioComponent implements OnInit {
     this.deleteVMSetModal.close();
   }
 
-  filterScenarioList() {
+  filterScenarioList(categories: string[]) {
+    this.selectedCategories = categories;
     if (this.selectedCategories.length === 0) {
       this.filteredScenarios = this.scenarios;
       return;
@@ -464,7 +465,7 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.list().subscribe((s: Scenario[]) => {
       this.scenarios = s;
       this.calculateCategories();
-      this.filterScenarioList();
+      this.filterScenarioList(this.selectedCategories);
     });
 
     this.rbacService
@@ -480,7 +481,7 @@ export class ScenarioComponent implements OnInit {
     this.categoryFilterForm.valueChanges.subscribe(() => {
       this.selectedCategories =
         this.categoryFilterForm.get('categoryControl').value ?? [];
-      this.filterScenarioList();
+      this.filterScenarioList(this.selectedCategories);
     });
   }
 }
