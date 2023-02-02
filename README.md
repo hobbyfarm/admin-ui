@@ -1,6 +1,6 @@
 # Hobbyfarm Admin
 
-This is the admin UI for https://github.com/hobbyfarm
+This is the admin UI for [HobbyFarm](https://github.com/hobbyfarm)
 
 ## Configuration
 
