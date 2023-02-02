@@ -2,18 +2,13 @@
 
 ## Local Development
 
-To modify Angular environment variables for your local environment, copy `src/environments/environment.local.example.ts` to `src/environments/environment.local.ts` and update variables as needed.
+To modify Angular configuration for your local environment, copy `src/environments/environment.local.example.ts` to `src/environments/environment.local.ts` and update the variables as needed. This is particulary usefull for `environment.server`, to match your local gargantua server URL.
 
-- `environment.server` - points to gargantua server
-
-The default behavior requires running a local copy of [k3d via hf-k3d](https://github.com/hobbyfarm/hobbyfarm) and a local copy of [gargantua](https://github.com/hobbyfarm/gargantua).  In this case, the default user is:
-
-- Username: `admin`
-- Password: `admin`
+This web application needs gargantua to be running, look at [gargantua](https://github.com/hobbyfarm/gargantua/CONTRIBUTING.md) for more information. The default authentification is admin/admin.
 
 ### via Angular server
 
-```
+```bash
 npm install
 npm run start:local
 ```
@@ -22,7 +17,7 @@ The Angular server will start a watch loop and listen on [localhost:4200](http:/
 
 ### via docker-compose
 
-```
+```bash
 # start the stack
 ./compose-up.sh
 
@@ -37,6 +32,6 @@ The Angular server will start a watch loop and listen on [localhost:4200](http:/
 - calls `docker-compose up`
   - creates or starts the `hf-admin-ui` container, runs `npm install` and starts the Angular Server, re-builds on change, and listens on [localhost:16205](http://localhost:16205)
 
-If `pakcages.json` has changed, stop and restart the `docker-compose` stack so that `npm install` runs inside the Docker container again
+If `packages.json` has changed, stop and restart the `docker-compose` stack so that `npm install` runs inside the Docker container again
 
 To modify `docker-compose` variables for your local environment, copy `.env.example` to `.env` and update variables as needed.
