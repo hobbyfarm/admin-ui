@@ -1,4 +1,4 @@
-# Hobbyfarm Admin
+# HobbyFarm Admin
 
 This is the admin web UI for [HobbyFarm](https://github.com/hobbyfarm). This is a Single Page Application (SPA) developped with Angular.
 
