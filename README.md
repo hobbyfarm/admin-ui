@@ -1,7 +1,7 @@
 # HobbyFarm Admin
 
-[![CI](https://github.com/hobbyfarm/admin-ui/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/hobbyfarm/admin-ui/actions/workflows/ci.yml)
-[![PKG](https://github.com/hobbyfarm/admin-ui/actions/workflows/pkg.yaml/badge.svg?branch=master)](https://github.com/hobbyfarm/admin-ui/actions/workflows/pkg.yml)
+[![CI](https://github.com/hobbyfarm/admin-ui/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/hobbyfarm/admin-ui/actions/workflows/ci.yaml)
+[![PKG](https://github.com/hobbyfarm/admin-ui/actions/workflows/pkg.yaml/badge.svg?branch=master)](https://github.com/hobbyfarm/admin-ui/actions/workflows/pkg.yaml)
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hobbyfarm/admin-ui?label=Docker)](https://hub.docker.com/r/hobbyfarm/admin-ui)
 
 This is the admin web UI for [HobbyFarm](https://github.com/hobbyfarm). This is a Single Page Application (SPA) developped with Angular.
