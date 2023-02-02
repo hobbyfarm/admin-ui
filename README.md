@@ -30,7 +30,7 @@ To customize logos, mount them into the container at `/usr/share/nginx/html/asse
 
 To modify Angular configuration for your local environment, copy `src/environments/environment.local.example.ts` to `src/environments/environment.local.ts` and update the variables as needed. This is particulary useful for `environment.server`, to match your local gargantua server URL.
 
-This web application needs gargantua (backend) to be working, look at [gargantua](https://github.com/hobbyfarm/gargantua/CONTRIBUTING.md) for more information. The default authentification is admin/admin.
+This web application needs gargantua (backend) to be working, look at [gargantua](https://github.com/hobbyfarm/gargantua/blob/master/CONTRIBUTING.md) for more information. The default authentification is admin/admin.
 
 Execute from a terminal:
 
