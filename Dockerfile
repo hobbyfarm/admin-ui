@@ -11,7 +11,6 @@ RUN npm install
 COPY . .
 RUN npm run build:prod
 
-
 ###### release image #####
 FROM nginx:stable-alpine
 
