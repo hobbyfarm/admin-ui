@@ -47,8 +47,8 @@
   <div class="clr-col-12 clr-col-md-6">
 
 
-    <app-filter-scenarios [categories]="categories" [filteredScenarios]="filteredScenarios"
-    (filterScenarioEventEmitter)="filterScenarioList($event)"></app-filter-scenarios>
+    <filter-scenarios 
+    (filterScenarioEventEmitter)="setScenarioList($event)"></filter-scenarios>
     <clr-datagrid
       [clrDgSingleSelected]="unusedSelectedScenario"
       (clrDgSingleSelectedChange)="editScenario($event)"

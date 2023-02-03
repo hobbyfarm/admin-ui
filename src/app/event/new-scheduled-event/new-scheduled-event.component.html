@@ -181,8 +181,7 @@
 
   <clr-wizard-page [clrWizardPageNextDisabled]="selectedcourses.length == 0 && selectedscenarios.length == 0">
     <ng-template clrPageTitle>Select Scenario(s)</ng-template>
-    <app-filter-scenarios [categories]="categories" [filteredScenarios]="filteredScenarios"
-      (filterScenarioEventEmitter)="filterScenarioList($event)"></app-filter-scenarios>
+    <filter-scenarios (filterScenarioEventEmitter)="setScenarioList($event)"></filter-scenarios>
 
     <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)"
       [clrDgPreserveSelection]="true">

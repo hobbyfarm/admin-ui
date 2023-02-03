@@ -46,14 +46,11 @@ export class NewScheduledEventComponent implements OnInit {
 
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
-  public categories: string[] = [];
-  public selectedCategories: string[] = [];
   public scenarios: Scenario[] = [];
-  public selectedScenario: Scenario;
   public filteredScenarios: Scenario[] = [];
+  public filteredScenariosSelected: Scenario[] = [];
   public courses: Course[] = [];
   public scheduledEvents: ScheduledEvent[] = [];
-
   public saving: boolean = false;
 
   public tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -96,7 +93,7 @@ export class NewScheduledEventComponent implements OnInit {
     public ses: ScheduledeventService,
     public es: EnvironmentService,
     public rbacService: RbacService
-  ) {}
+  ) { }
 
   public eventDetails: FormGroup = new FormGroup({
     event_name: new FormControl(this.se.event_name, [
@@ -200,9 +197,19 @@ export class NewScheduledEventComponent implements OnInit {
   @ViewChild("endTimeSignpost") endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
+    let unfilteredButSelected: Scenario[] = [];
+    this.selectedscenarios.forEach(element => {
+      if (!this.filteredScenarios.includes(element)) {
+        unfilteredButSelected.push(element);
+      }
+    });
+    let selected = unfilteredButSelected
     this.se.scenarios = [];
-    s.forEach((sc: Scenario) => this.se.scenarios.push(sc.id));
-    this.selectedscenarios = s;
+    s.forEach((sc: Scenario) => {
+      this.se.scenarios.push(sc.id);
+      selected.push(sc);
+    });
+    this.selectedscenarios = selected;
   }
   public coursesSelected(c: Course[]) {
     this.se.courses = [];
@@ -476,7 +483,7 @@ export class NewScheduledEventComponent implements OnInit {
         });
       });
       this.rbacService.Grants("environments", "list").then((allowListEnvironments: boolean) => {
-        if(allowListEnvironments) {
+        if (allowListEnvironments) {
           this.checkEnvironments();
         }
       })
@@ -519,15 +526,12 @@ export class NewScheduledEventComponent implements OnInit {
       const allowListScenarios: boolean = permissions[0];
       const allowListCourses: boolean = permissions[1];
 
-      if(allowListScenarios) {
+      if (allowListScenarios) {
         this.ss.list().subscribe((s: Scenario[]) => {
           this.scenarios = s;
-          this.calculateCategories();
-          // TODO: Refactoring
-          this.filterScenarioList(this.selectedCategories);
         });
       }
-      if(allowListCourses) {
+      if (allowListCourses) {
         this.cs.list().subscribe((c: Course[]) => {
           this.courses = c;
         });
@@ -571,7 +575,7 @@ export class NewScheduledEventComponent implements OnInit {
         this.times.push(hr + ":" + min);
       });
     });
-  
+
 
   }
 
@@ -636,7 +640,7 @@ export class NewScheduledEventComponent implements OnInit {
       .subscribe((ea: EnvironmentAvailability[]) => {
         this.availableEnvironments = ea;
         this.checkingEnvironments = false;
-        this.noEnvironmentsAvailable = ea.length == 0 ? true: false;
+        this.noEnvironmentsAvailable = ea.length == 0 ? true : false;
 
         ea.forEach((e => {
           Object.keys(e.available_count).forEach(vmt => {
@@ -836,45 +840,7 @@ export class NewScheduledEventComponent implements OnInit {
     }
     this.close();
   }
-  clearCategoryFilter() {
-    this.selectedCategories = [];
-    this.categoryFilterForm.get('categoryControl').setValue([]);
-  }
-  filterScenarioList(categories: string[]) {
-    this.selectedCategories = categories;
-    if (this.selectedCategories.length === 0) {
-      this.filteredScenarios = this.scenarios;
-      return;
-    }
-
-    let sc = [];
-
-    if (this.selectedCategories.includes('__none__')) {
-      this.scenarios.forEach((s) => {
-        if (s.categories.length === 0) {
-          sc.push(s);
-          return;
-        }
-      });
-    }
-
-    this.scenarios.forEach((s) => {
-      let matches = s.categories.filter((element) =>
-        this.selectedCategories.includes(element)
-      );
-      if (matches.length > 0) {
-        sc.push(s);
-        return;
-      }
-    });
-    this.filteredScenarios = sc;
-  }
-  calculateCategories() {
-    let c = new Set<string>();
-    this.scenarios.forEach((s) => {
-      s.categories.forEach((category) => c.add(category));
-    });
-
-    this.categories = Array.from(c).sort();
+  setScenarioList(values: Scenario[]) {
+    this.filteredScenarios = values;
   }
 }

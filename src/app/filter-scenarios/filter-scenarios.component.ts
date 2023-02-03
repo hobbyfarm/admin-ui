@@ -9,20 +9,19 @@ import { VMTemplate } from '../data/vmtemplate';
 import { VmtemplateService } from '../data/vmtemplate.service';
 
 @Component({
-  selector: 'app-filter-scenarios',
+  selector: 'filter-scenarios',
   templateUrl: './filter-scenarios.component.html',
   styleUrls: ['./filter-scenarios.component.scss']
 })
 export class FilterScenariosComponent implements OnInit {
 
-  @Input() public categories: string[] = [];
+  public categories: string[] = [];
   public selectedCategories: string[] = [];
   public se: ScheduledEvent = new ScheduledEvent();
   public ascSort = ClrDatagridSortOrder.ASC;
   public scenarios: Scenario[] = [];
   public filteredScenarios: Scenario[] = [];
-  //Working Here
-  @Output() public filterScenarioEventEmitter = new EventEmitter<string[]>()
+  @Output() public filterScenarioEventEmitter = new EventEmitter<Scenario[]>()
   public selectRbac: boolean = false;
   public vmtemplates: VMTemplate[] = [];
 
@@ -35,13 +34,15 @@ export class FilterScenariosComponent implements OnInit {
   ) { }
 
 
-  filterByCategory(values: string[]){
+  emitScenarios(values: Scenario[]){
     this.filterScenarioEventEmitter.emit(values);
+    console.log(values)
   }
   clearCategoryFilter() {
     this.selectedCategories = [];
     this.categoryFilterForm.get('categoryControl').setValue([]);
   }
+
 
   filterScenarioList() {
     if (this.selectedCategories.length === 0) {
@@ -91,6 +92,9 @@ export class FilterScenariosComponent implements OnInit {
 
     this.scenarioService.list().subscribe((s: Scenario[]) => {
       this.scenarios = s;
+      this.calculateCategories();
+      this.filterScenarioList();
+      this.emitScenarios(this.scenarios);
     });
 
     this.rbacService
@@ -106,9 +110,9 @@ export class FilterScenariosComponent implements OnInit {
     this.categoryFilterForm.valueChanges.subscribe(() => {
       this.selectedCategories =
         this.categoryFilterForm.get('categoryControl').value ?? [];
-      // this.filterScenarioList();
+      this.filterScenarioList();
       // TODO: Refactor
-      this.filterByCategory(this.selectedCategories)
+      this.emitScenarios(this.filteredScenarios)
     });
   }
 }
