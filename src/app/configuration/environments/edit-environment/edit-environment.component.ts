@@ -45,8 +45,6 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       dnssuffix: [edit ? this.updateEnv.dnssuffix : ''],
       provider: [edit ? this.updateEnv.provider : '', [Validators.required, Validators.minLength(2)]],
       ws_endpoint: [edit ? this.updateEnv.ws_endpoint : '', [Validators.required, Validators.pattern(/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/)]],
-      capacity_mode: [edit ? this.updateEnv.capacity_mode : '', Validators.required],
-      burst_capable: [edit ? this.updateEnv.burst_capable : true]
     });
   }
 
@@ -80,17 +78,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   public buildTemplateMapping() {
     this.templateMappings = this._fb.group({
-      templates: this._fb.array([
-        this._fb.group({
-          template: ['', Validators.required],
-          params: this._fb.array([
-            this._fb.group({
-              key: ['', Validators.required],
-              value: ['', Validators.required]
-            })
-          ])
-        })
-      ])
+      templates: this._fb.array([])
     });
   }
 
@@ -117,6 +105,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     for (var i = 0; i < templateKeys.length; i++) {
       var newGroup = this._fb.group({
         template: [templateKeys[i], Validators.required],
+        count: [this.updateEnv.count_capacity[templateKeys[i]], [Validators.required, Validators.pattern(/-?\d+/)]],
         params: this._fb.array([])
       });
       var paramKeys = Object.keys(this.updateEnv.template_mapping[templateKeys[i]]);
@@ -160,7 +149,10 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   ngOnChanges() {
     if (this.updateEnv) {
       this.fixNullValues();
+      this.env = this.updateEnv;
       this._prepare();
+      this.wizard.navService.goTo(this.wizard.pages.last, true);
+      this.wizard.pages.first.makeCurrent();
     }
   }
 
@@ -224,6 +216,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this._build();
     this.wizard.reset();
     if (this.updateEnv) {
+      this.env = this.updateEnv;
       this._prepare();
     }
     this.wizard.open();
@@ -234,8 +227,6 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this.env.dnssuffix = this.environmentDetails.get('dnssuffix').value;
     this.env.provider = this.environmentDetails.get('provider').value;
     this.env.ws_endpoint = this.environmentDetails.get('ws_endpoint').value;
-    this.env.capacity_mode = this.environmentDetails.get('capacity_mode').value;
-    this.env.burst_capable = (this.environmentDetails.get('burst_capable').value as boolean);
   }
 
   public newIpMapping(from: string = '', to: string = '') {
@@ -288,12 +279,8 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   public newTemplateMapping() {
     var newGroup = this._fb.group({
       template: [this.templateSelection.get('vmt_select').value, Validators.required],
-      params: this._fb.array([
-        this._fb.group({
-          key: ['', Validators.required],
-          value: ['', Validators.required]
-        })
-      ])
+      count: [0, [Validators.required, Validators.pattern(/-?\d+/)]],
+      params: this._fb.array([])
     });
     (this.templateMappings.get('templates') as FormArray).push(newGroup);
   }
@@ -302,11 +289,20 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     (this.templateMappings.get('templates') as FormArray).removeAt(index);
   }
 
+  public getTeplateCount(vmt: string){
+    if(!this.env.count_capacity){
+      return 0;
+    }
+    return this.env.count_capacity[vmt] ?? 0
+  }
+
   public copyTemplateMapping() {
     this.env.template_mapping = {};
+    this.env.count_capacity = {};
     // naïve solution, using nested for loop. gross, but gets the job done.
     for (var i = 0; i < (this.templateMappings.get('templates') as FormArray).length; i++) { // i = index of template
       var template = this.templateMappings.get(['templates', i, 'template']).value;
+      var count = this.templateMappings.get(['templates', i, 'count']).value;
       var templateMap = {};
       for (var j = 0; j < (this.templateMappings.get(['templates', i, 'params']) as FormArray).length; j++) { // j = index of param
         var key = this.templateMappings.get(['templates', i, 'params', j]).get('key').value;
@@ -314,6 +310,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
         templateMap[key] = value;
       }
       this.env.template_mapping[template] = templateMap;
+      this.env.count_capacity[template] = count;
     }
   }
 
@@ -345,6 +342,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
             this.event.next(true);
           }
         )
+      this.env = new Environment();
     }
   }
 }
