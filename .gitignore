@@ -45,5 +45,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# docker-compose enviornment variables
+# local environment variables
 /.env
+
+# local configuration file
+/src/environments/environment.local.ts
