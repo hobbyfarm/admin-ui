@@ -11,17 +11,16 @@ import { VmtemplateService } from '../data/vmtemplate.service';
 @Component({
   selector: 'filter-scenarios',
   templateUrl: './filter-scenarios.component.html',
-  styleUrls: ['./filter-scenarios.component.scss']
+  styleUrls: ['./filter-scenarios.component.scss'],
 })
 export class FilterScenariosComponent implements OnInit {
-
   public categories: string[] = [];
   public selectedCategories: string[] = [];
   public se: ScheduledEvent = new ScheduledEvent();
   public ascSort = ClrDatagridSortOrder.ASC;
   public scenarios: Scenario[] = [];
   public filteredScenarios: Scenario[] = [];
-  @Output() public filterScenarioEventEmitter = new EventEmitter<Scenario[]>()
+  @Output() public filterScenarioEventEmitter = new EventEmitter<Scenario[]>();
   public selectRbac: boolean = false;
   public vmtemplates: VMTemplate[] = [];
 
@@ -30,19 +29,19 @@ export class FilterScenariosComponent implements OnInit {
   });
   event: any;
 
-  constructor(public scenarioService: ScenarioService,     public rbacService: RbacService,     public vmTemplateService: VmtemplateService
-  ) { }
+  constructor(
+    public scenarioService: ScenarioService,
+    public rbacService: RbacService,
+    public vmTemplateService: VmtemplateService
+  ) {}
 
-
-  emitScenarios(values: Scenario[]){
+  emitScenarios(values: Scenario[]) {
     this.filterScenarioEventEmitter.emit(values);
-    console.log(values)
   }
   clearCategoryFilter() {
     this.selectedCategories = [];
     this.categoryFilterForm.get('categoryControl').setValue([]);
   }
-
 
   filterScenarioList() {
     if (this.selectedCategories.length === 0) {
@@ -60,8 +59,6 @@ export class FilterScenariosComponent implements OnInit {
         }
       });
     }
-
-    
 
     this.scenarios.forEach((s) => {
       let matches = s.categories.filter((element) =>
@@ -82,7 +79,6 @@ export class FilterScenariosComponent implements OnInit {
 
     this.categories = Array.from(c).sort();
   }
-  
 
   ngOnInit() {
     // "Get" Permission on scenarios is required to load step content
@@ -112,7 +108,7 @@ export class FilterScenariosComponent implements OnInit {
         this.categoryFilterForm.get('categoryControl').value ?? [];
       this.filterScenarioList();
       // TODO: Refactor
-      this.emitScenarios(this.filteredScenarios)
+      this.emitScenarios(this.filteredScenarios);
     });
   }
 }
