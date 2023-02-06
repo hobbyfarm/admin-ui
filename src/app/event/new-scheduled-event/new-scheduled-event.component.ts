@@ -594,7 +594,7 @@ export class NewScheduledEventComponent implements OnInit {
         }),
         filter((e: Environment) => {
           // first add to keyed environment, regardless of if we use it or not
-          this.keyedEnvironments.set(e.display_name, e);
+          this.keyedEnvironments.set(e.name, e);
           let pass = false;
           Object.keys(e.template_mapping).forEach((s: string) => {
             if (templates.has(s)) {

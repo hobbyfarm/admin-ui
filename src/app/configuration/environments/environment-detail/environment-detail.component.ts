@@ -51,4 +51,11 @@ export class EnvironmentDetailComponent implements OnInit {
   isEmpty(object: Object) {
     return Object.keys(object).length == 0;
   }
+
+  getLimit(vmt: string){
+    if(!this.currentEnvironment.count_capacity){
+      return 0
+    }
+    return this.currentEnvironment.count_capacity[vmt] ?? 0;
+  }
 }

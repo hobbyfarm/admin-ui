@@ -23,26 +23,6 @@
                 formControlName="image" required />
                 <clr-control-error *clrIfError="'required'">Image is required</clr-control-error>
             </clr-input-container>
-            <fieldset>
-                <clr-input-container>
-                    <label>CPU</label>
-                    <input clrInput type="number" placeholder="1" name="cpu"
-                    formControlName="cpu" />
-                    <clr-control-helper>Number of CPUs</clr-control-helper>
-                </clr-input-container>
-                <clr-input-container>
-                    <label>Memory</label>
-                    <input clrInput type="number" placeholder="1" name="memory"
-                    formControlName="memory" />
-                    <clr-control-helper>Memory specified in MB</clr-control-helper>
-                </clr-input-container>
-                <clr-input-container>
-                    <label>Storage</label>
-                    <input clrInput type="number" placeholder="1" name="storage"
-                    formControlName="storage" />
-                    <clr-control-helper>Storage specified in GB</clr-control-helper>
-                </clr-input-container>
-            </fieldset>
         </form>
     </clr-wizard-page>
     <clr-wizard-page [clrWizardPageNextDisabled]="!configMap.valid">
@@ -105,18 +85,6 @@
                 <tr>
                     <td>Image</td>
                     <td>{{ template.image }}</td>
-                </tr>
-                <tr>
-                    <td>CPU</td>
-                    <td>{{ template.resources?.cpu }}</td>
-                </tr>
-                <tr>
-                    <td>Memory</td>
-                    <td>{{ template.resources?.memory }}</td>
-                </tr>
-                <tr>
-                    <td>Storage</td>
-                    <td>{{ template.resources?.storage }}</td>
                 </tr>
             </tbody>
         </table>
