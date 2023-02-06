@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
-import { ClrModal } from '@clr/angular';
+import { ClrDatagridSortOrder, ClrModal } from '@clr/angular';
 import { Step } from '../data/step';
 import { ServerResponse } from '../data/serverresponse';
 import { deepCopy } from '../deepcopy';
@@ -20,7 +20,8 @@ import { RbacService } from '../data/rbac.service';
 export class ScenarioComponent implements OnInit {
   public unusedSelectedScenario: any = {}; // only exists to satisfy a datagrid requirement
 
-  public scenarios: Scenario[] = [];
+
+  public filteredScenarios: Scenario[] = [];
   public vmtemplates: VMTemplate[] = [];
   public selectedscenario: Scenario;
   public editingStep: Step = new Step();
@@ -33,10 +34,10 @@ export class ScenarioComponent implements OnInit {
   public scenarioDangerClosed: boolean = true;
   public scenarioSuccessClosed: boolean = true;
 
-  public editDangerAlert: string = "";
-  public editSuccessAlert: string = "";
-  public scenarioDangerAlert: string = "";
-  public scenarioSuccessAlert: string = "";
+  public editDangerAlert: string = '';
+  public editSuccessAlert: string = '';
+  public scenarioDangerAlert: string = '';
+  public scenarioSuccessAlert: string = '';
   public newvmindex: number = 0;
 
   public deletingVMSetIndex: number = 0;
@@ -57,87 +58,86 @@ export class ScenarioComponent implements OnInit {
 
   public selectRbac: boolean = false;
 
+  public ascSort = ClrDatagridSortOrder.ASC;
+
   constructor(
     public scenarioService: ScenarioService,
     public vmTemplateService: VmtemplateService,
     public rbacService: RbacService
-  ) { }
+  ) {}
+
 
   public vmform: FormGroup = new FormGroup({
-    'vm_name': new FormControl(null, [
+    vm_name: new FormControl(null, [
       Validators.required,
-      Validators.minLength(4)
+      Validators.minLength(4),
     ]),
-    'vm_template': new FormControl(null, [
-      Validators.required,
-    ])
-  })
+    vm_template: new FormControl(null, [Validators.required]),
+  });
 
-  public editScenarioForm: FormGroup = new FormGroup({
-    'scenario_name': new FormControl(null, [
-      Validators.required,
-      Validators.minLength(4)
-    ]),
-    'scenario_description': new FormControl(null, [
-      Validators.required,
-      Validators.minLength(4)
-    ]),
-    'keepalive_amount': new FormControl(10, [
-      Validators.required
-    ]),
-    'keepalive_unit': new FormControl('m', [
-      Validators.required
-    ]),
-    'pause_duration': new FormControl(1, [
-      Validators.required,
-      Validators.min(1),
-      Validators.pattern('^[0-9]+$')
-    ])
-  }, { validators: KeepaliveValidator })
+  public editScenarioForm: FormGroup = new FormGroup(
+    {
+      scenario_name: new FormControl(null, [
+        Validators.required,
+        Validators.minLength(4),
+      ]),
+      scenario_description: new FormControl(null, [
+        Validators.required,
+        Validators.minLength(4),
+      ]),
+      keepalive_amount: new FormControl(10, [Validators.required]),
+      keepalive_unit: new FormControl('m', [Validators.required]),
+      pause_duration: new FormControl(1, [
+        Validators.required,
+        Validators.min(1),
+        Validators.pattern('^[0-9]+$'),
+      ]),
+    },
+    { validators: KeepaliveValidator }
+  );
 
-  public scenarioDetails: FormGroup = new FormGroup({
-    'scenario_name': new FormControl(null, [
-      Validators.required,
-      Validators.minLength(4)
-    ]),
-    'scenario_description': new FormControl(null, [
-      Validators.required,
-      Validators.minLength(4)
-    ]),
-    'keepalive_amount': new FormControl(10, [
-      Validators.required
-    ]),
-    'keepalive_unit': new FormControl('m', [
-      Validators.required
-    ]),
-    'pause_duration': new FormControl(1, [
-      Validators.required,
-      Validators.min(1),
-      Validators.pattern('^[0-9]+$')
-    ])
-  }, { validators: KeepaliveValidator })
+  public scenarioDetails: FormGroup = new FormGroup(
+    {
+      scenario_name: new FormControl(null, [
+        Validators.required,
+        Validators.minLength(4),
+      ]),
+      scenario_description: new FormControl(null, [
+        Validators.required,
+        Validators.minLength(4),
+      ]),
+      keepalive_amount: new FormControl(10, [Validators.required]),
+      keepalive_unit: new FormControl('m', [Validators.required]),
+      pause_duration: new FormControl(1, [
+        Validators.required,
+        Validators.min(1),
+        Validators.pattern('^[0-9]+$'),
+      ]),
+    },
+    { validators: KeepaliveValidator }
+  );
 
   public newCategoryForm: FormGroup = new FormGroup({
-    "category": new FormControl(null, [
-      Validators.required
-    ])
-  })
+    category: new FormControl(null, [Validators.required]),
+  });
 
   public newTagForm: FormGroup = new FormGroup({
-    "tag": new FormControl(null, [
-      Validators.required
-    ])
-  })
+    tag: new FormControl(null, [Validators.required]),
+  });
 
-  get keepaliveAmount() { return this.scenarioDetails.get("keepalive_amount"); }
+  get keepaliveAmount() {
+    return this.scenarioDetails.get('keepalive_amount');
+  }
 
-  get keepaliveUnit() { return this.scenarioDetails.get("keepalive_unit"); }
+  get keepaliveUnit() {
+    return this.scenarioDetails.get('keepalive_unit');
+  }
 
   get keepaliveRequired() {
-    var ka = this.scenarioDetails.get("keepalive_amount");
-    var ku = this.scenarioDetails.get("keepalive_unit");
+    var ka = this.scenarioDetails.get('keepalive_amount');
+    var ku = this.scenarioDetails.get('keepalive_unit');
 
-    // validate 
+    // validate
     if ((ka.dirty || ka.touched) && ka.invalid && ka.errors.required) {
       return true;
     } else if ((ku.dirty || ku.touched) && ku.invalid && ku.errors.required) {
@@ -147,11 +147,11 @@ export class ScenarioComponent implements OnInit {
     }
   }
 
-  @ViewChild("editmodal", { static: true }) editModal: ClrModal;
-  @ViewChild("deletevmsetmodal", { static: true }) deleteVMSetModal: ClrModal;
-  @ViewChild("createvmmodal", { static: true }) createVMModal: ClrModal;
-  @ViewChild("deletestepmodal", { static: true }) deleteStepModal: ClrModal;
-  @ViewChild("newscenariomodal", { static: true }) newScenarioModal: ClrModal;
+  @ViewChild('editmodal', { static: true }) editModal: ClrModal;
+  @ViewChild('deletevmsetmodal', { static: true }) deleteVMSetModal: ClrModal;
+  @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
+  @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
+  @ViewChild('newscenariomodal', { static: true }) newScenarioModal: ClrModal;
 
   openEdit(s: Step, i: number) {
     this.editingStep = s;
@@ -162,19 +162,25 @@ export class ScenarioComponent implements OnInit {
   editScenario(s: Scenario) {
     if (s != undefined) {
       // this is only a partial scenario, we need to get the full
-      this.scenarioService.get(s.id)
-        .subscribe(
-          (s: Scenario) => {
-            this.selectedscenario = s;
-            this.editScenarioForm.reset({
-              'scenario_name': s.name,
-              'scenario_description': s.description,
-              'keepalive_amount': s.keepalive_duration.substring(0, s.keepalive_duration.length - 1),
-              'keepalive_unit': s.keepalive_duration.substring(s.keepalive_duration.length - 1, s.keepalive_duration.length),
-              'pause_duration': s.pause_duration.substring(0, s.pause_duration.length - 1)
-            });
-          }
-        )
+      this.scenarioService.get(s.id).subscribe((s: Scenario) => {
+        this.selectedscenario = s;
+        this.editScenarioForm.reset({
+          scenario_name: s.name,
+          scenario_description: s.description,
+          keepalive_amount: s.keepalive_duration.substring(
+            0,
+            s.keepalive_duration.length - 1
+          ),
+          keepalive_unit: s.keepalive_duration.substring(
+            s.keepalive_duration.length - 1,
+            s.keepalive_duration.length
+          ),
+          pause_duration: s.pause_duration.substring(
+            0,
+            s.pause_duration.length - 1
+          ),
+        });
+      });
     }
   }
 
@@ -217,26 +223,26 @@ export class ScenarioComponent implements OnInit {
   }
 
   public addNewScenario() {
-    this.newScenario.name = this.scenarioDetails.get("scenario_name").value;
-    this.newScenario.description = this.scenarioDetails.get("scenario_description").value;
-    this.newScenario.keepalive_duration = this.scenarioDetails.get("keepalive_amount").value + this.scenarioDetails.get("keepalive_unit").value;
-    this.newScenario.pause_duration = this.scenarioDetails.get("pause_duration").value + "h";
+    this.newScenario.name = this.scenarioDetails.get('scenario_name').value;
+    this.newScenario.description = this.scenarioDetails.get(
+      'scenario_description'
+    ).value;
+    this.newScenario.keepalive_duration =
+      this.scenarioDetails.get('keepalive_amount').value +
+      this.scenarioDetails.get('keepalive_unit').value;
+    this.newScenario.pause_duration =
+      this.scenarioDetails.get('pause_duration').value + 'h';
 
     // should be able to save at this point
-    this.scenarioService.create(this.newScenario)
-      .subscribe(
-        (s: string) => {
-          this._displayAlert(s, true);
-        },
-        (s: string) => {
-          this._displayAlert(s, false);
-        }
-      )
+    this.scenarioService.create(this.newScenario).subscribe(
+      (s: string) => {
+        this._displayAlert(s, true);
+      },
+      (s: string) => {
+        this._displayAlert(s, false);
+      }
+    );
 
-    this.scenarioService.list()
-      .subscribe(
-        (s: Scenario[]) => this.scenarios = s
-      )
 
     this.newScenarioModal.close();
   }
@@ -247,25 +253,24 @@ export class ScenarioComponent implements OnInit {
 
   saveStep() {
     this.selectedscenario.steps[this.editingIndex] = this.editingStep;
-    this.scenarioService.update(this.selectedscenario)
-      .subscribe(
-        (s: ServerResponse) => {
-          if (s.type == "updated") {
-            this.editSuccessAlert = "Step successfully updated";
-            this.editSuccessClosed = false;
-            setTimeout(() => {
-              this.editSuccessClosed = true;
-              this.editModal.close();
-            }, 1000);
-          } else {
-            this.editDangerAlert = "Unable to update step: " + s.message;
-            this.editDangerClosed = false;
-            setTimeout(() => {
-              this.editDangerClosed = true;
-            }, 1000);
-          }
+    this.scenarioService
+      .update(this.selectedscenario)
+      .subscribe((s: ServerResponse) => {
+        if (s.type == 'updated') {
+          this.editSuccessAlert = 'Step successfully updated';
+          this.editSuccessClosed = false;
+          setTimeout(() => {
+            this.editSuccessClosed = true;
+            this.editModal.close();
+          }, 1000);
+        } else {
+          this.editDangerAlert = 'Unable to update step: ' + s.message;
+          this.editDangerClosed = false;
+          setTimeout(() => {
+            this.editDangerClosed = true;
+          }, 1000);
         }
-      )
+      });
   }
 
   public openCreateVM(i: number) {
@@ -281,36 +286,42 @@ export class ScenarioComponent implements OnInit {
 
   addVM() {
     this.scenarioTainted = true;
-    this.selectedscenario.virtualmachines[this.newvmindex][this.vmform.get('vm_name').value] = this.vmform.get('vm_template').value;
+    this.selectedscenario.virtualmachines[this.newvmindex][
+      this.vmform.get('vm_name').value
+    ] = this.vmform.get('vm_template').value;
     this.createVMModal.close();
   }
 
-
   savescenario() {
-    this.selectedscenario.keepalive_duration = this.editScenarioForm.get("keepalive_amount").value + this.editScenarioForm.get("keepalive_unit").value;
-    this.selectedscenario.pause_duration = this.editScenarioForm.get("pause_duration").value + "h";
-    this.selectedscenario.name = this.editScenarioForm.get("scenario_name").value;
-    this.selectedscenario.description = this.editScenarioForm.get("scenario_description").value;
+    this.selectedscenario.keepalive_duration =
+      this.editScenarioForm.get('keepalive_amount').value +
+      this.editScenarioForm.get('keepalive_unit').value;
+    this.selectedscenario.pause_duration =
+      this.editScenarioForm.get('pause_duration').value + 'h';
+    this.selectedscenario.name =
+      this.editScenarioForm.get('scenario_name').value;
+    this.selectedscenario.description = this.editScenarioForm.get(
+      'scenario_description'
+    ).value;
 
-    this.scenarioService.update(this.selectedscenario)
-      .subscribe(
-        (s: ServerResponse) => {
-          if (s.type == "updated") {
-            this.scenarioSuccessAlert = "Scenario updated";
-            this.scenarioSuccessClosed = false;
-            setTimeout(() => {
-              this.scenarioSuccessClosed = true;
-              this.scenarioTainted = false;
-            }, 1000);
-          } else {
-            this.scenarioDangerAlert = "Unable to update scenario: " + s.message;
-            this.scenarioDangerClosed = false;
-            setTimeout(() => {
-              this.scenarioDangerClosed = true;
-            }, 1000);
-          }
+    this.scenarioService
+      .update(this.selectedscenario)
+      .subscribe((s: ServerResponse) => {
+        if (s.type == 'updated') {
+          this.scenarioSuccessAlert = 'Scenario updated';
+          this.scenarioSuccessClosed = false;
+          setTimeout(() => {
+            this.scenarioSuccessClosed = true;
+            this.scenarioTainted = false;
+          }, 1000);
+        } else {
+          this.scenarioDangerAlert = 'Unable to update scenario: ' + s.message;
+          this.scenarioDangerClosed = false;
+          setTimeout(() => {
+            this.scenarioDangerClosed = true;
+          }, 1000);
         }
-      )
+      });
   }
 
   moveStepUp(i: number) {
@@ -335,16 +346,20 @@ export class ScenarioComponent implements OnInit {
 
   deleteCategory(category: string) {
     this.selectedscenario.categories.forEach((element, index) => {
-      if (element == category) this.selectedscenario.categories.splice(index, 1);
+      if (element == category)
+        this.selectedscenario.categories.splice(index, 1);
     });
   }
 
   addCategory() {
-    let categories = this.newCategoryForm.get("category").value
-    categories = categories.split(",");
-    categories.forEach(category => {
-      category = category.replace(/\s/g, ""); //remove all whitespaces
-      if (category != "" && !this.selectedscenario.categories.includes(category)) {
+    let categories = this.newCategoryForm.get('category').value;
+    categories = categories.split(',');
+    categories.forEach((category) => {
+      category = category.replace(/\s/g, ''); //remove all whitespaces
+      if (
+        category != '' &&
+        !this.selectedscenario.categories.includes(category)
+      ) {
         this.selectedscenario.categories.push(category);
       }
     });
@@ -359,11 +374,11 @@ export class ScenarioComponent implements OnInit {
   }
 
   addTag() {
-    let tags = this.newTagForm.get("tag").value
-    tags = tags.split(",");
-    tags.forEach(tag => {
-      tag = tag.replace(/\s/g, ""); //remove all whitespaces
-      if (tag != "" && !this.selectedscenario.tags.includes(tag)) {
+    let tags = this.newTagForm.get('tag').value;
+    tags = tags.split(',');
+    tags.forEach((tag) => {
+      tag = tag.replace(/\s/g, ''); //remove all whitespaces
+      if (tag != '' && !this.selectedscenario.tags.includes(tag)) {
         this.selectedscenario.tags.push(tag);
       }
     });
@@ -386,27 +401,28 @@ export class ScenarioComponent implements OnInit {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
     this.deleteVMSetModal.close();
   }
+  setScenarioList(scenarios: Scenario[]){
+    this.filteredScenarios = scenarios;
+  }
+
 
   ngOnInit() {
     // "Get" Permission on scenarios is required to load step content
-    this.rbacService.Grants("scenarios", "get").then((allowed: boolean) => {
+    this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
       this.selectRbac = allowed;
     });
 
-    this.scenarioService.list()
-      .subscribe(
-        (s: Scenario[]) => this.scenarios = s
-      )
 
-    this.rbacService.Grants("virtualmachinesets", "list").then((listVmSets: boolean) => {
-      if (listVmSets) {
-        this.vmTemplateService.list()
-          .subscribe(
-            (v: VMTemplate[]) => {
-              this.vmtemplates = v;
-            }
-          )
-      }
-    })
+    this.rbacService
+      .Grants('virtualmachinesets', 'list')
+      .then((listVmSets: boolean) => {
+        if (listVmSets) {
+          this.vmTemplateService.list().subscribe((v: VMTemplate[]) => {
+            this.vmtemplates = v;
+          });
+        }
+      });
+
+
   }
 }

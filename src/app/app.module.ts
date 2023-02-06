@@ -75,6 +75,7 @@ import { DeleteProcessModalComponent } from './user/user/delete-process-modal/de
 import { EnvironmentDetailComponent } from './configuration/environments/environment-detail/environment-detail.component';
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
 import { NgChartsModule } from 'ng2-charts';
+import { FilterScenariosComponent } from './filter-scenarios/filter-scenarios.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -145,7 +146,8 @@ export function jwtOptionsFactory() {
     RolebindingsComponent,
     NewRoleBindingComponent,
     EnvironmentDetailComponent,
-    VmTemplateDetailComponent
+    VmTemplateDetailComponent,
+    FilterScenariosComponent
   ],
   imports: [
     BrowserModule,

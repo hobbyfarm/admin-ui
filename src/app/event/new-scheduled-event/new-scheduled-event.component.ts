@@ -5,18 +5,29 @@ import {
   Output,
   EventEmitter,
   Input,
-} from "@angular/core";
-import { ClrWizard, ClrSignpostContent } from "@clr/angular";
-import { ScheduledEvent } from "src/app/data/scheduledevent";
-import { Scenario } from "src/app/data/scenario";
-import { ScenarioService } from "src/app/data/scenario.service";
-import { Course } from "src/app/data/course";
-import { CourseService } from "src/app/data/course.service";
-import { EnvironmentService } from "src/app/data/environment.service";
-import { combineAll, concatMap, map, filter, defaultIfEmpty } from "rxjs/operators";
-import { Environment } from "src/app/data/environment";
-import { EnvironmentAvailability } from "src/app/data/environmentavailability";
-import { ScheduledeventService } from "src/app/data/scheduledevent.service";
+} from '@angular/core';
+import {
+  ClrWizard,
+  ClrSignpostContent,
+  ClrDatagrid,
+  ClrDatagridSortOrder,
+} from '@clr/angular';
+import { ScheduledEvent } from 'src/app/data/scheduledevent';
+import { Scenario } from 'src/app/data/scenario';
+import { ScenarioService } from 'src/app/data/scenario.service';
+import { Course } from 'src/app/data/course';
+import { CourseService } from 'src/app/data/course.service';
+import { EnvironmentService } from 'src/app/data/environment.service';
+import {
+  combineAll,
+  concatMap,
+  map,
+  filter,
+  defaultIfEmpty,
+} from 'rxjs/operators';
+import { Environment } from 'src/app/data/environment';
+import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
+import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import {
   FormGroup,
   FormControl,
@@ -26,16 +37,17 @@ import {
   ValidationErrors,
   FormBuilder,
   AbstractControl,
-} from "@angular/forms";
-import { DlDateTimePickerChange } from "angular-bootstrap-datetimepicker";
-import { QuicksetValidator } from "src/app/validators/quickset.validator";
+} from '@angular/forms';
+import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
+import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 import { RbacService } from 'src/app/data/rbac.service';
-import { of } from "rxjs";
+import { of } from 'rxjs';
+import { arrayHead } from '@cds/core/internal';
 
 @Component({
-  selector: "new-scheduled-event",
-  templateUrl: "./new-scheduled-event.component.html",
-  styleUrls: ["./new-scheduled-event.component.scss"],
+  selector: 'new-scheduled-event',
+  templateUrl: './new-scheduled-event.component.html',
+  styleUrls: ['./new-scheduled-event.component.scss'],
 })
 export class NewScheduledEventComponent implements OnInit {
   @Output()
@@ -47,9 +59,10 @@ export class NewScheduledEventComponent implements OnInit {
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
   public scenarios: Scenario[] = [];
+  public filteredScenarios: Scenario[] = [];
+  public filteredScenariosSelected: Scenario[] = [];
   public courses: Course[] = [];
   public scheduledEvents: ScheduledEvent[] = [];
-
   public saving: boolean = false;
 
   public tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -59,7 +72,7 @@ export class NewScheduledEventComponent implements OnInit {
   public availableEnvironments: EnvironmentAvailability[] = [];
   public checkingEnvironments: boolean = true;
   public noEnvironmentsAvailable: boolean = false;
-  public unavailableVMTs: string[] = []
+  public unavailableVMTs: string[] = [];
   public environments: Environment[] = [];
   public keyedEnvironments: Map<string, Environment> = new Map();
   public selectedEnvironments: EnvironmentAvailability[] = [];
@@ -72,6 +85,8 @@ export class NewScheduledEventComponent implements OnInit {
   public simpleMode: boolean = true;
 
   public validTimes: boolean = false;
+
+  public ascSort = ClrDatagridSortOrder.ASC;
 
   public selectedscenarios: Scenario[] = [];
   public selectedcourses: Course[] = [];
@@ -121,14 +136,18 @@ export class NewScheduledEventComponent implements OnInit {
     envs: this._fb.array([], this.validateNonZeroFormControl()),
   });
 
+  public categoryFilterForm = new FormGroup({
+    categoryControl: new FormControl([], []),
+  });
+
   public copyEventDetails() {
-    this.se.event_name = this.eventDetails.get("event_name").value;
-    this.se.description = this.eventDetails.get("description").value;
-    this.se.access_code = this.eventDetails.get("access_code").value;
+    this.se.event_name = this.eventDetails.get('event_name').value;
+    this.se.description = this.eventDetails.get('description').value;
+    this.se.access_code = this.eventDetails.get('access_code').value;
     this.se.disable_restriction =
-      !this.eventDetails.get("restricted_bind").value; // opposite, since restricted_bind: enabled really means disable_restriction: false
-    this.se.on_demand = this.eventDetails.get("on_demand").value;
-    this.se.printable = this.eventDetails.get("printable").value;
+      !this.eventDetails.get('restricted_bind').value; // opposite, since restricted_bind: enabled really means disable_restriction: false
+    this.se.on_demand = this.eventDetails.get('on_demand').value;
+    this.se.printable = this.eventDetails.get('printable').value;
   }
 
   private validateNonZeroFormControl(): ValidatorFn {
@@ -185,15 +204,31 @@ export class NewScheduledEventComponent implements OnInit {
     };
   }
 
-  @ViewChild("wizard", { static: true }) wizard: ClrWizard;
-  @ViewChild("startTimeSignpost") startTimeSignpost: ClrSignpostContent;
-  @ViewChild("endTimeSignpost") endTimeSignpost: ClrSignpostContent;
+  @ViewChild('wizard', { static: true }) wizard: ClrWizard;
+  @ViewChild('startTimeSignpost') startTimeSignpost: ClrSignpostContent;
+  @ViewChild('endTimeSignpost') endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
+    let selected: Scenario[] = [];
     this.se.scenarios = [];
-    s.forEach((sc: Scenario) => this.se.scenarios.push(sc.id));
-    this.selectedscenarios = s;
+
+    this.selectedscenarios.forEach((element) => {
+      if (!this.filteredScenarios.includes(element)) {
+        this.se.scenarios.push(element.id);
+        selected.push(element);
+      }
+    });
+
+    s.forEach((sc: Scenario) => {
+      if (!selected.includes(sc)) {
+        this.se.scenarios.push(sc.id);
+        selected.push(sc);
+      }
+    });
+
+    this.selectedscenarios = selected;
   }
+
   public coursesSelected(c: Course[]) {
     this.se.courses = [];
     c.forEach((co: Course) => this.se.courses.push(co.id));
@@ -294,7 +329,7 @@ export class NewScheduledEventComponent implements OnInit {
         Validators.pattern(/-?\d+/),
         Validators.max(this.maxUserCounts[ea.environment]),
       ]);
-      (this.simpleModeVmCounts.get("envs") as FormArray).push(newControl);
+      (this.simpleModeVmCounts.get('envs') as FormArray).push(newControl);
     }
   }
 
@@ -305,7 +340,7 @@ export class NewScheduledEventComponent implements OnInit {
 
     if (this.simpleMode) {
       this.selectedEnvironments.forEach((env, i) => {
-        var users = this.simpleModeVmCounts.get(["envs", i]).value;
+        var users = this.simpleModeVmCounts.get(['envs', i]).value;
         this.simpleUserCounts[env.environment] = users;
         if (users == 0) {
           return;
@@ -425,7 +460,7 @@ export class NewScheduledEventComponent implements OnInit {
 
   controls(path: string) {
     var group;
-    if (path == "") {
+    if (path == '') {
       group = this.vmCounts as FormGroup;
     } else {
       group = this.vmCounts.get(path) as FormGroup;
@@ -465,11 +500,13 @@ export class NewScheduledEventComponent implements OnInit {
           }
         });
       });
-      this.rbacService.Grants("environments", "list").then((allowListEnvironments: boolean) => {
-        if(allowListEnvironments) {
-          this.checkEnvironments();
-        }
-      })
+      this.rbacService
+        .Grants('environments', 'list')
+        .then((allowListEnvironments: boolean) => {
+          if (allowListEnvironments) {
+            this.checkEnvironments();
+          }
+        });
 
       this.wizard.navService.goTo(this.wizard.pages.last, true);
       this.wizard.pages.first.makeCurrent();
@@ -483,10 +520,10 @@ export class NewScheduledEventComponent implements OnInit {
     var total = 0;
     for (
       var i = 0;
-      i < (this.simpleModeVmCounts.get("envs") as FormArray).length;
+      i < (this.simpleModeVmCounts.get('envs') as FormArray).length;
       i++
     ) {
-      total += (this.simpleModeVmCounts.get(["envs", i]) as FormControl).value;
+      total += (this.simpleModeVmCounts.get(['envs', i]) as FormControl).value;
     }
     return total;
   }
@@ -501,20 +538,20 @@ export class NewScheduledEventComponent implements OnInit {
     }
 
     const authorizationRequests = Promise.all([
-      this.rbacService.Grants("scenarios", "list"),
-      this.rbacService.Grants("courses", "list"),
-    ])
+      this.rbacService.Grants('scenarios', 'list'),
+      this.rbacService.Grants('courses', 'list'),
+    ]);
 
     authorizationRequests.then((permissions: [boolean, boolean]) => {
       const allowListScenarios: boolean = permissions[0];
       const allowListCourses: boolean = permissions[1];
 
-      if(allowListScenarios) {
+      if (allowListScenarios) {
         this.ss.list().subscribe((s: Scenario[]) => {
           this.scenarios = s;
         });
       }
-      if(allowListCourses) {
+      if (allowListCourses) {
         this.cs.list().subscribe((c: Course[]) => {
           this.courses = c;
         });
@@ -529,33 +566,33 @@ export class NewScheduledEventComponent implements OnInit {
 
     // setup the times
     [
-      "00",
-      "01",
-      "02",
-      "03",
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
-      "10",
-      "11",
-      "12",
-      "13",
-      "14",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
+      '00',
+      '01',
+      '02',
+      '03',
+      '04',
+      '05',
+      '06',
+      '07',
+      '08',
+      '09',
+      '10',
+      '11',
+      '12',
+      '13',
+      '14',
+      '15',
+      '16',
+      '17',
+      '18',
+      '19',
+      '20',
+      '21',
+      '22',
+      '23',
     ].forEach((hr: string) => {
-      ["00", "30"].forEach((min: string) => {
-        this.times.push(hr + ":" + min);
+      ['00', '30'].forEach((min: string) => {
+        this.times.push(hr + ':' + min);
       });
     });
   }
@@ -590,11 +627,11 @@ export class NewScheduledEventComponent implements OnInit {
       .pipe(
         concatMap((e: Environment[]) => {
           this.environments = e;
-          return e
+          return e;
         }),
         filter((e: Environment) => {
           // first add to keyed environment, regardless of if we use it or not
-          this.keyedEnvironments.set(e.display_name, e);
+          this.keyedEnvironments.set(e.name, e);
           let pass = false;
           Object.keys(e.template_mapping).forEach((s: string) => {
             if (templates.has(s)) {
@@ -621,13 +658,13 @@ export class NewScheduledEventComponent implements OnInit {
       .subscribe((ea: EnvironmentAvailability[]) => {
         this.availableEnvironments = ea;
         this.checkingEnvironments = false;
-        this.noEnvironmentsAvailable = ea.length == 0 ? true: false;
+        this.noEnvironmentsAvailable = ea.length == 0 ? true : false;
 
-        ea.forEach((e => {
-          Object.keys(e.available_count).forEach(vmt => {
+        ea.forEach((e) => {
+          Object.keys(e.available_count).forEach((vmt) => {
             templates.delete(vmt);
-          })
-        }))
+          });
+        });
 
         this.unavailableVMTs = Array.from(templates.keys());
 
@@ -655,22 +692,22 @@ export class NewScheduledEventComponent implements OnInit {
   public quicksetEndtimeForm: FormGroup = new FormGroup(
     {
       quickset_endtime: new FormControl(1, [Validators.required]),
-      quickset_unit: new FormControl("w", [Validators.required]),
+      quickset_unit: new FormControl('w', [Validators.required]),
     },
     { validators: QuicksetValidator }
   );
 
   get quicksetAmount() {
-    return this.quicksetEndtimeForm.get("quickset_endtime");
+    return this.quicksetEndtimeForm.get('quickset_endtime');
   }
 
   get quicksetUnit() {
-    return this.quicksetEndtimeForm.get("quickset_unit");
+    return this.quicksetEndtimeForm.get('quickset_unit');
   }
 
   get quicksetRequired() {
-    var qe = this.quicksetEndtimeForm.get("quickset_endtime");
-    var qu = this.quicksetEndtimeForm.get("quickset_unit");
+    var qe = this.quicksetEndtimeForm.get('quickset_endtime');
+    var qu = this.quicksetEndtimeForm.get('quickset_unit');
 
     // validate
     if ((qe.dirty || qe.touched) && qe.invalid && qe.errors.required) {
@@ -687,23 +724,23 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   public quickEndTime() {
-    const durationType: "h" | "d" | "w" | "m" =
-      this.quicksetEndtimeForm.get("quickset_unit").value;
+    const durationType: 'h' | 'd' | 'w' | 'm' =
+      this.quicksetEndtimeForm.get('quickset_unit').value;
     const duration: number =
-      this.quicksetEndtimeForm.get("quickset_endtime").value;
+      this.quicksetEndtimeForm.get('quickset_endtime').value;
     switch (durationType) {
-      case "h":
+      case 'h':
         this.se.end_time = new Date(Date.now() + 3600 * 1000 * duration);
         break;
-      case "d":
+      case 'd':
         this.se.end_time = new Date(Date.now() + 24 * 3600 * 1000 * duration);
         break;
-      case "w":
+      case 'w':
         this.se.end_time = new Date(
           Date.now() + 7 * 24 * 3600 * 1000 * duration
         );
         break;
-      case "m":
+      case 'm':
         let days: number = 0;
         const today = new Date();
         for (let i = 0; i < duration; i++) {
@@ -747,7 +784,7 @@ export class NewScheduledEventComponent implements OnInit {
     this.selectedEnvironments = [];
     this.selectedscenarios = [];
     this.selectedcourses = [];
-    this.startDate = this.startTime = this.endDate = this.endTime = "";
+    this.startDate = this.startTime = this.endDate = this.endTime = '';
     this.wizard.reset();
     this.wizard.open();
     this.vmCounts = new FormGroup({}, this.validateAdvancedVmPage());
@@ -820,5 +857,8 @@ export class NewScheduledEventComponent implements OnInit {
       );
     }
     this.close();
+  }
+  setScenarioList(values: Scenario[]) {
+    this.filteredScenarios = values;
   }
 }

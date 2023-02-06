@@ -14,14 +14,6 @@
                 <clr-stack-label>Websocket Endpoint</clr-stack-label>
                 <clr-stack-content>{{ currentEnvironment.ws_endpoint }}</clr-stack-content>
             </clr-stack-block>
-            <clr-stack-block>
-                <clr-stack-label>Capacity Mode</clr-stack-label>
-                <clr-stack-content>{{ currentEnvironment.capacity_mode }}</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block>
-                <clr-stack-label>Burst Capable</clr-stack-label>
-                <clr-stack-content>{{ currentEnvironment.burst_capable }}</clr-stack-content>
-            </clr-stack-block>
         </clr-stack-block>
         <clr-stack-block>
             <clr-stack-label>Environment Specifics</clr-stack-label>
@@ -46,6 +38,7 @@
             </clr-stack-content>
             <clr-stack-block *ngFor="let template of currentEnvironment.template_mapping | keyvalue; let i = index" [(clrSbExpanded)]="stackBoxExpanded[i]">
                 <clr-stack-label>{{ template.key }}</clr-stack-label>
+                (Limit: {{ getLimit(template.key) }})
                 <clr-stack-block>
                     <clr-stack-label class="stackbox-header">Key</clr-stack-label>
                     <clr-stack-content class="stackbox-header">Value</clr-stack-content>

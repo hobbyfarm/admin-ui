@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AppConfigService } from '../app-config.service';
 import { RbacService } from '../data/rbac.service';
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: '[app-header]',
@@ -26,7 +27,8 @@ export class HeaderComponent implements OnInit {
     public router: Router,
     public helper: JwtHelperService,
     public configService: AppConfigService,
-    private rbacService: RbacService
+    private rbacService: RbacService,
+    private titleService:Title
   ) {
     this.configService.getLogo(this.logo)
       .then((obj: string) => {
@@ -38,6 +40,7 @@ export class HeaderComponent implements OnInit {
         let fi = <HTMLLinkElement>document.querySelector("#favicon")
         fi.href = this.config.favicon;
       }
+      this.titleService.setTitle(this.title);
   }
 
   ngOnInit() {
@@ -58,7 +61,7 @@ export class HeaderComponent implements OnInit {
     this.email = tok.email;
 
     // Automatically logout the user after token expiration
-    const timeout = tok.exp - Date.now();
+    const timeout = tok.exp * 1000 - Date.now();
     setTimeout(() => this.doLogout(), timeout);
   }
 

@@ -13,6 +13,7 @@ import { ServerResponse } from '../data/serverresponse';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 import { RbacService } from '../data/rbac.service';
+import { ClrDatagridSortOrder } from '@clr/angular';
 
 @Component({
   selector: 'app-course',
@@ -62,6 +63,8 @@ export class CourseComponent implements OnInit {
   public updateRbac: boolean = false;
   public listScenarios: boolean = false;
   public seeExamples = false;
+
+  public ascSort = ClrDatagridSortOrder.ASC;
 
   constructor(
     public courseService: CourseService,

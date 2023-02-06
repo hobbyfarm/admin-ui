@@ -55,10 +55,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     this.templateDetails = null;
     this.templateDetails = this._fb.group({
       name: [edit ? this.editTemplate.name : '', [Validators.required, Validators.minLength(4)]],
-      image: [edit ? this.editTemplate.image : '', [Validators.required]],
-      cpu: [ edit ? this.editTemplate.resources.cpu : 0 ],
-      memory: [ edit ? this.editTemplate.resources.memory : 0 ],
-      storage: [ edit ? this.editTemplate.resources.storage : 0 ]
+      image: [edit ? this.editTemplate.image : '', [Validators.required]]
     })
   }
 
@@ -107,10 +104,6 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public copyTemplateDetails() {
     this.template.name = this.templateDetails.get('name').value;
     this.template.image = this.templateDetails.get('image').value;
-    this.template.resources = {cpu: 0, memory: 0, storage: 0};
-    this.template.resources.cpu = this.templateDetails.get('cpu').value;
-    this.template.resources.memory = this.templateDetails.get('memory').value;
-    this.template.resources.storage = this.templateDetails.get('storage').value;
   }
 
   public copyConfigMap() {
@@ -168,6 +161,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     if (this.editTemplate) {
       this.fixNullValues();
       this._prepare();
+      this.wizard.navService.goTo(this.wizard.pages.last, true);
+      this.wizard.pages.first.makeCurrent();
     } else {
       this.buildTemplateDetails();
       this.buildConfigMap();
