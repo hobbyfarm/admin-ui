@@ -45,10 +45,9 @@
 </div>
 <div class="clr-row">
   <div class="clr-col-12 clr-col-md-6">
-
-
-    <filter-scenarios 
-    (filterScenarioEventEmitter)="setScenarioList($event)"></filter-scenarios>
+    <filter-scenarios
+      (filterScenarioEventEmitter)="setScenarioList($event)"
+    ></filter-scenarios>
     <clr-datagrid
       [clrDgSingleSelected]="unusedSelectedScenario"
       (clrDgSingleSelectedChange)="editScenario($event)"
@@ -481,143 +480,12 @@
         </span>
       </clr-alert-item>
     </clr-alert>
+
     <ng-container>
-      <clr-stack-view class="compact">
-        <clr-stack-header> HobbyFarm Syntax Reference </clr-stack-header>
-        <clr-stack-block>
-          <clr-stack-label>Virtual Machine Information</clr-stack-label>
-          <clr-stack-content> </clr-stack-content>
-          <clr-stack-block>
-            <clr-stack-label>
-              <p>
-                The listed variables are available. To use, specify within a
-                <code>{{ "${}" }}</code> block using the following syntax:
-              </p>
-              <p>
-                <code>{{ "${vminfo:[vmname]:[variable]}" }}</code> where
-                <code>vminfo</code> is a static string, <code>vmname</code> is
-                the name of one of the VMs in the scenario, and
-                <code>variable</code> is an item from the list on the right.
-              </p>
-              <p>
-                Example: <code>{{ "${vminfo:cluster01:public_ip}" }}</code>
-              </p>
-            </clr-stack-label>
-            <clr-stack-content>
-              <ul>
-                <li *ngFor="let vp of vmProps">{{ vp }}</li>
-              </ul>
-            </clr-stack-content>
-          </clr-stack-block>
-        </clr-stack-block>
-        <clr-stack-block>
-          <clr-stack-label>Click-to-run</clr-stack-label>
-          <clr-stack-content> </clr-stack-content>
-          <clr-stack-block>
-            <clr-stack-label>
-              <p>
-                Click-to-run is enabled by passing a special language argument
-                to a markdown code block. Use the syntax
-                <code>ctr:&lt;vmname&gt;[:&lt;limit&gt;]</code> as the language
-                argument where <code>vmname</code> is the name of one of the VMs
-                in the scenario. and <code>limit</code> is the maximum number of
-                times the CTR can be pressed to be executed. Limit can be
-                omitted which defaults to unlimited executions.
-              </p>
-              <p>
-                Examples:<br />
-                <code>
-                  ```ctr:cluster01<br />
-                  cat example.txt<br />
-                  ```<br />
-                </code>
-                <br />
-                <code>
-                  ```ctr:cluster01<br />
-                  echo This CTR has no limit<br />
-                  ```<br />
-                </code>
-                <code>
-                  ```ctr:cluster01:2<br />
-                  echo This CTR limits to 2 clicks<br />
-                  ```<br />
-                </code>
-              </p>
-            </clr-stack-label>
-          </clr-stack-block>
-        </clr-stack-block>
-        <clr-stack-block>
-          <clr-stack-label>Hidden Text Elements</clr-stack-label>
-          <clr-stack-content> </clr-stack-content>
-          <clr-stack-block>
-            <clr-stack-label>
-              <p>
-                To create a hidden text element, pass the special language
-                argument <code>hidden</code> to a markdown code block.
-              </p>
-              <p>
-                Example:<br />
-                <code>
-                  ```hidden:Hidden Text Summary<br />
-                  This is the hidden Text that opens and closes after a click on
-                  the summary<br />
-                  ```<br />
-                </code>
-              </p>
-            </clr-stack-label>
-          </clr-stack-block>
-        </clr-stack-block>
-        <clr-stack-block>
-          <clr-stack-label>Glossary</clr-stack-label>
-          <clr-stack-content> </clr-stack-content>
-          <clr-stack-block>
-            <clr-stack-label>
-              <p>
-                To create a glossary element, pass the special language argument
-                <code>glossary:&lt;name&gt;</code> to a markdown code block. The
-                text inside the code block will be displayed when a user hovers
-                over the provided name
-              </p>
-              <p>
-                Example:<br />
-                <code>
-                  ```glossary:Kubernetes<br />
-                  Kubernetes, also known as K8s, is an open-source system for
-                  automating deployment, scaling, and management of
-                  containerized applications.<br />
-                  ```<br />
-                </code>
-              </p>
-            </clr-stack-label>
-          </clr-stack-block>
-        </clr-stack-block>
-        <clr-stack-block>
-          <clr-stack-label>Nested Elements</clr-stack-label>
-          <clr-stack-content> </clr-stack-content>
-          <clr-stack-block>
-            <clr-stack-label>
-              <p>
-                Nested elements can be applied inside blocks or hidden elements.
-                To define a nested block, replace backticks by tildes.
-              </p>
-              <p>
-                Example:<br />
-                <code>
-                  ```<br />
-                  Some text<br />
-                  ~~~python<br />
-                  # This program prints Hello, world!<br />
-                  <br />
-                  print('Hello, world!')<br />
-                  ~~~<br />
-                  Some more text<br />
-                  ```<br />
-                </code>
-              </p>
-            </clr-stack-label>
-          </clr-stack-block>
-        </clr-stack-block>
-      </clr-stack-view>
+      For the HobbyFarm Special Syntax reference visit the
+      <a href="https://hobbyfarm.github.io/docs/appendix/markdown_syntax/"
+        >HobbyFarm Documentation</a
+      >
     </ng-container>
 
     <form clrForm>
@@ -640,6 +508,10 @@
           >Variables and nested elements do not render in the WYSIWYG section of
           this Markdown editor.</i
         >
+        <app-hf-markdown
+          [content]="editingStep.content"
+          [context]="{ vmInfo: {}, session: 'ss-123456' }"
+        ></app-hf-markdown>
       </div>
     </div>
   </div>
