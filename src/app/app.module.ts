@@ -1,5 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA, SecurityContext, APP_INITIALIZER } from '@angular/core';
+import {
+  NgModule,
+  CUSTOM_ELEMENTS_SCHEMA,
+  SecurityContext,
+  APP_INITIALIZER,
+} from '@angular/core';
 import '@clr/icons';
 import '@clr/icons/shapes/all-shapes';
 import { AppRoutingModule } from './app-routing.module';
@@ -16,7 +21,10 @@ import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewScheduledEventComponent } from './event/new-scheduled-event/new-scheduled-event.component';
 import { ScenarioService } from './data/scenario.service';
-import { DlDateTimePickerDateModule, DlDateTimePickerModule} from 'angular-bootstrap-datetimepicker';
+import {
+  DlDateTimePickerDateModule,
+  DlDateTimePickerModule,
+} from 'angular-bootstrap-datetimepicker';
 import { ScenarioComponent } from './scenario/scenario.component';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { UserComponent } from './user/user/user.component';
@@ -61,7 +69,7 @@ import { AngularSplitModule } from 'angular-split';
 import { DynamicHooksModule } from 'ngx-dynamic-hooks';
 import { CtrComponent } from './step/ctr.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
-import { ProgressService } from './data/progress.service'
+import { ProgressService } from './data/progress.service';
 import { RbacService } from './data/rbac.service';
 import { RbacDirective } from './directives/rbac.directive';
 import { ClarityDisableSelectionDirective } from './directives/clarity-disable-selection.directive';
@@ -85,15 +93,13 @@ const appInitializerFn = (appConfig: AppConfigService) => {
 export function jwtOptionsFactory() {
   return {
     tokenGetter: () => {
-      return localStorage.getItem("hobbyfarm_admin_token");
+      return localStorage.getItem('hobbyfarm_admin_token');
     },
-    whitelistedDomains: [
-      environment.server.match(/.*\:\/\/?([^\/]+)/)[1]
-    ],
+    whitelistedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
     blacklistedRoutes: [
-      environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + "/auth/authenticate"
-    ]
-  }
+      environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + '/auth/authenticate',
+    ],
+  };
 }
 
 @NgModule({
@@ -116,7 +122,7 @@ export function jwtOptionsFactory() {
     AddScenarioComponent,
     VmsetComponent,
     NewVmComponent,
-    DeleteConfirmationComponent,    
+    DeleteConfirmationComponent,
     DeleteProcessModalComponent,
     EventStatusFilterComponent,
     EditUserComponent,
@@ -129,7 +135,7 @@ export function jwtOptionsFactory() {
     ProgressComponent,
     EventUserListComponent,
     IntervalTimer,
-    ProgressDashboardComponent, 
+    ProgressDashboardComponent,
     DashboardsComponent,
     VmDashboardComponent,
     StepComponent,
@@ -146,7 +152,7 @@ export function jwtOptionsFactory() {
     NewRoleBindingComponent,
     EnvironmentDetailComponent,
     VmTemplateDetailComponent,
-    FilterScenariosComponent
+    FilterScenariosComponent,
   ],
   imports: [
     BrowserModule,
@@ -163,8 +169,8 @@ export function jwtOptionsFactory() {
     JwtModule.forRoot({
       jwtOptionsProvider: {
         provide: JWT_OPTIONS,
-        useFactory: jwtOptionsFactory
-      }
+        useFactory: jwtOptionsFactory,
+      },
     }),
     DynamicHooksModule.forRoot({
       globalOptions: {
@@ -176,13 +182,13 @@ export function jwtOptionsFactory() {
     BrowserAnimationsModule,
     DragulaModule.forRoot(),
     MarkdownModule.forRoot({
-      sanitize: SecurityContext.NONE
-    })
+      sanitize: SecurityContext.NONE,
+    }),
   ],
   providers: [
     ScenarioService,
     CtrService,
-    SessionService,    
+    SessionService,
     StepService,
     VMService,
     VMClaimService,
@@ -194,12 +200,10 @@ export function jwtOptionsFactory() {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFn,
       multi: true,
-      deps: [AppConfigService, RbacService] // rbacservice listed here to initialize it before anything else
-    }
+      deps: [AppConfigService, RbacService], // rbacservice listed here to initialize it before anything else
+    },
   ],
   bootstrap: [AppComponent],
-  schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
-  ]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule { }
+export class AppModule {}

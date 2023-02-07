@@ -178,7 +178,7 @@ ${token}`;
   }
 
   private replaceVmInfoTokens(content: string) {
-    return content.replace(
+    return content?.replace(
       /\$\{vminfo:([^:]*):([^}]*)\}/g,
       (match, vmName, propName) => {
         const vm = this.context.vmInfo?.[vmName.toLowerCase()];
@@ -188,6 +188,6 @@ ${token}`;
   }
 
   private replaceSessionToken(content: string) {
-    return content.replace(/\$\{session\}/g, this.context.session);
+    return content?.replace(/\$\{session\}/g, this.context.session);
   }
 }

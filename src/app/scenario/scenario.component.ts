@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
 import { ClrDatagridSortOrder, ClrModal } from '@clr/angular';
@@ -11,6 +11,7 @@ import { VirtualMachine } from '../data/virtualmachine';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { KeepaliveValidator } from '../validators/keepalive.validator';
 import { RbacService } from '../data/rbac.service';
+import { actions } from './markdownActions';
 
 @Component({
   selector: 'app-scenario',
@@ -19,7 +20,6 @@ import { RbacService } from '../data/rbac.service';
 })
 export class ScenarioComponent implements OnInit {
   public unusedSelectedScenario: any = {}; // only exists to satisfy a datagrid requirement
-
 
   public filteredScenarios: Scenario[] = [];
   public vmtemplates: VMTemplate[] = [];
@@ -60,12 +60,13 @@ export class ScenarioComponent implements OnInit {
 
   public ascSort = ClrDatagridSortOrder.ASC;
 
+  readonly ACTIONS = actions;
+
   constructor(
     public scenarioService: ScenarioService,
     public vmTemplateService: VmtemplateService,
     public rbacService: RbacService
   ) {}
-
 
   public vmform: FormGroup = new FormGroup({
     vm_name: new FormControl(null, [
@@ -147,16 +148,52 @@ export class ScenarioComponent implements OnInit {
     }
   }
 
+  @ViewChild('mdEditor') mdEditor: ElementRef;
   @ViewChild('editmodal', { static: true }) editModal: ClrModal;
   @ViewChild('deletevmsetmodal', { static: true }) deleteVMSetModal: ClrModal;
   @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
   @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
   @ViewChild('newscenariomodal', { static: true }) newScenarioModal: ClrModal;
 
+  resizeEditor() {
+    this.mdEditor.nativeElement.style.height = 'auto';
+    this.mdEditor.nativeElement.style.height =
+      this.mdEditor.nativeElement.scrollHeight + 'px';
+  }
+
+  delayedResizeEditor() {
+    setTimeout(() => this.resizeEditor(), 0);
+  }
+
   openEdit(s: Step, i: number) {
     this.editingStep = s;
     this.editingIndex = i;
     this.editModal.open();
+    this.delayedResizeEditor();
+  }
+
+  editorPreset(action: any) {
+    let cursorPosition: number = this.mdEditor.nativeElement.selectionStart;
+    let selectionEnd: number = this.mdEditor.nativeElement.selectionEnd;
+    let textBefore = this.mdEditor.nativeElement.value.substring(
+      0,
+      cursorPosition
+    );
+    let textAfter = this.mdEditor.nativeElement.value.substring(selectionEnd);
+    let textSelection = this.mdEditor.nativeElement.value.substring(
+      cursorPosition,
+      selectionEnd
+    );
+    if(cursorPosition == selectionEnd){
+      textSelection = action.actionEmpty;
+      selectionEnd += action.actionEmpty.length;
+    }
+    let newText = textBefore + action.actionBefore + textSelection + action.actionAfter + textAfter;
+    this.mdEditor.nativeElement.value = newText;
+    this.mdEditor.nativeElement.focus();
+    this.mdEditor.nativeElement.selectionStart = cursorPosition + action.actionBefore.length;
+    this.mdEditor.nativeElement.selectionEnd =
+      selectionEnd + action.actionBefore.length;
   }
 
   editScenario(s: Scenario) {
@@ -190,9 +227,40 @@ export class ScenarioComponent implements OnInit {
   }
 
   openNewStep() {
-    this.editingStep = new Step();
     this.editingIndex = this.selectedscenario.steps.length;
+    this.editingStep = new Step();
+    this.editingStep.title = 'Step ' + (this.editingIndex + 1);
+    // Provide default content with syntax examples
+    this.editingStep.content =
+      "## Your Content\n```ctr:node1\necho 'hello world'\n```\n```hidden:Syntax reference\navailable at [the hobbyfarm docs](https://hobbyfarm.github.io/docs/appendix/markdown_syntax/)\n```";
+    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
     this.editModal.open();
+  }
+
+  isFirstStep() {
+    return this.editingIndex == 0;
+  }
+
+  isLastStep() {
+    return this.editingIndex >= this.selectedscenario?.steps.length - 1;
+  }
+
+  nextStep() {
+    if (this.isLastStep()) {
+      return;
+    }
+    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
+    this.editingIndex++;
+    this.editingStep = this.selectedscenario.steps[this.editingIndex];
+  }
+
+  previousStep() {
+    if (this.isFirstStep()) {
+      return;
+    }
+    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
+    this.editingIndex--;
+    this.editingStep = this.selectedscenario.steps[this.editingIndex];
   }
 
   public openDeleteStep(i: number) {
@@ -243,7 +311,6 @@ export class ScenarioComponent implements OnInit {
       }
     );
 
-
     this.newScenarioModal.close();
   }
 
@@ -257,14 +324,14 @@ export class ScenarioComponent implements OnInit {
       .update(this.selectedscenario)
       .subscribe((s: ServerResponse) => {
         if (s.type == 'updated') {
-          this.editSuccessAlert = 'Step successfully updated';
+          this.editSuccessAlert = 'Steps successfully saved';
           this.editSuccessClosed = false;
           setTimeout(() => {
             this.editSuccessClosed = true;
             this.editModal.close();
           }, 1000);
         } else {
-          this.editDangerAlert = 'Unable to update step: ' + s.message;
+          this.editDangerAlert = 'Unable to save steps: ' + s.message;
           this.editDangerClosed = false;
           setTimeout(() => {
             this.editDangerClosed = true;
@@ -401,17 +468,15 @@ export class ScenarioComponent implements OnInit {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
     this.deleteVMSetModal.close();
   }
-  setScenarioList(scenarios: Scenario[]){
+  setScenarioList(scenarios: Scenario[]) {
     this.filteredScenarios = scenarios;
   }
-
 
   ngOnInit() {
     // "Get" Permission on scenarios is required to load step content
     this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
       this.selectRbac = allowed;
     });
-
 
     this.rbacService
       .Grants('virtualmachinesets', 'list')
@@ -422,7 +487,5 @@ export class ScenarioComponent implements OnInit {
           });
         }
       });
-
-
   }
 }

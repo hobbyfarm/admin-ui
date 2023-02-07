@@ -42,7 +42,8 @@
               "node_modules/prismjs/components/prism-python.min.js",
               "node_modules/prismjs/components/prism-go.min.js",
               "node_modules/prismjs/components/prism-docker.min.js",
-              "node_modules/prismjs/components/prism-json.min.js"
+              "node_modules/prismjs/components/prism-json.min.js",
+              "node_modules/prismjs/components/prism-markdown.min.js"
             ],
             "vendorChunk": true,
             "extractLicenses": false,

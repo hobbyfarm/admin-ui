@@ -488,6 +488,29 @@
       >
     </ng-container>
 
+    <div class="clr-row">
+      <div class="clr-col">
+        <ng-container
+          >Showing step <b>{{ this.editingIndex + 1 }}</b> of
+          <b>{{ this.selectedscenario?.steps.length }}</b></ng-container
+        >
+        <button
+          class="btn btn-info-outline"
+          (click)="previousStep()"
+          [disabled]="this.isFirstStep()"
+        >
+          Previous
+        </button>
+        <button
+          class="btn btn-info-outline"
+          (click)="nextStep()"
+          [disabled]="this.isLastStep()"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+
     <form clrForm>
       <clr-input-container>
         <label for="title">Step title</label>
@@ -500,20 +523,38 @@
         />
       </clr-input-container>
     </form>
-    <div class="clr-row">
-      <div class="clr-col">
-        <md-editor name="Content" [(ngModel)]="editingStep.content" required>
-        </md-editor>
-        <i
-          >Variables and nested elements do not render in the WYSIWYG section of
-          this Markdown editor.</i
-        >
-        <app-hf-markdown
-          [content]="editingStep.content"
-          [context]="{ vmInfo: {}, session: 'ss-123456' }"
-        ></app-hf-markdown>
-      </div>
+
+    <div class="editor-actions">
+      <button *ngFor="let action of ACTIONS;"
+      class="btn btn-info-outline"
+      (click)='editorPreset(action)'
+    >
+      {{action.name}}
+    </button>
     </div>
+    <div class="split-container">
+      <as-split unit="percent" direction="horizontal">
+        <as-split-area [size]="50" class="split-area-1">
+          <div class="markdown-editor-container">
+            <textarea #mdEditor
+              class="split-markdown-editor"
+              oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
+              [(ngModel)]="this.editingStep.content"
+              >{{ editingStep.content }}</textarea
+            >
+          </div>
+        </as-split-area>
+        <as-split-area [size]="50" class="split-area-2">
+          <app-hf-markdown
+            [content]="editingStep.content"
+            [context]="{ vmInfo: {}, session: 'ss-123456' }"
+          ></app-hf-markdown>
+        </as-split-area>
+      </as-split>
+    </div>
+    <i
+      >vmInfo does not render in the WYSIWYG section of this Markdown editor.</i
+    >
   </div>
   <div class="modal-footer">
     <button class="btn btn-danger-outline" (click)="cancelEdit()">
