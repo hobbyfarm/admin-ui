@@ -148,52 +148,16 @@ export class ScenarioComponent implements OnInit {
     }
   }
 
-  @ViewChild('mdEditor') mdEditor: ElementRef;
   @ViewChild('editmodal', { static: true }) editModal: ClrModal;
   @ViewChild('deletevmsetmodal', { static: true }) deleteVMSetModal: ClrModal;
   @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
   @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
   @ViewChild('newscenariomodal', { static: true }) newScenarioModal: ClrModal;
 
-  resizeEditor() {
-    this.mdEditor.nativeElement.style.height = 'auto';
-    this.mdEditor.nativeElement.style.height =
-      this.mdEditor.nativeElement.scrollHeight + 'px';
-  }
-
-  delayedResizeEditor() {
-    setTimeout(() => this.resizeEditor(), 0);
-  }
-
   openEdit(s: Step, i: number) {
     this.editingStep = s;
     this.editingIndex = i;
     this.editModal.open();
-    this.delayedResizeEditor();
-  }
-
-  editorPreset(action: any) {
-    let cursorPosition: number = this.mdEditor.nativeElement.selectionStart;
-    let selectionEnd: number = this.mdEditor.nativeElement.selectionEnd;
-    let textBefore = this.mdEditor.nativeElement.value.substring(
-      0,
-      cursorPosition
-    );
-    let textAfter = this.mdEditor.nativeElement.value.substring(selectionEnd);
-    let textSelection = this.mdEditor.nativeElement.value.substring(
-      cursorPosition,
-      selectionEnd
-    );
-    if(cursorPosition == selectionEnd){
-      textSelection = action.actionEmpty;
-      selectionEnd += action.actionEmpty.length;
-    }
-    let newText = textBefore + action.actionBefore + textSelection + action.actionAfter + textAfter;
-    this.mdEditor.nativeElement.value = newText;
-    this.mdEditor.nativeElement.focus();
-    this.mdEditor.nativeElement.selectionStart = cursorPosition + action.actionBefore.length;
-    this.mdEditor.nativeElement.selectionEnd =
-      selectionEnd + action.actionBefore.length;
   }
 
   editScenario(s: Scenario) {

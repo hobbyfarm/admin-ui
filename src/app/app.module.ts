@@ -26,7 +26,6 @@ import {
   DlDateTimePickerModule,
 } from 'angular-bootstrap-datetimepicker';
 import { ScenarioComponent } from './scenario/scenario.component';
-import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { UserComponent } from './user/user/user.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { EnvironmentsComponent } from './configuration/environments/environments.component';
@@ -83,6 +82,7 @@ import { DeleteProcessModalComponent } from './user/user/delete-process-modal/de
 import { EnvironmentDetailComponent } from './configuration/environments/environment-detail/environment-detail.component';
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
 import { FilterScenariosComponent } from './filter-scenarios/filter-scenarios.component';
+import { MDEditorComponent } from './scenario/md-editor/md-editor.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -153,6 +153,7 @@ export function jwtOptionsFactory() {
     EnvironmentDetailComponent,
     VmTemplateDetailComponent,
     FilterScenariosComponent,
+    MDEditorComponent,
   ],
   imports: [
     BrowserModule,
@@ -162,7 +163,6 @@ export function jwtOptionsFactory() {
     ReactiveFormsModule,
     AngularSplitModule,
     DlDateTimePickerDateModule,
-    LMarkdownEditorModule,
     DlDateTimePickerModule,
     ClarityModule,
     HttpClientModule,

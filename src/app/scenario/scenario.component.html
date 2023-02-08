@@ -524,37 +524,7 @@
       </clr-input-container>
     </form>
 
-    <div class="editor-actions">
-      <button *ngFor="let action of ACTIONS;"
-      class="btn btn-info-outline"
-      (click)='editorPreset(action)'
-    >
-      {{action.name}}
-    </button>
-    </div>
-    <div class="split-container">
-      <as-split unit="percent" direction="horizontal">
-        <as-split-area [size]="50" class="split-area-1">
-          <div class="markdown-editor-container">
-            <textarea #mdEditor
-              class="split-markdown-editor"
-              oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
-              [(ngModel)]="this.editingStep.content"
-              >{{ editingStep.content }}</textarea
-            >
-          </div>
-        </as-split-area>
-        <as-split-area [size]="50" class="split-area-2">
-          <app-hf-markdown
-            [content]="editingStep.content"
-            [context]="{ vmInfo: {}, session: 'ss-123456' }"
-          ></app-hf-markdown>
-        </as-split-area>
-      </as-split>
-    </div>
-    <i
-      >vmInfo does not render in the WYSIWYG section of this Markdown editor.</i
-    >
+    <md-editor [(content)]="this.editingStep.content"></md-editor>
   </div>
   <div class="modal-footer">
     <button class="btn btn-danger-outline" (click)="cancelEdit()">

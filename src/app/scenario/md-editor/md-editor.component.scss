@@ -1,0 +1,27 @@
+.split-container {
+  display: flex;
+}
+
+.markdown-editor-container {
+  height: 100%;
+  display: flex;
+  flex-flow: wrap column;
+}
+
+.split-markdown-editor {
+  padding-left: 15px;
+  background-color: rgb(50, 50, 61);
+  color: white;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border: none;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  overflow-y: hidden;
+  resize: none;
+  &:focus {
+    outline: 0px none transparent;
+  }
+}
