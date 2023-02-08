@@ -70,7 +70,6 @@ export class VMTemplateServiceFormComponent implements OnInit {
     this.selectedNewInterface.cloudConfigMap = this.cloudConfig.buildMapFromString(this.selectedNewInterface.cloudConfigString)
     this.cloudConfig.addVMService(this.selectedNewInterface)
     this.selectedNewInterface = undefined
-    console.log(this.cloudConfig)
     this.selectVMServiceModalOpen = false
   }
 

@@ -8,3 +8,23 @@ export class VMTemplateServiceConfiguration {
     public cloudConfigString?: string = ''    
 }
 
+
+export function vmServiceToJSON(vmService: VMTemplateServiceConfiguration) {
+   
+        let result = "{\"name\": \""+vmService.name+"\" ,\"hasWebinterface\": "+vmService.hasWebinterface
+        if (vmService.port) {
+            result += ", \"port\": "+vmService.port
+        }
+        if (vmService.hasOwnTab) {
+            result += ", \"hasOwnTab\": "+vmService.hasOwnTab
+        }
+        if (vmService.cloudConfigMap) {
+            let cloudConfigMapString = ""
+            vmService.cloudConfigMap.forEach((value, key) => {
+                cloudConfigMapString += "\""+key+"\": "+JSON.stringify(value)+" "
+            })
+            result += ", \"cloudConfigMap\": {"+cloudConfigMapString+"}"
+        }
+        result += "}"
+        return result   
+}

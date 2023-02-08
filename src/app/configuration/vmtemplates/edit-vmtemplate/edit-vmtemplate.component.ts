@@ -5,6 +5,7 @@ import { ClrWizard } from '@clr/angular';
 import { AlertComponent } from 'src/app/alert/alert.component';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { ServerResponse } from 'src/app/data/serverresponse';
+import { vmServiceToJSON } from 'src/app/data/vm-template-service-configuration';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 
@@ -82,12 +83,28 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     })
   }
 
+  private buildVMServices(configMapData?: string) {
+    if (configMapData) {
+      let temp = JSON.parse(configMapData)
+      let resultMap = new Map()
+      temp.forEach(entry => {
+        let newConfMap = new Map()
+        Object.keys(entry["cloudConfigMap"]).forEach(key => {
+          newConfMap.set(key, entry["cloudConfigMap"][key])
+        })
+        entry.cloudConfigMap = newConfMap
+        resultMap.set(entry['name'], entry)
+      })
+      return resultMap
+    }
+    else return new Map()
+  }
+
   public prepareConfigMap() {
     // differs from buildConfigMap() in that we are copying existing values
     // into the form
     let configKeys = Object.keys(this.editTemplate.config_map).filter(elem => elem !== this.cloudConfigKey && elem != this.vmServiceKey)
-    //READ FROM CONF MAP //TODO: REMOVE COMMENT
-    this.cloudConfig.vmServices = this.editTemplate.config_map[this.vmServiceKey] ? JSON.parse(this.editTemplate.config_map[this.vmServiceKey], jsonMapReviver)  : new Map() 
+    this.cloudConfig.vmServices = this.buildVMServices(this.editTemplate.config_map[this.vmServiceKey])
     this.cloudConfig.buildNewYAMLFile()
     this.configMap = this._fb.group({
       mappings: this._fb.array([])
@@ -132,9 +149,13 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       var value = (this.configMap.get(['mappings', i]) as FormGroup).get('value').value
       this.template.config_map[key] = value;
     }
-    // WRITE TO CONF MAP //TODO: REMOVE COMMENT
     this.template.config_map[this.cloudConfigKey] = this.cloudConfig.cloudConfigYaml;  
-    this.template.config_map[this.vmServiceKey] = JSON.stringify(this.cloudConfig.vmServices, jsonMapReplacer)
+    let tempArray = []
+    this.cloudConfig.vmServices.forEach(vmService => {
+      tempArray.push(JSON.parse(vmServiceToJSON(vmService)))
+    })
+    let jsonString = JSON.stringify(tempArray)
+    this.template.config_map[this.vmServiceKey] = jsonString
   }
   public copyTemplate() {
     this.copyConfigMap();
@@ -188,24 +209,3 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     }
   }
 }
-
-
-  function jsonMapReplacer(_, value) {
-    if(value instanceof Map) {
-      return {
-        dataType: 'Map',
-        value: Array.from(value.entries()),
-      };
-    } else {
-      return value;
-    }
-  }
-
-  function jsonMapReviver(_, value) {
-    if(typeof value === 'object' && value !== null) {
-      if (value.dataType === 'Map') {
-        return new Map(value.value);
-      }
-    }
-    return value;
-  }
