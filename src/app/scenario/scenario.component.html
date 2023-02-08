@@ -256,6 +256,13 @@
           <button clrTabLink="stepsLink">Steps</button>
           <clr-tab-content id="stepsContent" *clrIfActive>
             <button
+              class="btn btn-sm"
+              (click)="openEdit(selectedscenario?.steps[0] ?? undefined, 0)"
+              *rbac="['scenarios.update']"
+            >
+              Open Step Editor
+            </button>
+            <button
               class="btn btn-success-outline btn-sm"
               (click)="openNewStep()"
               *rbac="['scenarios.update']"
@@ -456,7 +463,10 @@
   </div>
 </div>
 <clr-modal #editmodal [(clrModalOpen)]="editOpen" [clrModalSize]="'xl'">
-  <h3 class="modal-title">Edit Step</h3>
+  <h3 class="modal-title">
+    Edit Step {{ this.editingIndex + 1 }} of
+    {{ this.selectedscenario?.steps.length }}
+  </h3>
   <div class="modal-body">
     <clr-alert
       [clrAlertType]="'danger'"
@@ -480,23 +490,27 @@
         </span>
       </clr-alert-item>
     </clr-alert>
-
-    <ng-container>
-      For the HobbyFarm Special Syntax reference visit the
-      <a href="https://hobbyfarm.github.io/docs/appendix/markdown_syntax/"
-        >HobbyFarm Documentation</a
-      >
-    </ng-container>
-
     <div class="clr-row">
-      <div class="clr-col">
-        <ng-container
-          >Showing step <b>{{ this.editingIndex + 1 }}</b> of
-          <b>{{ this.selectedscenario?.steps.length }}</b></ng-container
-        >
+      <div class="clr-col-6">
+        <form clrForm>
+          <clr-input-container class="step-input">
+            <label for="title">Step title</label>
+            <input
+              class="full-width"
+              clrInput
+              placeholder="Step title"
+              name="title"
+              [(ngModel)]="editingStep.title"
+              width="80%"
+            />
+          </clr-input-container>
+        </form>
+      </div>
+      <div class="clr-col-6">
         <button
           class="btn btn-info-outline"
           (click)="previousStep()"
+          title="Navigate to the previous step"
           [disabled]="this.isFirstStep()"
         >
           Previous
@@ -504,26 +518,20 @@
         <button
           class="btn btn-info-outline"
           (click)="nextStep()"
+          title="Navigate to the next step"
           [disabled]="this.isLastStep()"
         >
           Next
         </button>
+        <button
+          class="btn btn-info-outline"
+          (click)="openNewStep()"
+          title="Create new step at the end"
+        >
+          New Step
+        </button>
       </div>
     </div>
-
-    <form clrForm>
-      <clr-input-container>
-        <label for="title">Step title</label>
-        <input
-          class="full-width"
-          clrInput
-          placeholder="Step title"
-          name="title"
-          [(ngModel)]="editingStep.title"
-        />
-      </clr-input-container>
-    </form>
-
     <md-editor [(content)]="this.editingStep.content"></md-editor>
   </div>
   <div class="modal-footer">

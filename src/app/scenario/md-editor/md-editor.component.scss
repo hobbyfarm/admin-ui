@@ -2,6 +2,42 @@
   display: flex;
 }
 
+.editor-actions {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0px;
+  background-color: white;
+}
+
+.editor-action-button {
+  color: var(--clr-btn-link-color, rgb(55, 177, 218));
+  display: inline-block;
+  min-width: 30px;
+  min-height: 20px;
+  padding: 5px;
+  margin-right: 5px;
+  text-align: center;
+
+  cursor: pointer;
+  &:hover {
+    background-color: var(--clr-btn-link-color, rgb(55, 177, 218));
+    color: white;
+  }
+
+  clr-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  &.reference,
+  &.reference:visited,
+  &.reference:hover {
+    float: right;
+    background-color: white;
+    color: var(--clr-btn-link-color, rgb(55, 177, 218));
+  }
+}
+
 .markdown-editor-container {
   height: 100%;
   display: flex;

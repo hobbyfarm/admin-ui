@@ -8,7 +8,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { actions } from '../markdownActions';
+import { ACTIONS } from './markdownActions';
 
 @Component({
   selector: 'md-editor',
@@ -21,7 +21,7 @@ export class MDEditorComponent implements OnChanges, AfterViewInit {
   @Output()
   public contentChange: EventEmitter<string> = new EventEmitter<string>();
 
-  readonly ACTIONS = actions;
+  readonly ACTIONS = ACTIONS;
 
   constructor() {}
 

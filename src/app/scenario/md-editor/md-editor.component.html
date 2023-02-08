@@ -1,12 +1,23 @@
 <div class="editor-actions">
-  <button
+  <div
     *ngFor="let action of ACTIONS"
-    class="btn btn-info-outline"
-    [title]="action.name"
+    class="editor-action-button"
+    [title]="action.title ?? action.name"
     (click)="editorPreset(action)"
   >
-    {{ action.name }}
-  </button>
+    <ng-container *ngIf="action.icon"
+      ><clr-icon [attr.shape]="action.icon"></clr-icon
+    ></ng-container>
+    <ng-container *ngIf="!action.icon"
+      ><b>{{ action.name }}</b></ng-container
+    >
+  </div>
+  <div class="editor-action-button reference">
+    <a href="https://hobbyfarm.github.io/docs/appendix/markdown_syntax/">
+      <clr-icon shape="pop-out"></clr-icon>
+      Syntax Reference
+    </a>
+  </div>
 </div>
 <div class="split-container">
   <as-split unit="percent" direction="horizontal">

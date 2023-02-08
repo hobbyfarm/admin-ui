@@ -11,7 +11,6 @@ import { VirtualMachine } from '../data/virtualmachine';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { KeepaliveValidator } from '../validators/keepalive.validator';
 import { RbacService } from '../data/rbac.service';
-import { actions } from './markdownActions';
 
 @Component({
   selector: 'app-scenario',
@@ -59,8 +58,6 @@ export class ScenarioComponent implements OnInit {
   public selectRbac: boolean = false;
 
   public ascSort = ClrDatagridSortOrder.ASC;
-
-  readonly ACTIONS = actions;
 
   constructor(
     public scenarioService: ScenarioService,
@@ -155,6 +152,10 @@ export class ScenarioComponent implements OnInit {
   @ViewChild('newscenariomodal', { static: true }) newScenarioModal: ClrModal;
 
   openEdit(s: Step, i: number) {
+    if (this.selectedscenario.steps.length == 0) {
+      this.openNewStep();
+      return;
+    }
     this.editingStep = s;
     this.editingIndex = i;
     this.editModal.open();
