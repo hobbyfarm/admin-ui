@@ -38,6 +38,20 @@ export const ACTIONS: MDEditorAction[] = [
     icon: 'block-quote',
   },
   {
+    name: 'Link',
+    actionBefore: '[HobbyFarm](',
+    actionAfter: ')',
+    actionEmpty: 'https://github.com/hobbyfarm',
+    icon: 'link',
+  },
+  {
+    name: 'Image',
+    actionBefore: '![HobbyFarm Logo](',
+    actionAfter: ')',
+    actionEmpty: 'https://avatars.githubusercontent.com/u/50243159',
+    icon: 'image',
+  },
+  {
     name: 'Note',
     actionBefore: '```note:info:Read me\n',
     actionAfter: '\n```',
