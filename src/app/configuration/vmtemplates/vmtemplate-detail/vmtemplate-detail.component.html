@@ -14,18 +14,6 @@
                 <clr-stack-label>Image</clr-stack-label>
                 <clr-stack-content>{{ currentVmTemplate.image }}</clr-stack-content>
             </clr-stack-block>
-            <clr-stack-block>
-                <clr-stack-label>CPU</clr-stack-label>
-                <clr-stack-content>{{ currentVmTemplate.resources.cpu }}</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block>
-                <clr-stack-label>Memory</clr-stack-label>
-                <clr-stack-content>{{ currentVmTemplate.resources.memory }}</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block>
-                <clr-stack-label>Storage</clr-stack-label>
-                <clr-stack-content>{{ currentVmTemplate.resources.storage }}</clr-stack-content>
-            </clr-stack-block>
         </clr-stack-block>
         <clr-stack-block *ngIf="currentVmTemplate.config_map && !isEmpty(currentVmTemplate.config_map)">
             <clr-stack-label>Config Map</clr-stack-label>

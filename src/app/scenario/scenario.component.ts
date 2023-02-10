@@ -20,10 +20,8 @@ import { RbacService } from '../data/rbac.service';
 export class ScenarioComponent implements OnInit {
   public unusedSelectedScenario: any = {}; // only exists to satisfy a datagrid requirement
 
-  public scenarios: Scenario[] = [];
+
   public filteredScenarios: Scenario[] = [];
-  public categories: string[] = [];
-  public selectedCategories: string[] = [];
   public vmtemplates: VMTemplate[] = [];
   public selectedscenario: Scenario;
   public editingStep: Step = new Step();
@@ -68,9 +66,6 @@ export class ScenarioComponent implements OnInit {
     public rbacService: RbacService
   ) {}
 
-  public categoryFilterForm = new FormGroup({
-    categoryControl: new FormControl([], []),
-  });
 
   public vmform: FormGroup = new FormGroup({
     vm_name: new FormControl(null, [
@@ -248,11 +243,6 @@ export class ScenarioComponent implements OnInit {
       }
     );
 
-    this.scenarioService.list().subscribe((s: Scenario[]) => {
-      this.scenarios = s;
-      this.calculateCategories();
-      this.filterScenarioList();
-    });
 
     this.newScenarioModal.close();
   }
@@ -411,49 +401,10 @@ export class ScenarioComponent implements OnInit {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
     this.deleteVMSetModal.close();
   }
-
-  filterScenarioList() {
-    if (this.selectedCategories.length === 0) {
-      this.filteredScenarios = this.scenarios;
-      return;
-    }
-
-    let sc = [];
-
-    if (this.selectedCategories.includes('__none__')) {
-      this.scenarios.forEach((s) => {
-        if (s.categories.length === 0) {
-          sc.push(s);
-          return;
-        }
-      });
-    }
-
-    this.scenarios.forEach((s) => {
-      let matches = s.categories.filter((element) =>
-        this.selectedCategories.includes(element)
-      );
-      if (matches.length > 0) {
-        sc.push(s);
-        return;
-      }
-    });
-    this.filteredScenarios = sc;
+  setScenarioList(scenarios: Scenario[]){
+    this.filteredScenarios = scenarios;
   }
 
-  clearCategoryFilter() {
-    this.selectedCategories = [];
-    this.categoryFilterForm.get('categoryControl').setValue([]);
-  }
-
-  calculateCategories() {
-    let c = new Set<string>();
-    this.scenarios.forEach((s) => {
-      s.categories.forEach((category) => c.add(category));
-    });
-
-    this.categories = Array.from(c).sort();
-  }
 
   ngOnInit() {
     // "Get" Permission on scenarios is required to load step content
@@ -461,11 +412,6 @@ export class ScenarioComponent implements OnInit {
       this.selectRbac = allowed;
     });
 
-    this.scenarioService.list().subscribe((s: Scenario[]) => {
-      this.scenarios = s;
-      this.calculateCategories();
-      this.filterScenarioList();
-    });
 
     this.rbacService
       .Grants('virtualmachinesets', 'list')
@@ -477,10 +423,6 @@ export class ScenarioComponent implements OnInit {
         }
       });
 
-    this.categoryFilterForm.valueChanges.subscribe(() => {
-      this.selectedCategories =
-        this.categoryFilterForm.get('categoryControl').value ?? [];
-      this.filterScenarioList();
-    });
+
   }
 }

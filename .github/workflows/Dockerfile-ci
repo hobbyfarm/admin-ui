@@ -1,4 +1,4 @@
-# Should only be used with GitHub Actions cicd
+# Should only be used with GitHub Actions CI pipeline
 # For local, refer to Dockerfile at root of project
 
 FROM nginx:stable-alpine
@@ -6,6 +6,6 @@ FROM nginx:stable-alpine
 COPY dist/* /usr/share/nginx/html
 
 # copy staged files
-COPY cicd/stage-release/ /
+COPY .docker/stage-release/ /
 
 ENTRYPOINT ["entrypoint.sh"]

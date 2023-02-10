@@ -30,7 +30,6 @@ export class VmtemplateService {
     .set('id', template.id)
     .set('name', template.name)
     .set('image', template.image)
-    .set('resources', JSON.stringify(template.resources))
     .set('config_map', JSON.stringify(template.config_map))
 
     return this.http.put(environment.server + "/a/vmtemplate/" + template.id + "/update", params)
@@ -40,7 +39,6 @@ export class VmtemplateService {
     let params = new HttpParams()
     .set('name', template.name)
     .set('image', template.image)
-    .set('resources', JSON.stringify(template.resources))
     .set('config_map', JSON.stringify(template.config_map))
 
     return this.http.post(environment.server + "/a/vmtemplate/create", params)

@@ -45,37 +45,10 @@
 </div>
 <div class="clr-row">
   <div class="clr-col-12 clr-col-md-6">
-    <form clrForm [formGroup]="categoryFilterForm">
-      <clr-combobox-container>
-        <label>Category</label>
-        <clr-combobox
-          formControlName="categoryControl"
-          name="categories"
-          clrMulti="true"
-        >
-          <ng-container *clrOptionSelected="let selectedCategories">
-            {{ selectedCategories }}
-          </ng-container>
-          <clr-options>
-            <clr-option clrValue="__none__"> Without Category </clr-option>
-            <hr />
-            <clr-option *clrOptionItems="let c of categories" [clrValue]="c">
-              {{ c }}
-            </clr-option>
-          </clr-options>
-        </clr-combobox>
-        <clr-control-helper>
-          <div class="clr-row">
-            <div class="clr-col">
-              <a href="javascript://" (click)="clearCategoryFilter()"
-                >Clear categories</a
-              >
-            </div>
-          </div>
-        </clr-control-helper>
-      </clr-combobox-container>
-    </form>
 
+
+    <filter-scenarios 
+    (filterScenarioEventEmitter)="setScenarioList($event)"></filter-scenarios>
     <clr-datagrid
       [clrDgSingleSelected]="unusedSelectedScenario"
       (clrDgSingleSelectedChange)="editScenario($event)"

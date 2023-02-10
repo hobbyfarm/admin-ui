@@ -8,7 +8,7 @@ echo "Building HobbyFarm Amdin UI $PACKAGE_VERSION"
 
 ng build --prod --aot
 
-docker build -t "hobbyfarm/admin-ui" . 
+docker build -t "hobbyfarm/admin-ui" .
 
 docker tag "hobbyfarm/admin-ui" "hobbyfarm/admin-ui:$PACKAGE_VERSION"
 
