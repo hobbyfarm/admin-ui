@@ -12,6 +12,7 @@ export class VmTemplateDetailComponent implements OnInit {
 
   public loading: boolean;
   public currentVmTemplate: VMTemplate;
+  public cloudConfigData: string = '';
 
   constructor(public vmTemplateService: VmtemplateService) {}
 
@@ -19,7 +20,8 @@ export class VmTemplateDetailComponent implements OnInit {
     this.loading = true;
     // Make the server call
     this.vmTemplateService.get(this.id).subscribe((t: VMTemplate) => {
-      this.currentVmTemplate = t;
+      this.currentVmTemplate = t;      
+      this.cloudConfigData = this.currentVmTemplate.config_map['cloud-config'] ? this.currentVmTemplate.config_map['cloud-config'] : 'No Cloud Config defined'
       this.loading = false;
     });
   }
@@ -27,4 +29,6 @@ export class VmTemplateDetailComponent implements OnInit {
   isEmpty(object: Object) {
     return Object.keys(object).length == 0;
   }
+
+
 }
