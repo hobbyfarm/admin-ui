@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
-import { VMTemplateServiceConfiguration } from 'src/app/data/vm-template-service-configuration';
+import { getCloudConfigString, VMTemplateServiceConfiguration } from 'src/app/data/vm-template-service-configuration';
 
 @Component({
   selector: 'app-vmtemplate-service-form',
@@ -37,7 +37,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
       name: [edit ? this.editVMService.name : ''],
       port: [edit ? this.editVMService.port : undefined],
       hasOwnTab: [edit ? this.editVMService.hasOwnTab : false],
-      cloudConfigString: [edit ? this.editVMService.cloudConfigString : ''],
+      cloudConfigString: [edit ? getCloudConfigString(this.editVMService) : ''],
       hasWebinterface: [edit ? this.editVMService.hasWebinterface : false]
     })
   }
