@@ -85,11 +85,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       let temp = JSON.parse(configMapData)
       let resultMap = new Map()
       temp.forEach(entry => {
-        let newConfMap = new Map()
-        Object.keys(entry["cloudConfigMap"]).forEach(key => {
-          newConfMap.set(key, entry["cloudConfigMap"][key])
-        })
-        entry.cloudConfigMap = newConfMap
+        entry.cloudConfigMap = new Map(Object.entries(entry["cloudConfigMap"])); // Convert Object to map
         resultMap.set(entry['name'], entry)
       })
       return resultMap
@@ -145,6 +141,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     this.template.config_map[this.cloudConfigKey] = this.cloudConfig.cloudConfigYaml;  
     let tempArray = []
     this.cloudConfig.vmServices.forEach(vmService => {
+      //tempArray.push(vmService);
       tempArray.push(JSON.parse(vmServiceToJSON(vmService)))
     })
     let jsonString = JSON.stringify(tempArray)
