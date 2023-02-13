@@ -1,0 +1,40 @@
+<div class="editor-actions">
+  <div
+    *ngFor="let action of ACTIONS"
+    class="editor-action-button"
+    [title]="action.title ?? action.name"
+    (click)="editorPreset(action)"
+  >
+    <ng-container *ngIf="action.icon"
+      ><clr-icon [attr.shape]="action.icon"></clr-icon
+    ></ng-container>
+    <ng-container *ngIf="!action.icon"
+      ><b>{{ action.name }}</b></ng-container
+    >
+  </div>
+  <div class="editor-action-button reference">
+    <a href="https://hobbyfarm.github.io/docs/appendix/markdown_syntax/">
+      <clr-icon shape="pop-out"></clr-icon>
+      Syntax Reference
+    </a>
+  </div>
+</div>
+<div class="split-container">
+  <as-split unit="percent" direction="horizontal">
+    <as-split-area [size]="50" class="split-area-1">
+      <div class="markdown-editor-container">
+        <textarea
+          #mdEditor
+          class="split-markdown-editor"
+          [(ngModel)]="content"
+        ></textarea>
+      </div>
+    </as-split-area>
+    <as-split-area [size]="50" class="split-area-2">
+      <app-hf-markdown
+        [content]="content"
+        [context]="{ vmInfo: {}, session: 'ss-123456' }"
+      ></app-hf-markdown>
+    </as-split-area>
+  </as-split>
+</div>
