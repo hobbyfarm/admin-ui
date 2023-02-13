@@ -81,6 +81,7 @@ import { NewRoleBindingComponent } from './user/new-role-binding/new-role-bindin
 import { DeleteProcessModalComponent } from './user/user/delete-process-modal/delete-process-modal.component';
 import { EnvironmentDetailComponent } from './configuration/environments/environment-detail/environment-detail.component';
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
+import { VMTemplateServiceFormComponent } from './configuration/vmtemplates/edit-vmtemplate/vmtemplate-service-form/vmtemplate-service-form.component';
 import { FilterScenariosComponent } from './filter-scenarios/filter-scenarios.component';
 import { MDEditorComponent } from './scenario/md-editor/md-editor.component';
 
@@ -152,8 +153,9 @@ export function jwtOptionsFactory() {
     NewRoleBindingComponent,
     EnvironmentDetailComponent,
     VmTemplateDetailComponent,
-    FilterScenariosComponent,
     MDEditorComponent,
+    VMTemplateServiceFormComponent,
+    FilterScenariosComponent
   ],
   imports: [
     BrowserModule,

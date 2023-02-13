@@ -3,7 +3,9 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } 
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClrWizard } from '@clr/angular';
 import { AlertComponent } from 'src/app/alert/alert.component';
+import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { ServerResponse } from 'src/app/data/serverresponse';
+import { vmServiceToJSON } from 'src/app/data/vm-template-service-configuration';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 
@@ -16,12 +18,20 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public configMap: FormGroup;
   public buttonsDisabled: boolean = false;
 
+  private cloudConfigKey: string = 'cloud-config'
+  private vmServiceKey: string = 'webinterfaces'
+  public cloudConfig: CloudInitConfig = new CloudInitConfig();   
+
   @Input()
-  public editTemplate: VMTemplate;
-  public template: VMTemplate = new VMTemplate();
+  public editTemplate: VMTemplate;  
 
   @Output()
   public event: EventEmitter<boolean> = new EventEmitter(false);
+
+  public template: VMTemplate = new VMTemplate();
+  public selectWebinterfaceModalOpen: boolean = false
+  public newWebinterfaceModalOpen: boolean = false
+
 
   constructor(
     private _fb: FormBuilder,
@@ -70,10 +80,25 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     })
   }
 
+  private buildVMServices(configMapData?: string) {
+    if (configMapData) {
+      let temp = JSON.parse(configMapData)
+      let resultMap = new Map()
+      temp.forEach(entry => {
+        entry.cloudConfigMap = new Map(Object.entries(entry["cloudConfigMap"])); // Convert Object to map
+        resultMap.set(entry['name'], entry)
+      })
+      return resultMap
+    }
+    else return new Map()
+  }
+
   public prepareConfigMap() {
     // differs from buildConfigMap() in that we are copying existing values
     // into the form
-    var configKeys = Object.keys(this.editTemplate.config_map)
+    let configKeys = Object.keys(this.editTemplate.config_map).filter(elem => elem !== this.cloudConfigKey && elem != this.vmServiceKey)
+    this.cloudConfig.vmServices = this.buildVMServices(this.editTemplate.config_map[this.vmServiceKey])
+    this.cloudConfig.buildNewYAMLFile()
     this.configMap = this._fb.group({
       mappings: this._fb.array([])
     });
@@ -91,8 +116,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   public newConfigMapping(key: string = '', value: string = '') {
     var newGroup = this._fb.group({
-      key: [key, Validators.required],
-      value: [value, Validators.required]
+      key:    [key, Validators.required],
+      value:  [value, Validators.required]
     });
     (this.configMap.get('mappings') as FormArray).push(newGroup)
   }
@@ -113,8 +138,15 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       var value = (this.configMap.get(['mappings', i]) as FormGroup).get('value').value
       this.template.config_map[key] = value;
     }
+    this.template.config_map[this.cloudConfigKey] = this.cloudConfig.cloudConfigYaml;  
+    let tempArray = []
+    this.cloudConfig.vmServices.forEach(vmService => {
+      //tempArray.push(vmService);
+      tempArray.push(JSON.parse(vmServiceToJSON(vmService)))
+    })
+    let jsonString = JSON.stringify(tempArray)
+    this.template.config_map[this.vmServiceKey] = jsonString
   }
-
   public copyTemplate() {
     this.copyConfigMap();
     this.copyTemplateDetails();
