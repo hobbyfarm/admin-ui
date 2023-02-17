@@ -82,11 +82,12 @@
             </clr-signpost-content>
         </clr-signpost>
         <div [formGroup]="configMap">            
-            <form clrForm style="width: 100%;">
-                <div style="background-color: var(--clr-thead-bgcolor, #fafafa); width: fit-content;padding: 9px; border: 1px solid var(--clr-table-border-color, #cccccc);">
-                    <code class="clr-code" style="white-space: pre; color: var(--clr-table-font-color, #666666);">{{ cloudConfig.cloudConfigYaml }}</code>
+            <form clrForm>
+                <div class="code-container" *ngIf="cloudConfig.cloudConfigYaml.length > 0">
+                    <code class="clr-code">{{ cloudConfig.cloudConfigYaml }}</code>
                 </div>
             </form>
+            <div *ngIf="!cloudConfig.cloudConfigYaml.length">There is no Cloud-Init Configuration defined for this VM-Template. This can be done in the Services Step.</div>
         </div>
         <ng-container *ngIf="configMap && !configMap.valid">
             <span class="clr-subtext">All mappings must have key and value filled out. Complete, or remove, any entries
