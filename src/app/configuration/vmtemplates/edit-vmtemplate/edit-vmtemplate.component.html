@@ -83,8 +83,8 @@
         </clr-signpost>
         <div [formGroup]="configMap">            
             <form clrForm>
-                <div class="code-container" *ngIf="cloudConfig.cloudConfigYaml.length > 0">
-                    <code class="clr-code">{{ cloudConfig.cloudConfigYaml }}</code>
+                <div *ngIf="cloudConfig.cloudConfigYaml.length > 0">                    
+                    <markdown [data]="cloudConfig.cloudConfigYaml | language: 'yaml'"></markdown>
                 </div>
             </form>
             <div *ngIf="!cloudConfig.cloudConfigYaml.length">There is no Cloud-Init Configuration defined for this VM-Template. This can be done in the Services Step.</div>
