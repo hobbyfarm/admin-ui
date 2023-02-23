@@ -1,7 +1,4 @@
-<button
-  class="btn btn-table btn-link"
-  (click)="selectVMServiceModalOpen = true"
->
+<button class="btn btn-table btn-link" (click)="selectVMServiceModalOpen = true">
   <clr-icon shape="plus"></clr-icon> Add predefined Service
 </button>
 <button class="btn btn-table btn-link" (click)="openNewVMServiceModal()">
@@ -19,18 +16,12 @@
       <td>{{ interface.value.port }}</td>
       <td>{{ interface.value.hasOwnTab }}</td>
       <td>
-        <button
-          class="btn btn-table btn-link"
-          (click)="editVMServiceClicked(interface.value)"
-        >
+        <button class="btn btn-table btn-link" (click)="editVMServiceClicked(interface.value)">
           EDIT
         </button>
       </td>
       <td>
-        <button
-          class="btn btn-table btn-link"
-          (click)="cloudConfig.removeVMService(interface.key)"
-        >
+        <button class="btn btn-table btn-link" (click)="cloudConfig.removeVMService(interface.key)">
           DELETE
         </button>
       </td>
@@ -42,20 +33,13 @@
   <h3 class="modal-title">Choose a Service</h3>
   <div class="modal-body">
     <select clrSelect [(ngModel)]="selectedNewInterface">
-      <option
-        *ngFor="let interface of predefinedInterfaces"
-        [ngValue]="interface"
-      >
+      <option *ngFor="let interface of predefinedInterfaces" [ngValue]="interface">
         {{ interface.name }}
       </option>
     </select>
   </div>
   <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-outline"
-      (click)="selectVMServiceModalOpen = false"
-    >
+    <button type="button" class="btn btn-outline" (click)="selectVMServiceModalOpen = false">
       Cancel
     </button>
     <button type="button" class="btn btn-primary" (click)="selectModalClose()">
@@ -70,75 +54,37 @@
     <form clrForm [formGroup]="newVMServiceFormGroup">
       <clr-input-container>
         <label>Name</label>
-        <input
-          clrInput
-          placeholder="Webserver"
-          name="name"
-          formControlName="name"
-        />
+        <input clrInput placeholder="Webserver" name="name" formControlName="name" />
       </clr-input-container>
       <clr-checkbox-container>
         <clr-checkbox-wrapper>
-          <input
-            type="checkbox"
-            clrCheckbox
-            value="hasWebinterface"
-            name="hasWebinterface"
-            formControlName="hasWebinterface"
-            required
-          />
+          <input type="checkbox" clrCheckbox value="hasWebinterface" name="hasWebinterface"
+            formControlName="hasWebinterface" required />
           <label>Has a Webinterface</label>
         </clr-checkbox-wrapper>
       </clr-checkbox-container>
       <ng-container *ngIf="newVMServiceFormGroup.value['hasWebinterface']">
         <clr-checkbox-container>
           <clr-checkbox-wrapper>
-            <input
-              type="checkbox"
-              clrCheckbox
-              value="hasOwnTab"
-              name="hasOwnTab"
-              formControlName="hasOwnTab"
-            />
+            <input type="checkbox" clrCheckbox value="hasOwnTab" name="hasOwnTab" formControlName="hasOwnTab" />
             <label>Has it's own Tab in the UI</label>
           </clr-checkbox-wrapper>
         </clr-checkbox-container>
         <clr-input-container>
           <label>Port</label>
-          <input
-            type="number"
-            clrInput
-            placeholder="80"
-            name="input"
-            formControlName="port"
-          />
+          <input type="number" clrInput placeholder="80" name="input" formControlName="port" />
         </clr-input-container>
         <clr-input-container>
           <label>Path</label>
-          <input
-            type="text"
-            clrInput
-            placeholder="/dashboard"
-            name="input"
-            formControlName="path"
-          />
+          <input type="text" clrInput placeholder="/dashboard" name="input" formControlName="path" />
         </clr-input-container>
       </ng-container>
-      <textarea
-        clrTextarea
-        style="width: 100%; height: 30vh; padding: 0"
-        name="cloudConfigString"
-        formControlName="cloudConfigString"
-        required
-      ></textarea>
+      <app-code-with-syntax-highlighting [textValue]="newVMServiceFormGroup.value['cloudConfigString']"
+        (textChanged)="newVMServiceFormGroup.controls.cloudConfigString.setValue($event)"></app-code-with-syntax-highlighting>
     </form>
   </div>
   <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-outline"
-      (click)="newVMServiceModalOpen = false"
-    >
+    <button type="button" class="btn btn-outline" (click)="newVMServiceModalOpen = false">
       Cancel
     </button>
     <button type="button" class="btn btn-primary" (click)="newVMServiceClose()">
