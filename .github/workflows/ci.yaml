@@ -39,6 +39,8 @@ jobs:
 
       - name: Build
         run: npm run build:prod
+        env:
+          NODE_OPTIONS: '--openssl-legacy-provider'
 
       # TODO: lint, sonar, tests
 
