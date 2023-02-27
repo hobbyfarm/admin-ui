@@ -76,6 +76,7 @@ import { EnvironmentDetailComponent } from './configuration/environments/environ
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
 import { NgChartsModule } from 'ng2-charts';
 import { FilterScenariosComponent } from './filter-scenarios/filter-scenarios.component';
+import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -101,6 +102,7 @@ export function jwtOptionsFactory() {
   declarations: [
     AppComponent,
     HomeComponent,
+    SessionStatisticsComponent,
     HeaderComponent,
     EventComponent,
     LoginComponent,
