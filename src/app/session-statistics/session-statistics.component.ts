@@ -70,7 +70,11 @@ export class SessionStatisticsComponent implements OnInit {
     DataLabelsPlugin,
     {
       id: 'legendMargin',
-      beforeInit: function (chart: Chart<'bar'>) {
+      // chart is of type Chart<'bar'>. However, we are forced to use chart.js version 3.4.0 because it is used by ng2-charts as peer dependency.
+      // And the "legend" property is not defined in the type definitions of this version.
+      
+      // We can not upgrade ng2-charts (and so its peer dependency) yet because it requires Angular 14. 
+      beforeInit: function (chart: any) {
         // Get the reference to the original fit function
         const originalFit = (chart.legend as any).fit;
 
