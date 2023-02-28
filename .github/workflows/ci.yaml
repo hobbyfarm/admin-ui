@@ -1,0 +1,49 @@
+# Continuous Integration (Packaging) pipeline
+
+name: CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch: {}
+
+concurrency:
+  group: "ci"
+  cancel-in-progress: true
+
+env:
+  app_image: hobbyfarm/admin-ui
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Setup node_modules cache
+        id: cache-nodemodules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          # cache node_modules to improve performance dramatically
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build:prod
+        env:
+          NODE_OPTIONS: '--openssl-legacy-provider'
+
+      # TODO: lint, sonar, tests
+
+      - name: Create container image
+        run: |
+          docker build -f .github/workflows/Dockerfile-ci -t hobbyfarm/admin-ui:${GIT_COMMIT_SHORT_HASH:-dev} .

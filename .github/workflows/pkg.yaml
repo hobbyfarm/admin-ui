@@ -1,5 +1,11 @@
-name: Main
-on: [push, pull_request]
+# Continuous Delivery (Packaging) pipeline
+
+name: PKG
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch: {}
 
 env:
   app_image: hobbyfarm/admin-ui
@@ -26,33 +32,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Setup node_modules cache
-        id: cache-nodemodules
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-node-modules
-        with:
-          # cache node_modules to improve performance dramatically
-          path: node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-
-      - name: Install deps
-        run: npm install
-
-      - name: Build
-        run: npm run build:prod
-
-      - name: Build
+      - name: Create container image
         run: |
-          docker build -f cicd/Dockerfile -t $app_image:${GIT_COMMIT_SHORT_HASH:-dev} .
+          docker build -f Dockerfile -t $app_image:${GIT_COMMIT_SHORT_HASH:-dev} .
 
-      - name: Docker Login
+      - name: Login container registry
         if: fromJSON(env.should_push_image)
         run: |
           echo "${{ secrets.REGISTRY_PASSWORD }}" \
             | docker login -u "${{ secrets.REGISTRY_USER }}" --password-stdin
 
-      - name: Docker Push
+      - name: Push container image to registry
         if: fromJSON(env.should_push_image)
         run: |
           safe_ref=$(echo "${{ github.ref_name }}" | sed -e 's/[^a-zA-Z0-9\-\.]/-/g')
@@ -61,7 +51,7 @@ jobs:
           docker tag $app_image:${GIT_COMMIT_SHORT_HASH:-dev} $publish_tag
           docker push $publish_tag
 
-      - name: Docker Push Latest
+      - name: Push latest tag
         if: fromJSON(env.should_tag_latest)
         run: |
           docker tag $app_image:${GIT_COMMIT_SHORT_HASH:-dev} $app_image:latest

@@ -5,20 +5,37 @@ import { CtrService } from '../data/ctr.service';
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'ctr',
   template: `
-    <pre (click)="ctr()" #code><ng-content></ng-content></pre>
-    <i
-      ><clr-icon shape="angle"></clr-icon> Click to run on <b>{{ target }}</b
-      ><span> {{ countContent }}</span></i
-    >
+    <pre
+      [attr.executed]="executed"
+      class="file-{{ file }}"
+      title="{{ title }}"
+      (click)="ctr()"
+      #code
+    ><ng-content></ng-content></pre>
+    <i>
+      <clr-icon [attr.shape]="shape"></clr-icon> {{ statusText }}
+      <b>{{ target }}</b>
+      <span> {{ countContent }}</span>
+      <span> {{ disabledText }}</span>
+    </i>
   `,
   styleUrls: ['ctr.component.scss'],
 })
 export class CtrComponent implements OnInit {
   @Input() target = '';
+  @Input() title = '';
+  @Input() filename: string;
+  @Input() ctrId: string;
   @Input() count: number = Number.POSITIVE_INFINITY;
   @ViewChild('code') code: ElementRef<HTMLElement>;
 
   public countContent = '';
+  public disabledText = '';
+  public shape = 'angle';
+  public statusText = 'Click to run on';
+  public executed = false;
+  public file = false;
+  private enabled = true;
 
   constructor(private ctrService: CtrService) {}
 
@@ -26,12 +43,21 @@ export class CtrComponent implements OnInit {
     if (this.count != Number.POSITIVE_INFINITY) {
       this.updateCount();
     }
+    if (this.filename) {
+      this.file = true;
+      this.statusText = `Click to create ${this.filename} on`;
+    }
   }
 
   public ctr() {
-    if (this.count > 0) {
-      const code = this.code.nativeElement.innerText;
-      this.ctrService.sendCode({ target: this.target, code });
+    if (this.count > 0 && this.enabled) {
+      this.ctrService.sendCodeById(this.ctrId, this.target);
+      this.executed = true;
+      this.shape = 'success-standard';
+      this.statusText = 'Executed on';
+      if (this.filename) {
+        this.statusText = 'Created on';
+      }
       if (this.count != Number.POSITIVE_INFINITY) {
         this.count -= 1;
         this.updateCount();
@@ -43,5 +69,16 @@ export class CtrComponent implements OnInit {
     const clicks = this.count == 1 ? 'click' : 'clicks';
     const content = `(${this.count} ${clicks} left)`;
     this.countContent = content;
+  }
+
+  private setEnabled(enabled: boolean) {
+    this.enabled = enabled;
+    if (this.enabled) {
+      this.code.nativeElement.classList.remove('disabled');
+      this.disabledText = '';
+    } else {
+      this.code.nativeElement.classList.add('disabled');
+      this.disabledText = '(CTR disabled in settings)';
+    }
   }
 }

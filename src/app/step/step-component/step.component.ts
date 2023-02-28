@@ -10,13 +10,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Step } from '../../data/step';
-import {
-  switchMap,
-  concatMap,
-  tap,
-  map,
-  toArray,
-} from 'rxjs/operators';
+import { switchMap, concatMap, tap, map, toArray } from 'rxjs/operators';
 import { TerminalComponent } from '../terminal/terminal.component';
 import { ClrTabContent, ClrTab, ClrModal } from '@clr/angular';
 import { Scenario } from '../../data/scenario';
@@ -57,14 +51,14 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   public sessionExpired = false;
   public vms: Map<string, VM> = new Map();
 
-  mdContext: HfMarkdownRenderContext = { vmInfo: {} };
+  mdContext: HfMarkdownRenderContext = { vmInfo: {}, session: '' };
 
   public pauseOpen = false;
 
   public pauseLastUpdated: Date = new Date();
-  public pauseRemainingString = ''; 
-  public username: String = "";
-  public courseName: String = "";
+  public pauseRemainingString = '';
+  public username: String = '';
+  public courseName: String = '';
 
   public checkInterval: any;
 
@@ -87,7 +81,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     private vmService: VMService,
     private shellService: ShellService,
     private userService: UserService,
-    private courseService: CourseService,
+    private courseService: CourseService
   ) {}
 
   handleStepContentClick(e: MouseEvent) {
@@ -119,13 +113,11 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
       this.ssService.getStatus(sessionId).subscribe(
         () => {},
         () => {
-          this.sessionExpired = true
-          clearInterval(this.checkInterval)
+          this.sessionExpired = true;
+          clearInterval(this.checkInterval);
         }
-       )
-    }, 60000)
-    
-
+      );
+    }, 60000);
 
     this.ssService
       .get(sessionId)
@@ -137,8 +129,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         tap((s: Scenario) => {
           this.scenario = s;
           this._loadStep();
-          this._loadUser()
-          this._loadCourse()
+          this._loadUser();
+          this._loadCourse();
         }),
         switchMap(() => {
           return from(this.session.vm_claim);
@@ -154,21 +146,23 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
             .get(v.vm_id)
             .pipe(map((vm) => [k, vm] as const));
         }),
-        toArray(),
+        toArray()
       )
-      .subscribe((entries) => {
-        this.vms = new Map(entries);
+      .subscribe(
+        (entries) => {
+          this.vms = new Map(entries);
 
-        const vmInfo: HfMarkdownRenderContext['vmInfo'] = {};
-        for (const [k, v] of this.vms) {
-          vmInfo[k.toLowerCase()] = v;
+          const vmInfo: HfMarkdownRenderContext['vmInfo'] = {};
+          for (const [k, v] of this.vms) {
+            vmInfo[k.toLowerCase()] = v;
+          }
+          this.mdContext = { vmInfo, session: this.session.id };
+        },
+        () => {
+          this.sessionExpired = true;
+          clearInterval(this.checkInterval);
         }
-        this.mdContext = { vmInfo };
-      }, 
-      () => {
-        this.sessionExpired = true
-        clearInterval(this.checkInterval)
-      });
+      );
 
     this.ctr.getCodeStream().subscribe((c: CodeExec) => {
       // watch for tab changes
@@ -181,29 +175,29 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.shellService.watch().subscribe((ss: Map<string, string>) => {
       this.shellStatus = ss;
-    });    
+    });
   }
 
-  ngAfterViewInit() { 
+  ngAfterViewInit() {
     const sub = this.tabs.changes.subscribe((tabs: QueryList<ClrTab>) => {
       if (tabs.first) {
         tabs.first.tabLink.activate();
         sub.unsubscribe();
       }
-    })    
+    });
   }
 
   ngOnDestroy() {
     this.terms.forEach((term) => {
       term.mutationObserver.disconnect();
     });
-    clearInterval(this.checkInterval)
+    clearInterval(this.checkInterval);
   }
 
   goNext() {
     this.stepnumber += 1;
     this.router.navigateByUrl(
-      '/session/' + this.session.id + '/steps/' + this.stepnumber,
+      '/session/' + this.session.id + '/steps/' + this.stepnumber
     );
     this._loadStep();
     this.contentDiv.nativeElement.scrollTop = 0;
@@ -214,28 +208,30 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
       .get(this.scenario.id, this.stepnumber)
       .subscribe((s: Step) => {
         this.step = s;
-        this.step.title = atou(s.title)
+        this.step.title = atou(s.title);
         this.stepcontent = atou(s.content);
       });
   }
 
   private _loadUser() {
-    this.userService.getUserByID(this.session.user).subscribe((user) => 
-    this.username = user.email
-    )
+    this.userService
+      .getUserByID(this.session.user)
+      .subscribe((user) => (this.username = user.email));
   }
 
   private _loadCourse() {
-    if (!this.session.course) return
-    this.courseService.getCourseById(this.session.course).subscribe((course) => {
-      this.courseName = course.name
-    })
+    if (!this.session.course) return;
+    this.courseService
+      .getCourseById(this.session.course)
+      .subscribe((course) => {
+        this.courseName = course.name;
+      });
   }
 
   goPrevious() {
     this.stepnumber -= 1;
     this.router.navigateByUrl(
-      '/session/' + this.session.id + '/steps/' + this.stepnumber,
+      '/session/' + this.session.id + '/steps/' + this.stepnumber
     );
     this._loadStep();
     this.contentDiv.nativeElement.scrollTop = 0;

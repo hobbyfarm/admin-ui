@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
 import { ClrDatagridSortOrder, ClrModal } from '@clr/angular';
@@ -19,7 +19,6 @@ import { RbacService } from '../data/rbac.service';
 })
 export class ScenarioComponent implements OnInit {
   public unusedSelectedScenario: any = {}; // only exists to satisfy a datagrid requirement
-
 
   public filteredScenarios: Scenario[] = [];
   public vmtemplates: VMTemplate[] = [];
@@ -65,7 +64,6 @@ export class ScenarioComponent implements OnInit {
     public vmTemplateService: VmtemplateService,
     public rbacService: RbacService
   ) {}
-
 
   public vmform: FormGroup = new FormGroup({
     vm_name: new FormControl(null, [
@@ -154,6 +152,10 @@ export class ScenarioComponent implements OnInit {
   @ViewChild('newscenariomodal', { static: true }) newScenarioModal: ClrModal;
 
   openEdit(s: Step, i: number) {
+    if (this.selectedscenario.steps.length == 0) {
+      this.openNewStep();
+      return;
+    }
     this.editingStep = s;
     this.editingIndex = i;
     this.editModal.open();
@@ -190,9 +192,40 @@ export class ScenarioComponent implements OnInit {
   }
 
   openNewStep() {
-    this.editingStep = new Step();
     this.editingIndex = this.selectedscenario.steps.length;
+    this.editingStep = new Step();
+    this.editingStep.title = 'Step ' + (this.editingIndex + 1);
+    // Provide default content with syntax examples
+    this.editingStep.content =
+      "## Your Content\n```ctr:node1\necho 'hello world'\n```\n```hidden:Syntax reference\navailable at [the hobbyfarm docs](https://hobbyfarm.github.io/docs/appendix/markdown_syntax/)\n```";
+    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
     this.editModal.open();
+  }
+
+  isFirstStep() {
+    return this.editingIndex == 0;
+  }
+
+  isLastStep() {
+    return this.editingIndex >= this.selectedscenario?.steps.length - 1;
+  }
+
+  nextStep() {
+    if (this.isLastStep()) {
+      return;
+    }
+    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
+    this.editingIndex++;
+    this.editingStep = this.selectedscenario.steps[this.editingIndex];
+  }
+
+  previousStep() {
+    if (this.isFirstStep()) {
+      return;
+    }
+    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
+    this.editingIndex--;
+    this.editingStep = this.selectedscenario.steps[this.editingIndex];
   }
 
   public openDeleteStep(i: number) {
@@ -243,7 +276,6 @@ export class ScenarioComponent implements OnInit {
       }
     );
 
-
     this.newScenarioModal.close();
   }
 
@@ -257,14 +289,14 @@ export class ScenarioComponent implements OnInit {
       .update(this.selectedscenario)
       .subscribe((s: ServerResponse) => {
         if (s.type == 'updated') {
-          this.editSuccessAlert = 'Step successfully updated';
+          this.editSuccessAlert = 'Steps successfully saved';
           this.editSuccessClosed = false;
           setTimeout(() => {
             this.editSuccessClosed = true;
             this.editModal.close();
           }, 1000);
         } else {
-          this.editDangerAlert = 'Unable to update step: ' + s.message;
+          this.editDangerAlert = 'Unable to save steps: ' + s.message;
           this.editDangerClosed = false;
           setTimeout(() => {
             this.editDangerClosed = true;
@@ -401,17 +433,15 @@ export class ScenarioComponent implements OnInit {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
     this.deleteVMSetModal.close();
   }
-  setScenarioList(scenarios: Scenario[]){
+  setScenarioList(scenarios: Scenario[]) {
     this.filteredScenarios = scenarios;
   }
-
 
   ngOnInit() {
     // "Get" Permission on scenarios is required to load step content
     this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
       this.selectRbac = allowed;
     });
-
 
     this.rbacService
       .Grants('virtualmachinesets', 'list')
@@ -422,7 +452,5 @@ export class ScenarioComponent implements OnInit {
           });
         }
       });
-
-
   }
 }
