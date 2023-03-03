@@ -1,4 +1,4 @@
-# Continuous Integration (Packaging) pipeline
+# purpose: Continuous Integration (build, test, lint, scan)
 
 name: CI
 
@@ -21,29 +21,27 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
-
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Node.js (LTS)
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: Setup node_modules cache
         id: cache-nodemodules
         uses: actions/cache@v3
         env:
           cache-name: cache-node-modules
         with:
-          # cache node_modules to improve performance dramatically
           path: node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-
       - name: Install dependencies
         run: npm install
-
       - name: Build
         run: npm run build:prod
         env:
           NODE_OPTIONS: '--openssl-legacy-provider'
-
       # TODO: lint, sonar, tests
-
       - name: Create container image
         run: |
           docker build -f .github/workflows/Dockerfile-ci -t hobbyfarm/admin-ui:${GIT_COMMIT_SHORT_HASH:-dev} .
