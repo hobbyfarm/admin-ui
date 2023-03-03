@@ -107,8 +107,8 @@
     <div class="clr-col-lg-4 clr-col-md-4 clr-col-12">
       <h4>Started Sessions (Overview)</h4>
       <clr-datagrid>
-        <clr-dg-column [clrDgField]="'key'" [clrDgSortOrder]="ascSort">Scenario</clr-dg-column>
-        <clr-dg-column>Total Sessions</clr-dg-column>
+        <clr-dg-column [clrDgField]="'key'">Scenario</clr-dg-column>
+        <clr-dg-column [clrDgSortBy]="'value'" [clrDgSortOrder]="descSort">Total Sessions</clr-dg-column>
         <clr-dg-row *clrDgItems="let item of totalSessionsPerScenario | keyvalue">
           <clr-dg-cell>{{item.key}}</clr-dg-cell>
           <clr-dg-cell>{{item.value}}</clr-dg-cell>

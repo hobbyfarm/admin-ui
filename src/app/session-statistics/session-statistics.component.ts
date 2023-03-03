@@ -90,7 +90,7 @@ export class SessionStatisticsComponent implements OnInit {
   ];
   public scenariosWithSession: string[] = [];
   public totalSessionsPerScenario: Map<string, number> = new Map();
-  public ascSort = ClrDatagridSortOrder.ASC;
+  public descSort = ClrDatagridSortOrder.DESC;
 
   constructor(
     public progressService: ProgressService,
