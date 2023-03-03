@@ -1,11 +1,40 @@
 <div class="main-container" *rbac="['progresses.list']">
   <h3>Session Statistics For Active Events</h3>
   <form [formGroup]="chartDetails" [class.clr-error]="chartDetails.errors?.endDateLowerThanStartDate">
-    <select clrSelect formControlName="observationPeriod" >
-      <option value="daily">Daily</option>
-      <option value="weekly">Weekly</option>
-      <option value="monthly">Monthly</option>
-    </select>
+    <div class="clr-row">
+      <div class="clr-col-lg-4 clr-col-md-4 clr-col-12">
+        <clr-select-container>
+          <label>Observation Period</label>
+          <select clrSelect formControlName="observationPeriod" >
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </clr-select-container>
+      </div>
+      <div class="clr-col-lg-4 clr-col-md-4 clr-col-12">
+        <clr-combobox-container>
+          <label>Scenarios</label>
+          <clr-combobox formControlName="scenarios" name="scenarios" clrMulti="true">
+            <ng-container *clrOptionSelected="let scenarioSelected">
+                {{ scenarioSelected }}
+            </ng-container>
+            <clr-options>
+                <clr-option *clrOptionItems="let scenario of scenariosWithSession" [clrValue]="scenario">
+                    <clr-icon shape="node-group"></clr-icon> {{ scenario }}
+                </clr-option>
+            </clr-options>
+          </clr-combobox>
+          <clr-control-error>Scenarios are required.</clr-control-error>
+          <clr-control-helper>
+            <div class="scenario-actions">
+              <a class="scenario-action" href="javascript://" (click)="clearScenarios()">Clear Scenarios</a>
+              <a class="scenario-action" href="javascript://" (click)="addAllScenarios()">Add All Scenarios</a>
+            </div>
+          </clr-control-helper>
+        </clr-combobox-container>
+      </div>
+    </div>
     <div class="clr-row">
       <div class="clr-col-lg-4 clr-col-md-4 clr-col-12">
         <clr-input-container class="date-label-input">

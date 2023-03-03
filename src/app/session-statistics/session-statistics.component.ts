@@ -119,6 +119,7 @@ export class SessionStatisticsComponent implements OnInit {
     this.chartDetails = this._fb.group(
       {
         observationPeriod: ['daily', [Validators.required]],
+        scenarios: [[], [Validators.required, Validators.minLength(1)]],
         startDate: [
           this.startDate.toLocaleDateString('en-US', this.options),
           [Validators.required, this.validateStartDate()],
@@ -143,11 +144,36 @@ export class SessionStatisticsComponent implements OnInit {
         this.updateLabels(obsPeriod);
         this.updateData(obsPeriod);
       });
+    this.chartDetails
+      .get('scenarios')
+      .valueChanges.subscribe((scenarios: string[]) => {
+        const observationPeriod = this.chartDetails.get('observationPeriod').value;
+        let updatedScenarios: string [] = scenarios;
+        if(scenarios && scenarios.length >= 2) {
+          updatedScenarios = scenarios.filter((scenario: string) => scenario !== "*");
+        }
+        this.chartDetails.get('scenarios').setValue(updatedScenarios, {
+          emitEvent: false
+        })
+        this.updateData(observationPeriod);
+      });
   }
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
   @ViewChild('startDateSignpost') startDateSignpost: ClrSignpostContent;
   @ViewChild('endDateSignpost') endDateSignpost: ClrSignpostContent;
+
+  public addAllScenarios(): void {
+    this.chartDetails
+      .get('scenarios')
+      .setValue(["*"]);
+  }
+
+  public clearScenarios(): void {
+    this.chartDetails
+      .get('scenarios')
+      .setValue(null);
+  }
 
   // TODO: Validate start time
   private validateStartDate(): ValidatorFn {
@@ -192,7 +218,7 @@ export class SessionStatisticsComponent implements OnInit {
         } else {
           this.updateBarchartData(progress, this.getDayOrMonthDataIndex);
         }
-        this.updateTotalSessions();
+        this.updateTotalSessions(progress);
         this.chart?.update();
       });
   }
@@ -306,17 +332,35 @@ export class SessionStatisticsComponent implements OnInit {
     });
   }
 
+  private allScenariosSelected(): boolean {
+    const selectedScenarios = this.chartDetails.get('scenarios').value ?? [];
+    return selectedScenarios.length === 1 && selectedScenarios[0] === "*";
+  }
+
   private prepareBarchartDatasets() {
     this.barChartData.datasets.length = 0;
-    this.scenariosWithSession.forEach((sWithSession: string) => {
-      this.barChartData.datasets.push({
-        data: Array.from<number>({
-          length: this.barChartData.labels.length,
-        }).fill(0),
-        label: sWithSession,
-        stack: 'a',
+    const selectedScenarios = this.chartDetails.get('scenarios').value ?? [];
+    if(this.allScenariosSelected()) {
+      this.scenariosWithSession.forEach((sWithSession: string) => {
+        this.barChartData.datasets.push({
+          data: Array.from<number>({
+            length: this.barChartData.labels.length,
+          }).fill(0),
+          label: sWithSession,
+          stack: 'a',
+        });
       });
-    });
+    } else if (selectedScenarios.length >= 1) {
+      selectedScenarios.forEach((sWithSession: string) => {
+        this.barChartData.datasets.push({
+          data: Array.from<number>({
+            length: this.barChartData.labels.length,
+          }).fill(0),
+          label: sWithSession,
+          stack: 'a',
+        });
+      });
+    }
   }
 
   // Info: We need to use an arrow function here to access class variables defined in the parent's scope (with "this")
@@ -344,23 +388,31 @@ export class SessionStatisticsComponent implements OnInit {
     progressData: Progress[],
     getIndex: (prog: Progress) => number
   ) {
-    progressData.forEach((prog: Progress) => {
+    if(this.barChartData.datasets.length === 0) {
+      // there are no scenarios selected and there is nothing to add ... so return!
+      return;
+    }
+    let evaluatedProgressData: Progress[] = progressData;
+    let selectedScenarios: string[] = this.scenariosWithSession;
+    if(!this.allScenariosSelected()) {
+      selectedScenarios = this.chartDetails.get("scenarios").value ?? [];
+      evaluatedProgressData = progressData.filter((progress: Progress) => selectedScenarios.includes(progress.scenario_name));
+    }
+    evaluatedProgressData.forEach((prog: Progress) => {
       const index = getIndex(prog);
       (this.barChartData.datasets[
-        this.scenariosWithSession.indexOf(prog.scenario_name)
+        selectedScenarios.indexOf(prog.scenario_name)
       ].data[index] as number) += 1;
     });
   }
 
-  private updateTotalSessions() {
+  private updateTotalSessions(progressData: Progress[]) {
     this.totalSessionsPerScenario.clear();
-    this.barChartData.datasets.forEach((dataSet) => {
-      const tempTotalSessions = (dataSet.data as number[]).reduce(
-        (partialSum, i) => partialSum + i,
-        0
-      );
-      this.totalSessionsPerScenario.set(dataSet.label, tempTotalSessions);
-    });
+    this.totalSessionsPerScenario = progressData.reduce((totalSessions, progress) => {
+      const partialSum = totalSessions.get(progress.scenario_name) ?? 0;
+      totalSessions.set(progress.scenario_name, partialSum + 1);
+      return totalSessions;
+    }, new Map<string, number>());
   }
 
   // Info: Labels are not getting updated before calling this.chart.update()
