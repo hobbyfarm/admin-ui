@@ -56,7 +56,7 @@
         </clr-input-container>
         <clr-signpost class="signpost">
           <button class="btn btn-sm btn-link" clrSignpostTrigger>Change Start Date</button>
-          <clr-signpost-content [clrPosition]="'top-right'" *clrIfOpen #startDateSignpost>
+          <clr-signpost-content [clrPosition]="'right-middle'" *clrIfOpen #startDateSignpost>
             <dl-date-time-picker (change)="setStartDate($event)" [startView]="startView" maxView="year" [minView]="minView">
             </dl-date-time-picker>
           </clr-signpost-content>
@@ -79,7 +79,7 @@
         </clr-input-container>
         <clr-signpost class="signpost">
           <button class="btn btn-link" clrSignpostTrigger>Change End Date</button>
-          <clr-signpost-content [clrPosition]="'top-right'" *clrIfOpen #endDateSignpost>
+          <clr-signpost-content [clrPosition]="'right-middle'" *clrIfOpen #endDateSignpost>
             <dl-date-time-picker (change)="setEndDate($event)" [startView]="startView" maxView="year" [minView]="minView">
             </dl-date-time-picker>
           </clr-signpost-content>
