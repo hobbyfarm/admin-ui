@@ -81,10 +81,13 @@ import { NewRoleBindingComponent } from './user/new-role-binding/new-role-bindin
 import { DeleteProcessModalComponent } from './user/user/delete-process-modal/delete-process-modal.component';
 import { EnvironmentDetailComponent } from './configuration/environments/environment-detail/environment-detail.component';
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
+import { NgChartsModule } from 'ng2-charts';
+import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
 import { VMTemplateServiceFormComponent } from './configuration/vmtemplates/edit-vmtemplate/vmtemplate-service-form/vmtemplate-service-form.component';
 import { FilterScenariosComponent } from './filter-scenarios/filter-scenarios.component';
 import { MDEditorComponent } from './scenario/md-editor/md-editor.component';
 import { CodeWithSyntaxHighlightingComponent } from './configuration/code-with-syntax-highlighting/code-with-syntax-highlighting.component';
+
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -108,6 +111,7 @@ export function jwtOptionsFactory() {
   declarations: [
     AppComponent,
     HomeComponent,
+    SessionStatisticsComponent,
     HeaderComponent,
     EventComponent,
     LoginComponent,
@@ -169,6 +173,7 @@ export function jwtOptionsFactory() {
     DlDateTimePickerDateModule,
     DlDateTimePickerModule,
     ClarityModule,
+    NgChartsModule,
     HttpClientModule,
     JwtModule.forRoot({
       jwtOptionsProvider: {

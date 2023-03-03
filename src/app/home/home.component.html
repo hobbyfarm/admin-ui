@@ -1,4 +1,16 @@
 <div class="main-container">
-    <header class="header header-7" app-header></header>  
-    <p>Welcome to the Admin Page</p>
+    <header class="header header-7" app-header></header>
+    <!-- <p class="welcome-msg">Welcome to the Admin Page</p> -->
+    <div class="content-container">
+        <nav class="sidenav">
+            <section class="sidenav-content">
+                <a href="javascript://" [routerLink]="['statistics/sessions']" [routerLinkActive]="'active'" class="nav-link" *rbac="['progresses.list', 'scenarios.list']; op 'AND'">
+                    Session Statistics
+                </a>
+            </section>
+        </nav>
+        <div class="content-area">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
 </div>

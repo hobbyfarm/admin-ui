@@ -1,16 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { Progress, ProgressStep } from './progress';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import {
   extractResponseContent,
   GargantuaClientFactory,
 } from './gargantua.service';
+import { formatDate } from '@angular/common';
+import { ScenarioService } from './scenario.service';
+import { Scenario } from './scenario';
 
 @Injectable()
 export class ProgressService {
-  constructor(private gcf: GargantuaClientFactory) { }
+
+  constructor(
+    private gcf: GargantuaClientFactory,
+    public scenarioService: ScenarioService
+  ) { }
   private garg = this.gcf.scopedClient('/progress');
   private gargAdmin = this.gcf.scopedClient('/a/progress')
 
@@ -38,6 +45,34 @@ export class ProgressService {
         }),
       );
     }
+  }
+
+  public listByRange(from: Date, to: Date) {
+    const fromDateString: string = formatDate(from, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC");
+    const toDateString: string = formatDate(to, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC");
+    const params = new HttpParams()
+      .set("from", formatDate(fromDateString, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
+      .set("to", formatDate(toDateString, "E LLL dd HH:mm:ss UTC yyyy", "en-US", "UTC"))
+    return this.gargAdmin.get('/range', {
+      params: params
+    }).pipe(
+      map(extractResponseContent),
+      map((pList: Progress[]) => {
+        return this.buildProgressList(pList)
+      }),
+      switchMap((progress: Progress[]) => {
+        return forkJoin([
+          of(progress),
+          this.scenarioService.list()
+        ]);
+      }),
+      map(([progress, scenarios]: [Progress[], Scenario[]]) => {
+        const scenarioMap = {};
+        scenarios.forEach(s => scenarioMap[s.id] = s.name);
+        progress.forEach(p => p.scenario_name = scenarioMap[p.scenario]);
+        return progress;
+      })
+    );
   }
 
   public listByScheduledEvent(seId: string, includeFinished: boolean = false) {
