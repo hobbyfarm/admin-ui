@@ -6,3 +6,13 @@
 .signpost {
   margin-left: -0.6rem;
 }
+
+.scenario-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.scenario-action {
+  margin-right: 0.6rem;
+}
