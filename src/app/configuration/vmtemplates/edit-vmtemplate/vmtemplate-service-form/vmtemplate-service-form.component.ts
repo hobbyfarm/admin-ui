@@ -46,6 +46,8 @@ export class VMTemplateServiceFormComponent implements OnInit {
         edit ? this.editVMService.path ?? this.DEFAULT_PATH : this.DEFAULT_PATH,
       ],
       hasOwnTab: [edit ? this.editVMService.hasOwnTab : false],
+      noPathRewriting: [edit ? this.editVMService.noRewriteRootPath : false],
+      proxyHostHeaderRewriting: [edit ? this.editVMService.rewriteHostHeader : true],
       cloudConfigString: [edit ? getCloudConfigString(this.editVMService) : ''],
       hasWebinterface: [edit ? this.editVMService.hasWebinterface : false],
     });
@@ -69,6 +71,8 @@ export class VMTemplateServiceFormComponent implements OnInit {
     newVMService.port = this.newVMServiceFormGroup.get('port').value;
     newVMService.path = this.newVMServiceFormGroup.get('path').value;
     newVMService.hasOwnTab = this.newVMServiceFormGroup.get('hasOwnTab').value;
+    newVMService.noRewriteRootPath = this.newVMServiceFormGroup.get('noPathRewriting').value;
+    newVMService.rewriteHostHeader = this.newVMServiceFormGroup.get('proxyHostHeaderRewriting').value;
     newVMService.cloudConfigString =
       this.newVMServiceFormGroup.get('cloudConfigString').value;
     newVMService.cloudConfigMap = this.cloudConfig.buildMapFromString(

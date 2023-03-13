@@ -78,6 +78,14 @@
           <label>Path</label>
           <input type="text" clrInput placeholder="/dashboard" name="input" formControlName="path" />
         </clr-input-container>
+        <clr-checkbox-wrapper>
+          <input type="checkbox" clrCheckbox value="noPathRewriting" name="noPathRewriting" formControlName="noPathRewriting" />
+          <label>No Path Rewriting</label>
+        </clr-checkbox-wrapper>
+        <clr-checkbox-wrapper>
+          <input type="checkbox" clrCheckbox value="proxyHostHeaderRewriting" name="proxyHostHeaderRewriting" formControlName="proxyHostHeaderRewriting" />
+          <label>Proxy Host Header Rewriting</label>
+        </clr-checkbox-wrapper>
       </ng-container>
       <app-code-with-syntax-highlighting [textValue]="newVMServiceFormGroup.value['cloudConfigString']"
         (textChanged)="newVMServiceFormGroup.controls.cloudConfigString.setValue($event)"></app-code-with-syntax-highlighting>

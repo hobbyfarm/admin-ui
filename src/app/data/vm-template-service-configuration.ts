@@ -5,6 +5,8 @@ export class VMTemplateServiceConfiguration {
   public port?: number = -1;
   public path?: string = '/';
   public hasOwnTab?: boolean = false;
+  public noRewriteRootPath?: boolean = false;
+  public rewriteHostHeader?: boolean = true;
   public cloudConfigMap?: Map<string, Object> = new Map();
   public cloudConfigString?: string = '';
 }
@@ -29,6 +31,12 @@ export function vmServiceToJSON(vmService: VMTemplateServiceConfiguration) {
   }
   if (vmService.hasOwnTab) {
     result += ', "hasOwnTab": ' + vmService.hasOwnTab;
+  }
+  if (vmService.rewriteHostHeader) {
+    result += ', "rewriteHostHeader": ' + vmService.rewriteHostHeader;
+  }
+  if (vmService.noRewriteRootPath) {
+    result += ', "noRewriteRootPath": ' + vmService.noRewriteRootPath;
   }
   if (vmService.cloudConfigMap) {
     let cloudConfigMapString = '';
