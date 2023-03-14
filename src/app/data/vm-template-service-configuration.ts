@@ -7,6 +7,8 @@ export class VMTemplateServiceConfiguration {
   public hasOwnTab?: boolean = false;
   public noRewriteRootPath?: boolean = false;
   public rewriteHostHeader?: boolean = true;
+  public rewriteOriginHeader?: boolean = false;
+  public disallowIFrame?: boolean = false;
   public cloudConfigMap?: Map<string, Object> = new Map();
   public cloudConfigString?: string = '';
 }
@@ -34,6 +36,12 @@ export function vmServiceToJSON(vmService: VMTemplateServiceConfiguration) {
   }
   if (vmService.rewriteHostHeader) {
     result += ', "rewriteHostHeader": ' + vmService.rewriteHostHeader;
+  }
+  if (vmService.rewriteOriginHeader) {
+    result += ', "rewriteOriginHeader": ' + vmService.rewriteOriginHeader;
+  }
+  if (vmService.disallowIFrame) {
+    result += ', "disallowIFrame": ' + vmService.disallowIFrame;
   }
   if (vmService.noRewriteRootPath) {
     result += ', "noRewriteRootPath": ' + vmService.noRewriteRootPath;

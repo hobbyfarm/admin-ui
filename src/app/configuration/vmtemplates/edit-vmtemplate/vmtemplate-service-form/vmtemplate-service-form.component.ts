@@ -47,7 +47,15 @@ export class VMTemplateServiceFormComponent implements OnInit {
       ],
       hasOwnTab: [edit ? this.editVMService.hasOwnTab : false],
       noPathRewriting: [edit ? this.editVMService.noRewriteRootPath : false],
-      proxyHostHeaderRewriting: [edit ? this.editVMService.rewriteHostHeader : true],
+      proxyHostHeaderRewriting: [
+        edit ? this.editVMService.rewriteHostHeader : true,
+      ],
+      proxyOriginHeaderRewriting: [
+        edit ? this.editVMService.rewriteOriginHeader : false,
+      ],
+      disallowIFrame: [
+        edit ? this.editVMService.disallowIFrame : true,
+      ],
       cloudConfigString: [edit ? getCloudConfigString(this.editVMService) : ''],
       hasWebinterface: [edit ? this.editVMService.hasWebinterface : false],
     });
@@ -71,8 +79,17 @@ export class VMTemplateServiceFormComponent implements OnInit {
     newVMService.port = this.newVMServiceFormGroup.get('port').value;
     newVMService.path = this.newVMServiceFormGroup.get('path').value;
     newVMService.hasOwnTab = this.newVMServiceFormGroup.get('hasOwnTab').value;
-    newVMService.noRewriteRootPath = this.newVMServiceFormGroup.get('noPathRewriting').value;
-    newVMService.rewriteHostHeader = this.newVMServiceFormGroup.get('proxyHostHeaderRewriting').value;
+    newVMService.noRewriteRootPath =
+      this.newVMServiceFormGroup.get('noPathRewriting').value;
+    newVMService.rewriteHostHeader = this.newVMServiceFormGroup.get(
+      'proxyHostHeaderRewriting'
+    ).value;
+    newVMService.rewriteOriginHeader = this.newVMServiceFormGroup.get(
+      'proxyOriginHeaderRewriting'
+    ).value;
+    newVMService.disallowIFrame = this.newVMServiceFormGroup.get(
+      'disallowIFrame'
+    ).value;
     newVMService.cloudConfigString =
       this.newVMServiceFormGroup.get('cloudConfigString').value;
     newVMService.cloudConfigMap = this.cloudConfig.buildMapFromString(
