@@ -69,6 +69,7 @@ import { DynamicHooksModule } from 'ngx-dynamic-hooks';
 import { CtrComponent } from './step/ctr.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
 import { ProgressService } from './data/progress.service';
+import { PredefinedServiceService } from './data/predefinedservice.service';
 import { RbacService } from './data/rbac.service';
 import { RbacDirective } from './directives/rbac.directive';
 import { ClarityDisableSelectionDirective } from './directives/clarity-disable-selection.directive';
@@ -205,6 +206,7 @@ export function jwtOptionsFactory() {
     GargantuaClientFactory,
     AppConfigService,
     ProgressService,
+    PredefinedServiceService,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFn,
