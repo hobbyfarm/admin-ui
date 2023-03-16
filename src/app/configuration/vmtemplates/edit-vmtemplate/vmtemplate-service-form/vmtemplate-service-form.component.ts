@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
+import { PredefinedServiceService } from 'src/app/data/predefinedservice.service';
 import {
   getCloudConfigString,
   VMTemplateServiceConfiguration,
@@ -12,8 +13,7 @@ import {
   styleUrls: ['./vmtemplate-service-form.component.scss'],
 })
 export class VMTemplateServiceFormComponent implements OnInit {
-  public predefinedInterfaces: VMTemplateServiceConfiguration[] =
-    PredefinedWebInterfaces; //Placeholder until managed in Backend
+  public predefinedInterfaces: VMTemplateServiceConfiguration[];
 
   @Input()
   public cloudConfig: CloudInitConfig;
@@ -30,10 +30,13 @@ export class VMTemplateServiceFormComponent implements OnInit {
   private DEFAULT_PORT = 80;
   private DEFAULT_PATH = '/';
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private pdsService: PredefinedServiceService) {}
 
   ngOnInit(): void {
     this.buildNewVMServiceDetails();
+    this.pdsService.list().subscribe((vmtsc: VMTemplateServiceConfiguration[]) => {
+      this.predefinedInterfaces = vmtsc;
+    });
   }
 
   public buildNewVMServiceDetails(edit: boolean = false) {
@@ -46,6 +49,16 @@ export class VMTemplateServiceFormComponent implements OnInit {
         edit ? this.editVMService.path ?? this.DEFAULT_PATH : this.DEFAULT_PATH,
       ],
       hasOwnTab: [edit ? this.editVMService.hasOwnTab : false],
+      noPathRewriting: [edit ? this.editVMService.noRewriteRootPath : false],
+      proxyHostHeaderRewriting: [
+        edit ? this.editVMService.rewriteHostHeader : true,
+      ],
+      proxyOriginHeaderRewriting: [
+        edit ? this.editVMService.rewriteOriginHeader : false,
+      ],
+      disallowIFrame: [
+        edit ? this.editVMService.disallowIFrame : true,
+      ],
       cloudConfigString: [edit ? getCloudConfigString(this.editVMService) : ''],
       hasWebinterface: [edit ? this.editVMService.hasWebinterface : false],
     });
@@ -69,6 +82,17 @@ export class VMTemplateServiceFormComponent implements OnInit {
     newVMService.port = this.newVMServiceFormGroup.get('port').value;
     newVMService.path = this.newVMServiceFormGroup.get('path').value;
     newVMService.hasOwnTab = this.newVMServiceFormGroup.get('hasOwnTab').value;
+    newVMService.noRewriteRootPath =
+      this.newVMServiceFormGroup.get('noPathRewriting').value;
+    newVMService.rewriteHostHeader = this.newVMServiceFormGroup.get(
+      'proxyHostHeaderRewriting'
+    ).value;
+    newVMService.rewriteOriginHeader = this.newVMServiceFormGroup.get(
+      'proxyOriginHeaderRewriting'
+    ).value;
+    newVMService.disallowIFrame = this.newVMServiceFormGroup.get(
+      'disallowIFrame'
+    ).value;
     newVMService.cloudConfigString =
       this.newVMServiceFormGroup.get('cloudConfigString').value;
     newVMService.cloudConfigMap = this.cloudConfig.buildMapFromString(

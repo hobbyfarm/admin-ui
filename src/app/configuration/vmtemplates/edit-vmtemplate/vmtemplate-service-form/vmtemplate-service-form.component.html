@@ -1,4 +1,7 @@
-<button class="btn btn-table btn-link" (click)="selectVMServiceModalOpen = true">
+<button
+  class="btn btn-table btn-link"
+  (click)="selectVMServiceModalOpen = true"
+>
   <clr-icon shape="plus"></clr-icon> Add predefined Service
 </button>
 <button class="btn btn-table btn-link" (click)="openNewVMServiceModal()">
@@ -13,15 +16,23 @@
   <tbody>
     <tr *ngFor="let interface of cloudConfig.vmServices | keyvalue">
       <td>{{ interface.value.name }}</td>
-      <td>{{ interface.value.port }}</td>
-      <td>{{ interface.value.hasOwnTab }}</td>
       <td>
-        <button class="btn btn-table btn-link" (click)="editVMServiceClicked(interface.value)">
+        {{ interface.value.hasWebinterface ? interface.value.port : "-" }}
+      </td>
+      <td>{{ interface.value.hasOwnTab ? interface.value.hasOwnTab : "-" }}</td>
+      <td>
+        <button
+          class="btn btn-table btn-link"
+          (click)="editVMServiceClicked(interface.value)"
+        >
           EDIT
         </button>
       </td>
       <td>
-        <button class="btn btn-table btn-link" (click)="cloudConfig.removeVMService(interface.key)">
+        <button
+          class="btn btn-table btn-link"
+          (click)="cloudConfig.removeVMService(interface.key)"
+        >
           DELETE
         </button>
       </td>
@@ -33,13 +44,20 @@
   <h3 class="modal-title">Choose a Service</h3>
   <div class="modal-body">
     <select clrSelect [(ngModel)]="selectedNewInterface">
-      <option *ngFor="let interface of predefinedInterfaces" [ngValue]="interface">
+      <option
+        *ngFor="let interface of predefinedInterfaces"
+        [ngValue]="interface"
+      >
         {{ interface.name }}
       </option>
     </select>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline" (click)="selectVMServiceModalOpen = false">
+    <button
+      type="button"
+      class="btn btn-outline"
+      (click)="selectVMServiceModalOpen = false"
+    >
       Cancel
     </button>
     <button type="button" class="btn btn-primary" (click)="selectModalClose()">
@@ -54,37 +72,175 @@
     <form clrForm [formGroup]="newVMServiceFormGroup">
       <clr-input-container>
         <label>Name</label>
-        <input clrInput placeholder="Webserver" name="name" formControlName="name" />
+        <input
+          clrInput
+          placeholder="Webserver"
+          name="name"
+          formControlName="name"
+        />
       </clr-input-container>
       <clr-checkbox-container>
         <clr-checkbox-wrapper>
-          <input type="checkbox" clrCheckbox value="hasWebinterface" name="hasWebinterface"
-            formControlName="hasWebinterface" required />
+          <input
+            type="checkbox"
+            clrCheckbox
+            value="hasWebinterface"
+            name="hasWebinterface"
+            formControlName="hasWebinterface"
+            required
+          />
           <label>Has a Webinterface</label>
         </clr-checkbox-wrapper>
       </clr-checkbox-container>
       <ng-container *ngIf="newVMServiceFormGroup.value['hasWebinterface']">
         <clr-checkbox-container>
           <clr-checkbox-wrapper>
-            <input type="checkbox" clrCheckbox value="hasOwnTab" name="hasOwnTab" formControlName="hasOwnTab" />
+            <input
+              type="checkbox"
+              clrCheckbox
+              value="hasOwnTab"
+              name="hasOwnTab"
+              formControlName="hasOwnTab"
+            />
             <label>Has it's own Tab in the UI</label>
           </clr-checkbox-wrapper>
         </clr-checkbox-container>
         <clr-input-container>
           <label>Port</label>
-          <input type="number" clrInput placeholder="80" name="input" formControlName="port" />
+          <input
+            type="number"
+            clrInput
+            placeholder="80"
+            name="input"
+            formControlName="port"
+          />
         </clr-input-container>
         <clr-input-container>
           <label>Path</label>
-          <input type="text" clrInput placeholder="/dashboard" name="input" formControlName="path" />
+          <input
+            type="text"
+            clrInput
+            placeholder="/dashboard"
+            name="input"
+            formControlName="path"
+          />
         </clr-input-container>
+        <clr-accordion class="advanced-settings">
+          <clr-accordion-panel>
+            <clr-accordion-title>Advanced Proxy Options</clr-accordion-title>
+            <clr-accordion-content *clrIfExpanded>
+              Some applications may require these proxy settings to be set
+              differently.
+              <clr-checkbox-container>
+                <clr-checkbox-wrapper>
+                  <input
+                    type="checkbox"
+                    clrCheckbox
+                    value="noPathRewriting"
+                    name="noPathRewriting"
+                    formControlName="noPathRewriting"
+                  />
+                  <label
+                    >Disable Path Rewriting
+                    <a
+                      role="tooltip"
+                      aria-haspopup="true"
+                      class="tooltip tooltip-md tooltip-right"
+                    >
+                      <cds-icon shape="info-circle" size="24"></cds-icon>
+                      <span class="tooltip-content"
+                        >Disable path rewriting from /p/[vmid]/80/path to
+                        /path.</span
+                      >
+                    </a>
+                  </label>
+                </clr-checkbox-wrapper>
+                <clr-checkbox-wrapper>
+                  <input
+                    type="checkbox"
+                    clrCheckbox
+                    value="proxyHostHeaderRewriting"
+                    name="proxyHostHeaderRewriting"
+                    formControlName="proxyHostHeaderRewriting"
+                  />
+                  <label
+                    >Host Header Rewriting
+                    <a
+                      role="tooltip"
+                      aria-haspopup="true"
+                      class="tooltip tooltip-md tooltip-top-right"
+                    >
+                      <cds-icon shape="info-circle" size="24"></cds-icon>
+                      <span class="tooltip-content"
+                        >Rewrite Host Header to the proxy server host</span
+                      >
+                    </a>
+                  </label>
+                </clr-checkbox-wrapper>
+                <clr-checkbox-wrapper>
+                  <input
+                    type="checkbox"
+                    clrCheckbox
+                    value="proxyOriginHeaderRewriting"
+                    name="proxyOriginHeaderRewriting"
+                    formControlName="proxyOriginHeaderRewriting"
+                  />
+                  <label
+                    >Origin Header Rewriting to localhost
+                    <a
+                      role="tooltip"
+                      aria-haspopup="true"
+                      class="tooltip tooltip-md tooltip-top-right"
+                    >
+                      <cds-icon shape="info-circle" size="24"></cds-icon>
+                      <span class="tooltip-content"
+                        >Rewrite Origin Header to localhost instead of proxy
+                        Host</span
+                      >
+                    </a>
+                  </label>
+                </clr-checkbox-wrapper>
+                <clr-checkbox-wrapper>
+                  <input
+                    type="checkbox"
+                    clrCheckbox
+                    value="disallowIFrame"
+                    name="disallowIFrame"
+                    formControlName="disallowIFrame"
+                  />
+                  <label
+                    >Disallow iFrame
+                    <a
+                      role="tooltip"
+                      aria-haspopup="true"
+                      class="tooltip tooltip-md tooltip-top-right"
+                    >
+                      <cds-icon shape="info-circle" size="24"></cds-icon>
+                      <span class="tooltip-content"
+                        >Force opening inside a new tab</span
+                      >
+                    </a>
+                  </label>
+                </clr-checkbox-wrapper>
+              </clr-checkbox-container>
+            </clr-accordion-content>
+          </clr-accordion-panel>
+        </clr-accordion>
       </ng-container>
-      <app-code-with-syntax-highlighting [textValue]="newVMServiceFormGroup.value['cloudConfigString']"
-        (textChanged)="newVMServiceFormGroup.controls.cloudConfigString.setValue($event)"></app-code-with-syntax-highlighting>
+      <app-code-with-syntax-highlighting
+        [textValue]="newVMServiceFormGroup.value['cloudConfigString']"
+        (textChanged)="
+          newVMServiceFormGroup.controls.cloudConfigString.setValue($event)
+        "
+      ></app-code-with-syntax-highlighting>
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline" (click)="newVMServiceModalOpen = false">
+    <button
+      type="button"
+      class="btn btn-outline"
+      (click)="newVMServiceModalOpen = false"
+    >
       Cancel
     </button>
     <button type="button" class="btn btn-primary" (click)="newVMServiceClose()">
