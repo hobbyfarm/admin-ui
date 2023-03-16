@@ -22,7 +22,7 @@ export class VMTemplateServiceConfiguration {
     rewriteHostHeader: boolean = true,
     rewriteOriginHeader: boolean = false,
     disallowIFrame: boolean = false,
-    cloudConfigString: string = '',
+    cloudConfigString: string = ''
   ) {
     this.name = name;
     this.hasWebinterface = hasWebinterface;
@@ -32,19 +32,18 @@ export class VMTemplateServiceConfiguration {
     this.noRewriteRootPath = noRewriteRootPath;
     this.rewriteHostHeader = rewriteHostHeader;
     this.rewriteOriginHeader = rewriteOriginHeader;
-    this.disallowIFrame = disallowIFrame;    
+    this.disallowIFrame = disallowIFrame;
     this.cloudConfigString = cloudConfigString;
-    this.cloudConfigMap = new Map()
+    this.cloudConfigMap = new Map();
     if (this.cloudConfigString.length > 0) {
       try {
         this.cloudConfigMap = YAML.parse(this.cloudConfigString);
-      } catch(e){
+      } catch (e) {
         this.cloudConfigString = `YAML-Parse-Error: |
   The following Error occured while parsing the Cloud Config of this Service:
-  ${(e as Error).message}`
-        this.cloudConfigMap = new Map()
+  ${(e as Error).message}`;
+        this.cloudConfigMap = new Map();
       }
-      
     }
   }
 }
@@ -61,26 +60,30 @@ export function vmServiceToJSON(vmService: VMTemplateServiceConfiguration) {
     vmService.name +
     '" ,"hasWebinterface": ' +
     vmService.hasWebinterface;
-  if (vmService.port) {
-    result += ', "port": ' + vmService.port;
-  }
-  if (vmService.path) {
-    result += ', "path": ' + JSON.stringify(vmService.path);
-  }
-  if (vmService.hasOwnTab) {
-    result += ', "hasOwnTab": ' + vmService.hasOwnTab;
-  }
-  if (vmService.rewriteHostHeader) {
-    result += ', "rewriteHostHeader": ' + vmService.rewriteHostHeader;
-  }
-  if (vmService.rewriteOriginHeader) {
-    result += ', "rewriteOriginHeader": ' + vmService.rewriteOriginHeader;
-  }
-  if (vmService.disallowIFrame) {
-    result += ', "disallowIFrame": ' + vmService.disallowIFrame;
-  }
-  if (vmService.noRewriteRootPath) {
-    result += ', "noRewriteRootPath": ' + vmService.noRewriteRootPath;
+
+  //only add webinterface settings if the service has a webinterface.
+  if (vmService.hasWebinterface) {
+    if (vmService.port) {
+      result += ', "port": ' + vmService.port;
+    }
+    if (vmService.path) {
+      result += ', "path": ' + JSON.stringify(vmService.path);
+    }
+    if (vmService.hasOwnTab) {
+      result += ', "hasOwnTab": ' + vmService.hasOwnTab;
+    }
+    if (vmService.rewriteHostHeader) {
+      result += ', "rewriteHostHeader": ' + vmService.rewriteHostHeader;
+    }
+    if (vmService.rewriteOriginHeader) {
+      result += ', "rewriteOriginHeader": ' + vmService.rewriteOriginHeader;
+    }
+    if (vmService.disallowIFrame) {
+      result += ', "disallowIFrame": ' + vmService.disallowIFrame;
+    }
+    if (vmService.noRewriteRootPath) {
+      result += ', "noRewriteRootPath": ' + vmService.noRewriteRootPath;
+    }
   }
   if (vmService.cloudConfigMap) {
     let cloudConfigMapString = '';
