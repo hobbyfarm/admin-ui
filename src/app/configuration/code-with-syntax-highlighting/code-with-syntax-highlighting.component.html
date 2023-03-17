@@ -1,5 +1,5 @@
-<div class="code-editor">
-    <textarea (input)="onValueChange($event)" [(ngModel)]="textValue">
+<div class="code-editor" #codeEditor>
+    <textarea (input)="onValueChange($event)" (resize)="resizeEvent($event)" [(ngModel)]="textValue">
     </textarea>
-    <code id="code" class="language-yaml" [innerHTML]="highlightedText"></code>
+    <code #code class="language-yaml" [innerHTML]="highlightedText"></code>
 </div>

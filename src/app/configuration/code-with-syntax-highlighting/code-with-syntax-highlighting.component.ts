@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, SimpleChange, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import 'prismjs'
 import 'prismjs/components/prism-yaml'
-import { of } from 'rxjs';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+
 
 declare var Prism: any;
 
@@ -19,10 +18,17 @@ export class CodeWithSyntaxHighlightingComponent implements AfterViewInit {
   @Output()
   textChanged: EventEmitter<string> = new EventEmitter<string>()
 
+  @ViewChild('codeEditor')
+  codeEditor: ElementRef
+
+  @ViewChild('code')
+  codeBlock: ElementRef;
+
   public highlightedText: string;
 
   ngAfterViewInit() {
     this.setHighlightedText(this.textValue)
+
   }
 
   setHighlightedText(textValue) {
@@ -38,4 +44,11 @@ export class CodeWithSyntaxHighlightingComponent implements AfterViewInit {
     let newText: string = event.target.value
     this.textChanged.emit(newText)
   }
+
+  resizeEvent(event) {
+    this.codeEditor.nativeElement.style.height = event.height + 'px'
+    this.codeBlock.nativeElement.style.height = event.height + 'px'
+  }
 }
+
+
