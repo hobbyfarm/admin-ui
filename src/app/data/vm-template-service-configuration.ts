@@ -86,12 +86,29 @@ export function vmServiceToJSON(vmService: VMTemplateServiceConfiguration) {
     }
   }
   if (vmService.cloudConfigMap) {
-    let cloudConfigMapString = '';
-    vmService.cloudConfigMap.forEach((value, key) => {
-      cloudConfigMapString += '"' + key + '": ' + JSON.stringify(value) + ' ';
-    });
-    result += ', "cloudConfigMap": {' + cloudConfigMapString + '}';
+    let test = mapToJson(vmService.cloudConfigMap, '')
+    console.log(test)
+    // console.log(JSON.stringify(Object.fromEntries(vmService.cloudConfigMap)))
+    result += ', "cloudConfigMap": {' + mapToJson(vmService.cloudConfigMap, '') + '}'; //Potential alternative if es2019 or higher (configurable in tsconfig): JSON.stringify(Object.fromEntries(vmService.cloudConfigMap))
   }
   result += '}';
   return result;
+}
+
+export function mapToJson(map: Map<string, any>, jsonString: string): string {
+  let isfirstElement = true
+  map.forEach((value, key) => {
+    if(!isfirstElement) {
+      jsonString += ','
+    }
+    if(typeof value === 'string' || Array.isArray(value)) {
+      jsonString += '"' + key + '": ' + JSON.stringify(value) + ' ';
+    } else if (value instanceof Map){
+      jsonString += '"' + key + '": {' + mapToJson(value, '') + '} ';
+    } else {
+      jsonString += '"' + key + '": {' + mapToJson(new Map(Object.entries(value)), '') + '} ';
+    }
+    isfirstElement = false
+  });
+  return jsonString
 }
