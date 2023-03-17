@@ -39,6 +39,17 @@ export class VMTemplateServiceFormComponent implements OnInit {
     });
   }
 
+  changeOrder(direction: 'up' | 'down', currentIndex: number) {    
+    let serviceArray :VMTemplateServiceConfiguration[] = Array.from(this.cloudConfig.vmServices.values())
+    let newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
+    if (newIndex <= serviceArray.length && newIndex >= 0) {
+      serviceArray.splice(newIndex, 0, serviceArray.splice(currentIndex, 1)[0]);
+    }
+    let newOrderedMap = new Map(serviceArray.map(service => [service.name, service]))
+    this.cloudConfig.vmServices = newOrderedMap
+    this.cloudConfig.buildNewYAMLFile()
+  }
+
   public buildNewVMServiceDetails(edit: boolean = false) {
     this.newVMServiceFormGroup = this.fb.group({
       name: [edit ? this.editVMService.name : ''],
