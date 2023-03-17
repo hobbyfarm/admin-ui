@@ -85,11 +85,8 @@ export function vmServiceToJSON(vmService: VMTemplateServiceConfiguration) {
       result += ', "noRewriteRootPath": ' + vmService.noRewriteRootPath;
     }
   }
-  if (vmService.cloudConfigMap) {
-    let test = mapToJson(vmService.cloudConfigMap, '')
-    console.log(test)
-    // console.log(JSON.stringify(Object.fromEntries(vmService.cloudConfigMap)))
-    result += ', "cloudConfigMap": {' + mapToJson(vmService.cloudConfigMap, '') + '}'; //Potential alternative if es2019 or higher (configurable in tsconfig): JSON.stringify(Object.fromEntries(vmService.cloudConfigMap))
+  if (vmService.cloudConfigMap) {   
+    result += ', "cloudConfigMap": {' + mapToJson(vmService.cloudConfigMap, '') + '}'; //Potential alternative if es2019 or higher (configurable in tsconfig, field: lib): JSON.stringify(Object.fromEntries(vmService.cloudConfigMap))
   }
   result += '}';
   return result;
