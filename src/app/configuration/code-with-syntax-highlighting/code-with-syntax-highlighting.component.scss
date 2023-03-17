@@ -5,7 +5,7 @@
     line-height: 1.5;
     width: 500px;
     height: 500px;
-    border: solid 1px;
+    outline: solid 1px;
     background-color: #f5f2f0;
 }
 
@@ -28,10 +28,15 @@
     border: none;
 }
 
+.code-editor textarea:focus {
+    outline: none
+}
+
 .code-editor code {   
     z-index: 1;
     pointer-events: none;
     white-space: pre-wrap;
+    overflow-y: hidden;
     position: absolute;
     top: 0px;
     left: 0px;
