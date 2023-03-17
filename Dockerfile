@@ -20,5 +20,6 @@ COPY --from=sdk /app/dist/* /usr/share/nginx/html
 
 # copy staged files
 COPY .docker/stage-release/ /
+RUN chmod +x usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
