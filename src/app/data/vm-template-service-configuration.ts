@@ -1,5 +1,7 @@
 import YAML from 'yaml';
+import * as uuid from 'uuid'
 export class VMTemplateServiceConfiguration {
+  public id: string;
   public name: string;
   public hasWebinterface;
   public port?: number;
@@ -24,6 +26,7 @@ export class VMTemplateServiceConfiguration {
     disallowIFrame: boolean = false,
     cloudConfigString: string = ''
   ) {
+    this.id = uuid.v4()
     this.name = name;
     this.hasWebinterface = hasWebinterface;
     this.port = port;
@@ -56,7 +59,7 @@ export function getCloudConfigString(
 
 export function vmServiceToJSON(vmService: VMTemplateServiceConfiguration) {
   let result =
-    '{"name": "' +
+    '{"id" : "' + vmService.id + '" , "name": "' +
     vmService.name +
     '" ,"hasWebinterface": ' +
     vmService.hasWebinterface;

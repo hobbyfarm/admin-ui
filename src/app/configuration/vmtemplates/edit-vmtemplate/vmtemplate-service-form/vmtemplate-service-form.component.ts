@@ -6,6 +6,7 @@ import {
   getCloudConfigString,
   VMTemplateServiceConfiguration,
 } from 'src/app/data/vm-template-service-configuration';
+import * as uuid from 'uuid'
 
 @Component({
   selector: 'app-vmtemplate-service-form',
@@ -76,6 +77,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
   newVMServiceClose() {
     let newVMService: VMTemplateServiceConfiguration =
       new VMTemplateServiceConfiguration();
+    newVMService.id = this.editVMService?.id ?? uuid.v4()
     newVMService.name = this.newVMServiceFormGroup.get('name').value;
     newVMService.hasWebinterface =
       this.newVMServiceFormGroup.get('hasWebinterface').value;
@@ -124,6 +126,7 @@ export const PredefinedWebInterfaces: VMTemplateServiceConfiguration[] =
   //This has to be modeled into a CRD and retrieved over the Backend
   [
     {
+      id: uuid.v4(),
       name: 'VS Code IDE',
       port: 8080,
       path: '/?folder=/root',
@@ -141,6 +144,7 @@ export const PredefinedWebInterfaces: VMTemplateServiceConfiguration[] =
     `,
     },
     {
+      id: uuid.v4(),
       name: 'Test-Service without Webinterface',
       cloudConfigMap: new Map(),
       hasWebinterface: false,
@@ -150,6 +154,7 @@ export const PredefinedWebInterfaces: VMTemplateServiceConfiguration[] =
     `,
     },
     {
+      id: uuid.v4(),
       name: 'Test-Interface without Cloud Config',
       port: 8081,
       hasOwnTab: false,

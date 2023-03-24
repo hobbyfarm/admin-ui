@@ -8,6 +8,7 @@ import { ServerResponse } from 'src/app/data/serverresponse';
 import { vmServiceToJSON } from 'src/app/data/vm-template-service-configuration';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
+import * as uuid from 'uuid'
 
 @Component({
   selector: 'edit-vmtemplate-wizard',
@@ -87,7 +88,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       let resultMap = new Map()
       temp.forEach(entry => {
         entry.cloudConfigMap = new Map(Object.entries(entry["cloudConfigMap"])); // Convert Object to map
-        resultMap.set(entry['name'], entry)
+        entry['id'] = entry['id'] ?? uuid.v4() //Catch old entries, that do not have an ID 
+        resultMap.set(entry['id'], entry)
       })
       return resultMap
     }
