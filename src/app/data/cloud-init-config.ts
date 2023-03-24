@@ -21,13 +21,13 @@ export class CloudInitConfig {
     }
 
 
-    removeVMService(name: string) {
-        this.vmServices.delete(name)
+    removeVMService(id: string) {
+        this.vmServices.delete(id)
         this.buildNewYAMLFile()
     }
 
     addVMService(newInterface: VMTemplateServiceConfiguration) {
-        this.vmServices.set(newInterface.name, newInterface)
+        this.vmServices.set(newInterface.id, newInterface)
         this.buildNewYAMLFile()
     }
 
