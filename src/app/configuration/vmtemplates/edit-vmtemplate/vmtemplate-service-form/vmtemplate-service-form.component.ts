@@ -6,6 +6,7 @@ import {
   getCloudConfigString,
   VMTemplateServiceConfiguration,
 } from 'src/app/data/vm-template-service-configuration';
+import * as uuid from 'uuid'
 
 @Component({
   selector: 'app-vmtemplate-service-form',
@@ -76,6 +77,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
   newVMServiceClose() {
     let newVMService: VMTemplateServiceConfiguration =
       new VMTemplateServiceConfiguration();
+    newVMService.id = this.editVMService?.id ?? uuid.v4()
     newVMService.name = this.newVMServiceFormGroup.get('name').value;
     newVMService.hasWebinterface =
       this.newVMServiceFormGroup.get('hasWebinterface').value;
