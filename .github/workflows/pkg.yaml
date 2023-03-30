@@ -5,6 +5,7 @@ name: PKG
 on:
   push:
     branches: [ "master" ]
+    tags: '*'
   workflow_dispatch: {}
 
 env:
