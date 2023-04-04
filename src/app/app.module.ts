@@ -89,7 +89,8 @@ import { FilterScenariosComponent } from './filter-scenarios/filter-scenarios.co
 import { MDEditorComponent } from './scenario/md-editor/md-editor.component';
 import { CodeWithSyntaxHighlightingComponent } from './configuration/code-with-syntax-highlighting/code-with-syntax-highlighting.component';
 import { ResizableTextAreaDirective } from './directives/resizable-text-area.directive';
-
+import { TypedFormComponent } from './typed-form/typed-form.component';
+import {SettingsComponent} from './configuration/settings/settings.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -164,7 +165,9 @@ export function jwtOptionsFactory() {
     VMTemplateServiceFormComponent,
     FilterScenariosComponent,
     CodeWithSyntaxHighlightingComponent,
-    ResizableTextAreaDirective
+    ResizableTextAreaDirective,
+    TypedFormComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,

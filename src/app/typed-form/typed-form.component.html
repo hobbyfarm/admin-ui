@@ -1,0 +1,26 @@
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()" clrForm>
+  <div *ngFor="let input of typedInputs">
+    <ng-container [ngSwitch]="input.type">
+      <clr-input-container *ngSwitchCase="TypedInputTypes.STRING">
+        <label [for]="input.id">{{ input.name }}</label>
+        <input clrInput type="text" [formControlName]="input.id" [id]="input.id" />
+      </clr-input-container>
+      <clr-input-container *ngSwitchCase="TypedInputTypes.NUMBER">
+        <label [for]="input.id">{{ input.name }}</label>
+        <input clrInput type="number" [formControlName]="input.id" [id]="input.id" />
+      </clr-input-container>
+      <clr-input-container *ngSwitchCase="TypedInputTypes.BOOLEAN">
+        <label [for]="input.id">{{ input.name }}</label>
+        <input clrInput  type="checkbox" [formControlName]="input.id" [id]="input.id" />
+      </clr-input-container>
+      <clr-select-container *ngSwitchCase="TypedInputTypes.ENUM">
+        <label [for]="input.id">{{ input.name }}</label>
+        <select clrSelect  [formControlName]="input.id" [id]="input.id">
+          <option *ngFor="let enumValue of input.enumValues" [value]="enumValue">{{ enumValue }}</option>
+        </select>
+      </clr-select-container>
+
+    </ng-container>
+  </div>
+  <button type="submit" [disabled]="!formGroup.valid">Submit</button>
+</form>
