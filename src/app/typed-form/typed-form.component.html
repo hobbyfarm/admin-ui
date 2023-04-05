@@ -1,4 +1,4 @@
-<form [formGroup]="formGroup"clrForm (change)="onFormChanged()">
+<form [formGroup]="formGroup" clrForm (change)="onFormChanged()">
   <ng-container *ngFor="let input of typedInputs">
     <ng-container [ngSwitch]="input.type">
       <clr-input-container *ngSwitchCase="TypedInputTypes.STRING">
