@@ -9,15 +9,37 @@ export class SettingsComponent {
   public settings: TypedInput[] = [];
 
   constructor() {
+    // Retrieve settings from gargantua here
     this.settings = [
       {
-        id: 'test-setting',
-        name: 'Test this Setting', // Change to camelCase or snake_case
+        id: 'string-setting',
+        name: 'String',
         group: 'group1',
         type: TypedInputTypes.STRING,
         value: 'Some text',
       },
-      // ...
+      {
+        id: 'boolean-setting',
+        name: 'Boolean',
+        group: 'group1',
+        type: TypedInputTypes.BOOLEAN,
+        value: 'true',
+      },
+      {
+        id: 'number-setting',
+        name: 'Number',
+        group: 'group1',
+        type: TypedInputTypes.NUMBER,
+        value: '1337',
+      },
+      {
+        id: 'enum-setting',
+        name: 'Enum',
+        group: 'group1',
+        type: TypedInputTypes.ENUM,
+        enumValues: ['First Value', 'Second Value', 'Third Value'],
+        value: 'Second Value',
+      },
     ];
 
   }
