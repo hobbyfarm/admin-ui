@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {TypedInput, TypedInputTypes} from '../../typed-form/TypedInput';
+import { Component } from '@angular/core';
+import { TypedInput, TypedInputTypes } from '../../typed-form/TypedInput';
 
 @Component({
   selector: 'app-settings',
@@ -7,6 +7,8 @@ import {TypedInput, TypedInputTypes} from '../../typed-form/TypedInput';
 })
 export class SettingsComponent {
   public settings: TypedInput[] = [];
+  public updatedSettings: TypedInput[] = [];
+  public hasChanges: boolean = false;
 
   constructor() {
     // Retrieve settings from gargantua here
@@ -41,6 +43,14 @@ export class SettingsComponent {
         value: 'Second Value',
       },
     ];
+  }
 
+  onFormChange(data: TypedInput[]) {
+    this.updatedSettings = data;
+    this.hasChanges = true;
+  }
+
+  onSubmit() {
+    console.log(this.updatedSettings);
   }
 }

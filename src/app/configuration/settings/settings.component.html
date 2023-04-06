@@ -1,1 +1,7 @@
-<app-typed-form [typedInputs]="settings"></app-typed-form>
+<button class="btn" (click)="onSubmit()" [disabled]="!hasChanges">
+  Save Changes
+</button>
+<app-typed-form
+  [typedInputs]="settings"
+  (syncedInputs)="onFormChange($event)"
+></app-typed-form>

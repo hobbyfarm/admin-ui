@@ -3,11 +3,22 @@
     <ng-container [ngSwitch]="input.type">
       <clr-input-container *ngSwitchCase="TypedInputTypes.STRING">
         <label [for]="input.id">{{ input.name }}</label>
-        <input clrInput type="text" [formControlName]="input.id" [id]="input.id" (input)="onFormChanged()"/>
+        <input
+          clrInput
+          type="text"
+          [formControlName]="input.id"
+          [id]="input.id"
+          (input)="onFormChanged()"
+        />
       </clr-input-container>
       <clr-input-container *ngSwitchCase="TypedInputTypes.NUMBER">
         <label [for]="input.id">{{ input.name }}</label>
-        <input clrInput type="number" [formControlName]="input.id" [id]="input.id"/>
+        <input
+          clrInput
+          type="number"
+          [formControlName]="input.id"
+          [id]="input.id"
+        />
       </clr-input-container>
       <clr-checkbox-container *ngSwitchCase="TypedInputTypes.BOOLEAN">
         <label [for]="input.id">{{ input.name }}</label>
@@ -22,8 +33,13 @@
       </clr-checkbox-container>
       <clr-select-container *ngSwitchCase="TypedInputTypes.ENUM">
         <label [for]="input.id">{{ input.name }}</label>
-        <select clrSelect  [formControlName]="input.id" [id]="input.id">
-          <option *ngFor="let enumValue of input.enumValues" [value]="enumValue">{{ enumValue }}</option>
+        <select clrSelect [formControlName]="input.id" [id]="input.id">
+          <option
+            *ngFor="let enumValue of input.enumValues"
+            [value]="enumValue"
+          >
+            {{ enumValue }}
+          </option>
         </select>
       </clr-select-container>
     </ng-container>
