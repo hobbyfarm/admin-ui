@@ -1,5 +1,6 @@
 import {
   AfterContentChecked,
+  AfterViewChecked,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
@@ -13,14 +14,14 @@ import {
 } from '@angular/core';
 import { TypedInput, TypedInputType, FormGroupType } from './TypedInput';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ClrTabLink } from '@clr/angular';
+import { ClrTab, ClrTabContent, ClrTabLink } from '@clr/angular';
 
 @Component({
   selector: 'app-typed-form',
   templateUrl: './typed-form.component.html',
   styleUrls: ['./typed-form.component.scss'],
 })
-export class TypedFormComponent implements OnInit, OnChanges, AfterViewInit, AfterContentChecked {
+export class TypedFormComponent implements OnInit, OnChanges {
   @Input() typedInputs: TypedInput[] = []; // Input: List of typed inputs for the form
   @Output() syncedInputs: EventEmitter<TypedInput[]> = new EventEmitter(null); // Output: Emit updated TypedInput list when form changes
   @Input() groupType: FormGroupType = FormGroupType.LIST; // group Items, otherwise display all settings
@@ -28,10 +29,7 @@ export class TypedFormComponent implements OnInit, OnChanges, AfterViewInit, Aft
 
   formGroup: FormGroup = new FormGroup({}); // Form group to manage the dynamic form
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
-
-  @ViewChildren(ClrTabLink) private tabs: QueryList<ClrTabLink>;
-
-  constructor(private changeDetector: ChangeDetectorRef,) {}
+  activeTab = 0; // Activate first tab per default
 
   ngOnInit() {
     this.initForm();
@@ -41,17 +39,6 @@ export class TypedFormComponent implements OnInit, OnChanges, AfterViewInit, Aft
     this.initForm();
   }
 
-  ngAfterViewInit() {
-    const sub = this.tabs.changes.subscribe(() => {
-      this.tabs.first.activate();
-      sub.unsubscribe();
-    });
-  }
-
-  ngAfterContentChecked(){
-    this.changeDetector.detectChanges();
-  }
-  
   /**
    * Initialize the form by creating form controls based on the typedInputs.
    */
@@ -103,14 +90,12 @@ export class TypedFormComponent implements OnInit, OnChanges, AfterViewInit, Aft
 
   groupTypedInputs(): { [key: string]: TypedInput[] } {
     const groupedInputs: { [key: string]: TypedInput[] } = {};
-
     this.typedInputs.forEach((input) => {
       if (!groupedInputs[input.group]) {
         groupedInputs[input.group] = [];
       }
       groupedInputs[input.group].push(input);
     });
-
     return groupedInputs;
   }
 }

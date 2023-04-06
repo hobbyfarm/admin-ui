@@ -1,26 +1,36 @@
 <form [formGroup]="formGroup" clrForm (change)="onFormChanged()">
-  <ng-container [ngSwitch]="groupType">
-    <ng-container *ngSwitchCase="FormGroupType.LIST">
-      <ng-container *ngFor="let group of groupTypedInputs() | keyvalue">
-        <h3>{{ group.key }}</h3>
-        <ng-container *ngFor="let input of group.value">
-          <app-typed-input
-            [input]="input"
-            [formGroup]="formGroup"
-            (change)="onFormChanged()"
-          ></app-typed-input>
-        </ng-container>
-        <hr />
+  <ng-container *ngIf="groupType === FormGroupType.LIST">
+    <ng-container *ngFor="let group of groupTypedInputs() | keyvalue">
+      <h3>{{ group.key }}</h3>
+      <ng-container *ngFor="let input of group.value">
+        <app-typed-input
+          [input]="input"
+          [formGroup]="formGroup"
+          (change)="onFormChanged()"
+        ></app-typed-input>
       </ng-container>
+      <hr />
     </ng-container>
-    <ng-container *ngSwitchCase="FormGroupType.TABS">
-      <clr-tabs>
-        <clr-tab *ngFor="let group of groupTypedInputs() | keyvalue" #tab>
-          <button clrTabLink [id]="group.key">
+  </ng-container>
+  <ng-container
+    *ngIf="
+      groupType === FormGroupType.TABS ||
+      groupType === FormGroupType.TABS_VERTICAL
+    "
+  >
+    <clr-tabs
+      [clrLayout]="
+        groupType === FormGroupType.TABS_VERTICAL ? 'vertical' : 'horizontal'
+      "
+    >
+      <ng-container
+        *ngFor="let group of groupTypedInputs() | keyvalue; let i = index"
+      >
+        <clr-tab #tab>
+          <button clrTabLink [id]="'tablink-' + i" (click)="activeTab = i">
             {{ group.key }}
           </button>
-          <clr-tab-content *clrIfActive>
-            Content:  {{ group.key }}
+          <clr-tab-content [id]="'content-' + i" *clrIfActive="activeTab === i">
             <ng-container *ngFor="let input of group.value">
               <app-typed-input
                 [input]="input"
@@ -30,7 +40,7 @@
             </ng-container>
           </clr-tab-content>
         </clr-tab>
-      </clr-tabs>
-    </ng-container>
+      </ng-container>
+    </clr-tabs>
   </ng-container>
 </form>

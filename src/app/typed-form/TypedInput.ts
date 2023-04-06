@@ -8,7 +8,8 @@ export enum TypedInputType {
 
 export enum FormGroupType {
   LIST, // Display all settings in a grouped list
-  TABS, // Group form inputs, display groups in tabs (default)
+  TABS, // Group form inputs, display groups in horizontal tabs (default)
+  TABS_VERTICAL, // Group form inputs, display groups in vertical tabs
 }
 
 export class TypedInput {
