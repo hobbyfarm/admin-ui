@@ -90,7 +90,9 @@ import { MDEditorComponent } from './scenario/md-editor/md-editor.component';
 import { CodeWithSyntaxHighlightingComponent } from './configuration/code-with-syntax-highlighting/code-with-syntax-highlighting.component';
 import { ResizableTextAreaDirective } from './directives/resizable-text-area.directive';
 import { TypedFormComponent } from './typed-form/typed-form.component';
-import {SettingsComponent} from './configuration/settings/settings.component';
+import { TypedInput } from './typed-form/TypedInput';
+import { SettingsComponent } from './configuration/settings/settings.component';
+import { TypedInputComponent } from './typed-form/typed-input.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -167,7 +169,8 @@ export function jwtOptionsFactory() {
     CodeWithSyntaxHighlightingComponent,
     ResizableTextAreaDirective,
     TypedFormComponent,
-    SettingsComponent
+    TypedInputComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,

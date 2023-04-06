@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TypedInput, TypedInputTypes } from '../../typed-form/TypedInput';
+import { TypedInput, TypedInputType, FormGroupType } from '../../typed-form/TypedInput';
 
 @Component({
   selector: 'app-settings',
@@ -9,36 +9,37 @@ export class SettingsComponent {
   public settings: TypedInput[] = [];
   public updatedSettings: TypedInput[] = [];
   public hasChanges: boolean = false;
+  readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
 
   constructor() {
-    // Retrieve settings from gargantua here
+    // TODO 06.04.2023: Retrieve settings from gargantua here
     this.settings = [
       {
         id: 'string-setting',
         name: 'String',
-        group: 'group1',
-        type: TypedInputTypes.STRING,
+        group: 'General',
+        type: TypedInputType.STRING,
         value: 'Some text',
       },
       {
         id: 'boolean-setting',
         name: 'Boolean',
-        group: 'group1',
-        type: TypedInputTypes.BOOLEAN,
+        group: 'General',
+        type: TypedInputType.BOOLEAN,
         value: 'true',
       },
       {
         id: 'number-setting',
         name: 'Number',
-        group: 'group1',
-        type: TypedInputTypes.NUMBER,
+        group: 'Other',
+        type: TypedInputType.NUMBER,
         value: '1337',
       },
       {
         id: 'enum-setting',
         name: 'Enum',
-        group: 'group1',
-        type: TypedInputTypes.ENUM,
+        group: 'Third',
+        type: TypedInputType.ENUM,
         enumValues: ['First Value', 'Second Value', 'Third Value'],
         value: 'Second Value',
       },

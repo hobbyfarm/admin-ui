@@ -1,27 +1,37 @@
 import {
+  AfterContentChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
   OnChanges,
   OnInit,
   Output,
+  QueryList,
+  ViewChildren,
 } from '@angular/core';
-import { TypedInput, TypedInputTypes } from './TypedInput';
+import { TypedInput, TypedInputType, FormGroupType } from './TypedInput';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ClrTabLink } from '@clr/angular';
 
 @Component({
   selector: 'app-typed-form',
   templateUrl: './typed-form.component.html',
   styleUrls: ['./typed-form.component.scss'],
 })
-export class TypedFormComponent implements OnInit, OnChanges {
+export class TypedFormComponent implements OnInit, OnChanges, AfterViewInit, AfterContentChecked {
   @Input() typedInputs: TypedInput[] = []; // Input: List of typed inputs for the form
   @Output() syncedInputs: EventEmitter<TypedInput[]> = new EventEmitter(null); // Output: Emit updated TypedInput list when form changes
+  @Input() groupType: FormGroupType = FormGroupType.LIST; // group Items, otherwise display all settings
+  @Input() groupOrder: string[] = []; // start with this groups, other groups follow alphabetically.
 
   formGroup: FormGroup = new FormGroup({}); // Form group to manage the dynamic form
-  readonly TypedInputTypes = TypedInputTypes; // Reference to TypedInputTypes enum for template use
+  readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
 
-  constructor() {}
+  @ViewChildren(ClrTabLink) private tabs: QueryList<ClrTabLink>;
+
+  constructor(private changeDetector: ChangeDetectorRef,) {}
 
   ngOnInit() {
     this.initForm();
@@ -31,6 +41,17 @@ export class TypedFormComponent implements OnInit, OnChanges {
     this.initForm();
   }
 
+  ngAfterViewInit() {
+    const sub = this.tabs.changes.subscribe(() => {
+      this.tabs.first.activate();
+      sub.unsubscribe();
+    });
+  }
+
+  ngAfterContentChecked(){
+    this.changeDetector.detectChanges();
+  }
+  
   /**
    * Initialize the form by creating form controls based on the typedInputs.
    */
@@ -39,17 +60,17 @@ export class TypedFormComponent implements OnInit, OnChanges {
       let control: FormControl;
 
       switch (input.type) {
-        case TypedInputTypes.STRING:
-        case TypedInputTypes.ENUM:
+        case TypedInputType.STRING:
+        case TypedInputType.ENUM:
           control = new FormControl(input.value || '', Validators.required);
           break;
-        case TypedInputTypes.NUMBER:
+        case TypedInputType.NUMBER:
           control = new FormControl(
             input.value ? +input.value : null,
             Validators.required
           );
           break;
-        case TypedInputTypes.BOOLEAN:
+        case TypedInputType.BOOLEAN:
           control = new FormControl(
             input.value === 'true',
             Validators.required
@@ -78,5 +99,18 @@ export class TypedFormComponent implements OnInit, OnChanges {
    */
   onFormChanged(): void {
     this.syncedInputs.emit(this.retrieveFormData());
+  }
+
+  groupTypedInputs(): { [key: string]: TypedInput[] } {
+    const groupedInputs: { [key: string]: TypedInput[] } = {};
+
+    this.typedInputs.forEach((input) => {
+      if (!groupedInputs[input.group]) {
+        groupedInputs[input.group] = [];
+      }
+      groupedInputs[input.group].push(input);
+    });
+
+    return groupedInputs;
   }
 }

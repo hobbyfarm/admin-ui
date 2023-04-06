@@ -1,47 +1,36 @@
 <form [formGroup]="formGroup" clrForm (change)="onFormChanged()">
-  <ng-container *ngFor="let input of typedInputs">
-    <ng-container [ngSwitch]="input.type">
-      <clr-input-container *ngSwitchCase="TypedInputTypes.STRING">
-        <label [for]="input.id">{{ input.name }}</label>
-        <input
-          clrInput
-          type="text"
-          [formControlName]="input.id"
-          [id]="input.id"
-          (input)="onFormChanged()"
-        />
-      </clr-input-container>
-      <clr-input-container *ngSwitchCase="TypedInputTypes.NUMBER">
-        <label [for]="input.id">{{ input.name }}</label>
-        <input
-          clrInput
-          type="number"
-          [formControlName]="input.id"
-          [id]="input.id"
-        />
-      </clr-input-container>
-      <clr-checkbox-container *ngSwitchCase="TypedInputTypes.BOOLEAN">
-        <label [for]="input.id">{{ input.name }}</label>
-        <clr-checkbox-wrapper>
-          <input
-            type="checkbox"
-            clrCheckbox
-            [formControlName]="input.id"
-            [id]="input.id"
-          />
-        </clr-checkbox-wrapper>
-      </clr-checkbox-container>
-      <clr-select-container *ngSwitchCase="TypedInputTypes.ENUM">
-        <label [for]="input.id">{{ input.name }}</label>
-        <select clrSelect [formControlName]="input.id" [id]="input.id">
-          <option
-            *ngFor="let enumValue of input.enumValues"
-            [value]="enumValue"
-          >
-            {{ enumValue }}
-          </option>
-        </select>
-      </clr-select-container>
+  <ng-container [ngSwitch]="groupType">
+    <ng-container *ngSwitchCase="FormGroupType.LIST">
+      <ng-container *ngFor="let group of groupTypedInputs() | keyvalue">
+        <h3>{{ group.key }}</h3>
+        <ng-container *ngFor="let input of group.value">
+          <app-typed-input
+            [input]="input"
+            [formGroup]="formGroup"
+            (change)="onFormChanged()"
+          ></app-typed-input>
+        </ng-container>
+        <hr />
+      </ng-container>
+    </ng-container>
+    <ng-container *ngSwitchCase="FormGroupType.TABS">
+      <clr-tabs>
+        <clr-tab *ngFor="let group of groupTypedInputs() | keyvalue" #tab>
+          <button clrTabLink [id]="group.key">
+            {{ group.key }}
+          </button>
+          <clr-tab-content *clrIfActive>
+            Content:  {{ group.key }}
+            <ng-container *ngFor="let input of group.value">
+              <app-typed-input
+                [input]="input"
+                [formGroup]="formGroup"
+                (change)="onFormChanged()"
+              ></app-typed-input>
+            </ng-container>
+          </clr-tab-content>
+        </clr-tab>
+      </clr-tabs>
     </ng-container>
   </ng-container>
 </form>
