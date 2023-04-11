@@ -1,6 +1,6 @@
 <form [formGroup]="formGroup" clrForm (change)="onFormChanged()">
   <ng-container *ngIf="groupType === FormGroupType.LIST">
-    <ng-container *ngFor="let group of groupTypedInputs() | keyvalue">
+    <ng-container *ngFor="let group of groupedInputs | keyvalue">
       <h3>{{ group.key }}</h3>
       <ng-container *ngFor="let input of group.value">
         <app-typed-input

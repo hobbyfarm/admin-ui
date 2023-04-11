@@ -16,8 +16,9 @@ export enum FormGroupType {
 export class TypedInput {
   id: string; // id as of the metadata.name
   name: string; // Display name of the input
-  categories: string[]; // Category e.g. General, Provisioning etc.
+  category: string; // Category e.g. General, Provisioning etc.
   type: TypedInputType;
   value: any;
   enumValues?: string[]; // If this is of type ENUM this list provides allowed values
+  weight: number; // Weight of setting in it's category
 }

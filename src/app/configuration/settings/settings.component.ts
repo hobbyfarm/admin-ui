@@ -22,38 +22,43 @@ export class SettingsComponent {
       {
         id: 'string-setting',
         name: 'String',
-        categories: ['General', 'Other'],
+        category: '',
         type: TypedInputType.STRING,
         value: 'Some text',
+        weight: 10,
       },
       {
         id: 'boolean-setting',
         name: 'Boolean',
-        categories: ['General'],
+        category: '',
         type: TypedInputType.BOOLEAN,
         value: 'true',
+        weight: 20,
       },
       {
         id: 'number-setting',
         name: 'Number',
-        categories: ['Other'],
+        category: 'Other',
         type: TypedInputType.INTEGER,
         value: '1337',
+        weight: 10,
       },
       {
         id: 'float-setting',
         name: 'Float',
-        categories: ['Other'],
+        category: 'Other',
         type: TypedInputType.FLOAT,
         value: '13.37',
+        weight: 30,
       },
       {
         id: 'enum-setting',
         name: 'Enum',
-        categories: ['Third'],
+        category: 'Third',
         type: TypedInputType.ENUM,
         enumValues: ['First Value', 'Second Value', 'Third Value'],
         value: 'Second Value',
+        weight: 100
       },
     ];
   }

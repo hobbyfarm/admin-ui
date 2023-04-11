@@ -105,13 +105,25 @@ export class TypedFormComponent implements OnInit, OnChanges {
   groupTypedInputs(): { [key: string]: TypedInput[] } {
     const groupedInputs: { [key: string]: TypedInput[] } = {};
     this.typedInputs.forEach((input) => {
-      input.categories.forEach((category) => {
-        if (!groupedInputs[category]) {
-          groupedInputs[category] = [];
-        }
-        groupedInputs[category].push(input);
-      });
+      // Fallback group name if the 'category' property is not set or empty
+      if (!input.category || input.category == '') {
+        input.category = 'General'; 
+      }
+
+      // If the group doesn't exist in the object, create it and initialize an empty array
+      if (!groupedInputs[input.category]) {
+        groupedInputs[input.category] = [];
+      }
+
+      groupedInputs[input.category].push(input);
     });
+
+    // Sort the inputs within each group by their 'weight' property in descending order
+    for (const groupName in groupedInputs) {
+      groupedInputs[groupName].sort(
+        (a, b) => (b.weight || 0) - (a.weight || 0)
+      );
+    }
     return groupedInputs;
   }
 
