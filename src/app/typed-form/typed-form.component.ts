@@ -105,10 +105,12 @@ export class TypedFormComponent implements OnInit, OnChanges {
   groupTypedInputs(): { [key: string]: TypedInput[] } {
     const groupedInputs: { [key: string]: TypedInput[] } = {};
     this.typedInputs.forEach((input) => {
-      if (!groupedInputs[input.group]) {
-        groupedInputs[input.group] = [];
-      }
-      groupedInputs[input.group].push(input);
+      input.categories.forEach((category) => {
+        if (!groupedInputs[category]) {
+          groupedInputs[category] = [];
+        }
+        groupedInputs[category].push(input);
+      });
     });
     return groupedInputs;
   }
