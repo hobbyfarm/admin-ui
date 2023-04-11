@@ -1,6 +1,7 @@
 export enum TypedInputType {
   STRING,
-  NUMBER,
+  INTEGER,
+  FLOAT,
   BOOLEAN,
   ENUM,
   // COLOR or other possible custom input types

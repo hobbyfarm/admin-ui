@@ -9,15 +9,29 @@
       (input)="inputChanged()"
     />
   </clr-input-container>
-  <clr-input-container *ngSwitchCase="TypedInputType.NUMBER">
+  <clr-input-container *ngSwitchCase="TypedInputType.INTEGER">
     <label [for]="input.id">{{ input.name }}</label>
     <input
       clrInput
       type="number"
+      step="1"
       [formControlName]="input.id"
       [id]="input.id"
       (input)="inputChanged()"
     />
+    <clr-control-error>Must be of type integer</clr-control-error>
+  </clr-input-container>
+  <clr-input-container *ngSwitchCase="TypedInputType.FLOAT">
+    <label [for]="input.id">{{ input.name }}</label>
+    <input
+      clrInput
+      type="number"
+      step="any"
+      [formControlName]="input.id"
+      [id]="input.id"
+      (input)="inputChanged()"
+    />
+    <clr-control-error>Must be of type float</clr-control-error>
   </clr-input-container>
   <clr-checkbox-container *ngSwitchCase="TypedInputType.BOOLEAN">
     <label [for]="input.id">{{ input.name }}</label>

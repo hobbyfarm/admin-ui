@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-import { TypedInput, TypedInputType, FormGroupType } from '../../typed-form/TypedInput';
+import {
+  TypedInput,
+  TypedInputType,
+  FormGroupType,
+} from '../../typed-form/TypedInput';
 
 @Component({
   selector: 'app-settings',
@@ -9,6 +13,7 @@ export class SettingsComponent {
   public settings: TypedInput[] = [];
   public updatedSettings: TypedInput[] = [];
   public hasChanges: boolean = false;
+  public valid: boolean = true;
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
 
   constructor() {
@@ -32,8 +37,15 @@ export class SettingsComponent {
         id: 'number-setting',
         name: 'Number',
         group: 'Other',
-        type: TypedInputType.NUMBER,
+        type: TypedInputType.INTEGER,
         value: '1337',
+      },
+      {
+        id: 'float-setting',
+        name: 'Float',
+        group: 'Other',
+        type: TypedInputType.FLOAT,
+        value: '13.37',
       },
       {
         id: 'enum-setting',
@@ -49,6 +61,10 @@ export class SettingsComponent {
   onFormChange(data: TypedInput[]) {
     this.updatedSettings = data;
     this.hasChanges = true;
+  }
+
+  changeFormValidity(valid: boolean) {
+    this.valid = valid;
   }
 
   onSubmit() {

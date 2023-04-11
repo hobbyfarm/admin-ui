@@ -1,8 +1,9 @@
-<button class="btn" (click)="onSubmit()" [disabled]="!hasChanges">
+<button class="btn" (click)="onSubmit()" [disabled]="!hasChanges || !valid">
   Save Changes
 </button>
 <app-typed-form
   [typedInputs]="settings"
   (syncedInputs)="onFormChange($event)"
+  (inputsValid)="changeFormValidity($event)"
   [groupType]="FormGroupType.TABS_VERTICAL"
 ></app-typed-form>
