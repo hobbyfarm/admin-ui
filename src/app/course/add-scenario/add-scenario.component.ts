@@ -8,8 +8,9 @@ import { ClrModal } from '@clr/angular';
 })
 export class AddScenarioComponent {
   public addOpen: boolean = false;
-
+  
   public selectedScenarios = [];
+  public filteredScenarios: Scenario[] = [];
 
   @Input()
   public scenarios: Scenario[] = []; // TODO - convert this to ues shared service w/ client-side caching
@@ -27,6 +28,9 @@ export class AddScenarioComponent {
   public open(): void {
     this.selectedScenarios = [];
     this.addModal.open();
+  }
+  setScenarioList(scenarios: Scenario[]) {
+    this.filteredScenarios = scenarios;
   }
 
 }
