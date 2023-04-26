@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+} from '@angular/core';
 import { Scenario } from 'src/app/data/scenario';
 import { ClrModal } from '@clr/angular';
 
@@ -8,7 +14,7 @@ import { ClrModal } from '@clr/angular';
 })
 export class AddScenarioComponent {
   public addOpen: boolean = false;
-  
+
   public selectedScenarios = [];
   public filteredScenarios: Scenario[] = [];
 
@@ -18,7 +24,7 @@ export class AddScenarioComponent {
   @Output()
   public selected: EventEmitter<Scenario[]> = new EventEmitter();
 
-  @ViewChild("addModal") addModal: ClrModal;
+  @ViewChild('addModal') addModal: ClrModal;
 
   save(): void {
     this.selected.emit(this.selectedScenarios);
@@ -32,5 +38,4 @@ export class AddScenarioComponent {
   setScenarioList(scenarios: Scenario[]) {
     this.filteredScenarios = scenarios;
   }
-
 }
