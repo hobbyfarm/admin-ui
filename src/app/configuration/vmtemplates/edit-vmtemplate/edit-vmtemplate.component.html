@@ -68,32 +68,9 @@
 
     <clr-wizard-page>
         <ng-template clrPageTitle>Services</ng-template>
-        <app-vmtemplate-service-form 
-        [cloudConfig]="cloudConfig"
-        ></app-vmtemplate-service-form>      
+        <app-vmtemplate-service-form [cloudConfig]="cloudConfig"></app-vmtemplate-service-form>
     </clr-wizard-page>
 
-    <clr-wizard-page [clrWizardPageNextDisabled]="!configMap.valid">
-        <ng-template clrPageTitle>Cloud Config</ng-template>
-        <clr-signpost>
-            <clr-signpost-content *clrIfOpen>
-                <h3>Cloud Config</h3>
-                <p>This is the resulting Cloud Config from the previous step. It is put together based on the Order in which the Services are put in the List</p>                
-            </clr-signpost-content>
-        </clr-signpost>
-        <div [formGroup]="configMap">            
-            <form clrForm>
-                <div *ngIf="cloudConfig.cloudConfigYaml.length > 0">                    
-                    <markdown [data]="cloudConfig.cloudConfigYaml | language: 'yaml'"></markdown>
-                </div>
-            </form>
-            <div *ngIf="!cloudConfig.cloudConfigYaml.length">There is no Cloud-Init Configuration defined for this VM-Template. This can be done in the Services Step.</div>
-        </div>
-        <ng-container *ngIf="configMap && !configMap.valid">
-            <span class="clr-subtext">All mappings must have key and value filled out. Complete, or remove, any entries
-                that do not.</span>
-        </ng-container>
-    </clr-wizard-page>
 
     <clr-wizard-page (clrWizardPageOnLoad)="copyTemplate()" [clrWizardPagePreventDefaultNext]="true"
         (clrWizardPageFinish)="saveTemplate()">
@@ -130,8 +107,42 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of template.config_map | keyvalue">
-                    <td>{{ item.key }}</td>
-                    <td>{{ item.value }}</td>
+                    <ng-container *ngIf="item.key === cloudConfigKey && cloudConfig.cloudConfigYaml.length > 0">
+                        <td>{{ item.key }}<br><clr-signpost>
+                                <clr-signpost-content *clrIfOpen>
+                                    <h3>Cloud Config</h3>
+                                    <p>This is the resulting Cloud Config from the previous step. It is put together
+                                        based on the Order in
+                                        which the Services are put in the List</p>
+                                </clr-signpost-content>
+                            </clr-signpost></td>
+                        <td>
+                            <markdown [data]="cloudConfig.cloudConfigYaml | language: 'yaml'"></markdown>
+                        </td>
+                    </ng-container>
+                    <ng-container *ngIf="item.key === vmServiceKey">
+                        <td>{{ item.key }}</td>
+                        <td>
+                            <table class="table table-compact">
+                                <th>Name</th>
+                                <th>Port</th>
+                                <th>Tab</th>
+                                <tbody>
+                                    <tr *ngFor="let interface of cloudConfig.vmServices | keyvalue">
+                                        <td>{{ interface.value.name }}</td>
+                                        <td>
+                                            {{ interface.value.hasWebinterface ? interface.value.port : "-" }}
+                                        </td>
+                                        <td>{{ interface.value.hasOwnTab ? interface.value.hasOwnTab : "-" }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </ng-container>
+                    <ng-container *ngIf="item.key !== cloudConfigKey && item.key !== vmServiceKey">
+                        <td>{{ item.key }}</td>
+                        <td>{{ item.value }}</td>
+                    </ng-container>
                 </tr>
             </tbody>
         </table>
