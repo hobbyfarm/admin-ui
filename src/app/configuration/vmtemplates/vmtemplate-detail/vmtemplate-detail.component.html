@@ -21,21 +21,44 @@
                 <clr-stack-label class="stackbox-header">Key</clr-stack-label>
                 <clr-stack-content class="stackbox-header">Value</clr-stack-content>
             </clr-stack-block>
-            <clr-stack-block *ngFor="let item of currentVmTemplate.config_map | keyvalue">
-                <clr-stack-label>{{ item.key }}</clr-stack-label>
-                <clr-stack-content>{{ item.value }}</clr-stack-content>
+            <clr-stack-block *ngFor="let item of configMap | keyvalue" >                
+                <clr-stack-label>{{ item.key }}</clr-stack-label>                
+                <clr-stack-content>{{ item.value }}</clr-stack-content>                
             </clr-stack-block>
         </clr-stack-block>
+
+        <!-- Webinterfaces -->
+        <clr-stack-block>
+            <clr-stack-label>Services</clr-stack-label>
+                <clr-stack-content *ngIf="!(webinterfaces.length > 0)">None</clr-stack-content>   
+            <clr-stack-block *ngIf="webinterfaces.length > 0">
+                <clr-stack-label class="stackbox-header">Services and Webinterfaces</clr-stack-label>
+                <table class="table table-compact">
+                    <th>Name</th>
+                    <th>Port</th>
+                    <th>Tab</th>
+                    <tbody>
+                        <tr *ngFor="let webinterface of webinterfaces">
+                            <td>{{ webinterface.name }}</td>
+                            <td>
+                                {{ webinterface.hasWebinterface ? webinterface.port : "-" }}
+                            </td>
+                            <td>{{ webinterface.hasOwnTab ? webinterface.hasOwnTab : "-" }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </clr-stack-block>
+            
+        </clr-stack-block>
+
+        <!-- Cloud-Init -->
         <clr-stack-block>
             <clr-stack-label>Cloud-Init</clr-stack-label>
-            <clr-stack-block>
-                <clr-stack-label class="stackbox-header">Key</clr-stack-label>
-                <clr-stack-content class="stackbox-header">Value</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block>
+            <clr-stack-content *ngIf="cloudConfigData == 'No Cloud Config defined'">None</clr-stack-content>      
+            <clr-stack-block *ngIf="cloudConfigData != 'No Cloud Config defined'">
                 <clr-stack-label>cloud-config</clr-stack-label>
                 <clr-stack-content>
-                    <textarea clrTextarea  style="width: 100%; height: 50vh;"  [(ngModel)]="cloudConfigData"  disabled></textarea>
+                    <markdown [data]="cloudConfigData | language: 'yaml'"></markdown>
                 </clr-stack-content>
             </clr-stack-block>
         </clr-stack-block>
@@ -52,4 +75,3 @@
         </clr-alert>
     </ng-template>
 </div>
-
