@@ -29,6 +29,15 @@ export class ContentComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     this.contentNavigation();
   }
+
+  navigateScenarios(){
+    this.route.navigate(['scenarios'], { relativeTo: this.activateRoute });
+  }
+  navigateCourses(){
+    this.route.navigate(['courses'], {
+      relativeTo: this.activateRoute,
+    });
+  }
   contentNavigation() {
     this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
       this.selectRbac = allowed;
@@ -38,21 +47,17 @@ export class ContentComponent implements OnInit {
       this.selectRbac = allowed;
     });
 
-    this.scenarioService.list().subscribe((s: Scenario[]) => {
-      this.scenarios = s;
-      if (this.scenarios.length > 0) {
-        this.route.navigate(['scenarios'], { relativeTo: this.activateRoute });
-      } else if (this.courses.length > 0) {
-        this.courseService.list().subscribe((c: Course[]) => {
-          this.courses = c;
-          if (this.courses.length > 0)
-            this.route.navigate(['courses'], {
-              relativeTo: this.activateRoute,
-            });
-        });
-      }
-      else 
-      this.route.navigate(['scenarios'], { relativeTo: this.activateRoute });
+    this.courseService.list().subscribe((c: Course[]) => {
+      this.courses = c;
+      this.scenarioService.list().subscribe((s: Scenario[]) => {
+        this.scenarios = s;
+        if (this.scenarios.length > 0) {
+          this.navigateScenarios()
+        } else if (this.courses.length > 0) {
+          this.navigateCourses();
+        } else
+          this.navigateScenarios();
+      });
     });
   }
 }
