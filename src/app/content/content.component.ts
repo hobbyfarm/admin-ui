@@ -10,7 +10,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
   selector: 'app-content',
   templateUrl: './content.component.html',
 })
-export class ContentComponent implements OnInit, OnChanges{
+export class ContentComponent implements OnInit {
   scenarios: Scenario[] = [];
   courses: Course[] = [];
   selectRbac: boolean = false;
@@ -23,11 +23,11 @@ export class ContentComponent implements OnInit, OnChanges{
     private activateRoute: ActivatedRoute
   ) {}
 
-  ngOnInit():void {
-    this.contentNavigation()
+  ngOnInit(): void {
+    this.contentNavigation();
   }
   ngOnChanges(changes: SimpleChanges): void {
-    this.contentNavigation()
+    this.contentNavigation();
   }
   contentNavigation() {
     this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
@@ -46,12 +46,11 @@ export class ContentComponent implements OnInit, OnChanges{
         this.courseService.list().subscribe((c: Course[]) => {
           this.courses = c;
           if (this.courses.length > 0)
-            this.route.navigate(['courses'], { relativeTo: this.activateRoute });
+            this.route.navigate(['courses'], {
+              relativeTo: this.activateRoute,
+            });
         });
       }
     });
-
-
   }
-
 }
