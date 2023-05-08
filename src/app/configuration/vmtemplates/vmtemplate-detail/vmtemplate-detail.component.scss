@@ -1,3 +1,7 @@
 .stackbox-header {
     font-weight: bold;
 }
+
+::ng-deep .clr-accordion-header {
+    border: none;
+}
