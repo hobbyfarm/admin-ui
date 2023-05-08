@@ -42,7 +42,7 @@ export class ContentComponent implements OnInit {
       this.scenarios = s;
       if (this.scenarios.length > 0) {
         this.route.navigate(['scenarios'], { relativeTo: this.activateRoute });
-      } else {
+      } else if (this.courses.length > 0) {
         this.courseService.list().subscribe((c: Course[]) => {
           this.courses = c;
           if (this.courses.length > 0)
@@ -51,6 +51,8 @@ export class ContentComponent implements OnInit {
             });
         });
       }
+      else 
+      this.route.navigate(['scenarios'], { relativeTo: this.activateRoute });
     });
   }
 }
