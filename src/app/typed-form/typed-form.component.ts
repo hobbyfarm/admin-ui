@@ -6,8 +6,13 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { TypedInput, TypedInputType, FormGroupType } from './TypedInput';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  TypedInput,
+  TypedInputType,
+  FormGroupType,
+  TypedInputRepresentation,
+} from './TypedInput';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-typed-form',
@@ -41,32 +46,18 @@ export class TypedFormComponent implements OnInit, OnChanges {
    */
   initForm(): void {
     this.typedInputs.forEach((input) => {
-      let control: FormControl;
+      let control: FormControl | FormArray;
 
-      switch (input.type) {
-        case TypedInputType.STRING:
-          control = new FormControl(input.value || '');
-          break;
-        case TypedInputType.ENUM:
-          control = new FormControl(input.value || '', Validators.required);
-          break;
-        case TypedInputType.FLOAT:
-          control = new FormControl(input.value ? +input.value : null, [
-            Validators.required,
-          ]);
-          break;
-        case TypedInputType.INTEGER:
-          control = new FormControl(input.value ? +input.value : null, [
-            Validators.required,
-            Validators.pattern('^[0-9]*$'),
-          ]);
-          break;
-        case TypedInputType.BOOLEAN:
-          control = new FormControl(
-            input.value === 'true',
-            Validators.required
-          );
-          break;
+      if (input.representation === TypedInputRepresentation.SCALAR) {
+        control = this.getTypedInputFormControl(input.type, input.value);
+      } else if (input.representation === TypedInputRepresentation.ENUM) {
+        control = new FormControl(input.value, Validators.required);
+      } else if (input.representation === TypedInputRepresentation.ARRAY) {
+        // todo array
+        const controls = (input.value as any[]).map((val) =>
+          this.getTypedInputFormControl(input.type, val)
+        );
+        control = new FormArray(controls);
       }
 
       this.formGroup.addControl(input.id, control);
@@ -93,9 +84,19 @@ export class TypedFormComponent implements OnInit, OnChanges {
 
     let valid = true;
     this.typedInputs.forEach((input) => {
-      if (this.formGroup.get(input.id).errors) {
+      const control = this.formGroup.get(input.id);
+      if (control.errors) {
         valid = false;
         return;
+      }
+      if (input.representation === TypedInputRepresentation.ARRAY) {
+        // When the TypedInput has the Array representation we need to check for errors on each control.
+        (control as FormArray).controls.forEach((arrayControl) => {
+          if (arrayControl.errors) {
+            valid = false;
+            return;
+          }
+        });
       }
     });
     console.log('here valid');
@@ -107,7 +108,7 @@ export class TypedFormComponent implements OnInit, OnChanges {
     this.typedInputs.forEach((input) => {
       // Fallback group name if the 'category' property is not set or empty
       if (!input.category || input.category == '') {
-        input.category = 'General'; 
+        input.category = 'General';
       }
 
       // If the group doesn't exist in the object, create it and initialize an empty array
@@ -128,25 +129,67 @@ export class TypedFormComponent implements OnInit, OnChanges {
   }
 
   getTypedInputValue(input: TypedInput) {
-    const v = this.formGroup.get(input.id).value;
+    const formValue = this.formGroup.get(input.id).value;
+    if (input.representation === TypedInputRepresentation.ENUM) {
+      if (!input.enumValues) return null;
+      if (!input.enumValues[0]) return null;
+      const value = this.getTypedInputScalarValue(input, formValue);
+      const enumValues = this.getTypedInputEnumValues(input);
+      return enumValues.includes(value) ? value : enumValues[0];
+    } else if (input.representation === TypedInputRepresentation.SCALAR) {
+      return this.getTypedInputScalarValue(input, formValue);
+    } else if (input.representation === TypedInputRepresentation.ARRAY) {
+      return (this.formGroup.get(input.id) as FormArray).controls.map(
+        (control) => this.getTypedInputScalarValue(input, control.value)
+      );
+    }
+  }
 
+  getTypedInputScalarValue(input: TypedInput, value: any) {
     switch (input.type) {
       case TypedInputType.BOOLEAN:
-        return v;
-      case TypedInputType.ENUM:
-        if (!input.enumValues) return '';
-        if (!input.enumValues[0]) return '';
-        return input.enumValues.includes(v) ? v : input.enumValues[0];
+        return value;
       case TypedInputType.FLOAT:
-        return +v;
+        return +value;
       case TypedInputType.INTEGER:
-        const parsed = parseInt(v, 10);
+        const parsed = parseInt(value, 10);
         if (isNaN(parsed)) {
           return 0;
         }
         return parsed;
       case TypedInputType.STRING:
-        return v;
+        return value;
     }
+  }
+
+  getTypedInputEnumValues(input: TypedInput): any[] {
+    if (!input.enumValues) {
+      return [];
+    }
+    return input.enumValues.map((v) => {
+      return this.getTypedInputScalarValue(input, v);
+    });
+  }
+
+  getTypedInputFormControl(typedInputType: TypedInputType, value: any) {
+    let control: FormControl | FormArray;
+    switch (typedInputType) {
+      case TypedInputType.STRING:
+        control = new FormControl(value || '');
+        break;
+      case TypedInputType.FLOAT:
+        control = new FormControl(value ? +value : null, [Validators.required]);
+        break;
+      case TypedInputType.INTEGER:
+        control = new FormControl(value ? +value : null, [
+          Validators.required,
+          Validators.pattern('^[0-9]*$'),
+        ]);
+        break;
+      case TypedInputType.BOOLEAN:
+        control = new FormControl(value === 'true', Validators.required);
+        break;
+    }
+    return control;
   }
 }

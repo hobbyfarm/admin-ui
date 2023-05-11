@@ -3,8 +3,13 @@ export enum TypedInputType {
   INTEGER,
   FLOAT,
   BOOLEAN,
-  ENUM,
   // COLOR or other possible custom input types
+}
+
+export enum TypedInputRepresentation {
+  SCALAR,
+  ARRAY,
+  ENUM,
 }
 
 export enum FormGroupType {
@@ -18,7 +23,8 @@ export class TypedInput {
   name: string; // Display name of the input
   category: string; // Category e.g. General, Provisioning etc.
   type: TypedInputType;
+  representation: TypedInputRepresentation;
   value: any;
-  enumValues?: string[]; // If this is of type ENUM this list provides allowed values
+  enumValues?: any[]; // If this is of type ENUM this list provides allowed values
   weight: number; // Weight of setting in it's category
 }
