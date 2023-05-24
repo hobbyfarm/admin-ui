@@ -1,151 +1,89 @@
+<!--Scalar-->
 <ng-container *ngIf="isScalarType(input)">
-  <ng-container [ngSwitch]="input.type" [formGroup]="formGroup">
-    <clr-input-container *ngSwitchCase="TypedInputType.STRING">
-      <label [for]="input.id">{{ input.name }}</label>
-      <input
-        clrInput
-        type="text"
-        [formControlName]="input.id"
-        [id]="input.id"
-        (input)="inputChanged()"
-      />
-    </clr-input-container>
-    <clr-input-container *ngSwitchCase="TypedInputType.INTEGER">
-      <label [for]="input.id">{{ input.name }}</label>
-      <input
-        clrInput
-        type="number"
-        step="1"
-        [formControlName]="input.id"
-        [id]="input.id"
-        (input)="inputChanged()"
-      />
-      <clr-control-error>Must be of type integer</clr-control-error>
-    </clr-input-container>
-    <clr-input-container *ngSwitchCase="TypedInputType.FLOAT">
-      <label [for]="input.id">{{ input.name }}</label>
-      <input
-        clrInput
-        type="number"
-        step="any"
-        [formControlName]="input.id"
-        [id]="input.id"
-        (input)="inputChanged()"
-      />
-      <clr-control-error>Must be of type float</clr-control-error>
-    </clr-input-container>
-    <clr-checkbox-container *ngSwitchCase="TypedInputType.BOOLEAN">
-      <label [for]="input.id">{{ input.name }}</label>
-      <clr-checkbox-wrapper>
-        <input
-          type="checkbox"
-          clrCheckbox
-          [formControlName]="input.id"
-          [id]="input.id"
-        />
-      </clr-checkbox-wrapper>
-    </clr-checkbox-container>
-  </ng-container>
+  <app-typed-input-field
+    [input]="input"
+    [formGroup]="formGroup"
+    [formControlRef]="getFormControl(input.id)"
+    (change)="inputChanged()"
+  >
+  </app-typed-input-field>
 </ng-container>
-<ng-container *ngIf="isEnumType(input)" [formGroup]="formGroup">
-  <clr-select-container>
-    <label [for]="input.id">{{ input.name }}</label>
-    <select clrSelect [formControlName]="input.id" [id]="input.id">
-      <option *ngFor="let enumValue of input.enumValues" [value]="enumValue">
-        {{ enumValue }}
-      </option>
-    </select>
-  </clr-select-container>
-</ng-container>
-<ng-container *ngIf="isArrayType(input)" [formGroup]="formGroup">
-  <div formArrayName="{{ input.id }}">
+
+<!--Map-->
+<ng-container *ngIf="isMapType(input)">
+  <div>
     <b
       ><label>{{ input.name }}</label></b
     >
-    <div *ngFor="let ctrl of getControls(input.id); let i = index">
-      <ng-container [ngSwitch]="input.type">
-        <div
-          class="array-input-container"
-          *ngSwitchCase="TypedInputType.STRING"
-        >
-          <clr-input-container>
-            <label class="clr-sr-only">Array Item {{ i + 1 }}</label>
-            <input
-              clrInput
-              type="text"
-              [formControlName]="i"
-              [id]="input.id + i"
-              (input)="inputChanged()"
-            />
-          </clr-input-container>
-          <button
-            class="btn btn-danger-outline"
-            type="button"
-            (click)="removeArrayElement(input, i)"
-          >
-            <clr-icon shape="trash"></clr-icon> Remove
-          </button>
-        </div>
-        <div
-          class="array-input-container"
-          *ngSwitchCase="TypedInputType.INTEGER"
-        >
-          <clr-input-container>
-            <label class="clr-sr-only">Array Item {{ i + 1 }}</label>
-            <input
-              clrInput
-              type="number"
-              step="1"
-              [formControlName]="i"
-              [id]="input.id + i"
-              (input)="inputChanged()"
-            />
-            <clr-control-error>Must be of type integer</clr-control-error>
-          </clr-input-container>
-          <button
-            class="btn btn-danger-outline"
-            type="button"
-            (click)="removeArrayElement(input, i)"
-          >
-            <clr-icon shape="trash"></clr-icon> Remove
-          </button>
-        </div>
-        <div class="array-input-container" *ngSwitchCase="TypedInputType.FLOAT">
-          <clr-input-container>
-            <label class="clr-sr-only">Array Item {{ i + 1 }}</label>
-            <input
-              clrInput
-              type="number"
-              step="any"
-              [formControlName]="i"
-              [id]="input.id + i"
-              (input)="inputChanged()"
-            />
-            <clr-control-error>Must be of type float</clr-control-error>
-          </clr-input-container>
-          <button
-            class="btn btn-danger-outline"
-            type="button"
-            (click)="removeArrayElement(input, i)"
-          >
-            <clr-icon shape="trash"></clr-icon> Remove
-          </button>
-        </div>
-        <ng-container *ngSwitchCase="TypedInputType.BOOLEAN">
-          Arrays of type Boolean are not allowed.
-        </ng-container>
-      </ng-container>
-      <!--<clr-input-container>
-        <label [for]="input.id + i">{{ i + 1 }}.</label>
-        <input clrInput [formControlName]="i" [id]="input.id + i" (input)="inputChanged()"/>
-      </clr-input-container>-->
+    <div
+      *ngFor="let ctrl of getControls(input.id); let i = index"
+      class="map-input-container"
+    >
+      <clr-input-container>
+        <label class="clr-sr-only">Map Key {{ i + 1 }}</label>
+        <input
+          clrInput
+          [formControl]="getMapFormControl(ctrl, 'key')"
+          placeholder="Key"
+          (input)="inputChanged()"
+        />
+      </clr-input-container>
+      <app-typed-input-field
+        [input]="input"
+        [formGroup]="formGroup"
+        [formControlRef]="getMapFormControl(ctrl, 'value')"
+        (change)="inputChanged()"
+      >
+      </app-typed-input-field>
+      <button
+        class="btn btn-danger-outline"
+        type="button"
+        (click)="removeArrayElement(input, i)"
+      >
+        <clr-icon shape="trash"></clr-icon> Remove
+      </button>
     </div>
+    <button
+      class="btn btn-outline"
+      type="button"
+      (click)="addMapElement(input)"
+    >
+      Add Element
+    </button>
   </div>
-  <button
-    class="btn btn-outline"
-    type="button"
-    (click)="addArrayElement(input)"
-  >
-    Add Element
-  </button>
+</ng-container>
+
+<!--Array-->
+<ng-container *ngIf="isArrayType(input)" [formGroup]="formGroup">
+  <div>
+    <b
+      ><label>{{ input.name }}</label></b
+    >
+    <div
+      *ngFor="let ctrl of getControls(input.id); let i = index"
+      class="array-input-container"
+    >
+      <app-typed-input-field
+        [input]="input"
+        [formGroup]="formGroup"
+        [formControlRef]="getArrayFormControl(ctrl)"
+        (change)="inputChanged()"
+      >
+      </app-typed-input-field>
+      <button
+        class="btn btn-danger-outline"
+        type="button"
+        (click)="removeArrayElement(input, i)"
+      >
+        <clr-icon shape="trash"></clr-icon> Remove
+      </button>
+    </div>
+    <button
+      class="btn btn-outline"
+      type="button"
+      (click)="addArrayElement(input)"
+    >
+      Add Element
+    </button>
+  </div>
 </ng-container>

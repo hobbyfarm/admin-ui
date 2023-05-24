@@ -1,3 +1,5 @@
+import { FormArray, FormControl, Validators } from '@angular/forms';
+
 export enum TypedInputType {
   STRING,
   INTEGER,
@@ -9,7 +11,7 @@ export enum TypedInputType {
 export enum TypedInputRepresentation {
   SCALAR,
   ARRAY,
-  ENUM,
+  MAP,
 }
 
 export enum FormGroupType {
@@ -24,7 +26,44 @@ export class TypedInput {
   category: string; // Category e.g. General, Provisioning etc.
   type: TypedInputType;
   representation: TypedInputRepresentation;
+  validation: InputValidation;
   value: any;
   enumValues?: any[]; // If this is of type ENUM this list provides allowed values
   weight: number; // Weight of setting in it's category
+}
+
+export class InputValidation {
+  required?: boolean;
+  maximum?: number;
+  minimum?: number;
+  maxLength?: number;
+  minLength?: number;
+  format?: string;
+  pattern?: string;
+  enum?: string[];
+  default?: string;
+  uniqueItems?: boolean;
+}
+
+export function getTypedInputFormControl(input: TypedInput, value: any) {
+  // TODO validators from inputValidation here
+  let control: FormControl | FormArray;
+  switch (input.type) {
+    case TypedInputType.STRING:
+      control = new FormControl(value || '');
+      break;
+    case TypedInputType.FLOAT:
+      control = new FormControl(value ? +value : null, [Validators.required]);
+      break;
+    case TypedInputType.INTEGER:
+      control = new FormControl(value ? +value : null, [
+        Validators.required,
+        Validators.pattern('^[0-9]*$'),
+      ]);
+      break;
+    case TypedInputType.BOOLEAN:
+      control = new FormControl(value === 'true', Validators.required);
+      break;
+  }
+  return control;
 }

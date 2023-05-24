@@ -1,0 +1,83 @@
+<ng-container
+  [ngSwitch]="input.type"
+  [formGroup]="formGroup"
+  class="input-container"
+>
+  <clr-input-container *ngSwitchCase="TypedInputType.STRING">
+    <label
+      *ngIf="input.representation === TypedInputRepresentation.SCALAR"
+      [for]="input.id"
+      >{{ input.name }}</label
+    >
+    <label
+      *ngIf="input.representation !== TypedInputRepresentation.SCALAR"
+      class="invisible-label"
+    ></label>
+    <input
+      clrInput
+      type="text"
+      [formControl]="formControlRef"
+      [id]="input.id"
+      (input)="inputChanged()"
+    />
+  </clr-input-container>
+  <clr-input-container *ngSwitchCase="TypedInputType.INTEGER">
+    <label
+      *ngIf="input.representation === TypedInputRepresentation.SCALAR"
+      [for]="input.id"
+      >{{ input.name }}</label
+    >
+    <label
+      *ngIf="input.representation !== TypedInputRepresentation.SCALAR"
+      class="invisible-label"
+    ></label>
+    <input
+      clrInput
+      type="number"
+      step="1"
+      [formControl]="formControlRef"
+      [id]="input.id"
+      (input)="inputChanged()"
+    />
+    <clr-control-error>Must be of type integer</clr-control-error>
+  </clr-input-container>
+  <clr-input-container *ngSwitchCase="TypedInputType.FLOAT">
+    <label
+      *ngIf="input.representation === TypedInputRepresentation.SCALAR"
+      [for]="input.id"
+      >{{ input.name }}</label
+    >
+    <label
+      *ngIf="input.representation !== TypedInputRepresentation.SCALAR"
+      class="invisible-label"
+    ></label>
+    <input
+      clrInput
+      type="number"
+      step="any"
+      [formControl]="formControlRef"
+      [id]="input.id"
+      (input)="inputChanged()"
+    />
+    <clr-control-error>Must be of type float</clr-control-error>
+  </clr-input-container>
+  <clr-checkbox-container *ngSwitchCase="TypedInputType.BOOLEAN">
+    <label
+      *ngIf="input.representation === TypedInputRepresentation.SCALAR"
+      [for]="input.id"
+      >{{ input.name }}</label
+    >
+    <label
+      *ngIf="input.representation !== TypedInputRepresentation.SCALAR"
+      class="invisible-label"
+    ></label>
+    <clr-checkbox-wrapper>
+      <input
+        type="checkbox"
+        clrCheckbox
+        [formControl]="formControlRef"
+        [id]="input.id"
+      />
+    </clr-checkbox-wrapper>
+  </clr-checkbox-container>
+</ng-container>

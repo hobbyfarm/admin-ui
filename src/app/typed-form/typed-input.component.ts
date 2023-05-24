@@ -3,6 +3,7 @@ import {
   TypedInput,
   TypedInputRepresentation,
   TypedInputType,
+  getTypedInputFormControl,
 } from './TypedInput';
 import {
   AbstractControl,
@@ -32,8 +33,8 @@ export class TypedInputComponent {
     return typedInput.representation === TypedInputRepresentation.SCALAR;
   }
 
-  isEnumType(typedInput: TypedInput): boolean {
-    return typedInput.representation === TypedInputRepresentation.ENUM;
+  isMapType(typedInput: TypedInput): boolean {
+    return typedInput.representation === TypedInputRepresentation.MAP;
   }
 
   isArrayType(typedInput: TypedInput): boolean {
@@ -44,35 +45,39 @@ export class TypedInputComponent {
     return (this.formGroup.get(inputId) as FormArray).controls;
   }
 
+  getMapFormControl(ctrl: AbstractControl, controlName: string): FormControl {
+    const formGroup = ctrl as FormGroup;
+    return formGroup.controls[controlName] as FormControl;
+  }
+
+  getArrayFormControl(ctrl: AbstractControl): FormControl {
+    return ctrl as FormControl;
+  }
+
+  getFormControl(controlName: string): FormControl {
+    return this.formGroup.controls[controlName] as FormControl;
+  }
+
   addArrayElement(typedInput: TypedInput) {
     const control = this.formGroup.get(typedInput.id) as FormArray;
-    control.push(this.getTypedInputFormControl(typedInput.type, ''));
+    control.push(getTypedInputFormControl(typedInput, ''));
+    this.inputChanged();
+  }
+
+  addMapElement(typedInput: TypedInput): void {
+    const control = this.formGroup.get(typedInput.id) as FormArray;
+    control.push(
+      new FormGroup({
+        key: new FormControl(''),
+        value: getTypedInputFormControl(typedInput, ''),
+      })
+    );
+    this.inputChanged();
   }
 
   removeArrayElement(typedInput: TypedInput, index: number) {
     const control = this.formGroup.get(typedInput.id) as FormArray;
     control.removeAt(index);
-  }
-
-  getTypedInputFormControl(typedInputType: TypedInputType, value: any) {
-    let control: FormControl | FormArray;
-    switch (typedInputType) {
-      case TypedInputType.STRING:
-        control = new FormControl(value || '');
-        break;
-      case TypedInputType.FLOAT:
-        control = new FormControl(value ? +value : null, [Validators.required]);
-        break;
-      case TypedInputType.INTEGER:
-        control = new FormControl(value ? +value : null, [
-          Validators.required,
-          Validators.pattern('^[0-9]*$'),
-        ]);
-        break;
-      case TypedInputType.BOOLEAN:
-        control = new FormControl(value === 'true', Validators.required);
-        break;
-    }
-    return control;
+    this.inputChanged();
   }
 }

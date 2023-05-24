@@ -93,6 +93,7 @@ import { TypedFormComponent } from './typed-form/typed-form.component';
 import { TypedInput } from './typed-form/TypedInput';
 import { SettingsComponent } from './configuration/settings/settings.component';
 import { TypedInputComponent } from './typed-form/typed-input.component';
+import { TypedInputFieldComponent } from './typed-form/typed-input-field.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -170,6 +171,7 @@ export function jwtOptionsFactory() {
     ResizableTextAreaDirective,
     TypedFormComponent,
     TypedInputComponent,
+    TypedInputFieldComponent,
     SettingsComponent,
   ],
   imports: [

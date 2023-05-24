@@ -1,5 +1,13 @@
 .array-input-container {
+  //display: inline-block;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 10px; /* adjust this value to add space between elements */
+}
+
+.map-input-container {
+  //display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* adjust this value to add space between elements */
 }
