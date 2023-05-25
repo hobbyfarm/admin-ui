@@ -1,8 +1,7 @@
 <!--Scalar-->
-<ng-container *ngIf="isScalarType(input)">
+<ng-container *ngIf="input.isScalarType()">
   <app-typed-input-field
     [input]="input"
-    [formGroup]="formGroup"
     [formControlRef]="getFormControl(input.id)"
     (change)="inputChanged()"
   >
@@ -10,7 +9,7 @@
 </ng-container>
 
 <!--Map-->
-<ng-container *ngIf="isMapType(input)">
+<ng-container *ngIf="input.isMapType()">
   <div>
     <b
       ><label>{{ input.name }}</label></b
@@ -27,10 +26,15 @@
           placeholder="Key"
           (input)="inputChanged()"
         />
+        <clr-control-error *clrIfError="'required'"
+          >Key required</clr-control-error
+        >
+        <clr-control-error *clrIfError="'duplicate'"
+          >Key must be unique</clr-control-error
+        >
       </clr-input-container>
       <app-typed-input-field
         [input]="input"
-        [formGroup]="formGroup"
         [formControlRef]="getMapFormControl(ctrl, 'value')"
         (change)="inputChanged()"
       >
@@ -39,6 +43,7 @@
         class="btn btn-danger-outline"
         type="button"
         (click)="removeArrayElement(input, i)"
+        [disabled]="input.getMinLength() >= i"
       >
         <clr-icon shape="trash"></clr-icon> Remove
       </button>
@@ -47,14 +52,29 @@
       class="btn btn-outline"
       type="button"
       (click)="addMapElement(input)"
+      [disabled]="getMapSize(input) >= input.getMaxLength()"
     >
       Add Element
     </button>
   </div>
+  <div *ngIf="getMapSize(input) > input.getMaxLength()">
+    <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+      <clr-alert-item>
+        <span class="alert-text"> Map takes {{input.getMaxLength()}} key/value pairs at maximum. </span>
+      </clr-alert-item>
+    </clr-alert>
+  </div>
+  <div *ngIf="input.isRequired() && getMapSize(input) == 0">
+    <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+      <clr-alert-item>
+        <span class="alert-text"> Map requires at least one value. </span>
+      </clr-alert-item>
+    </clr-alert>
+  </div>
 </ng-container>
 
 <!--Array-->
-<ng-container *ngIf="isArrayType(input)" [formGroup]="formGroup">
+<ng-container *ngIf="input.isArrayType()" [formGroup]="formGroup">
   <div>
     <b
       ><label>{{ input.name }}</label></b
@@ -65,7 +85,6 @@
     >
       <app-typed-input-field
         [input]="input"
-        [formGroup]="formGroup"
         [formControlRef]="getArrayFormControl(ctrl)"
         (change)="inputChanged()"
       >
@@ -74,6 +93,7 @@
         class="btn btn-danger-outline"
         type="button"
         (click)="removeArrayElement(input, i)"
+        [disabled]="input.getMinLength() >= i"
       >
         <clr-icon shape="trash"></clr-icon> Remove
       </button>
@@ -82,8 +102,23 @@
       class="btn btn-outline"
       type="button"
       (click)="addArrayElement(input)"
+      [disabled]="getArrayLength(input) >= input.getMaxLength()"
     >
       Add Element
     </button>
+  </div>
+  <div *ngIf="getArrayLength(input) > input.getMaxLength()">
+    <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+      <clr-alert-item>
+        <span class="alert-text"> Array takes {{input.getMaxLength()}} values at maximum. </span>
+      </clr-alert-item>
+    </clr-alert>
+  </div>
+  <div *ngIf="input.isRequired() && getArrayLength(input) == 0">
+    <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+      <clr-alert-item>
+        <span class="alert-text"> Array requires at least one value. </span>
+      </clr-alert-item>
+    </clr-alert>
   </div>
 </ng-container>

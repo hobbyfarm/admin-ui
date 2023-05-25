@@ -1,15 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import {
-  TypedInput,
-  TypedInputRepresentation,
-  TypedInputType,
-  getTypedInputFormControl,
-} from './TypedInput';
+import { TypedInput, TypedInputType } from './TypedInput';
 import {
   AbstractControl,
   FormArray,
   FormControl,
   FormGroup,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 
@@ -29,18 +25,6 @@ export class TypedInputComponent {
     this.change.emit(true);
   }
 
-  isScalarType(typedInput: TypedInput): boolean {
-    return typedInput.representation === TypedInputRepresentation.SCALAR;
-  }
-
-  isMapType(typedInput: TypedInput): boolean {
-    return typedInput.representation === TypedInputRepresentation.MAP;
-  }
-
-  isArrayType(typedInput: TypedInput): boolean {
-    return typedInput.representation === TypedInputRepresentation.ARRAY;
-  }
-
   getControls(inputId: string): AbstractControl[] {
     return (this.formGroup.get(inputId) as FormArray).controls;
   }
@@ -58,26 +42,63 @@ export class TypedInputComponent {
     return this.formGroup.controls[controlName] as FormControl;
   }
 
+  getArrayLength(typedInput: TypedInput) {
+    const control = this.formGroup.get(typedInput.id) as FormArray;
+    return control.length;
+  }
+
+  getMapSize(typedInput: TypedInput) {
+    const control = this.formGroup.get(typedInput.id) as FormArray;
+    return control.length;
+  }
+
   addArrayElement(typedInput: TypedInput) {
     const control = this.formGroup.get(typedInput.id) as FormArray;
-    control.push(getTypedInputFormControl(typedInput, ''));
-    this.inputChanged();
+    let c = typedInput.getTypedInputFormControl('');
+    control.push(c);
+    c.updateValueAndValidity();
+    setTimeout(() => {
+      // this timeout is needed to trigger the validation of the control to show errors
+      c.markAsTouched();
+      c.updateValueAndValidity();
+      this.inputChanged();
+    });
   }
 
   addMapElement(typedInput: TypedInput): void {
     const control = this.formGroup.get(typedInput.id) as FormArray;
+    let vControl = typedInput.getTypedInputFormControl('');
+    let kControl = new FormControl('', [Validators.required, this.uniquekeyvalidator]);
     control.push(
       new FormGroup({
-        key: new FormControl(''),
-        value: getTypedInputFormControl(typedInput, ''),
+        key: kControl,
+        value: vControl,
       })
     );
-    this.inputChanged();
+
+    setTimeout(() => {
+      // this timeout is needed to trigger the validation of the control to show errors
+      vControl.markAsTouched();
+      vControl.updateValueAndValidity();
+      kControl.markAsTouched();
+      kControl.updateValueAndValidity();
+      this.inputChanged();
+    });
   }
 
   removeArrayElement(typedInput: TypedInput, index: number) {
     const control = this.formGroup.get(typedInput.id) as FormArray;
     control.removeAt(index);
     this.inputChanged();
+  }
+
+  private uniquekeyvalidator(control: AbstractControl): ValidationErrors | null {
+    const parent = control.parent as FormGroup;
+    if (!parent) return null;
+    const key = control.value;
+    const siblings = (parent.parent as FormArray).controls as FormGroup[];
+    const keys = siblings.map(sibling => sibling.controls.key.value);
+    const duplicates = keys.filter(k => k === key);
+    return duplicates.length > 1 ? { 'duplicate': true } : null;
   }
 }

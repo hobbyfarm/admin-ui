@@ -13,7 +13,6 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class TypedInputFieldComponent {
   @Input() input: TypedInput;
-  @Input() formGroup: FormGroup;
   @Input() formControlRef: FormControl;
   @Output() change: EventEmitter<boolean> = new EventEmitter(null);
   readonly TypedInputType = TypedInputType; // Reference to TypedInputTypes enum for template use
