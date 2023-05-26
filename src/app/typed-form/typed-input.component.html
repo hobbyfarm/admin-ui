@@ -60,14 +60,14 @@
   <div *ngIf="getMapSize(input) > input.getMaxLength()">
     <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
       <clr-alert-item>
-        <span class="alert-text"> Map takes {{input.getMaxLength()}} key/value pairs at maximum. </span>
+        <span class="alert-text"> {{input.name}} takes {{input.getMaxLength()}} key/value pairs at maximum. </span>
       </clr-alert-item>
     </clr-alert>
   </div>
   <div *ngIf="input.isRequired() && getMapSize(input) == 0">
     <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
       <clr-alert-item>
-        <span class="alert-text"> Map requires at least one value. </span>
+        <span class="alert-text"> {{input.name}} requires at least one value. </span>
       </clr-alert-item>
     </clr-alert>
   </div>
@@ -110,14 +110,14 @@
   <div *ngIf="getArrayLength(input) > input.getMaxLength()">
     <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
       <clr-alert-item>
-        <span class="alert-text"> Array takes {{input.getMaxLength()}} values at maximum. </span>
+        <span class="alert-text"> {{input.name}} takes {{input.getMaxLength()}} values at maximum. </span>
       </clr-alert-item>
     </clr-alert>
   </div>
   <div *ngIf="input.isRequired() && getArrayLength(input) == 0">
     <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
       <clr-alert-item>
-        <span class="alert-text"> Array requires at least one value. </span>
+        <span class="alert-text"> {{input.name}} requires at least one value. </span>
       </clr-alert-item>
     </clr-alert>
   </div>

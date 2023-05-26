@@ -135,7 +135,11 @@ export class SettingsComponent {
         category: 'Array',
         type: TypedInputType.STRING,
         representation: TypedInputRepresentation.ARRAY,
-        validation: { enum: ['first', '2nd', '3rd'], required: true, maxLength: 3} as InputValidation,
+        validation: {
+          enum: ['first', '2nd', '3rd'],
+          required: true,
+          maxLength: 3,
+        } as InputValidation,
         value: ['first', 'invalid', '3rd', '2nd'],
         weight: 100,
       }),

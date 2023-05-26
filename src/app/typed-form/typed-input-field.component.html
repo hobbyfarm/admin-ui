@@ -28,6 +28,9 @@
     <clr-control-error *clrIfError="'required'"
       >Value required</clr-control-error
     >
+    <clr-control-error *clrIfError="'duplicatearrayvalue'"
+      >Dupliacte values not allowed</clr-control-error
+    >
   </clr-select-container>
 </ng-container>
 <ng-container *ngIf="!input.isEnum()">
