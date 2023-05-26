@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+} from '@angular/core';
 import { Scenario } from 'src/app/data/scenario';
 import { ClrModal } from '@clr/angular';
 
@@ -10,6 +16,7 @@ export class AddScenarioComponent {
   public addOpen: boolean = false;
 
   public selectedScenarios = [];
+  public filteredScenarios: Scenario[] = [];
 
   @Input()
   public scenarios: Scenario[] = []; // TODO - convert this to ues shared service w/ client-side caching
@@ -17,7 +24,7 @@ export class AddScenarioComponent {
   @Output()
   public selected: EventEmitter<Scenario[]> = new EventEmitter();
 
-  @ViewChild("addModal") addModal: ClrModal;
+  @ViewChild('addModal') addModal: ClrModal;
 
   save(): void {
     this.selected.emit(this.selectedScenarios);
@@ -28,5 +35,7 @@ export class AddScenarioComponent {
     this.selectedScenarios = [];
     this.addModal.open();
   }
-
+  setScenarioList(scenarios: Scenario[]) {
+    this.filteredScenarios = scenarios;
+  }
 }
