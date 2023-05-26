@@ -21,24 +21,64 @@
                 <clr-stack-label class="stackbox-header">Key</clr-stack-label>
                 <clr-stack-content class="stackbox-header">Value</clr-stack-content>
             </clr-stack-block>
-            <clr-stack-block *ngFor="let item of currentVmTemplate.config_map | keyvalue">
+            <clr-stack-block *ngFor="let item of configMap | keyvalue">
                 <clr-stack-label>{{ item.key }}</clr-stack-label>
                 <clr-stack-content>{{ item.value }}</clr-stack-content>
             </clr-stack-block>
         </clr-stack-block>
-        <clr-stack-block>
-            <clr-stack-label>Cloud-Init</clr-stack-label>
+
+        <!-- Webinterfaces -->
+        <ng-container *ngIf="!(webinterfaces.length > 0); else services">
             <clr-stack-block>
-                <clr-stack-label class="stackbox-header">Key</clr-stack-label>
-                <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+                <clr-stack-label>Services</clr-stack-label>
+                <clr-stack-content>None</clr-stack-content>
             </clr-stack-block>
+        </ng-container>
+        <ng-template #services>
+            <clr-accordion style="margin-bottom: 0;">
+                <clr-accordion-panel>
+                    <clr-accordion-title>Services</clr-accordion-title>
+                    <clr-accordion-content *clrIfExpanded>
+                        <div style="margin: 1rem">
+                            <table class="table table-compact">
+                                <th>Name</th>
+                                <th>Port</th>
+                                <th>Tab</th>
+                                <tbody>
+                                    <tr *ngFor="let webinterface of webinterfaces">
+                                        <td>{{ webinterface.name }}</td>
+                                        <td>
+                                            {{ webinterface.hasWebinterface ? webinterface.port : "-" }}
+                                        </td>
+                                        <td>{{ webinterface.hasOwnTab ? webinterface.hasOwnTab : "-" }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </clr-accordion-content>
+                </clr-accordion-panel>
+            </clr-accordion>
+        </ng-template>
+
+        <!-- Cloud-Init -->
+        <ng-container *ngIf="cloudConfigData == 'No Cloud Config defined'; else cloudConfig">
             <clr-stack-block>
-                <clr-stack-label>cloud-config</clr-stack-label>
-                <clr-stack-content>
-                    <textarea clrTextarea  style="width: 100%; height: 50vh;"  [(ngModel)]="cloudConfigData"  disabled></textarea>
-                </clr-stack-content>
+                <clr-stack-label>Cloud-Init</clr-stack-label>
+                <clr-stack-content >None</clr-stack-content>
             </clr-stack-block>
-        </clr-stack-block>
+        </ng-container>
+        <ng-template #cloudConfig>
+            <clr-accordion style="margin-bottom: 0;">
+                <clr-accordion-panel>
+                    <clr-accordion-title>Cloud-Init</clr-accordion-title>
+                    <clr-accordion-content *clrIfExpanded>
+                        <div style="margin: 1rem">
+                            <markdown [data]="cloudConfigData | language: 'yaml'"></markdown>
+                        </div>
+                    </clr-accordion-content>
+                </clr-accordion-panel>
+            </clr-accordion>
+        </ng-template>
 
 
     </clr-stack-view>
@@ -52,4 +92,3 @@
         </clr-alert>
     </ng-template>
 </div>
-

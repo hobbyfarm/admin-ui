@@ -20,8 +20,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public configMap: FormGroup;
   public buttonsDisabled: boolean = false;
 
-  private cloudConfigKey: string = 'cloud-config'
-  private vmServiceKey: string = 'webinterfaces'
+  public cloudConfigKey: string = 'cloud-config'
+  public vmServiceKey: string = 'webinterfaces'
   public cloudConfig: CloudInitConfig = new CloudInitConfig();   
 
   @Input()
