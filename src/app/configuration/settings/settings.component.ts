@@ -6,6 +6,7 @@ import {
   TypedInputRepresentation,
   InputValidation,
 } from '../../typed-form/TypedInput';
+import { TypedSettingsService } from 'src/app/data/typedSettings.service';
 
 @Component({
   selector: 'app-settings',
@@ -18,7 +19,7 @@ export class SettingsComponent {
   public valid: boolean = true;
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
 
-  constructor() {
+  constructor(typedSettingsService: TypedSettingsService) {
     // TODO 06.04.2023: Retrieve settings from gargantua here
     this.settings = [
       new TypedInput({
@@ -144,6 +145,10 @@ export class SettingsComponent {
         weight: 100,
       }),
     ];
+
+    typedSettingsService.list('public').subscribe((typedSettings) => {
+      this.settings = typedSettings;
+    });
   }
 
   onFormChange(data: TypedInput[]) {

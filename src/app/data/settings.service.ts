@@ -16,9 +16,13 @@ import {
 } from '../data/gargantua.service';
 
 export interface Settings {
-  terminal_theme: typeof themes[number]['id'];
+  terminal_theme: (typeof themes)[number]['id'];
 }
 
+/**
+ * SettingsService is used to handle Settings saved by a user.
+ * For Global Settings see TypedSettingsService
+ */
 @Injectable()
 export class SettingsService {
   constructor(private gcf: GargantuaClientFactory) {}
@@ -32,7 +36,7 @@ export class SettingsService {
       map(extractResponseContent),
       tap((s: Readonly<Settings>) => {
         this.subject.next(s);
-      }),
+      })
     );
   }
 
@@ -42,7 +46,7 @@ export class SettingsService {
       catchError((e: HttpErrorResponse) => {
         return throwError(e.error);
       }),
-      tap(() => this.subject.next(newSettings)),
+      tap(() => this.subject.next(newSettings))
     );
   }
 
@@ -51,7 +55,7 @@ export class SettingsService {
       first(),
       switchMap((currentSettings) => {
         return this.set({ ...currentSettings, ...update });
-      }),
+      })
     );
   }
 }
