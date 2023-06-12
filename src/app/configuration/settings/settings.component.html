@@ -1,9 +1,61 @@
-<button class="btn" (click)="onSubmit()" [disabled]="!hasChanges || !valid">
-  Save Changes
-</button>
-<app-typed-form
-  [typedInputs]="settings"
-  (syncedInputs)="onFormChange($event)"
-  (inputsValid)="changeFormValidity($event)"
-  [groupType]="FormGroupType.LIST"
-></app-typed-form>
+<div class="clr-row">
+  <div class="clr-col">
+    <h3>
+      Settings <span class="scope">{{ this.selectedScope ?? "scope" }}</span>
+    </h3>
+  </div>
+</div>
+<alert #alert></alert>
+<ng-container *ngIf="scopesLoading">
+  <div>
+    <span class="spinner spinner-inline"> Please wait... </span>
+    <span> Scopes are being loaded... </span>
+  </div>
+</ng-container>
+<ng-container *ngIf="!scopesLoading">
+  <clr-dropdown>
+    <b><label>Scope</label></b>
+    <button
+      class="dropdown-toggle btn btn-link"
+      clrDropdownTrigger
+      [disabled]="scopes.length == 0"
+    >
+      <span *ngIf="!this.selectedScope">Select Scope</span>
+      <span *ngIf="this.selectedScope">{{ this.selectedScope }}</span>
+      <clr-icon shape="caret down"></clr-icon>
+    </button>
+
+    <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>
+      <clr-row
+        *ngFor="let sc of scopes"
+        clrDropdownItem
+        (click)="setScope(sc)"
+        [ngClass]="{ selected: this.selectedScope == sc }"
+      >
+        {{ sc }}
+      </clr-row>
+    </clr-dropdown-menu>
+  </clr-dropdown>
+  <button class="btn" (click)="onSubmit()" [disabled]="!hasChanges || !valid">
+    Save Changes
+  </button>
+  <ng-container *ngIf="loading">
+    <div>
+      <span class="spinner spinner-inline"> Please wait... </span>
+      <span> Settings are being loaded... </span>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="!loading">
+    <app-typed-form
+      *ngIf="settings.length > 0"
+      [typedInputs]="settings"
+      (syncedInputs)="onFormChange($event)"
+      (inputsValid)="changeFormValidity($event)"
+      [groupType]="FormGroupType.TABS"
+    ></app-typed-form>
+    <div *ngIf="settings.length == 0">
+      No settings available for scope <code>{{ this.selectedScope }}</code
+      >.
+    </div>
+  </ng-container>
+</ng-container>

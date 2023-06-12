@@ -190,8 +190,8 @@ export class TypedInput {
   }
 
   getTypedInputScalarValue(value: any) {
-    // Set to default if this is invalid
-    if (value === '' && this.type === TypedInputType.STRING) {
+    // Set to default if this is empty
+    if (value === '' && this.validation.default) {
       value = this.validation.default;
     }
 

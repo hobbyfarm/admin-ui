@@ -43,7 +43,7 @@
         class="btn btn-danger-outline"
         type="button"
         (click)="removeArrayElement(input, i)"
-        [disabled]="input.getMinLength() >= i"
+        [disabled]="input.getMinLength() > i"
       >
         <clr-icon shape="trash"></clr-icon> Remove
       </button>
@@ -93,7 +93,7 @@
         class="btn btn-danger-outline"
         type="button"
         (click)="removeArrayElement(input, i)"
-        [disabled]="input.getMinLength() >= i"
+        [disabled]="input.getMinLength() > i"
       >
         <clr-icon shape="trash"></clr-icon> Remove
       </button>
