@@ -149,15 +149,6 @@ export class TypedSettingsService {
           typedInputTypeIndex == -1 ? 0 : typedInputTypeIndex
         ];
 
-      // TODO 08.06.2023
-      // Converting scalar strings will result in escaped characters, we have to parse the value once again
-      if (
-        inputType == TypedInputType.STRING &&
-        representation == TypedInputRepresentation.SCALAR
-      ) {
-        //preparedSetting.value = JSON.parse(preparedSetting.value);
-      }
-
       const setting = new TypedInput({
         id: preparedSetting.name,
         name:
