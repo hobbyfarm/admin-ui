@@ -73,8 +73,13 @@ export class TypedSettingsService {
   ];
 
   public get(scope: string, setting: string) {
-    if (this.cachedTypedInputList.has(scope)) {
-      return of(this.cachedTypedInputList.get(scope).get(setting));
+    if (this.cachedTypedInputList && this.cachedTypedInputList.has(scope)) {
+      let scopedSettings = this.cachedTypedInputList.get(scope)!;
+      if (scopedSettings.has(setting)) {
+        return of(scopedSettings.get(setting) ?? ({} as TypedInput));
+      } else {
+        return of({} as TypedInput);
+      }
     } else {
       return this.list(scope).pipe(
         tap((typedInputs: TypedInput[]) => {
@@ -84,11 +89,13 @@ export class TypedSettingsService {
           });
           this.cachedTypedInputList.set(scope, m);
         }),
-        map(typedInputs => {
-          return typedInputs.find(typedInput => {
-            return typedInput.id === setting;
-          })
-        }),
+        map((typedInputs) => {
+          return (
+            typedInputs.find((typedInput) => {
+              return typedInput.id === setting;
+            }) ?? ({} as TypedInput)
+          );
+        })
       );
     }
   }
