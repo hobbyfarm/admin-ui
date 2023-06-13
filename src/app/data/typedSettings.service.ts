@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import {
   extractResponseContent,
   GargantuaClientFactory,
@@ -7,6 +7,7 @@ import {
 import { InputValidation, TypedInput } from '../typed-form/TypedInput';
 import { TypedInputRepresentation } from '../typed-form/TypedInput';
 import { TypedInputType } from '../typed-form/TypedInput';
+import { of } from 'rxjs';
 
 export class PreparedSettings {
   name: string;
@@ -42,6 +43,9 @@ export class TypedSettingsService {
   private garg = this.gcf.scopedClient('/setting');
   private scopeGarg = this.gcf.scopedClient('/scope');
 
+  private cachedTypedInputList: Map<string, Map<string, TypedInput>> =
+    new Map();
+
   // Maps TypedInput representation to corresponding string
   private typedInputRepresentationList: TypedInputRepresentation[] = [
     TypedInputRepresentation.ARRAY,
@@ -67,6 +71,27 @@ export class TypedSettingsService {
     'float',
     'integer',
   ];
+
+  public get(scope: string, setting: string) {
+    if (this.cachedTypedInputList.has(scope)) {
+      return of(this.cachedTypedInputList.get(scope).get(setting));
+    } else {
+      return this.list(scope).pipe(
+        tap((typedInputs: TypedInput[]) => {
+          let m: Map<string, TypedInput> = new Map();
+          typedInputs.forEach((typedSetting) => {
+            m.set(typedSetting.id, typedSetting);
+          });
+          this.cachedTypedInputList.set(scope, m);
+        }),
+        map(typedInputs => {
+          return typedInputs.find(typedInput => {
+            return typedInput.id === setting;
+          })
+        }),
+      );
+    }
+  }
 
   public list(scope: string) {
     return this.garg.get('/list/' + scope).pipe(
