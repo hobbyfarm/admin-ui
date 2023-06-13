@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
     });
 
     this.typedSettingsService
-      .get('admin-ui', 'motd-admin')
+      .get('admin-ui', 'motd-admin-ui')
       .subscribe((typedInput: TypedInput) => {
         this.motd = typedInput?.value ?? '';
       });
