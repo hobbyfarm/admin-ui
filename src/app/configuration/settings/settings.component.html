@@ -1,7 +1,8 @@
 <div class="clr-row">
   <div class="clr-col">
     <h3>
-      Settings <span class="scope">{{ this.selectedScope ?? "scope" }}</span>
+      Settings
+      <span class="scope">{{ this.selectedScope.displayName ?? "scope" }}</span>
     </h3>
   </div>
 </div>
@@ -21,7 +22,9 @@
       [disabled]="scopes.length == 0"
     >
       <span *ngIf="!this.selectedScope">Select Scope</span>
-      <span *ngIf="this.selectedScope">{{ this.selectedScope }}</span>
+      <span *ngIf="this.selectedScope">{{
+        this.selectedScope.displayName
+      }}</span>
       <clr-icon shape="caret down"></clr-icon>
     </button>
 
@@ -32,7 +35,7 @@
         (click)="setScope(sc)"
         [ngClass]="{ selected: this.selectedScope == sc }"
       >
-        {{ sc }}
+        {{ sc.displayName }}
       </clr-row>
     </clr-dropdown-menu>
   </clr-dropdown>
@@ -54,7 +57,8 @@
       [groupType]="FormGroupType.TABS"
     ></app-typed-form>
     <div *ngIf="settings.length == 0">
-      No settings available for scope <code>{{ this.selectedScope }}</code
+      No settings available for scope
+      <code>{{ this.selectedScope.displayName }}</code
       >.
     </div>
   </ng-container>

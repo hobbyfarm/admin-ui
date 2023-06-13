@@ -1,6 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { TypedInput, FormGroupType } from '../../typed-form/TypedInput';
-import { TypedSettingsService } from 'src/app/data/typedSettings.service';
+import {
+  PreparedScope,
+  TypedSettingsService,
+} from 'src/app/data/typedSettings.service';
 import { AlertComponent } from 'src/app/alert/alert.component';
 
 @Component({
@@ -13,8 +16,8 @@ export class SettingsComponent {
   public updatedSettings: TypedInput[] = [];
   public hasChanges: boolean = false;
   public valid: boolean = true;
-  public scopes: string[] = [];
-  public selectedScope: string;
+  public scopes: PreparedScope[] = [];
+  public selectedScope: PreparedScope;
   public loading: boolean = true;
   public scopesLoading: boolean = true;
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
@@ -58,10 +61,10 @@ export class SettingsComponent {
     );
   }
 
-  setScope(scope: string) {
+  setScope(scope: PreparedScope) {
     this.loading = true;
     this.selectedScope = scope;
-    this.typedSettingsService.list(this.selectedScope).subscribe(
+    this.typedSettingsService.list(this.selectedScope.name).subscribe(
       (typedSettings) => {
         this.settings = typedSettings;
         this.loading = false;
@@ -73,10 +76,16 @@ export class SettingsComponent {
   }
 
   getScopes() {
-    this.scopes = ['public', 'default', 'private']; // TODO retreive scopes
-    //  this.typedSettingsService
-    //  .listScopes().subscribe((scopes) => {this.scopes = scopes})
-    this.scopesLoading = false;
-    this.setScope(this.scopes[0]);
+    this.scopes = [];
+    this.typedSettingsService.listScopes().subscribe(
+      (scopes) => {
+        this.scopes = scopes;
+        this.scopesLoading = false;
+        this.setScope(this.scopes[0]);
+      },
+      (err) => {
+        this.alert.danger(err.error.message, true, this.alertErrorTime);
+      }
+    );
   }
 }

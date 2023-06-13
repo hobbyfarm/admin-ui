@@ -31,6 +31,11 @@ export class PreparedSettings {
   uniqueItems?: boolean;
 }
 
+export class PreparedScope {
+  name: string;
+  displayName: string;
+}
+
 @Injectable()
 export class TypedSettingsService {
   constructor(private gcf: GargantuaClientFactory) {}
@@ -67,8 +72,8 @@ export class TypedSettingsService {
     return this.garg.get('/list/' + scope).pipe(
       map(extractResponseContent),
       map((pList: PreparedSettings[]) => {
-        if(!pList){
-            return [];
+        if (!pList) {
+          return [];
         }
         return this.buildTypedInputList(pList);
       })
@@ -80,10 +85,13 @@ export class TypedSettingsService {
     return this.garg.put('/updatecollection', JSON.stringify(preparedSettings));
   }
 
-  public listScopes(){
+  public listScopes() {
     return this.scopeGarg.get('/list').pipe(
-        map(extractResponseContent)
-      );
+      map(extractResponseContent),
+      map((pList: PreparedScope[]) => {
+        return pList ?? [];
+      })
+    );
   }
 
   private buildTypedInputList(pList: PreparedSettings[]) {
@@ -151,7 +159,6 @@ export class TypedSettingsService {
   private buildPreparedSettingsList(inputs: TypedInput[]) {
     let preparedSettings: Partial<PreparedSettings>[] = [];
     inputs.forEach((input: TypedInput) => {
-
       // Maps will not be converted correctly with JSON.stringify, we have to convert them to an Object.
       if (input.representation == TypedInputRepresentation.MAP) {
         let jsonObject = {};
@@ -159,7 +166,7 @@ export class TypedSettingsService {
           jsonObject[key] = value;
         });
         input.value = jsonObject;
-       }
+      }
 
       const setting = {
         name: input.id,
