@@ -17,6 +17,7 @@ import { StepComponent } from './step/step-component/step.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
 import { RolesComponent } from './configuration/roles/roles/roles.component';
 import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
+import {SettingsComponent} from './configuration/settings/settings.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -79,6 +80,10 @@ const routes: Routes = [
       AuthGuard
     ],
     children: [
+      {
+        path: 'settings',
+        component: SettingsComponent
+      },
       {
         path: 'environments',
         component: EnvironmentsComponent

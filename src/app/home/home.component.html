@@ -1,6 +1,8 @@
 <div class="main-container">
     <header class="header header-7" app-header></header>
-    <!-- <p class="welcome-msg">Welcome to the Admin Page</p> -->
+    <div class="motd-container" *ngIf="motd">
+        <p class="motd">{{motd}}</p>
+    </div>
     <div class="content-container">
         <nav class="sidenav">
             <section class="sidenav-content">

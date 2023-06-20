@@ -34,7 +34,6 @@ import {
   Validators,
   FormArray,
   ValidatorFn,
-  ValidationErrors,
   FormBuilder,
   AbstractControl,
 } from '@angular/forms';
@@ -42,7 +41,6 @@ import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 import { RbacService } from 'src/app/data/rbac.service';
 import { of } from 'rxjs';
-import { arrayHead } from '@cds/core/internal';
 
 @Component({
   selector: 'new-scheduled-event',

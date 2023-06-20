@@ -1,0 +1,46 @@
+<form [formGroup]="formGroup" clrForm (change)="onFormChanged()">
+  <ng-container *ngIf="groupType === FormGroupType.LIST">
+    <ng-container *ngFor="let group of groupedInputs | keyvalue">
+      <h3>{{ group.key }}</h3>
+      <ng-container *ngFor="let input of group.value">
+        <app-typed-input
+          [input]="input"
+          [formGroup]="formGroup"
+          (change)="onFormChanged()"
+        ></app-typed-input>
+      </ng-container>
+      <hr />
+    </ng-container>
+  </ng-container>
+  <ng-container
+    *ngIf="
+      groupType === FormGroupType.TABS ||
+      groupType === FormGroupType.TABS_VERTICAL
+    "
+  >
+    <clr-tabs
+      [clrLayout]="
+        groupType === FormGroupType.TABS_VERTICAL ? 'vertical' : 'horizontal'
+      "
+    >
+      <ng-container
+        *ngFor="let group of groupedInputs | keyvalue; let i = index"
+      >
+        <clr-tab #tab>
+          <button clrTabLink [id]="'tablink-' + i" (click)="activeTab = i">
+            {{ group.key }}
+          </button>
+          <clr-tab-content [id]="'content-' + i" *clrIfActive="activeTab === i">
+            <ng-container *ngFor="let input of group.value">
+              <app-typed-input
+                [input]="input"
+                [formGroup]="formGroup"
+                (change)="onFormChanged()"
+              ></app-typed-input>
+            </ng-container>
+          </clr-tab-content>
+        </clr-tab>
+      </ng-container>
+    </clr-tabs>
+  </ng-container>
+</form>
