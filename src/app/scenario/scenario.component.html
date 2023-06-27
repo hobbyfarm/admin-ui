@@ -769,8 +769,7 @@
   <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
   <clr-wizard-page clrWizardPagePreventDefault="true"
-  (clrWizardPageOnCommit)="onCommit()"
-  (clrWizardPageOnCancel)="doCancel()">
+  [clrWizardPageNextDisabled]="!scenarioDetails.valid" (clrWizardPageNext)="addNewScenario()">
       <ng-template clrPageTitle>Create a new Scenario</ng-template>
       <div class="modal-body">
         <form clrForm [formGroup]="scenarioDetails">
@@ -870,19 +869,6 @@
             >
           </clr-input-container>
         </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-danger-outline" (click)="newScenarioOpen = false">
-          Cancel
-        </button>
-        <button
-          class="btn btn-success"
-          (click)="addNewScenario()"
-          [disabled]="!scenarioDetails.valid"
-          *rbac="['scenarios.update']"
-        >
-          Save
-        </button>
       </div>
   </clr-wizard-page>
 
