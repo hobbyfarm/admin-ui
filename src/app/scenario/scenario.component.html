@@ -42,6 +42,16 @@
       <clr-icon shape="plus"></clr-icon> New Scenario
     </button>
   </div>
+
+  <div class="clr-col">
+    <button
+      class="btn btn-warning"
+      (click)="openNewScenarioWizard()"
+      *rbac="['scenarios.create']"
+    >
+    <clr-icon shape="warning-standard" solid></clr-icon><clr-icon shape="plus"></clr-icon> New Scenario(under development)
+    </button>
+  </div>
 </div>
 <div class="clr-row">
   <div class="clr-col-12 clr-col-md-6">
@@ -742,3 +752,147 @@
     </button>
   </div>
 </clr-modal>
+
+<!-- <clr-wizard #newscenariowizard [(clrWizardOpen)]="newScenarioWizardOpen">
+
+  
+</clr-wizard> -->
+
+<clr-wizard #newscenariowizard [(clrWizardOpen)]="newScenarioWizardOpen">
+  <clr-wizard-title>New Scenario
+
+  </clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+  <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+
+  <clr-wizard-page clrWizardPagePreventDefault="true"
+  (clrWizardPageOnCommit)="onCommit()"
+  (clrWizardPageOnCancel)="doCancel()">
+      <ng-template clrPageTitle>Create a new Scenario</ng-template>
+      <div class="modal-body">
+        <form clrForm [formGroup]="scenarioDetails">
+          <clr-input-container>
+            <label>Name</label>
+            <input clrInput type="text" formControlName="scenario_name" required />
+            <clr-control-error *clrIfError="'required'"
+              >Scenario name is required</clr-control-error
+            >
+            <clr-control-error *clrIfError="'minlength'"
+              >Scenario name must be longer than 4 characters
+            </clr-control-error>
+          </clr-input-container>
+          <clr-input-container>
+            <label>Description</label>
+            <input
+              clrInput
+              type="text"
+              formControlName="scenario_description"
+              required
+            />
+            <clr-control-error *clrIfError="'required'"
+              >Scenario description is required</clr-control-error
+            >
+            <clr-control-error *clrIfError="'minlength'"
+              >Scenario description must be longer than 4 characters
+            </clr-control-error>
+          </clr-input-container>
+          <div class="clr-form-control clr-row">
+            <label for="keepalive_amount" class="clr-control-label"
+              >Keepalive Duration</label
+            >
+            <div
+              class="clr-control-container clr-col-md-10 clr-col-12"
+              [class.clr-error]="
+                keepaliveRequired || scenarioDetails.errors?.invalidKeepalivePeriod
+              "
+            >
+              <div class="clr-input-wrapper">
+                <div class="clr-input-group">
+                  <input
+                    type="number"
+                    id="keepalive_amount"
+                    formControlName="keepalive_amount"
+                    class="clr-input"
+                  />
+                  <select formControlName="keepalive_unit">
+                    <option value="h">Hour(s)</option>
+                    <option value="m">Minute(s)</option>
+                  </select>
+                </div>
+                <clr-icon
+                  class="clr-validate-icon"
+                  shape="exclamation-circle"
+                ></clr-icon>
+              </div>
+              <span
+                class="clr-subtext"
+                *ngIf="
+                  !keepaliveRequired &&
+                  !scenarioDetails.errors?.invalidKeepalivePeriod
+                "
+                >Period before VMs are reaped upon user inactivity.</span
+              >
+              <span class="clr-subtext" *ngIf="keepaliveRequired"
+                >Keepalive duration is required.</span
+              >
+              <span
+                class="clr-subtext"
+                *ngIf="scenarioDetails.errors?.invalidKeepalivePeriod"
+                >Invalid keepalive period. Valid periods: 1m to 48h inclusive.</span
+              >
+            </div>
+          </div>
+          <clr-input-container>
+            <label>Pause Duration</label>
+            <input
+              clrInput
+              type="number"
+              name="pause_duration"
+              placeholder="Duration in hours"
+              formControlName="pause_duration"
+              required
+            />
+            <clr-control-helper
+              >Period in hours that a user may pause their
+              scenario.</clr-control-helper
+            >
+            <clr-control-error *clrIfError="'required'"
+              >Pause duration is required.</clr-control-error
+            >
+            <clr-control-error *clrIfError="'min'"
+              >Pause duration must be 1 hour minimum.</clr-control-error
+            >
+            <clr-control-error *clrIfError="'max'"
+              >Pause duration must be 48 hours maximum.</clr-control-error
+            >
+          </clr-input-container>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger-outline" (click)="newScenarioOpen = false">
+          Cancel
+        </button>
+        <button
+          class="btn btn-success"
+          (click)="addNewScenario()"
+          [disabled]="!scenarioDetails.valid"
+          *rbac="['scenarios.update']"
+        >
+          Save
+        </button>
+      </div>
+  </clr-wizard-page>
+
+  <clr-wizard-page>
+      <ng-template clrPageTitle>Virtual Machines</ng-template>
+      ...
+  </clr-wizard-page>
+
+  <clr-wizard-page>
+      <ng-template clrPageTitle>Page 3</ng-template>
+      ...
+  </clr-wizard-page>
+</clr-wizard>

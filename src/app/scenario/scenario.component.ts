@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
-import { ClrDatagridSortOrder, ClrModal } from '@clr/angular';
+import { ClrDatagridSortOrder, ClrModal, ClrWizard } from '@clr/angular';
 import { Step } from '../data/step';
 import { ServerResponse } from '../data/serverresponse';
 import { deepCopy } from '../deepcopy';
@@ -47,6 +47,9 @@ export class ScenarioComponent implements OnInit {
   public deleteStepOpen: boolean = false;
   public createVMOpen: boolean = false;
   public newScenarioOpen: boolean = false;
+  public newScenarioWizardOpen: boolean = false;
+  public loadingFlag: boolean = false;
+  public  errorFlag: boolean = false; 
 
   public newCategory: boolean = false;
   public newTag: boolean = false;
@@ -145,11 +148,15 @@ export class ScenarioComponent implements OnInit {
     }
   }
 
+
+
   @ViewChild('editmodal', { static: true }) editModal: ClrModal;
   @ViewChild('deletevmsetmodal', { static: true }) deleteVMSetModal: ClrModal;
   @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
   @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
   @ViewChild('newscenariomodal', { static: true }) newScenarioModal: ClrModal;
+  @ViewChild('newscenariowizard', {static: true}) newScenarioWizard: ClrWizard;
+  @ViewChild("myForm") formData: any;
 
   openEdit(s: Step, i: number) {
     if (this.selectedscenario.steps.length == 0) {
@@ -190,6 +197,29 @@ export class ScenarioComponent implements OnInit {
     this.newScenario = new Scenario();
     this.newScenarioModal.open();
   }
+
+  openNewScenarioWizard(){
+    this.newScenario = new Scenario();
+    this.newScenarioWizard.open();
+  }
+
+  doCancel(): void {
+    this.newScenarioWizard.close();
+}
+onCommit(): void {
+  let value: any = this.formData.value;
+  this.loadingFlag = true;
+  this.errorFlag = false;
+
+  setTimeout(() => {
+      if (value.answer === "42") {
+          this.newScenarioWizard.forceNext();
+      } else {
+          this.errorFlag = true;
+      }
+      this.loadingFlag = false;
+  }, 1000);
+}
 
   openNewStep() {
     this.editingIndex = this.selectedscenario.steps.length;
