@@ -138,4 +138,8 @@ export class ScenarioService {
   public printable(id: string) {
     return this.http.get(environment.server + "/a/scenario/" + id + "/printable", {responseType: 'text'})
   }
+
+  public delete(id: string){
+    return this.http.delete(environment.server + "/a/scenario/" + id)
+  }
 }

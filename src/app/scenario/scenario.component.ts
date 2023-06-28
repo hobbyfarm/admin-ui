@@ -155,6 +155,7 @@ export class ScenarioComponent implements OnInit {
   @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
   @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
   @ViewChild('newscenariomodal', { static: true }) newScenarioModal: ClrModal;
+  @ViewChild('deletescenariomodal', { static: true }) deleteScenarioModal: ClrModal;
   @ViewChild('newscenariowizard', {static: true}) newScenarioWizard: ClrWizard;
   @ViewChild("myForm") formData: any;
 
@@ -305,7 +306,7 @@ onCommit(): void {
         this._displayAlert(s, false);
       }
     );
-
+    console.log(this.selectedscenario)
     this.newScenarioModal.close();
   }
 
@@ -466,12 +467,16 @@ onCommit(): void {
   setScenarioList(scenarios: Scenario[]) {
     this.filteredScenarios = scenarios;
   }
+  doDeleteScenario(){
+    this.deleteScenarioModal.close()
+  }
 
   ngOnInit() {
     // "Get" Permission on scenarios is required to load step content
     this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
       this.selectRbac = allowed;
     });
+
 
     this.rbacService
       .Grants('virtualmachinesets', 'list')
