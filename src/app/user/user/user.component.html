@@ -1,66 +1,103 @@
 <div class="main-container">
-    <header class="header header-7" app-header></header>
-    <div class="content-container">
-        <div class="content-area">
-            <h3>User Management</h3>
-            <div class="clr-row">
-                <div class="clr-col-4">
-                    <clr-datagrid  [(clrDgSelected)]="selectedUsers" [clrDgPreserveSelection]="true" [clrDisableSelection]="!selectRbac">
-                        <clr-dg-column>
-                            Email
-                            <clr-dg-string-filter [clrDgStringFilter]="emailFilter"></clr-dg-string-filter>
-                        </clr-dg-column>
-                        <clr-dg-column>
-                            Access Codes
-                            <clr-dg-string-filter [clrDgStringFilter]="accescodeFilter"></clr-dg-string-filter>
-                        </clr-dg-column>
+  <header class="header header-7" app-header></header>
+  <div class="content-container">
+    <div class="content-area">
+      <h3>User Management</h3>
+      <div class="clr-row">
+        <div class="clr-col-4">
+          <clr-datagrid
+            [(clrDgSelected)]="selectedUsers"
+            [clrDgPreserveSelection]="true"
+            [clrDisableSelection]="!selectRbac"
+          >
+            <clr-dg-column>
+              Email
+              <clr-dg-string-filter
+                [clrDgStringFilter]="emailFilter"
+              ></clr-dg-string-filter>
+            </clr-dg-column>
+            <clr-dg-column>
+              Access Codes
+              <clr-dg-string-filter
+                [clrDgStringFilter]="accescodeFilter"
+              ></clr-dg-string-filter>
+            </clr-dg-column>
 
-                        <clr-dg-row *clrDgItems="let u of users" [clrDgItem]="u" (click)="setSelectedUser(u)" [class.isSingleSelected]="u == selectedUser" class="userRow" [class.isMultiSelected]="selectedUsers.includes(u)">
-                            <clr-dg-cell>{{ u.email }}</clr-dg-cell>
-                            <clr-dg-cell>{{ u.access_codes }}</clr-dg-cell>
-                        </clr-dg-row>
+            <clr-dg-row
+              *clrDgItems="let u of users"
+              [clrDgItem]="u"
+              (click)="setSelectedUser(u)"
+              [class.isSingleSelected]="u == selectedUser"
+              class="userRow"
+              [class.isMultiSelected]="selectedUsers.includes(u)"
+            >
+              <clr-dg-cell>{{ u.email }}</clr-dg-cell>
+              <clr-dg-cell>{{ u.access_codes }}</clr-dg-cell>
+            </clr-dg-row>
 
-                        <clr-dg-footer>
-                            <clr-dg-action-bar>
-                                <button type="button" class="btn btn-sm btn-secondary btn-danger-outline" [disabled]="selectedUsers.length < 1" (click)="deleteMultiple()" *rbac="['users.delete']"><clr-icon shape="close"></clr-icon> Delete selected</button>
-                            </clr-dg-action-bar>
-                            <clr-dg-pagination #pagination [clrDgPageSize]="10">
-                                <clr-dg-page-size [clrPageSizeOptions]="[10, 20, 50]">Users per page</clr-dg-page-size>
-                                {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
-                                of {{pagination.totalItems}} users
-                            </clr-dg-pagination>
-                        </clr-dg-footer>
-                    </clr-datagrid>
-                </div>
-                <div class="clr-col-8">
-                    <ng-container *ngIf="selectedUser">
-                        <clr-tabs>
-                            <clr-tab>
-                                <button clrTabLink>Basic Info</button>
-                                <clr-tab-content *clrIfActive>
-                                    <edit-user (deleted)="doOnDeleteCompletion()" [user]="selectedUser"></edit-user>
-                                </clr-tab-content>
-                            </clr-tab>
-                            <clr-tab>
-                                <button clrTabLink>Access Codes</button>
-                                <clr-tab-content *clrIfActive>
-                                    <edit-access-codes [user]="selectedUser"></edit-access-codes>
-                                </clr-tab-content>
-                            </clr-tab>
-                            <ng-container *rbac="['rolebindings.list']">
-                                <clr-tab>
-                                    <button clrTabLink>Role Bindings</button>
-                                    <clr-tab-content *clrIfActive>
-                                        <rolebindings [user]="selectedUser"></rolebindings>
-                                    </clr-tab-content>
-                                </clr-tab>
-                            </ng-container>
-                        </clr-tabs>
-                    </ng-container>
-                </div>
-            </div>            
+            <clr-dg-footer>
+              <clr-dg-action-bar>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-secondary btn-danger-outline"
+                  [disabled]="selectedUsers.length < 1"
+                  (click)="deleteMultiple()"
+                  *rbac="['users.delete']"
+                >
+                  <clr-icon shape="close"></clr-icon> Delete selected
+                </button>
+              </clr-dg-action-bar>
+              <clr-dg-pagination #pagination [clrDgPageSize]="10">
+                <clr-dg-page-size [clrPageSizeOptions]="[10, 20, 50]"
+                  >Users per page</clr-dg-page-size
+                >
+                {{ pagination.firstItem + 1 }} -
+                {{ pagination.lastItem + 1 }} of
+                {{ pagination.totalItems }} users
+              </clr-dg-pagination>
+            </clr-dg-footer>
+          </clr-datagrid>
         </div>
+        <div class="clr-col-8">
+          <ng-container *ngIf="selectedUser">
+            <clr-tabs>
+              <clr-tab>
+                <button clrTabLink>Basic Info</button>
+                <clr-tab-content *clrIfActive>
+                  <edit-user
+                    (deleted)="doOnDeleteCompletion()"
+                    [user]="selectedUser"
+                  ></edit-user>
+                </clr-tab-content>
+              </clr-tab>
+              <clr-tab>
+                <button clrTabLink>Access Codes</button>
+                <clr-tab-content *clrIfActive>
+                  <edit-access-codes [user]="selectedUser"></edit-access-codes>
+                </clr-tab-content>
+              </clr-tab>
+              <ng-container *rbac="['rolebindings.list']">
+                <clr-tab>
+                  <button clrTabLink>Role Bindings</button>
+                  <clr-tab-content *clrIfActive>
+                    <rolebindings [user]="selectedUser"></rolebindings>
+                  </clr-tab-content>
+                </clr-tab>
+              </ng-container>
+            </clr-tabs>
+          </ng-container>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
-<delete-confirmation #deleteconfirm [message] = '"Are you sure you wish to delete these objects?"' (delete)="doDeleteMultiple()"></delete-confirmation>
-<delete-process-modal #deleteprocess (done)="doOnDeleteCompletion()" [selectedUsers]="selectedUsers"></delete-process-modal>
+<delete-confirmation
+  #deleteconfirm
+  [message]="'Are you sure you wish to delete these objects?'"
+  (delete)="doDeleteMultiple()"
+></delete-confirmation>
+<delete-process-modal
+  #deleteprocess
+  (done)="doOnDeleteCompletion()"
+  [selectedUsers]="selectedUsers"
+></delete-process-modal>

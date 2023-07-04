@@ -139,7 +139,7 @@ export class ScenarioService {
 
     return this.http.post(environment.server + '/a/scenario/new', params).pipe(
       catchError((e: HttpErrorResponse) => {
-        return throwError(e.error)
+        return throwError(e.error);
       }),
       map((s: ServerResponse) => {
         return s.message;
