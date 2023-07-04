@@ -3,15 +3,16 @@ import {
   HttpClient,
   HttpParams,
   HttpParameterCodec,
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { first, map, tap } from 'rxjs/operators';
+import { catchError, first, map, tap } from 'rxjs/operators';
 import { Scenario } from './scenario';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
 import { atou, utoa } from '../unicode';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, throwError } from 'rxjs';
 
 class CustomEncoder implements HttpParameterCodec {
   encodeKey(key: string): string {
@@ -137,6 +138,9 @@ export class ScenarioService {
       .set('keepalive_duration', s.keepalive_duration);
 
     return this.http.post(environment.server + '/a/scenario/new', params).pipe(
+      catchError((e: HttpErrorResponse) => {
+        return throwError(e.error)
+      }),
       map((s: ServerResponse) => {
         return s.message;
       }),

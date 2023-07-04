@@ -39,6 +39,9 @@ export class UserComponent implements OnInit {
     this.rbacService.Grants("users", "list").then(async (allowedGet: boolean) => {
       this.selectRbac =  await this.rbacService.Grants("users", "get");
       this.refresh();
+      this.userService.watch().subscribe((u: User[])=>{
+        this.users = u;
+      })
     });
   }
 
@@ -70,7 +73,7 @@ export class UserComponent implements OnInit {
 
   doOnDeleteCompletion() {    
       this.selectedUsers = []
-      this.refresh(true)
+      this.selectedUser = null;
   }
 
 }

@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { environment } from 'src/environments/environment';
 import { switchMap, catchError, tap } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
-import { of, throwError } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { atou } from '../unicode';
 import { User } from './user';
 
@@ -13,6 +13,13 @@ import { User } from './user';
 export class UserService {
   private cachedUserList: User[] = []
   private fetchedList = false;
+  private bh: BehaviorSubject<User[]> = new BehaviorSubject(
+    this.cachedUserList
+  );
+
+  public watch() {
+    return this.bh.asObservable();
+  }
 
   constructor(
     public http: HttpClient
@@ -53,6 +60,7 @@ export class UserService {
   public set(list: User[]) {
     this.cachedUserList = list;
     this.fetchedList = true;
+    this.bh.next(this.cachedUserList);
   }
 
   public saveUser(id: string, email: string = "", password: string = "", accesscodes: string[] = null)  {
@@ -78,6 +86,10 @@ export class UserService {
       .pipe(
         catchError((e: HttpErrorResponse) => {
           return throwError(e.error)
+        }),
+        tap(()=>{
+          this.cachedUserList = this.cachedUserList.filter( (user) => user.id != id);
+          this.set(this.cachedUserList);
         })
       )
   }
