@@ -9,7 +9,6 @@ import {
 import {
   ClrWizard,
   ClrSignpostContent,
-  ClrDatagrid,
   ClrDatagridSortOrder,
 } from '@clr/angular';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
@@ -118,9 +117,7 @@ export class NewScheduledEventComponent implements OnInit {
     access_code: new FormControl(this.se.access_code, [
       Validators.required,
       Validators.minLength(5),
-      Validators.pattern(
-        /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/
-      ),
+      Validators.pattern(/^[a-z0-9][a-z0-9.-]{3,}[a-z0-9]$/),
       this.uniqueAccessCode(),
     ]),
     restricted_bind: new FormControl(true),
@@ -481,23 +478,11 @@ export class NewScheduledEventComponent implements OnInit {
 
       // auto-select the environments
       this.se.scenarios = this.se.scenarios ?? [];
-      this.se.scenarios.forEach((sid: string) => {
-        // find matching if there is one, and push into selectedscenarios
-        this.scenarios.map((s: Scenario) => {
-          if (s.id == sid) {
-            this.selectedscenarios.push(s);
-          }
-        });
-      });
+      this.updateScenarioSelection(this.se.scenarios);
+
       this.se.courses = this.se.courses ?? [];
-      this.se.courses.forEach((sid: string) => {
-        // find matching if there is one, and push into selectedcourses
-        this.courses.map((c: Course) => {
-          if (c.id == sid) {
-            this.selectedcourses.push(c);
-          }
-        });
-      });
+      this.updateCourseSelection(this.se.courses);
+
       this.rbacService
         .Grants('environments', 'list')
         .then((allowListEnvironments: boolean) => {
@@ -547,11 +532,21 @@ export class NewScheduledEventComponent implements OnInit {
       if (allowListScenarios) {
         this.ss.list().subscribe((s: Scenario[]) => {
           this.scenarios = s;
+          this.updateScenarioSelection(this.se.scenarios ?? []);
+        });
+        this.ss.watch().subscribe((s: Scenario[]) => {
+          this.scenarios = s;
+          this.updateScenarioSelection(this.se.scenarios ?? []);
         });
       }
       if (allowListCourses) {
         this.cs.list().subscribe((c: Course[]) => {
           this.courses = c;
+          this.updateCourseSelection(this.se.courses ?? []);
+        });
+        this.cs.watch().subscribe((c: Course[]) => {
+          this.courses = c;
+          this.updateCourseSelection(this.se.courses ?? []);
         });
       }
     });
@@ -669,6 +664,22 @@ export class NewScheduledEventComponent implements OnInit {
         if (this.event) {
           // we are updating instead of creating new
           // so we need to select the environments
+
+          //increase the number of available VMs by the count of VMs currently set for this event (we can still use them)
+          this.availableEnvironments = this.availableEnvironments.map(
+            (ea: EnvironmentAvailability) => {
+              if (this.event.required_vms[ea.environment]) {
+                for (const [vmt, count] of Object.entries(ea.available_count)) {
+                  if (this.event.required_vms[ea.environment][vmt]) {
+                    ea.available_count[vmt] =
+                      count + this.event.required_vms[ea.environment][vmt];
+                  }
+                }
+              }
+              return ea;
+            }
+          );
+
           this._mapExistingEnvironments(Object.keys(this.event.required_vms));
         } else if (Object.keys(this.vmCounts.controls).length > 0) {
           // there exists fields filled in for vm counts - user probably went back in the form
@@ -679,11 +690,39 @@ export class NewScheduledEventComponent implements OnInit {
 
   private _mapExistingEnvironments(envs: string[]) {
     envs.forEach((eid: string) => {
-      this.availableEnvironments.map((ea: EnvironmentAvailability) => {
+      this.availableEnvironments.forEach((ea: EnvironmentAvailability) => {
         if (ea.environment == eid) {
           this.selectedEnvironments.push(ea);
         }
       });
+    });
+  }
+
+  private updateScenarioSelection(curSel: string[]) {
+    const scenarioMap: Map<string, Scenario> = new Map();
+    this.scenarios.forEach((s: Scenario) => {
+      scenarioMap.set(s.id, s);
+    });
+
+    curSel.forEach((sid: string) => {
+      // find matching if there is one, and push into selectedscenarios
+      if (scenarioMap.has(sid)) {
+        this.selectedscenarios.push(scenarioMap.get(sid));
+      }
+    });
+  }
+
+  private updateCourseSelection(curSel: string[]) {
+    const courseMap: Map<string, Course> = new Map();
+    this.courses.forEach((c: Course) => {
+      courseMap.set(c.id, c);
+    });
+
+    curSel.forEach((cid: string) => {
+      // find matching if there is one, and push into selectedcourses
+      if (courseMap.has(cid)) {
+        this.selectedcourses.push(courseMap.get(cid));
+      }
     });
   }
 
