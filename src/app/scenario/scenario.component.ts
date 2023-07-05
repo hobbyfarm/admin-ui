@@ -268,8 +268,8 @@ export class ScenarioComponent implements OnInit {
 
     // should be able to save at this point
     this.scenarioService.create(this.newScenario).subscribe(
-      (s: string) => {
-        this._displayAlert(s, true);
+      (s: Scenario) => {
+        this._displayAlert(s.name, true);
       },
       (s: string) => {
         this._displayAlert(s, false);

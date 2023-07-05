@@ -3,22 +3,21 @@ import { UserService } from 'src/app/data/user.service';
 import { User } from 'src/app/data/user';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { UserEmailFilter } from 'src/app/user-email-filter';
-import { UserAccesscodeFilter } from 'src/app/user-accescode-filter'
+import { UserAccesscodeFilter } from 'src/app/user-accescode-filter';
 import { DeleteProcessModalComponent } from './delete-process-modal/delete-process-modal.component';
 import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-confirmation.component';
 import { RbacService } from 'src/app/data/rbac.service';
 
-
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.scss']
+  styleUrls: ['./user.component.scss'],
 })
 export class UserComponent implements OnInit {
   public users: User[] = [];
 
   public selectedUser: User;
-  public selectedUsers: User[] = [];  
+  public selectedUsers: User[] = [];
 
   public selectRbac: boolean = false;
 
@@ -30,33 +29,37 @@ export class UserComponent implements OnInit {
   constructor(
     public userService: UserService,
     public rbacService: RbacService
-  ) { }
+  ) {}
 
   public emailFilter: UserEmailFilter = new UserEmailFilter();
   public accescodeFilter: UserAccesscodeFilter = new UserAccesscodeFilter();
 
   ngOnInit() {
-    this.rbacService.Grants("users", "list").then(async (allowedGet: boolean) => {
-      this.selectRbac =  await this.rbacService.Grants("users", "get");
-      this.refresh();
-    });
+    this.rbacService
+      .Grants('users', 'list')
+      .then(async (allowedGet: boolean) => {
+        this.selectRbac = await this.rbacService.Grants('users', 'get');
+        this.refresh();
+        this.userService.watch().subscribe((u: User[]) => {
+          this.users = u;
+        });
+      });
   }
 
   refresh(force?: boolean) {
-    this.userService.getUsers(force)
-      .subscribe(
-        (u: User[]) => {
-          this.users = u;
-        },
-        (s: ServerResponse) => {
-          // do something about failure
-        }
-      )
+    this.userService.getUsers(force).subscribe(
+      (u: User[]) => {
+        this.users = u;
+      },
+      (s: ServerResponse) => {
+        // do something about failure
+      }
+    );
   }
 
   setSelectedUser(u: User) {
-    if(this.selectRbac){
-      this.selectedUser = u
+    if (this.selectRbac) {
+      this.selectedUser = u;
     }
   }
 
@@ -65,12 +68,11 @@ export class UserComponent implements OnInit {
   }
 
   doDeleteMultiple() {
-    this.deleteProcessModal.open()
+    this.deleteProcessModal.open();
   }
 
-  doOnDeleteCompletion() {    
-      this.selectedUsers = []
-      this.refresh(true)
+  doOnDeleteCompletion() {
+    this.selectedUsers = [];
+    this.selectedUser = null;
   }
-
 }
