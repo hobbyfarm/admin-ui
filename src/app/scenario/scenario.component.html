@@ -36,30 +36,21 @@
   <div class="clr-col">
     <button
       class="btn btn-success"
-      (click)="openNewScenario()"
-      *rbac="['scenarios.create']"
-    >
-      <clr-icon shape="plus"></clr-icon> New Scenario
-    </button>
-  </div>
-
-  <div class="clr-col">
-    <button
-      class="btn btn-warning"
       (click)="openNewScenarioWizard()"
       *rbac="['scenarios.create']"
     >
-    <clr-icon shape="warning-standard" solid></clr-icon><clr-icon shape="plus"></clr-icon> New Scenario(under development)
+      <clr-icon shape="plus"></clr-icon> New Scenario
     </button>
   </div>
 </div>
 <div class="clr-row">
   <div class="clr-col-12 clr-col-md-6">
     <filter-scenarios
+      #scenarioFilter
       (filterScenarioEventEmitter)="setScenarioList($event)"
     ></filter-scenarios>
     <clr-datagrid
-      [clrDgSingleSelected]="unusedSelectedScenario"
+      [(clrDgSingleSelected)]="unusedSelectedScenario"
       (clrDgSingleSelectedChange)="editScenario($event)"
       [clrDisableSelection]="!selectRbac"
     >
@@ -68,6 +59,10 @@
         >Name</clr-dg-column
       >
       <clr-dg-row *clrDgItems="let s of filteredScenarios" [clrDgItem]="s">
+        <clr-dg-action-overflow >
+          <button class="action-item" >Edit</button>
+          <button class="action-item">Delete</button>
+      </clr-dg-action-overflow>
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
         <clr-dg-cell>{{ s.name }}</clr-dg-cell>
       </clr-dg-row>
@@ -244,7 +239,11 @@
             >
               <button class="btn btn-info-outline">Print</button>
             </a>
-            <button class="btn btn-danger-outline" *rbac="['scenarios.delete']">
+            <button
+              class="btn btn-danger-outline"
+              *rbac="['scenarios.delete']"
+              (click)="openDeleteScenario()"
+            >
               Delete
             </button>
             <button
@@ -472,6 +471,277 @@
     </ng-container>
   </div>
 </div>
+<clr-wizard
+  #newscenariowizard
+  [(clrWizardOpen)]="newScenarioWizardOpen"
+  clrWizardSize="xl"
+  (clrWizardOnFinish)="resetScenarioForm()"
+  [clrWizardClosable]="false"
+>
+  <clr-wizard-title>New Scenario </clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+  <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="!scenarioDetails.valid"
+    (clrWizardPageNext)="addNewScenario()"
+  >
+    <ng-template clrPageTitle>Create a new Scenario</ng-template>
+    <div class="modal-body">
+      <form clrForm [formGroup]="scenarioDetails">
+        <clr-input-container>
+          <label>Name</label>
+          <input
+            clrInput
+            type="text"
+            formControlName="scenario_name"
+            required
+          />
+          <clr-control-error *clrIfError="'required'"
+            >Scenario name is required</clr-control-error
+          >
+          <clr-control-error *clrIfError="'minlength'"
+            >Scenario name must be longer than 4 characters
+          </clr-control-error>
+        </clr-input-container>
+        <clr-input-container>
+          <label>Description</label>
+          <input
+            clrInput
+            type="text"
+            formControlName="scenario_description"
+            required
+          />
+          <clr-control-error *clrIfError="'required'"
+            >Scenario description is required</clr-control-error
+          >
+          <clr-control-error *clrIfError="'minlength'"
+            >Scenario description must be longer than 4 characters
+          </clr-control-error>
+        </clr-input-container>
+        <div class="clr-form-control clr-row">
+          <label for="keepalive_amount" class="clr-control-label"
+            >Keepalive Duration</label
+          >
+          <div
+            class="clr-control-container clr-col-md-10 clr-col-12"
+            [class.clr-error]="
+              keepaliveRequired ||
+              scenarioDetails.errors?.invalidKeepalivePeriod
+            "
+          >
+            <div class="clr-input-wrapper">
+              <div class="clr-input-group">
+                <input
+                  type="number"
+                  id="keepalive_amount"
+                  formControlName="keepalive_amount"
+                  class="clr-input"
+                />
+                <select formControlName="keepalive_unit">
+                  <option value="h">Hour(s)</option>
+                  <option value="m">Minute(s)</option>
+                </select>
+              </div>
+              <clr-icon
+                class="clr-validate-icon"
+                shape="exclamation-circle"
+              ></clr-icon>
+            </div>
+            <span
+              class="clr-subtext"
+              *ngIf="
+                !keepaliveRequired &&
+                !scenarioDetails.errors?.invalidKeepalivePeriod
+              "
+              >Period before VMs are reaped upon user inactivity.</span
+            >
+            <span class="clr-subtext" *ngIf="keepaliveRequired"
+              >Keepalive duration is required.</span
+            >
+            <span
+              class="clr-subtext"
+              *ngIf="scenarioDetails.errors?.invalidKeepalivePeriod"
+              >Invalid keepalive period. Valid periods: 1m to 48h
+              inclusive.</span
+            >
+          </div>
+        </div>
+        <clr-input-container>
+          <label>Pause Duration</label>
+          <input
+            clrInput
+            type="number"
+            name="pause_duration"
+            placeholder="Duration in hours"
+            formControlName="pause_duration"
+            required
+          />
+          <clr-control-helper
+            >Period in hours that a user may pause their
+            scenario.</clr-control-helper
+          >
+          <clr-control-error *clrIfError="'required'"
+            >Pause duration is required.</clr-control-error
+          >
+          <clr-control-error *clrIfError="'min'"
+            >Pause duration must be 1 hour minimum.</clr-control-error
+          >
+          <clr-control-error *clrIfError="'max'"
+            >Pause duration must be 48 hours maximum.</clr-control-error
+          >
+        </clr-input-container>
+      </form>
+    </div>
+  </clr-wizard-page>
+
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="!isVMAdded"
+    *rbac="['scenarios.update']"
+    (clrWizardPageOnCancel)="doDeleteScenario()"
+    (clrWizardPageNext)="savescenario()"
+  >
+    <ng-template clrPageTitle>Add Virtual Machine</ng-template>
+    <div class="alert alert-warning" role="alert">
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >You have to add virtual Machine in order to create a functional
+            scenario</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="clr-col-12 clr-col-md-6">
+      <ng-container *ngIf="selectedscenario">
+        <clr-stack-view>
+          <clr-stack-header>
+            Virtual Machines
+            <button
+              class="stack-action btn btn-sm btn-link"
+              (click)="addVMSet()"
+              *rbac="['scenarios.update']"
+            >
+              Add VM Set
+            </button>
+          </clr-stack-header>
+          <clr-stack-block
+            *ngFor="
+              let vmset of selectedscenario.virtualmachines;
+              let i = index
+            "
+          >
+            <clr-stack-label>Virtual Machine Set {{ i + 1 }} </clr-stack-label>
+            <clr-stack-content>
+              <button
+                class="btn btn-sm btn-link btn-link-stack"
+                (click)="deleteVMSet(i)"
+                *rbac="['scenarios.update']"
+              >
+                Delete VM Set
+              </button>
+            </clr-stack-content>
+            <clr-stack-block *ngFor="let item of vmset | keyvalue">
+              <clr-stack-label>{{ item.key }}</clr-stack-label>
+              <clr-stack-content
+                >{{ item.value }}
+                <button
+                  class="btn btn-sm btn-link btn-link-stack"
+                  (click)="deleteVM(i, item.key)"
+                  *rbac="['scenarios.update']"
+                >
+                  Delete VM
+                </button></clr-stack-content
+              >
+            </clr-stack-block>
+            <clr-stack-block>
+              <clr-stack-label
+                ><button
+                  class="btn btn-sm btn-link btn-link-stack"
+                  (click)="openCreateVM(i)"
+                  *rbac="['scenarios.update']"
+                >
+                  New VM
+                </button>
+              </clr-stack-label>
+            </clr-stack-block>
+          </clr-stack-block>
+        </clr-stack-view>
+      </ng-container>
+    </div>
+  </clr-wizard-page>
+
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="isStepsLengthNull"
+    *rbac="['scenarios.update']"
+    (clrWizardPageOnCancel)="doDeleteScenario()"
+  >
+    <ng-template clrPageTitle>Steps</ng-template>
+    <div class="clr-col-12 clr-col-md-6">
+      <ng-container *ngIf="selectedscenario">
+        <button
+          class="btn btn-sm"
+          (click)="openEdit(selectedscenario?.steps[0] ?? undefined, 0)"
+          *rbac="['scenarios.update']"
+        >
+          Open Step Editor
+        </button>
+        <button
+          class="btn btn-success-outline btn-sm"
+          (click)="openNewStep()"
+          *rbac="['scenarios.update']"
+        >
+          <clr-icon shape="plus"></clr-icon> New Step
+        </button>
+        <clr-datagrid>
+          <clr-dg-column>Index</clr-dg-column>
+          <clr-dg-column>Title</clr-dg-column>
+
+          <clr-dg-row
+            *clrDgItems="let s of selectedscenario.steps; let i = index"
+          >
+            <clr-dg-action-overflow *rbac="['scenarios.update']">
+              <button class="action-item" *ngIf="i > 0" (click)="moveStepUp(i)">
+                Move Up
+              </button>
+              <button
+                class="action-item"
+                *ngIf="i < selectedscenario.steps.length - 1"
+                (click)="moveStepDown(i)"
+              >
+                Move Down
+              </button>
+              <button class="action-item" (click)="openEdit(s, i)">Edit</button>
+              <button class="action-item" (click)="openDeleteStep(i)">
+                Delete
+              </button>
+            </clr-dg-action-overflow>
+
+            <clr-dg-cell>{{ i + 1 }}</clr-dg-cell>
+            <clr-dg-cell>{{ s.title }}</clr-dg-cell>
+          </clr-dg-row>
+        </clr-datagrid>
+      </ng-container>
+    </div>
+  </clr-wizard-page>
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Finish</ng-template>
+    <p>
+      <cds-icon shape="success-standard"></cds-icon> The created scenario is
+      ready to be used
+    </p>
+  </clr-wizard-page>
+</clr-wizard>
+
 <clr-modal #editmodal [(clrModalOpen)]="editOpen" [clrModalSize]="'xl'">
   <h3 class="modal-title">
     Edit Step {{ this.editingIndex + 1 }} of
@@ -582,9 +852,7 @@
 <clr-modal #deletescenariomodal [(clrModalOpen)]="deleteVMSetOpen">
   <h3 class="modal-title">Delete Scenario</h3>
   <div class="modal-body">
-    <p>
-      Are you sure you want to delete this scenario? 
-    </p>
+    <p>Are you sure you want to delete this scenario?</p>
   </div>
   <div class="modal-footer">
     <button class="btn btn-success-outline" (click)="deleteVMSetOpen = false">
@@ -592,7 +860,7 @@
     </button>
     <button
       class="btn btn-danger"
-      (click)="doDeleteVMSet()"
+      (click)="doDeleteScenario()"
       *rbac="['scenarios.update']"
     >
       Delete
@@ -773,530 +1041,3 @@
     </button>
   </div>
 </clr-modal>
-
-<!-- <clr-wizard #newscenariowizard [(clrWizardOpen)]="newScenarioWizardOpen">
-
-  
-</clr-wizard> -->
-
-<clr-wizard #newscenariowizard [(clrWizardOpen)]="newScenarioWizardOpen">
-  <clr-wizard-title>New Scenario
-
-  </clr-wizard-title>
-
-  <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
-  <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
-  <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-  <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
-
-  <clr-wizard-page 
-  [clrWizardPageNextDisabled]="!scenarioDetails.valid" (clrWizardPageNext)="addNewScenario()">
-      <ng-template clrPageTitle>Create a new Scenario</ng-template>
-      <div class="modal-body">
-        <form clrForm [formGroup]="scenarioDetails">
-          <clr-input-container>
-            <label>Name</label>
-            <input clrInput type="text" formControlName="scenario_name" required />
-            <clr-control-error *clrIfError="'required'"
-              >Scenario name is required</clr-control-error
-            >
-            <clr-control-error *clrIfError="'minlength'"
-              >Scenario name must be longer than 4 characters
-            </clr-control-error>
-          </clr-input-container>
-          <clr-input-container>
-            <label>Description</label>
-            <input
-              clrInput
-              type="text"
-              formControlName="scenario_description"
-              required
-            />
-            <clr-control-error *clrIfError="'required'"
-              >Scenario description is required</clr-control-error
-            >
-            <clr-control-error *clrIfError="'minlength'"
-              >Scenario description must be longer than 4 characters
-            </clr-control-error>
-          </clr-input-container>
-          <div class="clr-form-control clr-row">
-            <label for="keepalive_amount" class="clr-control-label"
-              >Keepalive Duration</label
-            >
-            <div
-              class="clr-control-container clr-col-md-10 clr-col-12"
-              [class.clr-error]="
-                keepaliveRequired || scenarioDetails.errors?.invalidKeepalivePeriod
-              "
-            >
-              <div class="clr-input-wrapper">
-                <div class="clr-input-group">
-                  <input
-                    type="number"
-                    id="keepalive_amount"
-                    formControlName="keepalive_amount"
-                    class="clr-input"
-                  />
-                  <select formControlName="keepalive_unit">
-                    <option value="h">Hour(s)</option>
-                    <option value="m">Minute(s)</option>
-                  </select>
-                </div>
-                <clr-icon
-                  class="clr-validate-icon"
-                  shape="exclamation-circle"
-                ></clr-icon>
-              </div>
-              <span
-                class="clr-subtext"
-                *ngIf="
-                  !keepaliveRequired &&
-                  !scenarioDetails.errors?.invalidKeepalivePeriod
-                "
-                >Period before VMs are reaped upon user inactivity.</span
-              >
-              <span class="clr-subtext" *ngIf="keepaliveRequired"
-                >Keepalive duration is required.</span
-              >
-              <span
-                class="clr-subtext"
-                *ngIf="scenarioDetails.errors?.invalidKeepalivePeriod"
-                >Invalid keepalive period. Valid periods: 1m to 48h inclusive.</span
-              >
-            </div>
-          </div>
-          <clr-input-container>
-            <label>Pause Duration</label>
-            <input
-              clrInput
-              type="number"
-              name="pause_duration"
-              placeholder="Duration in hours"
-              formControlName="pause_duration"
-              required
-            />
-            <clr-control-helper
-              >Period in hours that a user may pause their
-              scenario.</clr-control-helper
-            >
-            <clr-control-error *clrIfError="'required'"
-              >Pause duration is required.</clr-control-error
-            >
-            <clr-control-error *clrIfError="'min'"
-              >Pause duration must be 1 hour minimum.</clr-control-error
-            >
-            <clr-control-error *clrIfError="'max'"
-              >Pause duration must be 48 hours maximum.</clr-control-error
-            >
-          </clr-input-container>
-        </form>
-      </div>
-  </clr-wizard-page>
-
-  <!-- //Page 2 -->
-  <clr-wizard-page>
-      <ng-template clrPageTitle>Virtual Machines</ng-template>
-      <div class="clr-col-12 clr-col-md-6">
-        <ng-container *ngIf="selectedscenario">
-          <clr-tabs>
-            <clr-tab>
-              <button clrTabLink id="detailsLink">Scenario Details</button>
-              <clr-tab-content id="detailsContent" *clrIfActive>
-                <form clrForm [formGroup]="editScenarioForm">
-                  <clr-input-container>
-                    <label>Name</label>
-                    <input
-                      clrInput
-                      type="text"
-                      formControlName="scenario_name"
-                      required
-                    />
-                    <clr-control-error *clrIfError="'required'"
-                      >Scenario name is required</clr-control-error
-                    >
-                    <clr-control-error *clrIfError="'minlength'"
-                      >Scenario name must be longer than 4 characters
-                    </clr-control-error>
-                  </clr-input-container>
-                  <clr-input-container>
-                    <label>Description</label>
-                    <input
-                      clrInput
-                      type="text"
-                      formControlName="scenario_description"
-                      required
-                    />
-                    <clr-control-error *clrIfError="'required'"
-                      >Scenario description is required</clr-control-error
-                    >
-                    <clr-control-error *clrIfError="'minlength'"
-                      >Scenario description must be longer than 4 characters
-                    </clr-control-error>
-                  </clr-input-container>
-                  <div class="clr-form-control clr-row">
-                    <label for="keepalive_amount" class="clr-control-label"
-                      >Keepalive Duration</label
-                    >
-                    <div
-                      class="clr-control-container clr-col-md-10 clr-col-12"
-                      [class.clr-error]="
-                        keepaliveRequired ||
-                        editScenarioForm.errors?.invalidKeepalivePeriod
-                      "
-                    >
-                      <div class="clr-input-wrapper">
-                        <div class="clr-input-group">
-                          <input
-                            type="number"
-                            id="keepalive_amount"
-                            formControlName="keepalive_amount"
-                            class="clr-input"
-                          />
-                          <select formControlName="keepalive_unit">
-                            <option value="h">Hour(s)</option>
-                            <option value="m">Minute(s)</option>
-                          </select>
-                        </div>
-                        <clr-icon
-                          class="clr-validate-icon"
-                          shape="exclamation-circle"
-                        ></clr-icon>
-                      </div>
-                      <span
-                        class="clr-subtext"
-                        *ngIf="
-                          !keepaliveRequired &&
-                          !editScenarioForm.errors?.invalidKeepalivePeriod
-                        "
-                        >Period before VMs are reaped upon user inactivity.</span
-                      >
-                      <span class="clr-subtext" *ngIf="keepaliveRequired"
-                        >Keepalive duration is required.</span
-                      >
-                      <span
-                        class="clr-subtext"
-                        *ngIf="editScenarioForm.errors?.invalidKeepalivePeriod"
-                        >Invalid keepalive period. Valid periods: at least 1m.</span
-                      >
-                    </div>
-                  </div>
-                  <clr-input-container>
-                    <label>Pause Duration</label>
-                    <input
-                      clrInput
-                      type="number"
-                      name="pause_duration"
-                      placeholder="Duration in hours"
-                      formControlName="pause_duration"
-                      required
-                    />
-                    <clr-control-helper
-                      >Period in hours that a user may pause their
-                      scenario.</clr-control-helper
-                    >
-                    <clr-control-error *clrIfError="'required'"
-                      >Pause duration is required.</clr-control-error
-                    >
-                    <clr-control-error *clrIfError="'min'"
-                      >Pause duration must be 1 hour minimum.</clr-control-error
-                    >
-                    <clr-control-error *clrIfError="'max'"
-                      >Pause duration must be 48 hours maximum.
-                    </clr-control-error>
-                  </clr-input-container>
-                </form>
-                <clr-stack-view>
-                  <clr-stack-header>
-                    Virtual Machines
-                    <button
-                      class="stack-action btn btn-sm btn-link"
-                      (click)="addVMSet()"
-                      *rbac="['scenarios.update']"
-                    >
-                      Add VM Set
-                    </button>
-                  </clr-stack-header>
-                  <clr-stack-block
-                    *ngFor="
-                      let vmset of selectedscenario.virtualmachines;
-                      let i = index
-                    "
-                  >
-                    <clr-stack-label
-                      >Virtual Machine Set {{ i + 1 }}
-                    </clr-stack-label>
-                    <clr-stack-content>
-                      <button
-                        class="btn btn-sm btn-link btn-link-stack"
-                        (click)="deleteVMSet(i)"
-                        *rbac="['scenarios.update']"
-                      >
-                        Delete VM Set
-                      </button>
-                    </clr-stack-content>
-                    <clr-stack-block *ngFor="let item of vmset | keyvalue">
-                      <clr-stack-label>{{ item.key }}</clr-stack-label>
-                      <clr-stack-content
-                        >{{ item.value }}
-                        <button
-                          class="btn btn-sm btn-link btn-link-stack"
-                          (click)="deleteVM(i, item.key)"
-                          *rbac="['scenarios.update']"
-                        >
-                          Delete VM
-                        </button></clr-stack-content
-                      >
-                    </clr-stack-block>
-                    <clr-stack-block>
-                      <clr-stack-label
-                        ><button
-                          class="btn btn-sm btn-link btn-link-stack"
-                          (click)="openCreateVM(i)"
-                          *rbac="['scenarios.update']"
-                        >
-                          New VM
-                        </button>
-                      </clr-stack-label>
-                    </clr-stack-block>
-                  </clr-stack-block>
-                </clr-stack-view>
-                <a
-                  [routerLink]="['/scenario', selectedscenario.id, 'printable']"
-                  target="_blank"
-                >
-                  <button class="btn btn-info-outline">Print</button>
-                </a>
-                <button class="btn btn-danger-outline" *rbac="['scenarios.delete']">
-                  Delete
-                </button>
-                <button
-                  class="btn btn-success"
-                  (click)="savescenario()"
-                  [disabled]="
-                    !this.selectedscenario.steps ||
-                    !this.selectedscenario.virtualmachines ||
-                    (editScenarioForm.invalid &&
-                      (editScenarioForm.dirty || editScenarioForm.touched))
-                  "
-                  *rbac="['scenarios.update']"
-                >
-                  Save
-                </button>
-              </clr-tab-content>
-            </clr-tab>
-            <clr-tab>
-              <button clrTabLink="stepsLink">Steps</button>
-              <clr-tab-content id="stepsContent" *clrIfActive>
-                <button
-                  class="btn btn-sm"
-                  (click)="openEdit(selectedscenario?.steps[0] ?? undefined, 0)"
-                  *rbac="['scenarios.update']"
-                >
-                  Open Step Editor
-                </button>
-                <button
-                  class="btn btn-success-outline btn-sm"
-                  (click)="openNewStep()"
-                  *rbac="['scenarios.update']"
-                >
-                  <clr-icon shape="plus"></clr-icon> New Step
-                </button>
-                <clr-datagrid>
-                  <clr-dg-column>Index</clr-dg-column>
-                  <clr-dg-column>Title</clr-dg-column>
-    
-                  <clr-dg-row
-                    *clrDgItems="let s of selectedscenario.steps; let i = index"
-                  >
-                    <clr-dg-action-overflow *rbac="['scenarios.update']">
-                      <button
-                        class="action-item"
-                        *ngIf="i > 0"
-                        (click)="moveStepUp(i)"
-                      >
-                        Move Up
-                      </button>
-                      <button
-                        class="action-item"
-                        *ngIf="i < selectedscenario.steps.length - 1"
-                        (click)="moveStepDown(i)"
-                      >
-                        Move Down
-                      </button>
-                      <button class="action-item" (click)="openEdit(s, i)">
-                        Edit
-                      </button>
-                      <button class="action-item" (click)="openDeleteStep(i)">
-                        Delete
-                      </button>
-                    </clr-dg-action-overflow>
-    
-                    <clr-dg-cell>{{ i + 1 }}</clr-dg-cell>
-                    <clr-dg-cell>{{ s.title }}</clr-dg-cell>
-                  </clr-dg-row>
-                </clr-datagrid>
-                <ng-container *ngIf="scenarioTainted">
-                  <button
-                    class="btn btn-success"
-                    (click)="savescenario()"
-                    *rbac="['scenarios.update']"
-                    [disabled]="
-                      !this.selectedscenario.steps ||
-                      !this.selectedscenario.virtualmachines ||
-                      (editScenarioForm.invalid &&
-                        (editScenarioForm.dirty || editScenarioForm.touched))
-                    "
-                  >
-                    Save
-                  </button>
-                </ng-container>
-              </clr-tab-content>
-            </clr-tab>
-            <clr-tab>
-              <button clrTabLink>Categories</button>
-              <clr-tab-content id="categoriesContent" *clrIfActive>
-                <button
-                  class="btn btn-success-outline btn-sm"
-                  (click)="newCategory = true"
-                  *rbac="['scenarios.update']"
-                >
-                  <clr-icon shape="plus"></clr-icon> Add Category
-                </button>
-                <ng-container *ngIf="newCategory">
-                  <p>
-                    You can provide multiple categories by passing them as a
-                    Comma-separated List
-                  </p>
-                  <form clrForm [formGroup]="newCategoryForm">
-                    <clr-input-container>
-                      <label class="clr-col-md-4">Category</label>
-                      <input
-                        class="clr-col-md-6"
-                        clrInput
-                        type="text"
-                        name="category"
-                        formControlName="category"
-                        required
-                      />
-                      <clr-control-error *clrIfError="'required'"
-                        >Category required.</clr-control-error
-                      >
-                    </clr-input-container>
-                    <div class="col-md-2">
-                      <button
-                        class="btn btn-success btn-sm"
-                        [disabled]="!newCategoryForm.valid"
-                        *rbac="['scenarios.update']"
-                        (click)="addCategory()"
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </form>
-                </ng-container>
-                <clr-datagrid class="datagrid-compact">
-                  <clr-dg-column>Category</clr-dg-column>
-                  <clr-dg-row
-                    *clrDgItems="let a of selectedscenario.categories"
-                    [clrDgItem]="a"
-                  >
-                    <clr-dg-action-overflow *rbac="['scenarios.update']">
-                      <button class="action-item" (click)="deleteCategory(a)">
-                        Delete
-                      </button>
-                    </clr-dg-action-overflow>
-                    <clr-dg-cell>{{ a }}</clr-dg-cell>
-                  </clr-dg-row>
-                </clr-datagrid>
-                <button
-                  class="btn btn-success"
-                  (click)="savescenario()"
-                  [disabled]="
-                    !this.selectedscenario.steps ||
-                    !this.selectedscenario.virtualmachines
-                  "
-                  *rbac="['scenarios.update']"
-                >
-                  Save
-                </button>
-              </clr-tab-content>
-            </clr-tab>
-            <clr-tab>
-              <button clrTabLink>Tags</button>
-              <clr-tab-content id="tagsContent" *clrIfActive>
-                <button
-                  class="btn btn-success-outline btn-sm"
-                  (click)="newTag = true"
-                  *rbac="['scenarios.update']"
-                >
-                  <clr-icon shape="plus"></clr-icon> Add Tag
-                </button>
-                <ng-container *ngIf="newTag">
-                  <p>
-                    You can provide multiple tags by passing them as a
-                    Comma-separated List
-                  </p>
-                  <form clrForm [formGroup]="newTagForm">
-                    <clr-input-container>
-                      <label class="clr-col-md-4">Tag</label>
-                      <input
-                        class="clr-col-md-6"
-                        clrInput
-                        type="text"
-                        name="tag"
-                        formControlName="tag"
-                        required
-                      />
-                      <clr-control-error *clrIfError="'required'"
-                        >Tag required.</clr-control-error
-                      >
-                    </clr-input-container>
-                    <div class="col-md-2">
-                      <button
-                        class="btn btn-success btn-sm"
-                        [disabled]="!newTagForm.valid"
-                        *rbac="['scenarios.update']"
-                        (click)="addTag()"
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </form>
-                </ng-container>
-                <clr-datagrid class="datagrid-compact">
-                  <clr-dg-column>Tag</clr-dg-column>
-                  <clr-dg-row
-                    *clrDgItems="let a of selectedscenario.tags"
-                    [clrDgItem]="a"
-                  >
-                    <clr-dg-action-overflow *rbac="['scenarios.update']">
-                      <button class="action-item" (click)="deleteTag(a)">
-                        Delete
-                      </button>
-                    </clr-dg-action-overflow>
-                    <clr-dg-cell>{{ a }}</clr-dg-cell>
-                  </clr-dg-row>
-                </clr-datagrid>
-                <button
-                  class="btn btn-success"
-                  (click)="savescenario()"
-                  *rbac="['scenarios.update']"
-                  [disabled]="
-                    !this.selectedscenario.steps ||
-                    !this.selectedscenario.virtualmachines
-                  "
-                >
-                  Save
-                </button>
-              </clr-tab-content>
-            </clr-tab>
-          </clr-tabs>
-        </ng-container>
-      </div>
-  </clr-wizard-page>
-
-  <clr-wizard-page>
-      <ng-template clrPageTitle>Page 3</ng-template>
-      ...
-  </clr-wizard-page>
-</clr-wizard>
