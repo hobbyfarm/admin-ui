@@ -6,6 +6,22 @@ import { ServerResponse } from './serverresponse';
 import { of } from 'rxjs';
 import { atou } from '../unicode';
 import { VMTemplate } from './vmtemplate';
+import { HttpParameterCodec } from '@angular/common/http';
+
+export class CustomHttpParamEncoder implements HttpParameterCodec {
+    encodeKey(key: string): string {
+        return encodeURIComponent(key);
+    }
+    encodeValue(value: string): string {
+            return encodeURIComponent(value);
+    }
+    decodeKey(key: string): string {
+            return decodeURIComponent(key);
+    }
+    decodeValue(value: string): string {
+            return decodeURIComponent(value);
+    }
+}
 
 @Injectable({
   providedIn: 'root'
@@ -26,12 +42,12 @@ export class VmtemplateService {
   }
 
   public update(template: VMTemplate) {
-    let params = new HttpParams()
+    let params = new HttpParams({encoder: new CustomHttpParamEncoder()})
     .set('id', template.id)
     .set('name', template.name)
     .set('image', template.image)
     .set('config_map', JSON.stringify(template.config_map))
-
+   
     return this.http.put(environment.server + "/a/vmtemplate/" + template.id + "/update", params)
   }
 
