@@ -1,14 +1,15 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
   Output,
-  ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  ClrDatagridSortOrder
+} from '@clr/angular';
 import { Observable, Subject } from 'rxjs';
 import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { OTAC } from 'src/app/data/otac.type';
@@ -17,6 +18,11 @@ import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { User } from 'src/app/data/user';
 import { UserService } from 'src/app/data/user.service';
+
+interface iOTAC extends OTAC {
+  userEmail?: string;
+  status: 'free' | 'taken';
+}
 
 @Component({
   selector: 'app-otacmanagement',
@@ -40,10 +46,11 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   amountNewOtacs: number = 1;
 
-  otacs: OTAC[] = [];
+  otacs: iOTAC[] = [];
 
   users: User[] = [];
 
+  descSort = ClrDatagridSortOrder.DESC;
 
   constructor(
     private seService: ScheduledeventService,
@@ -51,7 +58,6 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    
     this.userService.getUsers().subscribe((users) => {
       this.users = users;
     });
@@ -60,16 +66,27 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.onDestroy),
         tap((se: ScheduledEvent) => {
-          this.currentScheduledEvent = se
+          this.currentScheduledEvent = se;
         }),
         switchMap((se: ScheduledEvent) => {
           return this.seService.listOtacs(se.id);
         })
       )
       .subscribe((otacList: OTAC[]) => {
-        this.otacs = otacList ?? [];
+        this.otacs =
+          otacList?.map((otac) => this.addUserinformation(otac)) ?? [];
       });
-    
+  }
+
+  addUserinformation(otac: OTAC): iOTAC {
+    if (otac.user) {
+      return {
+        ...otac,
+        status: 'taken',
+        userEmail: this.getUsername(otac.user),
+      };
+    }
+    return { ...otac, status: 'free' };
   }
 
   getUsername(userId: string): string {
@@ -80,12 +97,14 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
     this.seService
       .addOtacs(this.currentScheduledEvent.id, this.amountNewOtacs)
       .subscribe((newOtacs: OTAC[]) => {
-        this.otacs.push(...newOtacs);
+        this.otacs.push(
+          ...newOtacs.map((otac) => this.addUserinformation(otac))
+        );
         this.amountNewOtacs = 1;
       });
   }
 
-  deleteOtac(otac: OTAC) {
+  deleteOtac(otac: iOTAC) {
     this.seService
       .deleteOtac(this.currentScheduledEvent.id, otac.name)
       .subscribe((res: ServerResponse) => {
@@ -103,20 +122,27 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
   }
 
   exportCSV() {
-    let otacCSV = ''
-    this.otacs.forEach(otac => {
-      otacCSV = otacCSV.concat( otac.name + ", " + this.getUsername(otac.user) + ", " +otac.redeemed_timestamp + "\n" )
-    })
-    const filename = this.currentScheduledEvent.event_name + "_OTACs.csv"
+    let otacCSV = '';
+    this.otacs.forEach((otac) => {
+      otacCSV = otacCSV.concat(
+        otac.name +
+          ', ' +
+          this.getUsername(otac.user) +
+          ', ' +
+          otac.redeemed_timestamp +
+          '\n'
+      );
+    });
+    const filename = this.currentScheduledEvent.event_name + '_OTACs.csv';
     var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(otacCSV));
+    element.setAttribute(
+      'href',
+      'data:text/plain;charset=utf-8,' + encodeURIComponent(otacCSV)
+    );
     element.setAttribute('download', filename);
-
     element.style.display = 'none';
     document.body.appendChild(element);
-
     element.click();
-
     document.body.removeChild(element);
   }
 
