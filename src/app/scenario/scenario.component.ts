@@ -109,7 +109,7 @@ export class ScenarioComponent implements OnInit {
       scenario_name: new FormControl(null, [
         Validators.required,
         Validators.minLength(4),
-        Validators.pattern(/^[a-zA-Z0-9]+$/)
+        Validators.pattern(/^[a-zA-Z0-9 ]+$/)
       ]),
       scenario_description: new FormControl(null, [
         Validators.required,
@@ -324,7 +324,12 @@ onCommit(): void {
 
 
   cancelEdit() {
-    this.doDeleteStep();
+    this.scenarioService.get(this.selectedscenario.id).subscribe(
+    (scenario)=> {this.selectedscenario.steps = scenario.steps},
+    (e: HttpErrorResponse)=> {
+      console.log(e.error.message)
+    }
+    )
     this.editModal.close();
   }
 
