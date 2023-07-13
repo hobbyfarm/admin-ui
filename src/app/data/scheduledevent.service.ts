@@ -128,4 +128,29 @@ export class ScheduledeventService {
       })
     )
   }
+
+  public addOtacs(seId: string, count: number) {
+    return this.http.get(environment.server + "/a/scheduledevent/" + seId + "/otacs/add/" + count)
+    .pipe(
+      switchMap((s: ServerResponse) => {
+        let se = JSON.parse(atou(s.content));
+        return of(se);
+      })
+    )
+  }
+
+  public deleteOtac(seId: string, otacId: string) {
+    return this.http.get(environment.server + "/a/scheduledevent/" + seId + "/otacs/delete/" + otacId)
+    
+  }
+
+  public listOtacs(seId: string) {
+    return this.http.get(environment.server + "/a/scheduledevent/" + seId + "/otacs/list")
+    .pipe(
+      switchMap((s: ServerResponse) => {
+        let se = JSON.parse(atou(s.content));
+        return of(se);
+      })
+    )
+  }
 }
