@@ -62,7 +62,7 @@
         <clr-dg-action-overflow >
           <button class="action-item" >Edit</button>
           <button class="action-item">Delete</button>
-      </clr-dg-action-overflow>
+        </clr-dg-action-overflow>
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
         <clr-dg-cell>{{ s.name }}</clr-dg-cell>
       </clr-dg-row>
@@ -102,6 +102,8 @@
                 <clr-control-error *clrIfError="'required'"
                   >Scenario description is required</clr-control-error
                 >
+                <clr-control-error *clrIfError="'pattern'"> Scenario name must not include non latin characters
+                </clr-control-error>
                 <clr-control-error *clrIfError="'minlength'"
                   >Scenario description must be longer than 4 characters
                 </clr-control-error>
@@ -506,6 +508,8 @@
           <clr-control-error *clrIfError="'minlength'"
             >Scenario name must be longer than 4 characters
           </clr-control-error>
+          <clr-control-error *clrIfError="'pattern'"> Scenario name must not include non latin characters or you added a space
+          </clr-control-error>
         </clr-input-container>
         <clr-input-container>
           <label>Description</label>
@@ -520,6 +524,8 @@
           >
           <clr-control-error *clrIfError="'minlength'"
             >Scenario description must be longer than 4 characters
+          </clr-control-error>
+          <clr-control-error *clrIfError="'pattern'"> Scenario name must not include non latin characters
           </clr-control-error>
         </clr-input-container>
         <div class="clr-form-control clr-row">

@@ -26,6 +26,7 @@ export class ScenarioComponent implements OnInit {
   public filteredScenarios: Scenario[] = [];
   public vmtemplates: VMTemplate[] = [];
   public selectedscenario: Scenario;
+  public newSteps: Step[] = [];
   public editingStep: Step = new Step();
   public editingIndex: number = 0;
 
@@ -108,10 +109,12 @@ export class ScenarioComponent implements OnInit {
       scenario_name: new FormControl(null, [
         Validators.required,
         Validators.minLength(4),
+        Validators.pattern(/^[a-zA-Z0-9]+$/)
       ]),
       scenario_description: new FormControl(null, [
         Validators.required,
         Validators.minLength(4),
+        Validators.pattern(/^[a-zA-Z0-9 ]+$/)
       ]),
       keepalive_amount: new FormControl(10, [Validators.required]),
       keepalive_unit: new FormControl('m', [Validators.required]),
@@ -317,8 +320,6 @@ onCommit(): void {
       }
     );
     this.unusedSelectedScenario = this.newScenario;
-    this.scenarioService.list(true).subscribe((s) => {
-    });
   }
 
 
