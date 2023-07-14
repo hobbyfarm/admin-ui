@@ -94,6 +94,7 @@ import { SettingsComponent } from './configuration/settings/settings.component';
 import { TypedInputComponent } from './typed-form/typed-input.component';
 import { TypedInputFieldComponent } from './typed-form/typed-input-field.component';
 import { TypedSettingsService } from './data/typedSettings.service';
+import { OTACManagementComponent } from './event/otacmanagement/otacmanagement.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -173,6 +174,7 @@ export function jwtOptionsFactory() {
     TypedInputComponent,
     TypedInputFieldComponent,
     SettingsComponent,
+    OTACManagementComponent,
   ],
   imports: [
     BrowserModule,
