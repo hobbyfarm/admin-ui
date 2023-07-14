@@ -1,7 +1,6 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
 import 'prismjs'
 import 'prismjs/components/prism-yaml'
-
 
 declare var Prism: any;
 
@@ -10,7 +9,7 @@ declare var Prism: any;
   templateUrl: './code-with-syntax-highlighting.component.html',
   styleUrls: ['./code-with-syntax-highlighting.component.scss']
 })
-export class CodeWithSyntaxHighlightingComponent implements AfterViewInit {
+export class CodeWithSyntaxHighlightingComponent implements AfterViewInit, OnDestroy {
 
   @Input()
   textValue: string;
@@ -24,11 +23,16 @@ export class CodeWithSyntaxHighlightingComponent implements AfterViewInit {
   @ViewChild('code')
   codeBlock: ElementRef;
 
+  @ViewChild('textarea')
+  textarea: ElementRef;
+
   public highlightedText: string;
+
+  private observer = new MutationObserver(() => this.resize())
 
   ngAfterViewInit() {
     this.setHighlightedText(this.textValue)
-
+    this.observer.observe(this.textarea.nativeElement, {attributes: true})
   }
 
   setHighlightedText(textValue) {
@@ -38,6 +42,7 @@ export class CodeWithSyntaxHighlightingComponent implements AfterViewInit {
   ngOnChanges(changes: SimpleChanges) {
     this.textValue = changes.textValue.currentValue
     this.setHighlightedText(changes.textValue.currentValue)
+
   }
 
   onValueChange(event) {
@@ -48,6 +53,17 @@ export class CodeWithSyntaxHighlightingComponent implements AfterViewInit {
   resizeEvent(event) {
     this.codeEditor.nativeElement.style.height = event.height + 'px'
     this.codeBlock.nativeElement.style.height = event.height + 'px'
+  }
+
+  resize() {
+    const scrollHeight = this.textarea.nativeElement.scrollHeight
+    if (scrollHeight > 0) {
+      this.resizeEvent({height: scrollHeight})
+    }
+  }
+
+  ngOnDestroy() {
+    this.observer.disconnect()
   }
 }
 
