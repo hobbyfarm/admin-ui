@@ -58,8 +58,9 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.userService.getUsers().subscribe((users) => {
-      this.users = users;
+    this.userService.getUsers().subscribe({
+      next: (users) => this.users = users,
+      error: () => this.users = []
     });
 
     this.scheduledEvents

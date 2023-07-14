@@ -3,7 +3,7 @@
         OTACs for {{ currentScheduledEvent.event_name }}
     </h3>
     <div class="modal-body">
-        <form clrForm [formGroup]="amountInputForm" class="flexbox">
+        <form clrForm [formGroup]="amountInputForm" class="flexbox" *rbac="['scheduledevents.update']">
             <div>New OTACs:</div>
             <clr-input-container class="input-container">
                 <input formControlName="amountInput" type="number" clrInput name="amountNewOtacsInput"
@@ -21,7 +21,7 @@
                 <clr-dg-column>OTAC</clr-dg-column>
                 <clr-dg-column [clrDgField]="'userEmail'">Claimed by</clr-dg-column>
                 <clr-dg-column>Claimed at</clr-dg-column>
-                <clr-dg-column>Delete</clr-dg-column>
+                <clr-dg-column *rbac="['scheduledevents.update']">Delete</clr-dg-column>
 
                 <clr-dg-row *clrDgItems="let otac of otacs">
                     <clr-dg-cell>
@@ -31,7 +31,7 @@
                     <clr-dg-cell>{{ otac.name }}</clr-dg-cell>
                     <clr-dg-cell>{{ otac.userEmail }}</clr-dg-cell>
                     <clr-dg-cell>{{ otac.redeemed_timestamp }}</clr-dg-cell>
-                    <clr-dg-cell>
+                    <clr-dg-cell *rbac="['scheduledevents.update']">
                         <button type="button" class="btn btn-warning-outline" (click)="deleteOtac(otac)">
                             Delete
                         </button>
