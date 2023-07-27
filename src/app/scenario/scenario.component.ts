@@ -20,7 +20,6 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./scenario.component.scss'],
 })
 export class ScenarioComponent implements OnInit {
-  public unusedSelectedScenario: Scenario; // only exists to satisfy a datagrid requirement
   public scenarioAdded = false;
 
   public filteredScenarios: Scenario[] = [];
@@ -30,7 +29,7 @@ export class ScenarioComponent implements OnInit {
   public editingStep: Step = new Step();
   public editingIndex: number = 0;
 
-  public isStepsLengthNull = true;
+  public isStepsLengthNull: boolean = true;
 
   public scenarioTainted: boolean = false;
 
@@ -48,15 +47,22 @@ export class ScenarioComponent implements OnInit {
 
   public deletingVMSetIndex: number = 0;
   public deletingStepIndex: number = 0;
+  public stepsToBeAdded: number = 0;
 
   public editOpen: boolean = false;
   public deleteVMSetOpen: boolean = false;
+  public deleteScenarioSetOpen: boolean = false;
   public deleteStepOpen: boolean = false;
   public createVMOpen: boolean = false;
   public newScenarioOpen: boolean = false;
   public newScenarioWizardOpen: boolean = false;
+  public editScenarioWizardOpen: boolean = false;
   public loadingFlag: boolean = false;
-  public  errorFlag: boolean = false; 
+  public errorFlag: boolean = false;
+
+  public alertType: string = 'warning';
+  public isAlert: boolean = false;
+  public modified: boolean = false;
 
   public newCategory: boolean = false;
   public newTag: boolean = false;
@@ -109,12 +115,12 @@ export class ScenarioComponent implements OnInit {
       scenario_name: new FormControl(null, [
         Validators.required,
         Validators.minLength(4),
-        Validators.pattern(/^[a-zA-Z0-9 ]+$/)
+        Validators.pattern(/^[a-zA-Z0-9 ]+$/),
       ]),
       scenario_description: new FormControl(null, [
         Validators.required,
         Validators.minLength(4),
-        Validators.pattern(/^[a-zA-Z0-9 ]+$/)
+        Validators.pattern(/^[a-zA-Z0-9 ]+$/),
       ]),
       keepalive_amount: new FormControl(10, [Validators.required]),
       keepalive_unit: new FormControl('m', [Validators.required]),
@@ -147,7 +153,6 @@ export class ScenarioComponent implements OnInit {
     var ka = this.scenarioDetails.get('keepalive_amount');
     var ku = this.scenarioDetails.get('keepalive_unit');
 
-
     // validate
     if ((ka.dirty || ka.touched) && ka.invalid && ka.errors.required) {
       return true;
@@ -158,16 +163,19 @@ export class ScenarioComponent implements OnInit {
     }
   }
 
-
-
   @ViewChild('editmodal', { static: true }) editModal: ClrModal;
   @ViewChild('deletevmsetmodal', { static: true }) deleteVMSetModal: ClrModal;
   @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
   @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
-  @ViewChild('deletescenariomodal', { static: true }) deleteScenarioModal: ClrModal;
-  @ViewChild('newscenariowizard', {static: true}) newScenarioWizard: ClrWizard;
-  @ViewChild('scenarioFilter', {static: true}) scenarioFilter: FilterScenariosComponent;
-  @ViewChild("myForm") formData: any;
+  @ViewChild('deletescenariomodal', { static: true })
+  deleteScenarioModal: ClrModal;
+  @ViewChild('newscenariowizard', { static: true })
+  newScenarioWizard: ClrWizard;
+  @ViewChild('editscenariowizard', { static: true })
+  editScenarioWizard: ClrWizard;
+  @ViewChild('scenarioFilter', { static: true })
+  scenarioFilter: FilterScenariosComponent;
+  @ViewChild('myForm') formData: any;
 
   openEdit(s: Step, i: number) {
     if (this.selectedscenario.steps.length == 0) {
@@ -179,7 +187,6 @@ export class ScenarioComponent implements OnInit {
     this.editModal.open();
   }
 
-  
   editScenario(s: Scenario) {
     if (s != undefined) {
       // this is only a partial scenario, we need to get the full
@@ -205,34 +212,44 @@ export class ScenarioComponent implements OnInit {
     }
   }
 
-  openNewScenarioWizard(){
+  openNewScenarioWizard() {
     this.newScenario = new Scenario();
+    this.newScenarioWizard.reset();
     this.newScenarioWizard.open();
   }
 
-  openDeleteScenario(){
-    this.deleteScenarioModal.open()
+  editScenarioWizardfunction(scenario: Scenario) {
+    this.editScenarioWizard.navService.goTo(
+      this.editScenarioWizard.pages.last,
+      true
+    );
+    this.editScenarioWizard.pages.first.makeCurrent();
+    this.editScenario(scenario);
+    this.scenarioService
+      .get(scenario.id)
+      .subscribe((scenario) => (this.selectedscenario = scenario));
+    this.editScenarioWizard.open();
+  }
+
+  openDeleteScenario(scenario: Scenario) {
+    this.scenarioService.get(scenario.id).subscribe(
+      (scenario) => (this.selectedscenario = scenario),
+      (e: HttpErrorResponse) =>
+        this.alertDanger('Error deleting object: ' + e.error.message)
+    );
+    this.deleteScenarioModal.open();
   }
 
   doCancel(): void {
+    this.newScenarioWizard.reset();
+    this.resetScenarioForm();
+    this.isStepsLengthNull = true;
+    this.scenarioTainted = false;
     this.newScenarioWizard.close();
-}
-onCommit(): void {
-  let value: any = this.formData.value;
-  this.loadingFlag = true;
-  this.errorFlag = false;
-
-  setTimeout(() => {
-      if (value.answer === "42") {
-          this.newScenarioWizard.forceNext();
-      } else {
-          this.errorFlag = true;
-      }
-      this.loadingFlag = false;
-  }, 1000);
-}
+  }
 
   openNewStep() {
+    this.stepsToBeAdded++;
     this.editingIndex = this.selectedscenario.steps.length;
     this.editingStep = new Step();
     this.editingStep.title = 'Step ' + (this.editingIndex + 1);
@@ -252,6 +269,7 @@ onCommit(): void {
   }
 
   nextStep() {
+    this.stepsToBeAdded++;
     if (this.isLastStep()) {
       return;
     }
@@ -277,9 +295,8 @@ onCommit(): void {
   public doDeleteStep() {
     this.selectedscenario.steps.splice(this.deletingStepIndex, 1);
     this.deleteStepModal.close();
-    this.savescenario();
+    if (this.selectedscenario.steps.length == 0) this.isStepsLengthNull = true;
   }
-
 
   private _displayAlert(alert: string, success: boolean, duration?: number) {
     if (success) {
@@ -307,9 +324,39 @@ onCommit(): void {
       this.scenarioDetails.get('keepalive_unit').value;
     this.newScenario.pause_duration =
       this.scenarioDetails.get('pause_duration').value + 'h';
+    if (this.newScenario.steps == null) this.newScenario.steps = [];
+    if (this.newScenario.virtualmachines == null)
+      this.newScenario.virtualmachines = [];
+    this.selectedscenario = this.newScenario;
+  }
 
-    // should be able to save at this point
-    this.scenarioService.create(this.newScenario).subscribe(
+  cancelEdit() {
+    this.reloadSteps();
+    this.editModal.close();
+  }
+
+  reloadSteps() {
+    this.scenarioService.get(this.selectedscenario.id).subscribe(
+      (scenario) => {
+        this.selectedscenario.steps = scenario.steps;
+      },
+      (e: HttpErrorResponse) => {
+        this.alertDanger('Error deleting object: ' + e.error.message);
+        while (this.stepsToBeAdded > 0) {
+          this.stepsToBeAdded--;
+          this.selectedscenario.steps.pop();
+        }
+      }
+    );
+  }
+  saveCreatedStep() {
+    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
+    this.isStepsLengthNull = false;
+    this.stepsToBeAdded = 0;
+    this.editModal.close();
+  }
+  saveCreatedScenario() {
+    this.scenarioService.create(this.selectedscenario).subscribe(
       (s: string) => {
         this._displayAlert(s, true);
         this.scenarioAdded = true;
@@ -319,20 +366,8 @@ onCommit(): void {
         this._displayAlert(s, false);
       }
     );
-    this.unusedSelectedScenario = this.newScenario;
+    this.resetScenarioForm();
   }
-
-
-  cancelEdit() {
-    this.scenarioService.get(this.selectedscenario.id).subscribe(
-    (scenario)=> {this.selectedscenario.steps = scenario.steps},
-    (e: HttpErrorResponse)=> {
-      console.log(e.error.message)
-    }
-    )
-    this.editModal.close();
-  }
-
   saveStep() {
     this.selectedscenario.steps[this.editingIndex] = this.editingStep;
     this.scenarioService
@@ -484,63 +519,69 @@ onCommit(): void {
 
   doDeleteVMSet() {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
+    if (this.selectedscenario.virtualmachines.length == 0)
+      this.isVMAdded = false;
     this.deleteVMSetModal.close();
   }
   setScenarioList(scenarios: Scenario[]) {
     this.filteredScenarios = scenarios;
     if (this.scenarioAdded) {
-      this.unusedSelectedScenario =
-        this.filteredScenarios[this.filteredScenarios.length - 1];
       this.scenarioAdded = false;
     }
   }
 
   refresh(): void {
-    this.scenarioService.list(true)
-      .subscribe(
-        (sList: Scenario[]) => this.filteredScenarios = sList
-      )
+    this.scenarioService
+      .list(true)
+      .subscribe((sList: Scenario[]) => (this.filteredScenarios = sList));
   }
 
-  deleteScenario(i: string){
+  deleteScenario(i: string) {
     this.scenarioService.delete(i).subscribe(
       (s: ServerResponse) => {
-        // this.clearModified();
-        // this.alertSuccess('Course deleted');
+        this.alertSuccess('Course deleted');
         this.refresh();
         this.selectedscenario = null;
-        // this.courseDetailsActive = true; // return the user to the details tab
       },
       (e: HttpErrorResponse) => {
-        // this.alertDanger('Error deleting object: ' + e.error.message)
-        console.log('Error deleting object: ' + e.error.message)
+        this.alertDanger('Error deleting object: ' + e.error.message);
       }
-    )
-
-    
+    );
   }
 
-  resetScenarioForm(){
+  resetScenarioForm() {
     this.newScenarioWizard.reset();
     this.scenarioDetails.reset({
       keepalive_amount: 10,
       keepalive_unit: 'm',
-      pause_duration: 1}
-      );
-  }
-  doDeleteScenario(){
-    this.deleteScenario(this.selectedscenario.id)
-    this.deleteScenarioModal.close()
-    this.resetScenarioForm();
-    this.newScenarioWizard.reset();
+      pause_duration: 1,
+    });
   }
 
+  doDeleteScenario() {
+    this.deleteScenario(this.selectedscenario.id);
+    this.deleteScenarioModal.close();
+    this.resetScenarioForm();
+  }
+
+  alertSuccess(msg: string) {
+    this.alertType = 'success';
+    this.scenarioDangerAlert = msg;
+    this.isAlert = true;
+    setTimeout(() => (this.isAlert = false), 1000);
+  }
+
+  alertDanger(msg: string) {
+    this.alertType = 'danger';
+    this.scenarioDangerAlert = msg;
+    this.isAlert = true;
+    setTimeout(() => (this.isAlert = false), 3000);
+  }
   ngOnInit() {
     // "Get" Permission on scenarios is required to load step content
     this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
       this.selectRbac = allowed;
     });
-
 
     this.rbacService
       .Grants('virtualmachinesets', 'list')
