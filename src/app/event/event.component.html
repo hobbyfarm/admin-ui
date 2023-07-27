@@ -43,6 +43,7 @@
             <clr-dg-row *clrDgItems="let se of events">
               <clr-dg-action-overflow *ngIf="showActionOverflow">
                 <button class="action-item" (click)="openDelete(se)" *rbac="['scheduledevents.delete']">Delete</button>
+                <button class="action-item" (click)="openOtac(se)">OTACs</button>
                 <button class="action-item" (click)="openEdit(se)" *ngIf="allowEdit">Edit</button>
               </clr-dg-action-overflow>
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
@@ -74,6 +75,8 @@
       </div>
 
       <new-scheduled-event #wizard (updated)="newupdated()" [event]="editingEvent"></new-scheduled-event>
+
+      <app-otacmanagement [open]="otacModalOpen" [scheduledEvents]="openModalEvents.asObservable()" (closeEvent)="otacModalOpen = false"></app-otacmanagement>
 
       <clr-modal #deletemodal [(clrModalOpen)]="deleteopen">
         <h3 class="modal-title">Confirm Delete</h3>

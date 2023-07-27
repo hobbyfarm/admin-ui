@@ -141,7 +141,7 @@ export class ProgressDashboardComponent implements OnInit {
         course_name: courseMap.get(element.course) ?? '',
       }));
       this.users = users.filter(
-        user => user.access_codes.includes(this.selectedEvent.access_code) || usersWithProgress.includes(user.id)
+        user => user.access_codes?.includes(this.selectedEvent.access_code) || usersWithProgress.includes(user.id)
         ) ;     
       
       this.scenarioList = new Set(this.currentProgress.map(p => p.scenario_name));

@@ -1,0 +1,157 @@
+<ng-container *ngIf="input.isEnum()">
+  <clr-select-container>
+    <label
+      *ngIf="input.representation === TypedInputRepresentation.SCALAR"
+      [for]="input.id"
+      >{{ input.name }}</label
+    >
+    <label
+      *ngIf="input.representation !== TypedInputRepresentation.SCALAR"
+      class="invisible-label"
+    ></label>
+    <select
+      clrSelect
+      [formControl]="formControlRef"
+      [id]="input.id"
+      class="wide-dropdown"
+    >
+      <option
+        *ngFor="let enumValue of input.getTypedInputEnumValues()"
+        [value]="enumValue"
+      >
+        {{ enumValue }}
+      </option>
+    </select>
+    <clr-control-error *clrIfError="'invalidenumvalue'"
+      >Invalid enum value</clr-control-error
+    >
+    <clr-control-error *clrIfError="'required'"
+      >Value required</clr-control-error
+    >
+    <clr-control-error *clrIfError="'duplicatearrayvalue'"
+      >Dupliacte values not allowed</clr-control-error
+    >
+  </clr-select-container>
+</ng-container>
+<ng-container *ngIf="!input.isEnum()">
+  <ng-container [ngSwitch]="input.type" class="input-container">
+    <clr-input-container *ngSwitchCase="TypedInputType.STRING">
+      <label
+        *ngIf="input.representation === TypedInputRepresentation.SCALAR"
+        [for]="input.id"
+        >{{ input.name }}</label
+      >
+      <label
+        *ngIf="input.representation !== TypedInputRepresentation.SCALAR"
+        class="invisible-label"
+      ></label>
+      <input
+        clrInput
+        type="text"
+        [placeholder]="input.getPlaceholder()"
+        [formControl]="formControlRef"
+        [id]="input.id"
+        (input)="inputChanged()"
+      />
+      <clr-control-error *clrIfError="'duplicatearrayvalue'"
+        >Dupliacte values not allowed</clr-control-error
+      >
+      <clr-control-error *clrIfError="'required'"
+        >Value required</clr-control-error
+      >
+      <clr-control-error *clrIfError="'pattern'"
+        >Value must be of pattern:
+        {{ input.validation.pattern }}</clr-control-error
+      >
+      <clr-control-error *clrIfError="'minlength'"
+        >Minimum length of {{ input.getMinLength() }}</clr-control-error
+      >
+      <clr-control-error *clrIfError="'maxlength'"
+        >Maximum length of {{ input.getMaxLength() }}</clr-control-error
+      >
+    </clr-input-container>
+    <clr-input-container *ngSwitchCase="TypedInputType.INTEGER">
+      <label
+        *ngIf="input.representation === TypedInputRepresentation.SCALAR"
+        [for]="input.id"
+        >{{ input.name }}</label
+      >
+      <label
+        *ngIf="input.representation !== TypedInputRepresentation.SCALAR"
+        class="invisible-label"
+      ></label>
+      <input
+        clrInput
+        type="number"
+        step="1"
+        [placeholder]="input.getPlaceholder()"
+        [formControl]="formControlRef"
+        [id]="input.id"
+        (input)="inputChanged()"
+      />
+      <clr-control-error *clrIfError="'required'"
+        >Required value of type integer</clr-control-error
+      >
+      <clr-control-error *clrIfError="'invalid'"
+        >Must be of type integer</clr-control-error
+      >
+      <clr-control-error *clrIfError="'min'"
+        >Minimum of {{ input.getMinimum() }}</clr-control-error
+      >
+      <clr-control-error *clrIfError="'max'"
+        >Maximum of {{ input.getMaximum() }}</clr-control-error
+      >
+    </clr-input-container>
+    <clr-input-container *ngSwitchCase="TypedInputType.FLOAT">
+      <label
+        *ngIf="input.representation === TypedInputRepresentation.SCALAR"
+        [for]="input.id"
+        >{{ input.name }}</label
+      >
+      <label
+        *ngIf="input.representation !== TypedInputRepresentation.SCALAR"
+        class="invisible-label"
+      ></label>
+      <input
+        clrInput
+        type="number"
+        step="any"
+        [placeholder]="input.getPlaceholder()"
+        [formControl]="formControlRef"
+        [id]="input.id"
+        (input)="inputChanged()"
+      />
+      <clr-control-error *clrIfError="'required'"
+        >Required value of type float</clr-control-error
+      >
+      <clr-control-error *clrIfError="'invalid'"
+        >Must be of type float</clr-control-error
+      >
+      <clr-control-error *clrIfError="'min'"
+        >Minimum of {{ input.getMinimum() }}</clr-control-error
+      >
+      <clr-control-error *clrIfError="'max'"
+        >Maximum of {{ input.getMaximum() }}</clr-control-error
+      >
+    </clr-input-container>
+    <clr-checkbox-container *ngSwitchCase="TypedInputType.BOOLEAN">
+      <label
+        *ngIf="input.representation === TypedInputRepresentation.SCALAR"
+        [for]="input.id"
+        >{{ input.name }}</label
+      >
+      <label
+        *ngIf="input.representation !== TypedInputRepresentation.SCALAR"
+        class="invisible-label"
+      ></label>
+      <clr-checkbox-wrapper>
+        <input
+          type="checkbox"
+          clrCheckbox
+          [formControl]="formControlRef"
+          [id]="input.id"
+        />
+      </clr-checkbox-wrapper>
+    </clr-checkbox-container>
+  </ng-container>
+</ng-container>

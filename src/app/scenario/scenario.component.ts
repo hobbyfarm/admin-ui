@@ -357,8 +357,8 @@ export class ScenarioComponent implements OnInit {
   }
   saveCreatedScenario() {
     this.scenarioService.create(this.selectedscenario).subscribe(
-      (s: string) => {
-        this._displayAlert(s, true);
+      (s: Scenario) => {
+        this._displayAlert(s.name, true);
         this.scenarioAdded = true;
         this.scenarioFilter.reloadScenarios();
       },

@@ -1,4 +1,12 @@
-.welcome-msg {
-    display: flex;
-    align-self: center;
-  }
+.motd {
+  align-self: center;
+  margin-top: 0px;
+  text-align: center;
+  color: white;
+}
+
+.motd-container {
+  background-color: red;
+  margin-top: 0px;
+  width: 100%;
+}

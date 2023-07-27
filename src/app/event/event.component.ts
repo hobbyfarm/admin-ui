@@ -7,7 +7,7 @@ import { CourseService } from '../data/course.service';
 import { ScenarioService } from '../data/scenario.service';
 import { UserService } from '../data/user.service';
 import { RbacService } from '../data/rbac.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 
 interface extendedScheduledEvent extends ScheduledEvent {
@@ -40,6 +40,9 @@ export class EventComponent implements OnInit, OnDestroy {
   public showActionOverflow: boolean = false;
 
   private scenarioSubscription: Subscription; 
+
+  otacModalOpen: boolean = false;
+  openModalEvents: Subject<ScheduledEvent> = new Subject<ScheduledEvent>()
 
 
   constructor(
@@ -159,6 +162,11 @@ export class EventComponent implements OnInit, OnDestroy {
 
   public newupdated() {
     this.refresh();
+  }
+
+  openOtac(se: ScheduledEvent) {
+    this.openModalEvents.next(se)
+    this.otacModalOpen = true
   }
 
   ngOnDestroy() {

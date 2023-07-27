@@ -3,15 +3,16 @@ import {
   HttpClient,
   HttpParams,
   HttpParameterCodec,
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { first, map, tap } from 'rxjs/operators';
+import { catchError, first, map, tap } from 'rxjs/operators';
 import { Scenario } from './scenario';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
 import { atou, utoa } from '../unicode';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, throwError } from 'rxjs';
 
 class CustomEncoder implements HttpParameterCodec {
   encodeKey(key: string): string {
@@ -43,6 +44,10 @@ export class ScenarioService {
   );
 
   constructor(public http: HttpClient) {}
+
+  public watch() {
+    return this.bh.asObservable();
+  }
 
   public list(force = false) {
     if (!force && (this.fetchedList || this.startedFetchedList)) {
@@ -139,7 +144,24 @@ export class ScenarioService {
       .set('pause_duration', s.pause_duration)
       .set('keepalive_duration', s.keepalive_duration);
 
-    return this.http.post(environment.server + '/a/scenario/new', params);
+    return this.http.post(environment.server + '/a/scenario/new', params).pipe(
+      catchError((e: HttpErrorResponse) => {
+        return throwError(e.error);
+      }),
+      map((s: ServerResponse) => {
+        return s.message;
+      }),
+      map((scenarioID: string) => {
+        s.id = scenarioID;
+        s.categories = [];
+        s.tags = [];
+        return s;
+      }),
+      tap((scenario: Scenario) => {
+        this.cachedScenarioList.push(scenario);
+        this.set(this.cachedScenarioList);
+      })
+    );
   }
 
   public printable(id: string) {
