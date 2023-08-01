@@ -1,0 +1,31 @@
+<p>add-course-wizard works!</p>
+<clr-wizard #wizard clrWizardSize="xl" (clrWizardOnFinish)="whenFinish()">
+
+    <clr-wizard-title> Wizard</clr-wizard-title>
+
+    <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+    <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+    <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+    <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+
+    <clr-wizard-page (clrWizardPageNext)="save()" [clrWizardPageNextDisabled]="!form.valid">
+        <ng-template clrPageTitle>Page 1</ng-template>
+        <div>
+            <course-form [course]="course" (formReady)="setupForm($event)"></course-form>
+          </div>
+          <div>
+            <!-- <button class="btn btn-success" (click)="save()" [disabled]="!form.valid">Save</button> -->
+          </div>
+    </clr-wizard-page>
+
+    <clr-wizard-page *ngIf="selectedCourse">
+        <ng-template clrPageTitle>Page 2</ng-template>
+        ...
+    </clr-wizard-page>
+
+    <clr-wizard-page>
+        <ng-template clrPageTitle>Page 3</ng-template>
+        ...
+    </clr-wizard-page>
+
+</clr-wizard>

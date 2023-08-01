@@ -14,6 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 import { RbacService } from '../data/rbac.service';
 import { ClrDatagridSortOrder } from '@clr/angular';
+import { AddCourseWizardComponent } from './add-course-wizard/add-course-wizard.component';
 
 @Component({
   selector: 'app-course',
@@ -24,6 +25,7 @@ export class CourseComponent implements OnInit {
   public courses: Course[] = [];
 
   @ViewChild("newCourse") newCourse: NewCourseComponent;
+  @ViewChild("addNewCourse")  addNewCourse: AddCourseWizardComponent;
   @ViewChild("addScenario") addScenario: AddScenarioComponent;
   @ViewChild("deleteConfirmation") deleteConfirmation: DeleteConfirmationComponent;
 
@@ -177,6 +179,10 @@ export class CourseComponent implements OnInit {
 
   openNew() {
     this.newCourse.open();
+  }
+
+  openNewWizard(){
+    this.addNewCourse.openCourse()
   }
 
   openAdd() {

@@ -11,6 +11,9 @@
         <button class="btn btn-success" (click)="openNew()" *rbac="['courses.create']">
             <clr-icon shape="plus"></clr-icon> New Course
         </button>
+        <button class="btn btn-warning" (click)="openNewWizard()" *rbac="['courses.create']">
+            <clr-icon shape="plus"></clr-icon> New Course(Under development)
+        </button>
     </div>
 </div>
 <div class="clr-row">
@@ -170,6 +173,8 @@
         <button class="btn btn-success" [disabled]="!editForm?.valid" *ngIf="updateRbac" (click)="saveCourse()">Save</button>
     </div>
 </div>
+<app-add-course-wizard #addNewCourse [selectedCourse]="selectedCourse"></app-add-course-wizard>
+
 <new-course #newCourse (added)="refresh()"></new-course>
 <add-scenario #addScenario [scenarios]="scenarios" (selected)="addSelected($event)"></add-scenario>
 <delete-confirmation #deleteConfirmation (delete)="deleteSelected()"></delete-confirmation>
