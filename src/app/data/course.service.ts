@@ -108,7 +108,9 @@ export class CourseService {
       .set('keepalive_duration', c.keepalive_duration)
       .set('pause_duration', c.pause_duration)
       .set('pauseable', JSON.stringify(c.pauseable))
-      .set('keep_vm', JSON.stringify(c.keep_vm));
+      .set('keep_vm', JSON.stringify(c.keep_vm))
+      .set('virtualmachines', JSON.stringify(c.virtualmachines));
+
 
     return this.http.post(environment.server + '/a/course/new', params);
   }

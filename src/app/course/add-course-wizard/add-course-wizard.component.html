@@ -1,7 +1,7 @@
 <p>add-course-wizard works!</p>
 <clr-wizard #wizard clrWizardSize="xl" (clrWizardOnFinish)="whenFinish()">
 
-    <clr-wizard-title> Wizard</clr-wizard-title>
+    <clr-wizard-title> Create new Course</clr-wizard-title>
 
     <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
     <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
@@ -9,18 +9,18 @@
     <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
     <clr-wizard-page (clrWizardPageNext)="save()" [clrWizardPageNextDisabled]="!form.valid">
-        <ng-template clrPageTitle>Page 1</ng-template>
+        <ng-template clrPageTitle>Course Details</ng-template>
         <div>
             <course-form [course]="course" (formReady)="setupForm($event)"></course-form>
           </div>
           <div>
-            <!-- <button class="btn btn-success" (click)="save()" [disabled]="!form.valid">Save</button> -->
           </div>
     </clr-wizard-page>
 
-    <clr-wizard-page *ngIf="selectedCourse">
-        <ng-template clrPageTitle>Page 2</ng-template>
-        ...
+    <clr-wizard-page [clrWizardPageNextDisabled]="isVMNull" (clrWizardPageNext)="save()">
+        <ng-template clrPageTitle>Virtual Machines</ng-template>
+        <vmset [(vms)]="editVirtualMachines" (vmsChange)="setModified()" [updateRbac]="updateRbac"></vmset>
+
     </clr-wizard-page>
 
     <clr-wizard-page>
