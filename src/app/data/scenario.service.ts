@@ -110,14 +110,14 @@ export class ScenarioService {
   }
 
   public update(iScenario: Scenario) {
-    var s = <Scenario>deepCopy(iScenario);
+    const s = <Scenario>deepCopy(iScenario);
     // step by step, re-encode to b64
     s.steps.forEach((st: Step) => {
       st.title = utoa(st.title);
       st.content = utoa(st.content);
     });
 
-    var params = new HttpParams({ encoder: new CustomEncoder() })
+    const params = new HttpParams({ encoder: new CustomEncoder() })
       .set('name', utoa(s.name))
       .set('description', utoa(s.description))
       .set('steps', JSON.stringify(s.steps))
@@ -136,7 +136,7 @@ export class ScenarioService {
       st.content = utoa(st.content);
     });
 
-    var params = new HttpParams()
+    const params = new HttpParams()
       .set('name', utoa(s.name))
       .set('description', utoa(s.description))
       .set('virtualmachines', JSON.stringify(s.virtualmachines))

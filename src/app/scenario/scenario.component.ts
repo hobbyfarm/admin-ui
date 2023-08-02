@@ -150,8 +150,8 @@ export class ScenarioComponent implements OnInit {
   }
 
   get keepaliveRequired() {
-    var ka = this.scenarioDetails.get('keepalive_amount');
-    var ku = this.scenarioDetails.get('keepalive_unit');
+    const ka = this.scenarioDetails.get('keepalive_amount');
+    const ku = this.scenarioDetails.get('keepalive_unit');
 
     // validate
     if ((ka.dirty || ka.touched) && ka.invalid && ka.errors.required) {
@@ -446,7 +446,7 @@ export class ScenarioComponent implements OnInit {
   moveStepUp(i: number) {
     this.scenarioTainted = true;
     // get a copy of the to-be-moved item
-    var obj = <Step>deepCopy(this.selectedscenario.steps[i]);
+    const obj = <Step>deepCopy(this.selectedscenario.steps[i]);
     // delete at the index currently
     this.selectedscenario.steps.splice(i, 1);
     // put into the i-1 index
@@ -456,7 +456,7 @@ export class ScenarioComponent implements OnInit {
   moveStepDown(i: number) {
     this.scenarioTainted = true;
     // get a copy of the to-be-moved item
-    var obj = <Step>deepCopy(this.selectedscenario.steps[i]);
+    const obj = <Step>deepCopy(this.selectedscenario.steps[i]);
     // delete at the index currently
     this.selectedscenario.steps.splice(i, 1);
     // put into the i+1 index
