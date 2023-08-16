@@ -332,6 +332,7 @@ export class ScenarioComponent implements OnInit {
 
   cancelEdit() {
     this.reloadSteps();
+    this.editOpen = false;
     this.editModal.close();
   }
 
@@ -400,6 +401,8 @@ export class ScenarioComponent implements OnInit {
   public deleteVM(setIndex: number, key: string) {
     this.scenarioTainted = true;
     delete this.selectedscenario.virtualmachines[setIndex][key];
+    if (Object.keys(this.selectedscenario.virtualmachines[0]).length == 0)
+      this.isVMAdded = false;
   }
 
   addVM() {
@@ -507,7 +510,6 @@ export class ScenarioComponent implements OnInit {
 
   addVMSet() {
     this.scenarioTainted = true;
-    this.isVMAdded = true;
     this.selectedscenario.virtualmachines.push({});
   }
 
@@ -519,7 +521,7 @@ export class ScenarioComponent implements OnInit {
 
   doDeleteVMSet() {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
-    if (this.selectedscenario.virtualmachines.length == 0)
+    if (Object.keys(this.selectedscenario.virtualmachines[0]).length == 0)
       this.isVMAdded = false;
     this.deleteVMSetModal.close();
   }
