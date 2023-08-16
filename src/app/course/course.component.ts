@@ -14,37 +14,39 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 import { RbacService } from '../data/rbac.service';
 import { ClrDatagridSortOrder } from '@clr/angular';
-import { AddCourseWizardComponent } from './add-course-wizard/add-course-wizard.component';
+import { CourseWizardComponent } from './course-wizard/course-wizard.component';
 
 @Component({
   selector: 'app-course',
   templateUrl: './course.component.html',
-  styleUrls: ['./course.component.scss']
+  styleUrls: ['./course.component.scss'],
 })
 export class CourseComponent implements OnInit {
   public courses: Course[] = [];
 
-  @ViewChild("newCourse") newCourse: NewCourseComponent;
-  @ViewChild("addNewCourse")  addNewCourse: AddCourseWizardComponent;
-  @ViewChild("addScenario") addScenario: AddScenarioComponent;
-  @ViewChild("deleteConfirmation") deleteConfirmation: DeleteConfirmationComponent;
+  @ViewChild('newCourse') newCourse: NewCourseComponent;
+  @ViewChild('addNewCourse') addNewCourse: CourseWizardComponent;
+  @ViewChild('editcourse') editCourseWizard: CourseWizardComponent; 
+  @ViewChild('addScenario') addScenario: AddScenarioComponent;
+  @ViewChild('deleteConfirmation')
+  deleteConfirmation: DeleteConfirmationComponent;
 
   private courseForm: CourseFormComponent;
 
-  @ViewChild('courseform', { static: false }) set content(content: CourseFormComponent) {
-     if(content) {
-          this.courseForm = content;
-     }
+  @ViewChild('courseform', { static: false }) set content(
+    content: CourseFormComponent
+  ) {
+    if (content) {
+      this.courseForm = content;
+    }
   }
 
   public selectedCourse: Course;
 
   public editForm: FormGroup;
   public newCategoryForm: FormGroup = new FormGroup({
-    "category": new FormControl(null, [
-      Validators.required
-    ])
-  })
+    category: new FormControl(null, [Validators.required]),
+  });
 
   public scenarios: Scenario[] = [];
   public dragScenarios: Scenario[] = [];
@@ -52,7 +54,7 @@ export class CourseComponent implements OnInit {
   public editVirtualMachines: {}[] = [];
   public editCategories: string[] = [];
 
-  public alertType: string = "warning";
+  public alertType: string = 'warning';
   public alertText: string = null;
   public isAlert: boolean = false;
   public modified: boolean = false;
@@ -77,66 +79,65 @@ export class CourseComponent implements OnInit {
     dragulaService.destroy('scenarios');
     dragulaService.createGroup('scenarios', {
       moves: (el, container, handle) => {
-        return handle.className == "handle"
+        return handle.className == 'handle';
       },
-    })
+    });
 
-    dragulaService.drop('scenarios').subscribe(
-      () => {
-        this.setModified();
-      }
-    )
+    dragulaService.drop('scenarios').subscribe(() => {
+      this.setModified();
+    });
   }
 
   ngOnInit(): void {
     const authorizationRequests = Promise.all([
-      this.rbacService.Grants("courses", "get"),
-      this.rbacService.Grants("courses", "update"),
-      this.rbacService.Grants("scenarios", "list")
-    ])
+      this.rbacService.Grants('courses', 'get'),
+      this.rbacService.Grants('courses', 'update'),
+      this.rbacService.Grants('scenarios', 'list'),
+    ]);
 
-    authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
-      const allowedGet: boolean = permissions[0];
-      const allowedUpdate: boolean = permissions[1];
-      const allowListScenarios: boolean = permissions[2];
-      // Enable permission to list courses if either "get" or "update" on courses is granted
-      this.selectRbac = allowedGet || allowedUpdate;
-      this.listScenarios = allowListScenarios;
-      // Enable permission to update courses
-      this.updateRbac = allowedUpdate && this.listScenarios;
-      return this.listScenarios;
-    }).then((allowListScenarios: boolean) => {
-      if(allowListScenarios) {
-        return this.scenarioService.list().toPromise();
-      } else {
-        return [];
-      }
-    }).then((s: Scenario[]) => {
-      this.scenarios = s;
-    });
+    authorizationRequests
+      .then((permissions: [boolean, boolean, boolean]) => {
+        const allowedGet: boolean = permissions[0];
+        const allowedUpdate: boolean = permissions[1];
+        const allowListScenarios: boolean = permissions[2];
+        // Enable permission to list courses if either "get" or "update" on courses is granted
+        this.selectRbac = allowedGet || allowedUpdate;
+        this.listScenarios = allowListScenarios;
+        // Enable permission to update courses
+        this.updateRbac = allowedUpdate && this.listScenarios;
+        return this.listScenarios;
+      })
+      .then((allowListScenarios: boolean) => {
+        if (allowListScenarios) {
+          return this.scenarioService.list().toPromise();
+        } else {
+          return [];
+        }
+      })
+      .then((s: Scenario[]) => {
+        this.scenarios = s;
+      });
     this.refresh();
   }
 
   refresh(): void {
-    this.courseService.list(true)
-      .subscribe(
-        (cList: Course[]) => this.courses = cList
-      )
+    this.courseService.list(true).subscribe((cList: Course[]) => {
+      this.courses = cList;
+    });
   }
+
 
   setupForm(fg: FormGroup) {
     this.editForm = fg;
-    if(!this.updateRbac) {
+    if (!this.updateRbac) {
       this.editForm.disable();
     } else {
       this.editForm.enable();
-      this.editForm.valueChanges.subscribe(
-        (a: any) => {
-          if (this.editForm.dirty) {
-            this.setModified();
-          }
+      this.editForm.valueChanges.subscribe((a: any) => {
+        if (this.editForm.dirty) {
+          this.setModified();
         }
-      )
+      });
     }
   }
 
@@ -151,15 +152,16 @@ export class CourseComponent implements OnInit {
   }
 
   setModified() {
-    this.alertText = "Course has been modified, please save your changes or discard";
-    this.alertType = "warning";
+    this.alertText =
+      'Course has been modified, please save your changes or discard';
+    this.alertType = 'warning';
     this.isAlert = true;
     this.modified = true;
   }
 
   clearModified() {
     this.isAlert = false;
-    this.alertText = "";
+    this.alertText = '';
     this.modified = false;
   }
 
@@ -167,43 +169,45 @@ export class CourseComponent implements OnInit {
     this.alertType = 'success';
     this.alertText = msg;
     this.isAlert = true;
-    setTimeout(() => this.isAlert = false, 1000);
+    setTimeout(() => (this.isAlert = false), 1000);
   }
 
   alertDanger(msg: string) {
     this.alertType = 'danger';
     this.alertText = msg;
     this.isAlert = true;
-    setTimeout(() => this.isAlert = false, 3000);
+    setTimeout(() => (this.isAlert = false), 3000);
   }
 
   openNew() {
     this.newCourse.open();
   }
 
-  openNewWizard(){
-    this.addNewCourse.openCourse()
+  openNewWizard() {
+    this.addNewCourse.openNewCourse();
   }
+
+ 
 
   openAdd() {
     this.addScenario.open();
   }
 
-  deleteCategory(category: string){
-    this.editCategories.forEach((element,index)=>{
-      if(element==category) this.editCategories.splice(index,1);
+  deleteCategory(category: string) {
+    this.editCategories.forEach((element, index) => {
+      if (element == category) this.editCategories.splice(index, 1);
     });
     this.updateDynamicScenarios();
     this.setModified();
   }
 
-  addCategory(){
-    let categories = this.newCategoryForm.get("category").value
-    categories = categories.split(","); 
-    categories.forEach(category => {
-      category = category.replace(/\s/g, ""); //remove all whitespaces
-      if(category != "" && !this.editCategories.includes(category)){
-        this.editCategories.push(category); 
+  addCategory() {
+    let categories = this.newCategoryForm.get('category').value;
+    categories = categories.split(',');
+    categories.forEach((category) => {
+      category = category.replace(/\s/g, ''); //remove all whitespaces
+      if (category != '' && !this.editCategories.includes(category)) {
+        this.editCategories.push(category);
       }
     });
     this.newCategoryForm.reset();
@@ -212,22 +216,23 @@ export class CourseComponent implements OnInit {
     this.setModified();
   }
 
-  updateDynamicScenarios(){
+  updateDynamicScenarios() {
     this.dynamicAddedScenarios = [];
-    if(this.listScenarios) {
-      this.courseService.listDynamicScenarios(this.editCategories)
-      .subscribe(
+    if (this.listScenarios) {
+      this.courseService.listDynamicScenarios(this.editCategories).subscribe(
         (dynamicScenarios: String[]) => {
-          this.scenarios.forEach(scenario => {
-            if(dynamicScenarios && dynamicScenarios.includes(scenario.id)){
-                this.dynamicAddedScenarios.push(scenario);
+          this.scenarios.forEach((scenario) => {
+            if (dynamicScenarios && dynamicScenarios.includes(scenario.id)) {
+              this.dynamicAddedScenarios.push(scenario);
             }
-          })
+          });
         },
         (e: HttpErrorResponse) => {
-          this.alertDanger('Error listing dynmamic scenarios: ' + e.error.message);
+          this.alertDanger(
+            'Error listing dynmamic scenarios: ' + e.error.message
+          );
         }
-      )
+      );
     }
   }
 
@@ -243,7 +248,8 @@ export class CourseComponent implements OnInit {
   }
 
   editCourse(c: Course) {
-    if (c) { // because this can be called when unsetting the selected course
+    if (c) {
+      // because this can be called when unsetting the selected course
       this.courseDetailsActive = true;
       setTimeout(() => this.courseForm.reset(), 200); // hack
       this.dragScenarios = c.scenarios;
@@ -253,48 +259,54 @@ export class CourseComponent implements OnInit {
     }
   }
 
+  openEditCourseWizard(course: Course) {
+    this.selectedCourse = course;
+    this.editCourseWizard.openEditCourse(course)
+  }
+
   saveCourse() {
     this.selectedCourse.name = this.editForm.get('course_name').value;
-    this.selectedCourse.description = this.editForm.get('course_description').value;
-    this.selectedCourse.keepalive_duration = this.editForm.get('keepalive_amount').value +
+    this.selectedCourse.description =
+      this.editForm.get('course_description').value;
+    this.selectedCourse.keepalive_duration =
+      this.editForm.get('keepalive_amount').value +
       this.editForm.get('keepalive_unit').value;
-    this.selectedCourse.pause_duration = this.editForm.get('pause_duration').value + 'h';
+    this.selectedCourse.pause_duration =
+      this.editForm.get('pause_duration').value + 'h';
     this.selectedCourse.pauseable = this.editForm.get('pauseable').value;
     this.selectedCourse.keep_vm = this.editForm.get('keep_vm').value;
     this.selectedCourse.categories = this.editCategories;
     this.selectedCourse.scenarios = this.dragScenarios;
     this.selectedCourse.virtualmachines = this.editVirtualMachines;
 
-    this.courseService.update(this.selectedCourse)
-      .subscribe(
-        (s: ServerResponse) => {
-          this.clearModified();
-          this.alertSuccess('Course successfully updated');
-        },
-        (e: HttpErrorResponse) => {
-          this.alertDanger('Error creating object: ' + e.error.message);
-        }
-      )
-
+    this.courseService.update(this.selectedCourse).subscribe(
+      (s: ServerResponse) => {
+        this.clearModified();
+        this.alertSuccess('Course successfully updated');
+      },
+      (e: HttpErrorResponse) => {
+        this.alertDanger('Error creating object: ' + e.error.message);
+      }
+    );
   }
 
-  delete(): void {
+  delete(course: Course): void {
+    this.selectedCourse = course;
     this.deleteConfirmation.open();
   }
 
   deleteSelected(): void {
-    this.courseService.delete(this.selectedCourse)
-      .subscribe(
-        (s: ServerResponse) => {
-          this.clearModified();
-          this.alertSuccess('Course deleted');
-          this.refresh();
-          this.selectedCourse = null;
-          this.courseDetailsActive = true; // return the user to the details tab
-        },
-        (e: HttpErrorResponse) => {
-          this.alertDanger('Error deleting object: ' + e.error.message)
-        }
-      )
+    this.courseService.delete(this.selectedCourse).subscribe(
+      (s: ServerResponse) => {
+        this.clearModified();
+        this.alertSuccess('Course deleted');
+        this.refresh();
+        this.selectedCourse = null;
+        this.courseDetailsActive = true; // return the user to the details tab
+      },
+      (e: HttpErrorResponse) => {
+        this.alertDanger('Error deleting object: ' + e.error.message);
+      }
+    );
   }
 }

@@ -1,0 +1,260 @@
+<clr-wizard
+  #wizard
+  clrWizardSize="xl"
+  (clrWizardOnFinish)="whenFinish()"
+  (clrWizardOnCancel)="doCancel()"
+>
+  <clr-wizard-title>  {{ wizardTitle }} </clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+  <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="!form.valid"
+    (clrWizardPageNext)="saveCourseWizard()"
+  >
+    <ng-template clrPageTitle>Course Details</ng-template>
+    <div>
+      <course-form 
+        #courseForm
+        [course]="selectedCourse"
+        (formReady)="setupForm($event)"
+      ></course-form>
+    </div>
+  </clr-wizard-page>
+
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="!VMAllowNext || editVirtualMachines.length == 0"
+    (clrWizardPageNext)="saveCourseWizard()"
+  >
+    <ng-template clrPageTitle>Virtual Machines</ng-template>
+    <vmset
+      #virtualmachine
+      [(vms)]="editVirtualMachines"
+      (vmsChange)="setVM($event)"
+      [updateRbac]="updateRbac"
+    ></vmset>
+  </clr-wizard-page>
+
+  <clr-wizard-page
+    (clrWizardPageNext)="saveCourseWizard()"
+    [clrWizardPageNextDisabled]="dragScenarios.length == 0"
+  >
+    <ng-template clrPageTitle>Scenario</ng-template>
+    <ng-container *ngIf="listScenarios">
+      <button
+        class="btn btn-sm btn-success-outline"
+        *rbac="['courses.update']"
+        (click)="openAdd()"
+      >
+        Add Scenario
+      </button>
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>Move</th>
+            <th>Order</th>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody
+          class="container"
+          [dragula]="'scenarios'"
+          [(dragulaModel)]="dragScenarios"
+        >
+          <tr *ngFor="let s of dragScenarios; let i = index">
+            <td>
+              <clr-icon class="handle" shape="drag-handle" size="24"></clr-icon>
+            </td>
+            <td>
+              {{ i + 1 }}
+            </td>
+            <td>
+              {{ s.id }}
+            </td>
+            <td>
+              {{ s.name }}
+            </td>
+            <td>
+              <button
+                class="btn btn-link btn-sm btn-link-danger"
+                (click)="deleteScenario(i)"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The following scenarios are added dynamically to this course. Edit them
+        in the "Dynamic Scenarios" Tab.
+      </p>
+      <clr-datagrid class="datagrid-compact">
+        <clr-dg-column>Id</clr-dg-column>
+        <clr-dg-column>Name</clr-dg-column>
+        <clr-dg-row
+          *clrDgItems="let s of dynamicAddedScenarios"
+          [clrDgItem]="s"
+        >
+          <clr-dg-cell>{{ s.id }}</clr-dg-cell>
+          <clr-dg-cell>{{ s.name }}</clr-dg-cell>
+        </clr-dg-row>
+      </clr-datagrid>
+    </ng-container>
+  </clr-wizard-page>
+  
+  <clr-wizard-page *ngIf="wizardCourse == 'edit'">
+    <ng-template clrPageTitle>Dynamic Scenario</ng-template>
+    <ng-container>
+      
+      <p>
+        Scenarios that match at least one of the queries provided are
+        dynamically included in this course,<br />
+        together with all scenarios selected in the scenarios-tab which are
+        always included.<br />
+        There is no need to update the course (or any scheduled event that
+        includes this course) if categories of a scenario are changed.<br />
+      </p>
+      
+      <button
+        class="btn btn-success-outline btn-sm"
+        (click)="newCategory = true"
+        *rbac="['courses.update']"
+      >
+        <clr-icon shape="plus"></clr-icon> Add Query
+      </button>
+      <button
+        class="btn btn-success-outline btn-sm"
+        (click)="seeExamples = !seeExamples"
+        *rbac="['courses.update']"
+      >
+        <clr-icon shape="plus"></clr-icon> Example Queries
+      </button>
+      <ng-container *ngIf="seeExamples">
+        <clr-datagrid class="datagrid-compact">
+          <clr-dg-column>Query</clr-dg-column>
+          <clr-dg-column>Explanation</clr-dg-column>
+          <clr-dg-row>
+            <clr-dg-cell>kubernetes</clr-dg-cell>
+            <clr-dg-cell
+              >All Scenarios that are in the kubernetes
+              category</clr-dg-cell
+            >
+          </clr-dg-row>
+          <clr-dg-row>
+            <clr-dg-cell>!kubernetes</clr-dg-cell>
+            <clr-dg-cell
+              >All Scenarios that are not in the kubernetes
+              category</clr-dg-cell
+            >
+          </clr-dg-row>
+          <clr-dg-row>
+            <clr-dg-cell>kubernetes&basic</clr-dg-cell>
+            <clr-dg-cell
+              >All Scenarios that are in the kubernetes AND in the basic
+              category</clr-dg-cell
+            >
+          </clr-dg-row>
+          <clr-dg-row>
+            <clr-dg-cell>kubernetes&k3s&basic</clr-dg-cell>
+            <clr-dg-cell
+              >Queries also work with more than two categories</clr-dg-cell
+            >
+          </clr-dg-row>
+          <clr-dg-row>
+            <clr-dg-cell>kubernetes&!basic</clr-dg-cell>
+            <clr-dg-cell
+              >All Scenarios that are in the kubernetes category, but not in
+              the basic category</clr-dg-cell
+            >
+          </clr-dg-row>
+          <clr-dg-row>
+            <clr-dg-cell>example&!example</clr-dg-cell>
+            <clr-dg-cell>No Scenarios will ever match this</clr-dg-cell>
+          </clr-dg-row>
+        </clr-datagrid>
+        <p>
+          Logical OR can be achieved by adding two queries. Each queries
+          matched scenarios will be uniquely merged<br />
+          Adding one query `kubernetes` and one query `docker` will select
+          all categories that are part of either one.
+        </p>
+      </ng-container>
+      <ng-container *ngIf="newCategory"> 
+        <p>
+          You can provide multiple queries by passing them as a
+          Comma-separated List
+        </p>
+        <form clrForm [formGroup]="newCategoryForm">
+          <clr-input-container>
+            <label class="clr-col-md-4">Query</label>
+            <input
+              class="clr-col-md-6"
+              clrInput
+              type="text"
+              name="category"
+              formControlName="category"
+              required
+            />
+            <clr-control-error *clrIfError="'required'"
+              >Query required.</clr-control-error
+            >
+          </clr-input-container>
+          <div class="col-md-2">
+            <button
+              class="btn btn-success btn-sm"
+              [disabled]="!newCategoryForm.valid"
+              (click)="addCategory()"
+            >
+              Add
+            </button>
+          </div>
+        </form> 
+      </ng-container>
+      <clr-datagrid class="datagrid-compact">
+        <clr-dg-column>Query</clr-dg-column>
+        <clr-dg-row *clrDgItems="let a of editCategories" [clrDgItem]="a">
+          <clr-dg-action-overflow>
+            <button class="action-item" (click)="deleteCategory(a)">
+              Delete
+            </button>
+          </clr-dg-action-overflow>
+          <clr-dg-cell>{{ a }}</clr-dg-cell>
+        </clr-dg-row>
+      </clr-datagrid>
+
+    </ng-container>
+  </clr-wizard-page>
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Confirmation</ng-template>
+    <p>Confirm the following details before finalizing</p>
+    <h4>Basic Information</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Virtual Machines</th>
+          <th>Scenarios</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{wizardCourse == 'create'? course.name : selectedCourse}}</td>
+          <td>{{editVirtualMachines.length}}</td> 
+          <td><span *ngFor="let scenario of dragScenarios">{{scenario.name}}, </span></td>
+        </tr>
+      </tbody>
+    </table>
+  </clr-wizard-page>
+</clr-wizard>
+<add-scenario
+  #addScenario
+  [scenarios]="scenarios"
+  (selected)="addSelected($event)"
+></add-scenario>

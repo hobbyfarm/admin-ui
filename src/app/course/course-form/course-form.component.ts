@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { KeepaliveValidator } from 'src/app/validators/keepalive.validator';
 import { Course } from 'src/app/data/course';
@@ -13,6 +13,7 @@ export class CourseFormComponent implements OnInit {
 
   @Output()
   formReady: EventEmitter<FormGroup> = new EventEmitter(null);
+
 
   constructor() { }
 
@@ -67,6 +68,22 @@ export class CourseFormComponent implements OnInit {
     }
   }
 
+
+  resetFormToRenew(): void {
+    this.courseDetails.reset({
+      'course_name': null,
+      'course_description': null,
+      'virtualmachines': null, 
+      'keepalive_amount': 10,
+      'keepalive_unit': 'm',
+      'pauseable': true,
+      'keep_vm': true,
+      'pause_duration': 1,
+      'scenarios': null, 
+    });
+    this.formReady.emit(this.courseDetails);
+  }
+
   ngOnChanges(): void {
     this.reset();
   }
@@ -74,11 +91,13 @@ export class CourseFormComponent implements OnInit {
   public courseDetails: FormGroup = new FormGroup({
     'course_name': new FormControl(null, [
       Validators.required,
-      Validators.minLength(4)
+      Validators.minLength(4), 
+      Validators.pattern(/^[a-zA-Z0-9 ]+$/)
     ]),
     'course_description': new FormControl(null, [
       Validators.required,
-      Validators.minLength(4)
+      Validators.minLength(4),
+      Validators.pattern(/^[a-zA-Z0-9 ]+$/)
     ]),
     'keepalive_amount': new FormControl(10, [
       Validators.required
