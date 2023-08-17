@@ -298,6 +298,30 @@ export class NewScheduledEventComponent implements OnInit {
     this.vmCounts.addControl(ea.environment, newFormGroup);
   }
 
+  public checkIfSimplePageCanBeDone() {
+    let simpleUserCounts: {} = {};
+    for (let env in this.se.required_vms) {
+      const [template, count] = Object.entries(this.se.required_vms[env]).pop();
+      const userRatio = Math.ceil(count / this.requiredVmCounts[template]); // Calculate ratio of VMs, for example when 2 are needed but 4 are present 2 users could use them.
+      // if userRatio is not a true integer
+      if (userRatio * this.requiredVmCounts[template] != count) {
+        return false;
+      }
+      // Filter all entries that do not have the same userRatio
+      const list = Object.entries(this.se.required_vms[env]).filter(
+        (requiredCount) => requiredCount[1] / userRatio != count
+      );
+      // If not all entries have the same userRatio we can not use simple mode
+      if (list.length != Object.entries(this.se.required_vms[env]).length) {
+        return false;
+      }
+      simpleUserCounts[env] = userRatio;
+    }
+
+    this.simpleUserCounts = simpleUserCounts;
+    return true;
+  }
+
   public setupSimpleVMPage(ea: EnvironmentAvailability) {
     // go through each required VM (and its count) and verify that a) it exists in the selected environment and b) there is a minimum count that supports a single user
     // (otherwise don't list it)
@@ -310,7 +334,7 @@ export class NewScheduledEventComponent implements OnInit {
         ) {
           // this template either doesn't exist in the environment, or doesn't match a minimum count
           meetsCriteria = false;
-          if(!this.invalidSimpleEnvironments.includes(ea.environment)){
+          if (!this.invalidSimpleEnvironments.includes(ea.environment)) {
             this.invalidSimpleEnvironments.push(ea.environment);
           }
         }
@@ -484,6 +508,12 @@ export class NewScheduledEventComponent implements OnInit {
 
       this.se.courses = this.se.courses ?? [];
       this.updateCourseSelection(this.se.courses);
+
+      //Test if simple mode can be done
+      this.calculateRequiredVms();
+      if (this.checkIfSimplePageCanBeDone()) {
+        this.simpleMode = true;
+      }
 
       this.rbacService
         .Grants('environments', 'list')

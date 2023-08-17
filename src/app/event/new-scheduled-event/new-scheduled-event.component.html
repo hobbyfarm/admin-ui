@@ -1,5 +1,10 @@
-<clr-wizard #wizard [(clrWizardOpen)]="wzOpen" clrWizardSize="xl" (clrWizardOnFinish)="save()"
-  (clrWizardOnCancel)="close()">
+<clr-wizard
+  #wizard
+  [(clrWizardOpen)]="wzOpen"
+  clrWizardSize="xl"
+  (clrWizardOnFinish)="save()"
+  (clrWizardOnCancel)="close()"
+>
   <clr-wizard-title>New Scheduled Event</clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
@@ -7,110 +12,204 @@
   <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
   <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="!eventDetails.valid" (clrWizardPageNext)="copyEventDetails()">
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="!eventDetails.valid"
+    (clrWizardPageNext)="copyEventDetails()"
+  >
     <ng-template clrPageTitle>Event Details</ng-template>
     <form clrForm [formGroup]="eventDetails">
       <clr-input-container>
         <label>Name</label>
-        <input clrInput type="text" placeholder="Event name" name="event_name" formControlName="event_name" required />
-        <clr-control-error *clrIfError="'required'">Event name is required</clr-control-error>
-        <clr-control-error *clrIfError="'minlength'">Event name must be longer than 4 characters</clr-control-error>
-        <clr-control-error *clrIfError="'notUnique'">Event name must be unique</clr-control-error>
+        <input
+          clrInput
+          type="text"
+          placeholder="Event name"
+          name="event_name"
+          formControlName="event_name"
+          required
+        />
+        <clr-control-error *clrIfError="'required'"
+          >Event name is required</clr-control-error
+        >
+        <clr-control-error *clrIfError="'minlength'"
+          >Event name must be longer than 4 characters</clr-control-error
+        >
+        <clr-control-error *clrIfError="'notUnique'"
+          >Event name must be unique</clr-control-error
+        >
       </clr-input-container>
       <clr-input-container>
         <label>Description</label>
-        <input clrInput type="text" placeholder="Event description" name="description" formControlName="description"
-          required />
-        <clr-control-error *clrIfError="'required'">Event description is required</clr-control-error>
-        <clr-control-error *clrIfError="'minlength'">Event description must be longer than 4 characters
+        <input
+          clrInput
+          type="text"
+          placeholder="Event description"
+          name="description"
+          formControlName="description"
+          required
+        />
+        <clr-control-error *clrIfError="'required'"
+          >Event description is required</clr-control-error
+        >
+        <clr-control-error *clrIfError="'minlength'"
+          >Event description must be longer than 4 characters
         </clr-control-error>
       </clr-input-container>
       <clr-input-container>
         <label>Access Code</label>
-        <input clrInput type="text" placeholder="Access code" name="access_code" formControlName="access_code"
-          required />
-        <clr-control-error *clrIfError="'required'">Access code is required</clr-control-error>
-        <clr-control-error *clrIfError="'minlength'">Access code must be longer than 5 characters</clr-control-error>
-        <clr-control-error *clrIfError="'pattern'">Access code must
+        <input
+          clrInput
+          type="text"
+          placeholder="Access code"
+          name="access_code"
+          formControlName="access_code"
+          required
+        />
+        <clr-control-error *clrIfError="'required'"
+          >Access code is required</clr-control-error
+        >
+        <clr-control-error *clrIfError="'minlength'"
+          >Access code must be longer than 5 characters</clr-control-error
+        >
+        <clr-control-error *clrIfError="'pattern'"
+          >Access code must
           <ul>
             <li>contain only lowercase alphanumeric characters, '-', or '.'</li>
             <li>start and end with an alphanumber character</li>
           </ul>
         </clr-control-error>
-        <clr-control-error *clrIfError="'notUnique'">Access code is already in use</clr-control-error>
+        <clr-control-error *clrIfError="'notUnique'"
+          >Access code is already in use</clr-control-error
+        >
       </clr-input-container>
       <clr-toggle-container>
         <clr-toggle-wrapper>
-          <input type="checkbox" clrToggle name="restricted_bind" formControlName="restricted_bind">
+          <input
+            type="checkbox"
+            clrToggle
+            name="restricted_bind"
+            formControlName="restricted_bind"
+          />
           <label>Restricted Bind</label>
         </clr-toggle-wrapper>
-        <clr-control-helper>Restricted bind prevents users from reserving VM resources not associated with this
-          Scheduled Event.</clr-control-helper>
+        <clr-control-helper
+          >Restricted bind prevents users from reserving VM resources not
+          associated with this Scheduled Event.</clr-control-helper
+        >
       </clr-toggle-container>
       <clr-toggle-container>
         <clr-toggle-wrapper>
-          <input type="checkbox" clrToggle name="on_demand" formControlName="on_demand">
+          <input
+            type="checkbox"
+            clrToggle
+            name="on_demand"
+            formControlName="on_demand"
+          />
           <label>On Demand</label>
         </clr-toggle-wrapper>
         <clr-control-helper>
-          On demand allocates VM resources when requested by a user instead of pre-provisioning.
+          On demand allocates VM resources when requested by a user instead of
+          pre-provisioning.
         </clr-control-helper>
       </clr-toggle-container>
       <clr-toggle-container>
         <clr-toggle-wrapper>
-          <input type="checkbox" clrToggle name="printable" formControlName="printable">
+          <input
+            type="checkbox"
+            clrToggle
+            name="printable"
+            formControlName="printable"
+          />
           <label>Printable</label>
         </clr-toggle-wrapper>
         <clr-control-helper>
-          Printable enables an option for users to print scenario content or save it as PDF file.
+          Printable enables an option for users to print scenario content or
+          save it as PDF file.
         </clr-control-helper>
       </clr-toggle-container>
     </form>
   </clr-wizard-page>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="(se.start_time >= se.end_time) || !se.start_time || !se.end_time">
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="
+      se.start_time >= se.end_time || !se.start_time || !se.end_time
+    "
+  >
     <ng-template clrPageTitle>Event Times</ng-template>
     <div class="clr-row">
       <div class="clr-col">
-        Start Time: {{ se.start_time | date:'long' }} <br />
+        Start Time: {{ se.start_time | date : "long" }} <br />
         <clr-signpost>
-          <button class="btn btn-link" clrSignpostTrigger>Set Start Time</button>
+          <button class="btn btn-link" clrSignpostTrigger>
+            Set Start Time
+          </button>
           <clr-signpost-content *clrIfOpen #startTimeSignpost>
-            <dl-date-time-picker (change)="setStartTime($event)" startView="day" maxView="year" minView="minute"
-              [minuteStep]="30"></dl-date-time-picker>
+            <dl-date-time-picker
+              (change)="setStartTime($event)"
+              startView="day"
+              maxView="year"
+              minView="minute"
+              [minuteStep]="30"
+            ></dl-date-time-picker>
           </clr-signpost-content>
         </clr-signpost>
       </div>
     </div>
 
     <div>
-      <button class="btn btn-outline" (click)="quickStartTime()">Start now</button>
+      <button class="btn btn-outline" (click)="quickStartTime()">
+        Start now
+      </button>
     </div>
 
     <div class="clr-row">
       <div class="clr-col">
-        End Time: {{ se.end_time | date:'long' }} <br />
+        End Time: {{ se.end_time | date : "long" }} <br />
         <clr-signpost>
           <button class="btn btn-link" clrSignpostTrigger>Set End Time</button>
           <clr-signpost-content *clrIfOpen #endTimeSignpost>
-            <dl-date-time-picker (change)="setEndTime($event)" startView="day" maxView="year" minView="minute"
-              [minuteStep]="30"></dl-date-time-picker>
+            <dl-date-time-picker
+              (change)="setEndTime($event)"
+              startView="day"
+              maxView="year"
+              minView="minute"
+              [minuteStep]="30"
+            ></dl-date-time-picker>
           </clr-signpost-content>
         </clr-signpost>
       </div>
     </div>
 
-    <form class="quickset-endtime-form clr-form clr-form-vertical" [formGroup]="quicksetEndtimeForm">
+    <form
+      class="quickset-endtime-form clr-form clr-form-vertical"
+      [formGroup]="quicksetEndtimeForm"
+    >
       <div class="clr-form-control clr-row no-margin-top">
         <label for="quickset_endtime" class="clr-control-label padding-left">
-          <button class="btn btn-outline" (click)="quickEndTime()" [disabled]="!quicksetEndtimeForm.valid">Terminate
-            in</button>
+          <button
+            class="btn btn-outline"
+            (click)="quickEndTime()"
+            [disabled]="!quicksetEndtimeForm.valid"
+          >
+            Terminate in
+          </button>
         </label>
-        <div class="clr-control-container clr-col-md-10 clr-col-12 block"
-          [class.clr-error]="quicksetRequired || quicksetEndtimeForm.errors?.invalidQuicksetAmount || quicksetEndtimeForm.errors?.invalidNumber">
+        <div
+          class="clr-control-container clr-col-md-10 clr-col-12 block"
+          [class.clr-error]="
+            quicksetRequired ||
+            quicksetEndtimeForm.errors?.invalidQuicksetAmount ||
+            quicksetEndtimeForm.errors?.invalidNumber
+          "
+        >
           <div class="clr-input-wrapper">
             <div class="clr-input-group">
-              <input type="number" id="quickset_endtime" formControlName="quickset_endtime" class="clr-input">
+              <input
+                type="number"
+                id="quickset_endtime"
+                formControlName="quickset_endtime"
+                class="clr-input"
+              />
               <select formControlName="quickset_unit">
                 <option value="h">Hour(s)</option>
                 <option value="d">Day(s)</option>
@@ -118,13 +217,24 @@
                 <option value="m">Month(s)</option>
               </select>
             </div>
-            <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+            <clr-icon
+              class="clr-validate-icon"
+              shape="exclamation-circle"
+            ></clr-icon>
           </div>
-          <span class="clr-subtext" *ngIf="quicksetRequired">Please specify when your event should end.</span>
-          <span class="clr-subtext" *ngIf="quicksetEndtimeForm.errors?.invalidQuicksetAmount">
+          <span class="clr-subtext" *ngIf="quicksetRequired"
+            >Please specify when your event should end.</span
+          >
+          <span
+            class="clr-subtext"
+            *ngIf="quicksetEndtimeForm.errors?.invalidQuicksetAmount"
+          >
             Invalid event duration.
           </span>
-          <span class="clr-subtext" *ngIf="quicksetEndtimeForm.errors?.invalidNumber">
+          <span
+            class="clr-subtext"
+            *ngIf="quicksetEndtimeForm.errors?.invalidNumber"
+          >
             Please enter an integral number.
           </span>
         </div>
@@ -132,12 +242,14 @@
     </form>
 
     <p>
-      <i>
-        All times are in {{ tz }} (browser detected)
-      </i>
+      <i> All times are in {{ tz }} (browser detected) </i>
     </p>
     <ng-container *ngIf="se.start_time >= se.end_time">
-      <clr-alert [clrAlertSizeSmall]="true" [clrAlertType]="'danger'" [clrAlertClosable]="false">
+      <clr-alert
+        [clrAlertSizeSmall]="true"
+        [clrAlertType]="'danger'"
+        [clrAlertClosable]="false"
+      >
         <clr-alert-item>
           <span class="alert-text">
             Start time must occur before end time!
@@ -150,8 +262,11 @@
   <clr-wizard-page>
     <ng-template clrPageTitle>Select Course(s)</ng-template>
     <i>Expand a row to view scenarios within that course</i>
-    <clr-datagrid [clrDgSelected]="selectedcourses" (clrDgSelectedChange)="coursesSelected($event)"
-      [clrDgPreserveSelection]="true">
+    <clr-datagrid
+      [clrDgSelected]="selectedcourses"
+      (clrDgSelectedChange)="coursesSelected($event)"
+      [clrDgPreserveSelection]="true"
+    >
       <clr-dg-column>Id</clr-dg-column>
       <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
       <clr-dg-column [clrDgField]="'description'">Description</clr-dg-column>
@@ -179,12 +294,21 @@
     </clr-datagrid>
   </clr-wizard-page>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="selectedcourses.length == 0 && selectedscenarios.length == 0">
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="
+      selectedcourses.length == 0 && selectedscenarios.length == 0
+    "
+  >
     <ng-template clrPageTitle>Select Scenario(s)</ng-template>
-    <filter-scenarios (filterScenarioEventEmitter)="setScenarioList($event)"></filter-scenarios>
+    <filter-scenarios
+      (filterScenarioEventEmitter)="setScenarioList($event)"
+    ></filter-scenarios>
 
-    <clr-datagrid [clrDgSelected]="selectedscenarios" (clrDgSelectedChange)="scenariosSelected($event)"
-      [clrDgPreserveSelection]="true">
+    <clr-datagrid
+      [clrDgSelected]="selectedscenarios"
+      (clrDgSelectedChange)="scenariosSelected($event)"
+      [clrDgPreserveSelection]="true"
+    >
       <clr-dg-column [clrDgField]="'id'">Id</clr-dg-column>
       <clr-dg-column [clrDgField]="'name'">Name</clr-dg-column>
       <clr-dg-column [clrDgField]="'description'">Description</clr-dg-column>
@@ -196,8 +320,15 @@
       </clr-dg-row>
     </clr-datagrid>
 
-    <ng-container *ngIf="selectedcourses.length == 0 && selectedscenarios.length == 0">
-      <clr-alert [clrAlertSizeSmall]="true" [clrAlertType]="'warning'" [clrAlertClosable]="false" class="bottom">
+    <ng-container
+      *ngIf="selectedcourses.length == 0 && selectedscenarios.length == 0"
+    >
+      <clr-alert
+        [clrAlertSizeSmall]="true"
+        [clrAlertType]="'warning'"
+        [clrAlertClosable]="false"
+        class="bottom"
+      >
         <clr-alert-item>
           <span class="alert-text">
             You must select at least one course or scenario to proceed
@@ -207,18 +338,16 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page (clrWizardPageOnLoad)="checkEnvironments()"
-    [clrWizardPageNextDisabled]="selectedEnvironments.length == 0">
+  <clr-wizard-page
+    (clrWizardPageOnLoad)="checkEnvironments()"
+    [clrWizardPageNextDisabled]="selectedEnvironments.length == 0"
+  >
     <ng-template clrPageTitle>Select Environment(s)</ng-template>
     <ng-container *ngIf="checkingEnvironments">
-      <span class="spinner">
-        Please wait...
-      </span>
+      <span class="spinner"> Please wait... </span>
     </ng-container>
     <ng-container *ngIf="noEnvironmentsAvailable">
-      <span>
-        No suitable environments found.
-      </span>
+      <span> No suitable environments found. </span>
     </ng-container>
     <ng-container *ngIf="unavailableVMTs.length > 0">
       <span>
@@ -230,16 +359,22 @@
         </tr>
       </thead>
       <tbody [formGroup]="simpleModeVmCounts">
-        <ng-container *ngFor="let vmt of unavailableVMTs;">
+        <ng-container *ngFor="let vmt of unavailableVMTs">
           <tr>
             <td class="left">
-              {{vmt}}
+              {{ vmt }}
             </td>
           </tr>
         </ng-container>
       </tbody>
     </ng-container>
-    <ng-container *ngIf="!checkingEnvironments && !noEnvironmentsAvailable && unavailableVMTs.length == 0">
+    <ng-container
+      *ngIf="
+        !checkingEnvironments &&
+        !noEnvironmentsAvailable &&
+        unavailableVMTs.length == 0
+      "
+    >
       <clr-datagrid [(clrDgSelected)]="selectedEnvironments">
         <clr-dg-column>
           <clr-icon shape="building"></clr-icon>&nbsp;Environment
@@ -247,47 +382,92 @@
         <clr-dg-column>
           <clr-icon shape="host"></clr-icon>&nbsp;Count
         </clr-dg-column>
-        
-        <clr-dg-row *clrDgItems="let ea of availableEnvironments" [clrDgItem]="ea">
+
+        <clr-dg-row
+          *clrDgItems="let ea of availableEnvironments"
+          [clrDgItem]="ea"
+        >
           <clr-dg-cell>{{ ea.environment }}</clr-dg-cell>
           <clr-dg-cell>
-              <ng-container *ngFor="let item of ea.available_count | keyvalue">
-                <span class="label">{{ item.key }} <span class="badge badge-success">{{ item.value }}</span></span>
-              </ng-container>
+            <ng-container *ngFor="let item of ea.available_count | keyvalue">
+              <span class="label"
+                >{{ item.key }}
+                <span class="badge badge-success">{{ item.value }}</span></span
+              >
+            </ng-container>
           </clr-dg-cell>
         </clr-dg-row>
       </clr-datagrid>
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page (clrWizardPageOnLoad)="setupVMSelection()" (clrWizardPageNext)="copyVMCounts()"
-    [clrWizardPageNextDisabled]="!vmCounts.valid && !simpleMode || !simpleModeVmCounts.valid && simpleMode">
+  <clr-wizard-page
+    (clrWizardPageOnLoad)="setupVMSelection()"
+    (clrWizardPageNext)="copyVMCounts()"
+    [clrWizardPageNextDisabled]="
+      (!vmCounts.valid && !simpleMode) ||
+      (!simpleModeVmCounts.valid && simpleMode)
+    "
+  >
     <ng-template clrPageTitle>Select Virtual Machines</ng-template>
     <clr-toggle-wrapper>
-      <input type="checkbox" clrToggle [(ngModel)]="simpleMode" name="simpleMode" />
+      <input
+        type="checkbox"
+        clrToggle
+        [(ngModel)]="simpleMode"
+        name="simpleMode"
+      />
       <label>Simple Mode</label>
     </clr-toggle-wrapper>
     <ng-container *ngIf="simpleMode">
-      <i>In simple mode, define the number of users per environment. Virtual machines are calculated for you.</i>
+      <i
+        >In simple mode, define the number of users per environment. Virtual
+        machines are calculated for you.</i
+      >
       <table class="table table-compact">
         <thead>
           <tr>
             <th class="left">Environment</th>
             <th class="left">Users</th>
+            <th class="left">VirtualMachines</th>
           </tr>
         </thead>
         <tbody [formGroup]="simpleModeVmCounts">
-          <ng-container *ngFor="let fc of simpleModeVmCounts['controls']?.envs['controls']; let it = index">
+          <ng-container
+            *ngFor="
+              let fc of simpleModeVmCounts['controls']?.envs['controls'];
+              let it = index
+            "
+          >
             <tr>
               <td class="left">
                 {{ selectedEnvironments[it]?.environment }}
               </td>
               <td class="left">
                 <clr-input-container class="table-input">
-                  <input clrInput type="number" [formControl]="fc" pattern="^[0-9]*$" min="0" step="1">
-                  <clr-control-error *clrIfError="'max'">User count higher than max</clr-control-error>
+                  <input
+                    clrInput
+                    type="number"
+                    [formControl]="fc"
+                    pattern="^[0-9]*$"
+                    min="0"
+                    step="1"
+                  />
+                  <clr-control-error *clrIfError="'max'"
+                    >User count higher than max</clr-control-error
+                  >
                 </clr-input-container>
-                (max {{ maxUserCounts[selectedEnvironments[it]?.environment]}})
+                (max {{ maxUserCounts[selectedEnvironments[it]?.environment] }})
+              </td>
+              <td class="left">
+                <span
+                  class="label"
+                  *ngFor="let item of requiredVmCounts | keyvalue"
+                  >{{ item.key }}
+                  <span class="badge badge-success">{{
+                    item.value * fc.value
+                  }}</span></span
+                >
               </td>
             </tr>
           </ng-container>
@@ -295,31 +475,34 @@
             <td class="right">
               <b>Total</b>
             </td>
-            <td class="left">
-              {{ simpleUserTotal() }} users
-            </td>
+            <td class="left">{{ simpleUserTotal() }} users</td>
+            <td></td>
           </tr>
         </tbody>
       </table>
-      <br />
-      <i>The following environments are incompatible with simple mode: </i>
-      <clr-signpost>
-        <clr-signpost-content *clrIfOpen>
-          <h3>Simple Mode Compatibility</h3>
-          <p>
-            An environment must be able to support the creation of all types of required VMs, as well as
-            have enough capacity for at least one user (and all their associated VMs).
-          </p>
-        </clr-signpost-content>
-      </clr-signpost>
-      <ul>
-        <li *ngFor="let s of invalidSimpleEnvironments">{{s}}</li>
-      </ul>
+      <ng-container *ngIf="invalidSimpleEnvironments.length > 0">
+        <br />
+        <i>The following environments are incompatible with simple mode: </i>
+        <clr-signpost>
+          <clr-signpost-content *clrIfOpen>
+            <h3>Simple Mode Compatibility</h3>
+            <p>
+              An environment must be able to support the creation of all types
+              of required VMs, as well as have enough capacity for at least one
+              user (and all their associated VMs).
+            </p>
+          </clr-signpost-content>
+        </clr-signpost>
+        <ul>
+          <li *ngFor="let s of invalidSimpleEnvironments">{{ s }}</li>
+        </ul>
+      </ng-container>
     </ng-container>
     <ng-container *ngIf="!simpleMode">
-      <i>In advanced mode, define the number of virtual machines per environment. Remember to account for the number of
-        expected users,
-        thus <code>number_of_users * number_of_required_vms</code>.
+      <i
+        >In advanced mode, define the number of virtual machines per
+        environment. Remember to account for the number of expected users, thus
+        <code>number_of_users * number_of_required_vms</code>.
       </i>
       <p>
         The following VMs are required <b>per user</b>:
@@ -336,15 +519,27 @@
           </tr>
         </thead>
         <tbody [formGroup]="vmCounts">
-          <ng-container *ngFor="let groupName of controls('')" [formGroupName]="groupName">
+          <ng-container
+            *ngFor="let groupName of controls('')"
+            [formGroupName]="groupName"
+          >
             <ng-container *ngFor="let controlName of controls(groupName)">
               <tr>
                 <td>{{ groupName }}</td>
                 <td>{{ controlName }}</td>
                 <td>
                   <clr-input-container class="table-input">
-                    <input clrInput type="number" [formControlName]="controlName" pattern="^[0-9]*$" min="0" step="1">
-                    <clr-control-error *clrIfError="'max'">VM count higher than max</clr-control-error>
+                    <input
+                      clrInput
+                      type="number"
+                      [formControlName]="controlName"
+                      pattern="^[0-9]*$"
+                      min="0"
+                      step="1"
+                    />
+                    <clr-control-error *clrIfError="'max'"
+                      >VM count higher than max</clr-control-error
+                    >
                   </clr-input-container>
                 </td>
               </tr>
@@ -357,9 +552,7 @@
 
   <clr-wizard-page [clrWizardPageNextDisabled]="isFinishWizardDisabled()">
     <ng-template clrPageTitle>Finalize</ng-template>
-    <p>
-      Confirm the following details before finishing:
-    </p>
+    <p>Confirm the following details before finishing:</p>
     <h4>Basic Information</h4>
     <table class="table table-compact">
       <thead>
@@ -379,22 +572,22 @@
         </tr>
         <tr>
           <td>Start Time</td>
-          <td>{{ se.start_time | date:'long' }}</td>
+          <td>{{ se.start_time | date : "long" }}</td>
         </tr>
         <tr>
           <td>End Time</td>
-          <td>{{ se.end_time | date:'long' }}</td>
+          <td>{{ se.end_time | date : "long" }}</td>
         </tr>
         <tr>
           <td>Courses</td>
           <td>
-            <span *ngFor="let c of se.courses" class="label">{{c}}</span>
+            <span *ngFor="let c of se.courses" class="label">{{ c }}</span>
           </td>
         </tr>
         <tr>
           <td>Scenarios</td>
           <td>
-            <span *ngFor="let s of se.scenarios" class="label">{{s}}</span>
+            <span *ngFor="let s of se.scenarios" class="label">{{ s }}</span>
           </td>
         </tr>
       </tbody>
@@ -411,8 +604,10 @@
         <tr *ngFor="let i of se.required_vms | keyvalue">
           <td>{{ i.key }}</td>
           <td>
-            <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span class="badge badge-success">{{
-                q.value }}</span></span>
+            <span class="label" *ngFor="let q of i.value | keyvalue"
+              >{{ q.key }}
+              <span class="badge badge-success">{{ q.value }}</span></span
+            >
           </td>
         </tr>
       </tbody>

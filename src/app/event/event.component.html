@@ -2,14 +2,22 @@
   <header class="header header-7" app-header></header>
   <div class="content-container">
     <div class="content-area">
-      <clr-alert [clrAlertType]="'danger'" [(clrAlertClosed)]="seDangerClosed" [clrAlertClosable]="false">
+      <clr-alert
+        [clrAlertType]="'danger'"
+        [(clrAlertClosed)]="seDangerClosed"
+        [clrAlertClosable]="false"
+      >
         <clr-alert-item>
           <span class="alert-text">
             {{ seDangerAlert }}
           </span>
         </clr-alert-item>
       </clr-alert>
-      <clr-alert [clrAlertType]="'success'" [(clrAlertClosed)]="seSuccessClosed" [clrAlertClosable]="false">
+      <clr-alert
+        [clrAlertType]="'success'"
+        [(clrAlertClosed)]="seSuccessClosed"
+        [clrAlertClosable]="false"
+      >
         <clr-alert-item>
           <span class="alert-text">
             {{ seSuccessAlert }}
@@ -19,7 +27,11 @@
       <h3>Scheduled Events</h3>
       <div class="clr-row">
         <div class="clr-col">
-          <button class="btn btn-success" (click)="openNew()" *rbac="['scheduledevents.create']">
+          <button
+            class="btn btn-success"
+            (click)="openNew()"
+            *rbac="['scheduledevents.create']"
+          >
             <clr-icon shape="plus"></clr-icon> New
           </button>
         </div>
@@ -28,11 +40,21 @@
         <div class="clr-col">
           <clr-datagrid>
             <clr-dg-column [clrDgField]="'event_name'">Name</clr-dg-column>
-            <clr-dg-column [clrDgField]="'creatorEmail'" *rbac="['users.list']">Creator</clr-dg-column>
-            <clr-dg-column [clrDgField]="'start_time'" [clrDgSortOrder]="descSort">Start</clr-dg-column>
+            <clr-dg-column [clrDgField]="'creatorEmail'" *rbac="['users.list']"
+              >Creator</clr-dg-column
+            >
+            <clr-dg-column
+              [clrDgField]="'start_time'"
+              [clrDgSortOrder]="descSort"
+              >Start</clr-dg-column
+            >
             <clr-dg-column [clrDgField]="'end_time'">End</clr-dg-column>
-            <clr-dg-column [clrDgField]="'courses'" *rbac="['courses.list']">Courses</clr-dg-column>
-            <clr-dg-column [clrDgField]="'scenarios'" *rbac="['scenarios.list']">Scenarios</clr-dg-column>
+            <clr-dg-column [clrDgField]="'courses'" *rbac="['courses.list']"
+              >Courses</clr-dg-column
+            >
+            <clr-dg-column [clrDgField]="'scenarios'" *rbac="['scenarios.list']"
+              >Scenarios</clr-dg-column
+            >
             <clr-dg-column>
               Status
               <clr-dg-filter>
@@ -42,24 +64,52 @@
 
             <clr-dg-row *clrDgItems="let se of events">
               <clr-dg-action-overflow *ngIf="showActionOverflow">
-                <button class="action-item" (click)="openDelete(se)" *rbac="['scheduledevents.delete']">Delete</button>
-                <button class="action-item" (click)="openOtac(se)">OTACs</button>
-                <button class="action-item" (click)="openEdit(se)" *ngIf="allowEdit">Edit</button>
+                <button
+                  class="action-item"
+                  (click)="openEdit(se)"
+                  *ngIf="allowEdit"
+                >
+                  Edit
+                </button>
+                <button class="action-item" (click)="openOtac(se)">
+                  OTACs
+                </button>
+                <button
+                  class="action-item"
+                  (click)="openDelete(se)"
+                  *rbac="['scheduledevents.delete']"
+                >
+                  Delete
+                </button>
               </clr-dg-action-overflow>
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
-              <clr-dg-cell *rbac="['users.list']">{{ se.creatorEmail ? se.creatorEmail : "...loading" }}</clr-dg-cell>
-              <clr-dg-cell>{{ se.start_time | date:'long' }}</clr-dg-cell>
-              <clr-dg-cell>{{ se.end_time | date:'long' }}</clr-dg-cell>
+              <clr-dg-cell *rbac="['users.list']">{{
+                se.creatorEmail ? se.creatorEmail : "...loading"
+              }}</clr-dg-cell>
+              <clr-dg-cell>{{ se.start_time | date : "long" }}</clr-dg-cell>
+              <clr-dg-cell>{{ se.end_time | date : "long" }}</clr-dg-cell>
               <clr-dg-cell *rbac="['courses.list']">
-                <ng-container *ngIf="se.courses && !se.courseNames">...loading</ng-container>
-                <span class="label" *ngFor="let c of se.courseNames">{{ c }}</span>
+                <ng-container *ngIf="se.courses && !se.courseNames"
+                  >...loading</ng-container
+                >
+                <span class="label" *ngFor="let c of se.courseNames">{{
+                  c
+                }}</span>
               </clr-dg-cell>
               <clr-dg-cell *rbac="['scenarios.list']">
-                <ng-container *ngIf="se.scenarios && !se.scenarioNames">...loading</ng-container>
-                <span class="label" *ngFor="let s of se.scenarioNames">{{ s }}</span>
+                <ng-container *ngIf="se.scenarios && !se.scenarioNames"
+                  >...loading</ng-container
+                >
+                <span class="label" *ngFor="let s of se.scenarioNames">{{
+                  s
+                }}</span>
               </clr-dg-cell>
               <clr-dg-cell>
-                <ng-container *ngIf="se.active && se.provisioned && !se.finished && se.ready">
+                <ng-container
+                  *ngIf="
+                    se.active && se.provisioned && !se.finished && se.ready
+                  "
+                >
                   <clr-icon shape="clock"></clr-icon> In Progress
                 </ng-container>
                 <ng-container *ngIf="!se.active">
@@ -74,23 +124,39 @@
         </div>
       </div>
 
-      <new-scheduled-event #wizard (updated)="newupdated()" [event]="editingEvent"></new-scheduled-event>
+      <new-scheduled-event
+        #wizard
+        (updated)="newupdated()"
+        [event]="editingEvent"
+      ></new-scheduled-event>
 
-      <app-otacmanagement [open]="otacModalOpen" [scheduledEvents]="openModalEvents.asObservable()" (closeEvent)="otacModalOpen = false"></app-otacmanagement>
+      <app-otacmanagement
+        [open]="otacModalOpen"
+        [scheduledEvents]="openModalEvents.asObservable()"
+        (closeEvent)="otacModalOpen = false"
+      ></app-otacmanagement>
 
       <clr-modal #deletemodal [(clrModalOpen)]="deleteopen">
         <h3 class="modal-title">Confirm Delete</h3>
         <div class="modal-body">
-          <p>
-            Are you sure you want to delete this scheduled event?
-          </p>
-          <p>
-            Doing so will clear any access codes and VM registrations.
-          </p>
+          <p>Are you sure you want to delete this scheduled event?</p>
+          <p>Doing so will clear any access codes and VM registrations.</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline" (click)="deleteopen = false">Cancel</button>
-          <button type="button" class="btn btn-danger-outline" (click)="doDelete()">Delete</button>
+          <button
+            type="button"
+            class="btn btn-outline"
+            (click)="deleteopen = false"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger-outline"
+            (click)="doDelete()"
+          >
+            Delete
+          </button>
         </div>
       </clr-modal>
     </div>
