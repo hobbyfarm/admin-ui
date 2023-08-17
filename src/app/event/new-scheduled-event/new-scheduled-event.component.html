@@ -390,7 +390,7 @@
           <clr-dg-cell>{{ ea.environment }}</clr-dg-cell>
           <clr-dg-cell>
             <ng-container *ngFor="let item of ea.available_count | keyvalue">
-              <span class="label"
+              <span class="label" title="{{ item.key }}"
                 >{{ getVirtualMachineTemplateName(item.key) }}
                 <span class="badge badge-success">{{ item.value }}</span></span
               >
@@ -462,6 +462,7 @@
               <td class="left">
                 <span
                   class="label"
+                  title="{{ item.key }}"
                   *ngFor="let item of requiredVmCounts | keyvalue"
                   >{{ getVirtualMachineTemplateName(item.key) }}
                   <span class="badge badge-success">{{
@@ -507,7 +508,9 @@
       <p>
         The following VMs are required <b>per user</b>:
         <ng-container *ngFor="let item of requiredVmCounts | keyvalue">
-          <li>{{ getVirtualMachineTemplateName(item.key) }}: {{ item.value }}</li>
+          <li>
+            {{ getVirtualMachineTemplateName(item.key) }}: {{ item.value }}
+          </li>
         </ng-container>
       </p>
       <table class="table table-compact">
@@ -604,7 +607,10 @@
         <tr *ngFor="let i of se.required_vms | keyvalue">
           <td>{{ i.key }}</td>
           <td>
-            <span class="label" *ngFor="let q of i.value | keyvalue"
+            <span
+              class="label"
+              title="{{ q.key }}"
+              *ngFor="let q of i.value | keyvalue"
               >{{ getVirtualMachineTemplateName(q.key) }}
               <span class="badge badge-success">{{ q.value }}</span></span
             >
