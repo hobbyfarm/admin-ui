@@ -40,6 +40,8 @@ import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 import { RbacService } from 'src/app/data/rbac.service';
 import { of } from 'rxjs';
+import { VMTemplate } from 'src/app/data/vmtemplate';
+import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 
 @Component({
   selector: 'new-scheduled-event',
@@ -93,6 +95,8 @@ export class NewScheduledEventComponent implements OnInit {
   public maxUserCounts: {} = {};
   public invalidSimpleEnvironments: string[] = [];
 
+  public virtualMachineTemplateList: Map<string, string> = new Map();
+
   private onCloseFn: Function;
 
   constructor(
@@ -101,8 +105,24 @@ export class NewScheduledEventComponent implements OnInit {
     public cs: CourseService,
     public ses: ScheduledeventService,
     public es: EnvironmentService,
-    public rbacService: RbacService
-  ) {}
+    public rbacService: RbacService,
+    public vmTemplateService: VmtemplateService
+  ) {
+    this.rbacService
+      .Grants('virtualmachinetemplates', 'list')
+      .then((allowVMTemplateList: boolean) => {
+        if (!allowVMTemplateList) {
+          return;
+        }
+        vmTemplateService
+          .list()
+          .subscribe((list: VMTemplate[]) =>
+            list.forEach((v) =>
+              this.virtualMachineTemplateList.set(v.id, v.name)
+            )
+          );
+      });
+  }
 
   public eventDetails: FormGroup = new FormGroup({
     event_name: new FormControl(this.se.event_name, [
@@ -929,5 +949,9 @@ export class NewScheduledEventComponent implements OnInit {
   }
   setScenarioList(values: Scenario[]) {
     this.filteredScenarios = values;
+  }
+
+  getVirtualMachineTemplateName(template: any) {
+    return this.virtualMachineTemplateList.get(template as string) ?? template;
   }
 }

@@ -16,7 +16,7 @@
     [clrWizardPageNextDisabled]="!eventDetails.valid"
     (clrWizardPageNext)="copyEventDetails()"
   >
-    <ng-template clrPageTitle>Event Details</ng-template>
+    <ng-template clrPageTitle>Basic Information</ng-template>
     <form clrForm [formGroup]="eventDetails">
       <clr-input-container>
         <label>Name</label>
@@ -391,7 +391,7 @@
           <clr-dg-cell>
             <ng-container *ngFor="let item of ea.available_count | keyvalue">
               <span class="label"
-                >{{ item.key }}
+                >{{ getVirtualMachineTemplateName(item.key) }}
                 <span class="badge badge-success">{{ item.value }}</span></span
               >
             </ng-container>
@@ -463,7 +463,7 @@
                 <span
                   class="label"
                   *ngFor="let item of requiredVmCounts | keyvalue"
-                  >{{ item.key }}
+                  >{{ getVirtualMachineTemplateName(item.key) }}
                   <span class="badge badge-success">{{
                     item.value * fc.value
                   }}</span></span
@@ -507,7 +507,7 @@
       <p>
         The following VMs are required <b>per user</b>:
         <ng-container *ngFor="let item of requiredVmCounts | keyvalue">
-          <li>{{ item.key }}: {{ item.value }}</li>
+          <li>{{ getVirtualMachineTemplateName(item.key) }}: {{ item.value }}</li>
         </ng-container>
       </p>
       <table class="table table-compact">
@@ -526,7 +526,7 @@
             <ng-container *ngFor="let controlName of controls(groupName)">
               <tr>
                 <td>{{ groupName }}</td>
-                <td>{{ controlName }}</td>
+                <td>{{ getVirtualMachineTemplateName(controlName) }}</td>
                 <td>
                   <clr-input-container class="table-input">
                     <input
@@ -605,7 +605,7 @@
           <td>{{ i.key }}</td>
           <td>
             <span class="label" *ngFor="let q of i.value | keyvalue"
-              >{{ q.key }}
+              >{{ getVirtualMachineTemplateName(q.key) }}
               <span class="badge badge-success">{{ q.value }}</span></span
             >
           </td>
