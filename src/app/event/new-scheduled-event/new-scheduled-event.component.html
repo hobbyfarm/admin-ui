@@ -387,7 +387,7 @@
           *clrDgItems="let ea of availableEnvironments"
           [clrDgItem]="ea"
         >
-          <clr-dg-cell>{{ ea.environment }}</clr-dg-cell>
+          <clr-dg-cell>{{ getEnvironmentName(ea.environment) }}</clr-dg-cell>
           <clr-dg-cell>
             <ng-container *ngFor="let item of ea.available_count | keyvalue">
               <span class="label" title="{{ item.key }}"
@@ -441,7 +441,7 @@
           >
             <tr>
               <td class="left">
-                {{ selectedEnvironments[it]?.environment }}
+                {{ getEnvironmentName(selectedEnvironments[it]?.environment) }}
               </td>
               <td class="left">
                 <clr-input-container class="table-input">
@@ -528,7 +528,7 @@
           >
             <ng-container *ngFor="let controlName of controls(groupName)">
               <tr>
-                <td>{{ groupName }}</td>
+                <td>{{ getEnvironmentName(groupName) }}</td>
                 <td>{{ getVirtualMachineTemplateName(controlName) }}</td>
                 <td>
                   <clr-input-container class="table-input">
@@ -605,7 +605,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let i of se.required_vms | keyvalue">
-          <td>{{ i.key }}</td>
+          <td>{{ getEnvironmentName(i.key) }}</td>
           <td>
             <span
               class="label"

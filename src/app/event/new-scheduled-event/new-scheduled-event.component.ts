@@ -954,4 +954,11 @@ export class NewScheduledEventComponent implements OnInit {
   getVirtualMachineTemplateName(template: any) {
     return this.virtualMachineTemplateList.get(template as string) ?? template;
   }
+
+  getEnvironmentName(environment: any) {
+    return (
+      this.environments.filter((env) => env.name == environment)?.pop()
+        .display_name ?? environment
+    );
+  }
 }
