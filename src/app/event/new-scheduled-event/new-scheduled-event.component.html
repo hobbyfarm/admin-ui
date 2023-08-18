@@ -365,18 +365,41 @@
       <thead>
         <tr>
           <th>Option</th>
-          <th>Value</th>
+          <th>Value</th>       
+              
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>Name</td>
           <td>{{ se.event_name }}</td>
-        </tr>
+         
+        </tr>       
         <tr>
           <td>Description</td>
           <td>{{ se.description }}</td>
+          
         </tr>
+        
+        <tr>
+          <td>Access code</td>
+          <td>{{ se.access_code }}</td>
+        </tr>
+        <tr>
+          <td>Restricted Bind</td>
+          <td>{{ se.disable_restriction }}</td>
+        </tr>
+        <tr>
+          <td>On demand</td>
+          <td *ngIf="se.on_demand">
+            <div> VMs on demand</div>
+          </td>
+          <td *ngIf="!se.on_demand">
+            <div style="color:red"> VMs will be started right away</div>
+          </td>
+         
+       
+        </tr>             
         <tr>
           <td>Start Time</td>
           <td>{{ se.start_time | date:'long' }}</td>
@@ -417,5 +440,127 @@
         </tr>
       </tbody>
     </table>
-  </clr-wizard-page>
+  </clr-wizard-page> 
+
+  <!-- <clr-wizard-page [clrWizardPageNextDisabled]="isFinishWizardDisabled()">
+    <ng-template clrPageTitle>Finalize</ng-template>
+    <p>
+      Confirm the following details before finishing:
+    </p>
+    <h4>Basic Information</h4>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>Value</th>
+          <th>New Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Name</td>
+          <td>{{ se.event_name }}</td>
+          <td>{{ eventDetails.get('event_name').value }}</td>
+        </tr>       
+        <tr>
+          <td>Description</td>
+          <td>{{ se.description }}</td>
+          <td>{{ eventDetails.get('description').value }}</td>
+        </tr>         
+        <tr>
+          <td>Access code</td>
+          <td>{{ se.access_code }}</td>
+          <td>{{ eventDetails.get('access_code').value }}</td>
+        </tr>
+        <tr>
+          <td>Restricted Bind</td>
+          <td>{{ se.disable_restriction }}</td>
+          <td>{{ eventDetails.get('restricted_bind').value }}</td>
+        </tr>
+        <tr>
+          <td>On demand</td>
+          <td *ngIf="se.on_demand">
+            <div> VMs on demand</div>
+          </td>
+          <td *ngIf="!se.on_demand">
+            <div style="color:red"> VMs will be started right away</div>
+          </td>
+   
+           <td *ngIf="eventDetails.get('on_demand').value">
+            <div> VMs on demand</div>
+           </td>
+            <td *ngIf="!eventDetails.get('on_demand').value">
+              <div style="color:red"> VMs will be started right away</div>
+            </td>   
+          
+        </tr>             
+        <tr>
+          <td>Start Time</td>
+          <td>{{ se.start_time | date:'long' }}</td>
+          <td>{{ se.start_time | date:'long' }}</td>
+        </tr>
+        <tr>
+          <td>End Time</td>
+          <td>{{ se.end_time | date:'long' }}</td>
+          <td>{{ se.end_time | date:'long' }}</td>
+        </tr>
+        <tr>
+          <td>Courses</td>
+          <td>
+            <span *ngFor="let c of se.courses" class="label">{{c}}</span>
+          </td>
+          <td>
+            <span *ngFor="let c of se.courses" class="label">{{c}}</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Scenarios</td>
+          <td>
+            <span *ngFor="let s of se.scenarios" class="label">{{s}}</span>
+          </td>
+          <td>
+            <span *ngFor="let s of se.scenarios" class="label">{{s}}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>VM Information</h4>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>Environment</th>
+          <th>Virtual Machines</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of se.required_vms | keyvalue">
+          <td>{{ i.key }}</td>
+          <td>
+            <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span class="badge badge-success">{{
+                q.value }}</span></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>New VM Information</h4>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>Environment</th>
+          <th>Virtual Machines</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of se.required_vms | keyvalue">
+          <td>{{ i.key }}</td>
+          <td>
+            <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span class="badge badge-success">{{
+                q.value }}</span></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </clr-wizard-page> -->
 </clr-wizard>
