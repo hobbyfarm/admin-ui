@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { of } from 'rxjs';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { PredefinedServiceService } from 'src/app/data/predefinedservice.service';
 import {
@@ -16,11 +17,12 @@ export class VMTemplateServiceFormComponent implements OnInit {
   public predefinedInterfaces: VMTemplateServiceConfiguration[];
 
   @Input()
-  public cloudConfig: CloudInitConfig;
+  cloudConfig: CloudInitConfig;
 
   public selectedNewInterface: VMTemplateServiceConfiguration = undefined;
   public newVMServiceFormGroup: FormGroup;
   public editVMService: VMTemplateServiceConfiguration;
+  public dragServices = [];
 
   //Open/Close Modals
   public editCloudConfigModalOpen: boolean = false;
@@ -30,29 +32,48 @@ export class VMTemplateServiceFormComponent implements OnInit {
   private DEFAULT_PORT = 80;
   private DEFAULT_PATH = '/';
 
-  constructor(private fb: FormBuilder, private pdsService: PredefinedServiceService) {}
+  constructor(
+    private fb: FormBuilder,
+    private pdsService: PredefinedServiceService
+  ) {}
 
   ngOnInit(): void {
     this.buildNewVMServiceDetails();
-    this.pdsService.list().subscribe((vmtsc: VMTemplateServiceConfiguration[]) => {
-      this.predefinedInterfaces = vmtsc;
-    });
+    this.pdsService
+      .list()
+      .subscribe((vmtsc: VMTemplateServiceConfiguration[]) => {
+        this.predefinedInterfaces = vmtsc;
+      });
   }
 
-  changeOrder(direction: 'up' | 'down', currentIndex: number) {    
-    let serviceArray :VMTemplateServiceConfiguration[] = Array.from(this.cloudConfig.vmServices.values())
-    let newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
-    if (newIndex <= serviceArray.length && newIndex >= 0) {
-      serviceArray.splice(newIndex, 0, serviceArray.splice(currentIndex, 1)[0]);
+  ngDoCheck() {
+    const newServices = Array.from(this.cloudConfig.vmServices.values());
+    if (
+      //Check if the Input cloudConfig changed, since basic Changedetection (ngOnChanges()) only works for primitive Datatypes
+      !(
+        this.dragServices.length === newServices.length &&
+        newServices.every((elem) => this.dragServices.includes(elem))
+      )
+    ) {
+      this.dragServices = Array.from(this.cloudConfig.vmServices.values());
     }
-    let newOrderedMap = new Map(serviceArray.map(service => [service.name, service]))
-    this.cloudConfig.vmServices = newOrderedMap
-    this.cloudConfig.buildNewYAMLFile()
+  }
+
+  changeOrder(event: VMTemplateServiceConfiguration[]) {
+    this.dragServices = event;
+    const newOrderedMap = new Map(
+      this.dragServices.map((service) => [service.name, service])
+    );
+    this.cloudConfig.vmServices = newOrderedMap;
+    this.cloudConfig.buildNewYAMLFile();
   }
 
   public buildNewVMServiceDetails(edit: boolean = false) {
     this.newVMServiceFormGroup = this.fb.group({
-      name: [edit ? this.editVMService.name : ''],
+      name: [
+        edit ? this.editVMService.name : '',
+        [Validators.required, Validators.minLength(3)],
+      ],
       port: [
         edit ? this.editVMService.port ?? this.DEFAULT_PORT : this.DEFAULT_PORT,
       ],
@@ -67,9 +88,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
       proxyOriginHeaderRewriting: [
         edit ? this.editVMService.rewriteOriginHeader : false,
       ],
-      disallowIFrame: [
-        edit ? this.editVMService.disallowIFrame : true,
-      ],
+      disallowIFrame: [edit ? this.editVMService.disallowIFrame : true],
       cloudConfigString: [edit ? getCloudConfigString(this.editVMService) : ''],
       hasWebinterface: [edit ? this.editVMService.hasWebinterface : false],
     });
@@ -80,6 +99,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
   }
 
   openNewVMServiceModal() {
+    this.editVMService = null;
     this.buildNewVMServiceDetails();
     this.newVMServiceModalOpen = true;
   }
@@ -101,9 +121,8 @@ export class VMTemplateServiceFormComponent implements OnInit {
     newVMService.rewriteOriginHeader = this.newVMServiceFormGroup.get(
       'proxyOriginHeaderRewriting'
     ).value;
-    newVMService.disallowIFrame = this.newVMServiceFormGroup.get(
-      'disallowIFrame'
-    ).value;
+    newVMService.disallowIFrame =
+      this.newVMServiceFormGroup.get('disallowIFrame').value;
     newVMService.cloudConfigString =
       this.newVMServiceFormGroup.get('cloudConfigString').value;
     newVMService.cloudConfigMap = this.cloudConfig.buildMapFromString(
@@ -112,6 +131,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
     this.cloudConfig.addVMService(newVMService);
     this.buildNewVMServiceDetails();
     this.newVMServiceModalOpen = false;
+    this.editVMService = null;
   }
 
   selectModalClose() {
