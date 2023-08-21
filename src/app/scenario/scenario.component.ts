@@ -42,6 +42,8 @@ export class ScenarioComponent implements OnInit {
   public editSuccessAlert: string = '';
   public scenarioDangerAlert: string = '';
   public scenarioSuccessAlert: string = '';
+  public contentCancelStep: string = '';
+  public titleCancelStep: string = '';
   public newvmindex: number = 0;
   public isVMAdded = false;
 
@@ -182,6 +184,8 @@ export class ScenarioComponent implements OnInit {
       this.openNewStep();
       return;
     }
+    this.contentCancelStep = s.content;
+    this.titleCancelStep = s.title;
     this.editingStep = s;
     this.editingIndex = i;
     this.editModal.open();
@@ -243,6 +247,8 @@ export class ScenarioComponent implements OnInit {
   doCancel(): void {
     this.newScenarioWizard.reset();
     this.resetScenarioForm();
+    this.contentCancelStep = '';
+    this.titleCancelStep = '';
     this.isStepsLengthNull = true;
     this.scenarioTainted = false;
     this.newScenarioWizard.close();
@@ -257,6 +263,7 @@ export class ScenarioComponent implements OnInit {
     this.editingStep.content =
       "## Your Content\n```ctr:node1\necho 'hello world'\n```\n```hidden:Syntax reference\navailable at [the hobbyfarm docs](https://hobbyfarm.github.io/docs/appendix/markdown_syntax/)\n```";
     this.selectedscenario.steps[this.editingIndex] = this.editingStep;
+    console.log('openNewStep was executed');
     this.editModal.open();
   }
 
@@ -337,18 +344,25 @@ export class ScenarioComponent implements OnInit {
   }
 
   reloadSteps() {
-    this.scenarioService.get(this.selectedscenario.id).subscribe(
-      (scenario) => {
-        this.selectedscenario.steps = scenario.steps;
-      },
-      (e: HttpErrorResponse) => {
-        this.alertDanger('Error deleting object: ' + e.error.message);
-        while (this.stepsToBeAdded > 0) {
-          this.stepsToBeAdded--;
-          this.selectedscenario.steps.pop();
+    if (this.contentCancelStep == '')
+      this.scenarioService.get(this.selectedscenario.id).subscribe(
+        (scenario) => {
+          this.selectedscenario.steps = scenario.steps;
+        },
+        (e: HttpErrorResponse) => {
+          this.alertDanger('Error deleting object: ' + e.error.message);
+          this.editingStep.content = this.contentCancelStep;
+          this.editingStep.title = this.titleCancelStep;
+          while (this.stepsToBeAdded > 0) {
+            this.stepsToBeAdded--;
+            this.selectedscenario.steps.pop();
+          }
         }
-      }
-    );
+      );
+    else {
+      this.editingStep.content = this.contentCancelStep;
+      this.editingStep.title = this.titleCancelStep;
+    }
   }
   saveCreatedStep() {
     this.selectedscenario.steps[this.editingIndex] = this.editingStep;
@@ -521,7 +535,7 @@ export class ScenarioComponent implements OnInit {
 
   doDeleteVMSet() {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
-    if (Object.keys(this.selectedscenario.virtualmachines[0]).length == 0)
+    if (this.selectedscenario.virtualmachines.length == 0)
       this.isVMAdded = false;
     this.deleteVMSetModal.close();
   }
@@ -538,10 +552,10 @@ export class ScenarioComponent implements OnInit {
       .subscribe((sList: Scenario[]) => (this.filteredScenarios = sList));
   }
 
-  deleteScenario(i: string) {
-    this.scenarioService.delete(i).subscribe(
+  deleteScenario(scenarioId: string) {
+    this.scenarioService.delete(scenarioId).subscribe(
       (s: ServerResponse) => {
-        this.alertSuccess('Course deleted');
+        this.alertSuccess('Scenario deleted');
         this.refresh();
         this.selectedscenario = null;
       },
