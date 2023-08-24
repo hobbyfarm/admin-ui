@@ -44,7 +44,7 @@
   </div>
 </div>
 <div class="clr-row">
-  <div class="clr-col-12 clr-col-md-6">
+  <div class="clr-col">
     <filter-scenarios
       #scenarioFilter
       (filterScenarioEventEmitter)="setScenarioList($event)"
@@ -206,10 +206,10 @@
   </clr-wizard-page>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="!isVMAdded"
+    [clrWizardPageNextDisabled]="!scenarioHasVM(selectedscenario)"
     *rbac="['scenarios.update']"
   >
-    <ng-template clrPageTitle>Add Virtual Machine</ng-template>
+    <ng-template clrPageTitle>Virtual Machine</ng-template>
     <div class="alert alert-warning" role="alert">
       <div class="alert-items">
         <div class="alert-item static">
@@ -384,7 +384,7 @@
   <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
   <clr-wizard-page [clrWizardPageNextDisabled]="!editScenarioForm.valid">
-    <ng-template clrPageTitle>Edit Scenario</ng-template>
+    <ng-template clrPageTitle>Basic information</ng-template>
     <ng-container *ngIf="selectedscenario">
       <form clrForm [formGroup]="editScenarioForm">
         <clr-input-container>

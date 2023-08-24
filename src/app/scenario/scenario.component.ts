@@ -25,8 +25,9 @@ export class ScenarioComponent implements OnInit {
   public filteredScenarios: Scenario[] = [];
   public vmtemplates: VMTemplate[] = [];
   public selectedscenario: Scenario;
-  public newSteps: Step[] = [];
   public editingStep: Step = new Step();
+  public AddedStepsContents: string[] = [];
+  public AddedStepsTitle: string[] = [];
   public editingIndex: number = 0;
 
   public isStepsLengthNull: boolean = true;
@@ -42,10 +43,7 @@ export class ScenarioComponent implements OnInit {
   public editSuccessAlert: string = '';
   public scenarioDangerAlert: string = '';
   public scenarioSuccessAlert: string = '';
-  public contentCancelStep: string = '';
-  public titleCancelStep: string = '';
   public newvmindex: number = 0;
-  public isVMAdded = false;
 
   public deletingVMSetIndex: number = 0;
   public deletingStepIndex: number = 0;
@@ -59,8 +57,7 @@ export class ScenarioComponent implements OnInit {
   public newScenarioOpen: boolean = false;
   public newScenarioWizardOpen: boolean = false;
   public editScenarioWizardOpen: boolean = false;
-  public loadingFlag: boolean = false;
-  public errorFlag: boolean = false;
+  public pressNextStep: boolean = false;
 
   public alertType: string = 'warning';
   public isAlert: boolean = false;
@@ -184,10 +181,12 @@ export class ScenarioComponent implements OnInit {
       this.openNewStep();
       return;
     }
-    this.contentCancelStep = s.content;
-    this.titleCancelStep = s.title;
     this.editingStep = s;
     this.editingIndex = i;
+    if (this.AddedStepsContents[i] == null) {
+      this.AddedStepsContents[i] = s.content;
+      this.AddedStepsTitle[i] = s.title;
+    }
     this.editModal.open();
   }
 
@@ -218,6 +217,11 @@ export class ScenarioComponent implements OnInit {
 
   openNewScenarioWizard() {
     this.newScenario = new Scenario();
+    this.selectedscenario = new Scenario();
+    this.selectedscenario.name = '';
+    this.selectedscenario.virtualmachines = [];
+    this.selectedscenario.steps = [];
+    this.selectedscenario.virtualmachines[0] = {};
     this.newScenarioWizard.reset();
     this.newScenarioWizard.open();
   }
@@ -247,8 +251,6 @@ export class ScenarioComponent implements OnInit {
   doCancel(): void {
     this.newScenarioWizard.reset();
     this.resetScenarioForm();
-    this.contentCancelStep = '';
-    this.titleCancelStep = '';
     this.isStepsLengthNull = true;
     this.scenarioTainted = false;
     this.newScenarioWizard.close();
@@ -263,7 +265,6 @@ export class ScenarioComponent implements OnInit {
     this.editingStep.content =
       "## Your Content\n```ctr:node1\necho 'hello world'\n```\n```hidden:Syntax reference\navailable at [the hobbyfarm docs](https://hobbyfarm.github.io/docs/appendix/markdown_syntax/)\n```";
     this.selectedscenario.steps[this.editingIndex] = this.editingStep;
-    console.log('openNewStep was executed');
     this.editModal.open();
   }
 
@@ -276,7 +277,6 @@ export class ScenarioComponent implements OnInit {
   }
 
   nextStep() {
-    this.stepsToBeAdded++;
     if (this.isLastStep()) {
       return;
     }
@@ -339,30 +339,23 @@ export class ScenarioComponent implements OnInit {
 
   cancelEdit() {
     this.reloadSteps();
+    this.editingStep.content = this.AddedStepsContents[this.editingIndex];
+    this.editingStep.title = this.AddedStepsTitle[this.editingIndex];
     this.editOpen = false;
     this.editModal.close();
   }
 
   reloadSteps() {
-    if (this.contentCancelStep == '')
-      this.scenarioService.get(this.selectedscenario.id).subscribe(
-        (scenario) => {
-          this.selectedscenario.steps = scenario.steps;
-        },
-        (e: HttpErrorResponse) => {
-          this.alertDanger('Error deleting object: ' + e.error.message);
-          this.editingStep.content = this.contentCancelStep;
-          this.editingStep.title = this.titleCancelStep;
-          while (this.stepsToBeAdded > 0) {
-            this.stepsToBeAdded--;
-            this.selectedscenario.steps.pop();
-          }
-        }
-      );
-    else {
-      this.editingStep.content = this.contentCancelStep;
-      this.editingStep.title = this.titleCancelStep;
+    while (this.stepsToBeAdded > 0) {
+      this.stepsToBeAdded--;
+      this.selectedscenario.steps.pop();
     }
+  }
+  scenarioHasVM(scenario: Scenario): boolean {
+    if (this.selectedscenario.virtualmachines.length != 0)
+      if (Object.keys(this.selectedscenario.virtualmachines[0]).length != 0)
+        return true;
+    return false;
   }
   saveCreatedStep() {
     this.selectedscenario.steps[this.editingIndex] = this.editingStep;
@@ -415,12 +408,10 @@ export class ScenarioComponent implements OnInit {
   public deleteVM(setIndex: number, key: string) {
     this.scenarioTainted = true;
     delete this.selectedscenario.virtualmachines[setIndex][key];
-    if (Object.keys(this.selectedscenario.virtualmachines[0]).length == 0)
-      this.isVMAdded = false;
   }
 
   addVM() {
-    this.isVMAdded = true;
+    this.scenarioHasVM(this.selectedscenario);
     this.scenarioTainted = true;
     this.selectedscenario.virtualmachines[this.newvmindex][
       this.vmform.get('vm_name').value
@@ -535,8 +526,6 @@ export class ScenarioComponent implements OnInit {
 
   doDeleteVMSet() {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
-    if (this.selectedscenario.virtualmachines.length == 0)
-      this.isVMAdded = false;
     this.deleteVMSetModal.close();
   }
   setScenarioList(scenarios: Scenario[]) {
