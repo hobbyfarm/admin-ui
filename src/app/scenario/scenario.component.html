@@ -492,7 +492,21 @@
           </clr-control-error>
         </clr-input-container>
       </form>
+      <a
+        [routerLink]="['/scenario', selectedscenario.id, 'printable']"
+        target="_blank"
+      >
+        <button class="btn btn-info-outline">Print</button>
+      </a>
+    </ng-container>
+  </clr-wizard-page>
 
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="!scenarioHasVM(selectedscenario)"
+    *rbac="['scenarios.update']"
+  >
+    <ng-template clrPageTitle>Virtual Machines</ng-template>
+    <ng-container *ngIf="selectedscenario">
       <clr-stack-view>
         <clr-stack-header>
           Virtual Machines
@@ -543,12 +557,6 @@
           </clr-stack-block>
         </clr-stack-block>
       </clr-stack-view>
-      <a
-        [routerLink]="['/scenario', selectedscenario.id, 'printable']"
-        target="_blank"
-      >
-        <button class="btn btn-info-outline">Print</button>
-      </a>
     </ng-container>
   </clr-wizard-page>
 
