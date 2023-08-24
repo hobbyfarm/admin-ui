@@ -41,7 +41,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   public wizardCourse: 'create' | 'edit';
 
   @Input()
-
   @Input()
   public dragScenarios: Scenario[] = [];
 
@@ -84,7 +83,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   public wizardTitle: string = '';
   public alertType: string = ClrAlertType.Info;
-
 
   constructor(
     public courseService: CourseService,
@@ -136,8 +134,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     }
     this.coursesRefresher.emit();
   }
-
-  
 
   @ViewChild('courseForm', { static: false }) set content(
     content: CourseFormComponent
@@ -218,7 +214,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   setVM(vms: {}[]) {
-    console.log(Object.keys(vms[0]));
     this.editVirtualMachines = vms;
     this.VMSAllow();
     this.setModified();
@@ -265,7 +260,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   addSelected(s: Scenario[]) {
     this.dragScenarios = this.dragScenarios.concat(s);
-    console.log(this.dragScenarios);
     this.setModified();
   }
 
@@ -302,7 +296,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
       setTimeout(() => this.courseForm.reset(), 200); // hack
       this.dragScenarios = c.scenarios;
       this.editVirtualMachines = cloneDeep(c.virtualmachines);
-      console.log(this.editVirtualMachines[0]);
       this.editCategories = c.categories;
       this.updateDynamicScenarios();
     }
@@ -344,7 +337,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
       },
       (e: HttpErrorResponse) => {
         this.alertText = 'Error creating object: ' + e.error.message;
-        console.log('Error message: ', e.error.message);
         this.isAlert = true;
       }
     );

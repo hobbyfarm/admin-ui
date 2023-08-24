@@ -4,7 +4,7 @@
   (clrWizardOnFinish)="whenFinish()"
   (clrWizardOnCancel)="doCancel()"
 >
-  <clr-wizard-title>  {{ wizardTitle }} </clr-wizard-title>
+  <clr-wizard-title> {{ wizardTitle }} </clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
   <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
@@ -17,7 +17,7 @@
   >
     <ng-template clrPageTitle>Course Details</ng-template>
     <div>
-      <course-form 
+      <course-form
         #courseForm
         [course]="selectedCourse"
         (formReady)="setupForm($event)"
@@ -26,7 +26,9 @@
   </clr-wizard-page>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="!VMAllowNext || editVirtualMachines.length == 0"
+    [clrWizardPageNextDisabled]="
+      !VMAllowNext || editVirtualMachines.length == 0
+    "
     (clrWizardPageNext)="saveCourseWizard()"
   >
     <ng-template clrPageTitle>Virtual Machines</ng-template>
@@ -38,10 +40,7 @@
     ></vmset>
   </clr-wizard-page>
 
-  <clr-wizard-page
-    (clrWizardPageNext)="saveCourseWizard()"
-    [clrWizardPageNextDisabled]="dragScenarios.length == 0"
-  >
+  <clr-wizard-page (clrWizardPageNext)="saveCourseWizard()">
     <ng-template clrPageTitle>Scenario</ng-template>
     <ng-container *ngIf="listScenarios">
       <button
@@ -108,11 +107,10 @@
       </clr-datagrid>
     </ng-container>
   </clr-wizard-page>
-  
+
   <clr-wizard-page *ngIf="wizardCourse == 'edit'">
     <ng-template clrPageTitle>Dynamic Scenario</ng-template>
     <ng-container>
-      
       <p>
         Scenarios that match at least one of the queries provided are
         dynamically included in this course,<br />
@@ -121,7 +119,7 @@
         There is no need to update the course (or any scheduled event that
         includes this course) if categories of a scenario are changed.<br />
       </p>
-      
+
       <button
         class="btn btn-success-outline btn-sm"
         (click)="newCategory = true"
@@ -143,8 +141,7 @@
           <clr-dg-row>
             <clr-dg-cell>kubernetes</clr-dg-cell>
             <clr-dg-cell
-              >All Scenarios that are in the kubernetes
-              category</clr-dg-cell
+              >All Scenarios that are in the kubernetes category</clr-dg-cell
             >
           </clr-dg-row>
           <clr-dg-row>
@@ -170,8 +167,8 @@
           <clr-dg-row>
             <clr-dg-cell>kubernetes&!basic</clr-dg-cell>
             <clr-dg-cell
-              >All Scenarios that are in the kubernetes category, but not in
-              the basic category</clr-dg-cell
+              >All Scenarios that are in the kubernetes category, but not in the
+              basic category</clr-dg-cell
             >
           </clr-dg-row>
           <clr-dg-row>
@@ -180,16 +177,16 @@
           </clr-dg-row>
         </clr-datagrid>
         <p>
-          Logical OR can be achieved by adding two queries. Each queries
-          matched scenarios will be uniquely merged<br />
-          Adding one query `kubernetes` and one query `docker` will select
-          all categories that are part of either one.
+          Logical OR can be achieved by adding two queries. Each queries matched
+          scenarios will be uniquely merged<br />
+          Adding one query `kubernetes` and one query `docker` will select all
+          categories that are part of either one.
         </p>
       </ng-container>
-      <ng-container *ngIf="newCategory"> 
+      <ng-container *ngIf="newCategory">
         <p>
-          You can provide multiple queries by passing them as a
-          Comma-separated List
+          You can provide multiple queries by passing them as a Comma-separated
+          List
         </p>
         <form clrForm [formGroup]="newCategoryForm">
           <clr-input-container>
@@ -215,7 +212,7 @@
               Add
             </button>
           </div>
-        </form> 
+        </form>
       </ng-container>
       <clr-datagrid class="datagrid-compact">
         <clr-dg-column>Query</clr-dg-column>
@@ -228,7 +225,6 @@
           <clr-dg-cell>{{ a }}</clr-dg-cell>
         </clr-dg-row>
       </clr-datagrid>
-
     </ng-container>
   </clr-wizard-page>
   <clr-wizard-page>
@@ -245,9 +241,15 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{wizardCourse == 'create'? course.name : selectedCourse}}</td>
-          <td>{{editVirtualMachines.length}}</td> 
-          <td><span *ngFor="let scenario of dragScenarios">{{scenario.name}}, </span></td>
+          <td>
+            {{ wizardCourse == "create" ? course.name : selectedCourse.name }}
+          </td>
+          <td>{{ editVirtualMachines.length }}</td>
+          <td>
+            <span *ngFor="let scenario of dragScenarios"
+              >{{ scenario.name }},
+            </span>
+          </td>
         </tr>
       </tbody>
     </table>

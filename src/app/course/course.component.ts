@@ -26,7 +26,7 @@ export class CourseComponent implements OnInit {
 
   @ViewChild('newCourse') newCourse: NewCourseComponent;
   @ViewChild('addNewCourse') addNewCourse: CourseWizardComponent;
-  @ViewChild('editcourse') editCourseWizard: CourseWizardComponent; 
+  @ViewChild('editcourse') editCourseWizard: CourseWizardComponent;
   @ViewChild('addScenario') addScenario: AddScenarioComponent;
   @ViewChild('deleteConfirmation')
   deleteConfirmation: DeleteConfirmationComponent;
@@ -126,7 +126,6 @@ export class CourseComponent implements OnInit {
     });
   }
 
-
   setupForm(fg: FormGroup) {
     this.editForm = fg;
     if (!this.updateRbac) {
@@ -186,8 +185,6 @@ export class CourseComponent implements OnInit {
   openNewWizard() {
     this.addNewCourse.openNewCourse();
   }
-
- 
 
   openAdd() {
     this.addScenario.open();
@@ -261,7 +258,7 @@ export class CourseComponent implements OnInit {
 
   openEditCourseWizard(course: Course) {
     this.selectedCourse = course;
-    this.editCourseWizard.openEditCourse(course)
+    this.editCourseWizard.openEditCourse(course);
   }
 
   saveCourse() {

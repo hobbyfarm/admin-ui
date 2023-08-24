@@ -105,7 +105,6 @@ export class CourseService {
     var scenarioArray: string[] = [];
     c.scenarios.forEach((s: Scenario) => {
       scenarioArray.push(s.id);
-      console.log(c);
     });
     var params = new HttpParams()
       .set('name', btoa(c.name))
@@ -115,10 +114,7 @@ export class CourseService {
       .set('pauseable', JSON.stringify(c.pauseable))
       .set('keep_vm', JSON.stringify(c.keep_vm))
       .set('virtualmachines', JSON.stringify(c.virtualmachines))
-      .set('scenarios', JSON.stringify(scenarioArray))
-      ;
-
-
+      .set('scenarios', JSON.stringify(scenarioArray));
     return this.http.post(environment.server + '/a/course/new', params);
   }
 
