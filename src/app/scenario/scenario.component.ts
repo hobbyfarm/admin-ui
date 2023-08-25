@@ -359,7 +359,7 @@ export class ScenarioComponent implements OnInit {
           ? (hasVMs[i] = true)
           : (hasVMs[i] = false)
       );
-      if (hasVMs.includes(false)){
+      if (hasVMs.includes(false)) {
         return false;
       } else return true;
     }
