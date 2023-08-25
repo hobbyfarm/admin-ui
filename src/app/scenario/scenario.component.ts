@@ -353,13 +353,15 @@ export class ScenarioComponent implements OnInit {
   }
   scenarioHasVM(scenario: Scenario): boolean {
     if (this.selectedscenario.virtualmachines.length != 0) {
-      let hasVM: boolean;
-      this.selectedscenario.virtualmachines.forEach((virtualmachine) =>
+      let hasVMs: boolean[] = [];
+      this.selectedscenario.virtualmachines.forEach((virtualmachine, i) =>
         Object.keys(virtualmachine).length != 0
-          ? (hasVM = true)
-          : (hasVM = false)
+          ? (hasVMs[i] = true)
+          : (hasVMs[i] = false)
       );
-      return hasVM;
+      if (hasVMs.includes(false)){
+        return false;
+      } else return true;
     }
     return false;
   }
