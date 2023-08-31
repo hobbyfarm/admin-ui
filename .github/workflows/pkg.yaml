@@ -48,7 +48,9 @@ jobs:
       - name: Build & Push
         if: fromJSON(env.should_push_image)
         run: |
-          docker buildx build --push --platform linux/amd64,linux/arm64 -f Dockerfile -t $publish_tag .
+          echo $publish_tag
+          docker buildx build --push --platform linux/amd64,linux/arm64 -t seboknt/gargantua:latest -f Dockerfile .
+          #docker buildx build --push --platform linux/amd64,linux/arm64 -f Dockerfile -t $publish_tag .
 
       - name: Push latest
         if: fromJSON(env.should_tag_latest)
