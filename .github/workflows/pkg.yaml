@@ -53,4 +53,4 @@ jobs:
       - name: Push latest
         if: fromJSON(env.should_tag_latest)
         run: |
-          docker buildx build --push --platform linux/amd64,linux/arm64 -f Dockerfile -t
+          docker buildx build --push --platform linux/amd64,linux/arm64 -f Dockerfile -t $app_image:latest .
