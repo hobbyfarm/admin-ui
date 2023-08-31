@@ -38,6 +38,7 @@ jobs:
           docker buildx create --use
           safe_ref=$(echo "${{ github.ref_name }}" | sed -e 's/[^a-zA-Z0-9\-\.]/-/g')
           publish_tag=$app_image:$safe_ref
+          echo $publish_tag
         
       - name: Login container registry
         if: fromJSON(env.should_push_image)
@@ -49,7 +50,7 @@ jobs:
         if: fromJSON(env.should_push_image)
         run: |
           echo $publish_tag
-          docker buildx build --push --platform linux/amd64,linux/arm64 -t seboknt/gargantua:latest -f Dockerfile .
+          #docker buildx build --push --platform linux/amd64,linux/arm64 -t seboknt/gargantua:latest -f Dockerfile .
           #docker buildx build --push --platform linux/amd64,linux/arm64 -f Dockerfile -t $publish_tag .
 
       - name: Push latest
