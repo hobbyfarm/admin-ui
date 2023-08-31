@@ -33,21 +33,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Build & Push
+      - name: Prep build env
+        run: |
+          docker buildx create --use
+          safe_ref=$(echo "${{ github.ref_name }}" | sed -e 's/[^a-zA-Z0-9\-\.]/-/g')
+          publish_tag=$app_image:$safe_ref
+        
+      - name: Login container registry
         if: fromJSON(env.should_push_image)
         run: |
           echo "${{ secrets.REGISTRY_PASSWORD }}" \
             | docker login -u "${{ secrets.REGISTRY_USER }}" --password-stdin
 
-          safe_ref=$(echo "${{ github.ref_name }}" | sed -e 's/[^a-zA-Z0-9\-\.]/-/g')
-          publish_tag=$app_image:$safe_ref
+      - name: Build & Push
+        if: fromJSON(env.should_push_image)
+        run: |
+          docker buildx build --push --platform linux/amd64,linux/arm64 -f Dockerfile -t $publish_tag .
 
-          docker buildx create --use
-          docker buildx build --push --platform linux/amd64 -f Dockerfile -t $publish_tag .
-          #docker buildx build --load --platform linux/amd64,linux/arm64 -f Dockerfile -t $app_image:${GIT_COMMIT_SHORT_HASH:-dev} .
-
-      - name: Push latest tag
+      - name: Push latest
         if: fromJSON(env.should_tag_latest)
         run: |
-          docker tag $app_image:${GIT_COMMIT_SHORT_HASH:-dev} $app_image:latest
-          docker push $app_image:latest
+          docker buildx build --push --platform linux/amd64,linux/arm64 -f Dockerfile -t
