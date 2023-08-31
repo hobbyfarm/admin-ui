@@ -9,7 +9,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  app_image: hobbyfarm/admin-ui
+  app_image: seboknt/admin-ui
 
   should_push_image: |-
     ${{
