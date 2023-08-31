@@ -11,7 +11,7 @@ on:
 env:
   app_image: seboknt/admin-ui
 
-    should_push_image: |-
+  should_push_image: |-
     ${{
       github.event_name == 'push' && (
         github.ref_type == 'tag' ||
