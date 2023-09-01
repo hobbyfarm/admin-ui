@@ -16,7 +16,7 @@ env:
         github.ref_name == 'master'
       )
     }}
-
+  # when tagged commits get pushed, two conatiner are pushed to docker hub ('admin-ui:latest' and 'admin-ui:<tag>' )
   should_tag_latest: |-
     ${{
       github.event_name == 'push' &&
@@ -31,10 +31,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Prep build and fill cache
+      - name: Cache docker buildx
+        uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/.docker
+            /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+
+      - name: Prep build and fill cache # also builds the conatiner when triggered via workflow_dispatch
         run: | 
           docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t ${GITHUB_REPOSITORY,,}:${GIT_COMMIT_SHORT_HASH:-dev} .
+          docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile -t ${GITHUB_REPOSITORY,,}:dev .
         
       - name: Login container registry
         if: fromJSON(env.should_push_image)
@@ -42,13 +50,13 @@ jobs:
           echo "${{ secrets.REGISTRY_PASSWORD }}" \
             | docker login -u "${{ secrets.REGISTRY_USER }}" --password-stdin
 
-      - name: Build & Push
+      - name: Build from cache & Push # if commit is taged, the container name is freed from unwanted chars
         if: fromJSON(env.should_push_image)
         run: |
           safe_ref=$(echo "${{ github.ref_name }}" | sed -e 's/[^a-zA-Z0-9\-\.]/-/g')
           docker buildx build --push --platform linux/amd64,linux/arm64 -f Dockerfile -t ${GITHUB_REPOSITORY,,}:$safe_ref .
 
-      - name: Push latest
+      - name: Build from cache & Push latest
         if: fromJSON(env.should_tag_latest)
         run: |
           docker buildx build --push --platform linux/amd64,linux/arm64 -f Dockerfile -t ${GITHUB_REPOSITORY,,}:latest .
