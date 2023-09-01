@@ -77,7 +77,7 @@ jobs:
           --platform linux/amd64,linux/arm64 \
           --cache-from type=local,src=/home/runner/tmp/amd64 \
           --cache-from type=local,src=/home/runner/tmp/arm64 \
-          --tag ${GITHUB_REPOSITORY,,}:$safe_ref
+          --tag ${GITHUB_REPOSITORY,,}:$safe_ref \
           --file Dockerfile .
 
       - name: Build from cache & Push latest
@@ -87,5 +87,5 @@ jobs:
           --platform linux/amd64,linux/arm64 \
           --cache-from type=local,src=/home/runner/tmp/amd64 \
           --cache-from type=local,src=/home/runner/tmp/arm64 \
-          --tag ${GITHUB_REPOSITORY,,}:latest
+          --tag ${GITHUB_REPOSITORY,,}:latest \
           --file Dockerfile .
