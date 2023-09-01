@@ -40,6 +40,8 @@
     "moment": "^2.29.4",
     "ng2-charts": "^3.1.2",
     "ng2-dragula": "^2.1.1",
+    "ngx-dynamic-hooks": "^2.1.0",
+    "ngx-markdown": "^13.0.0",
     "rxjs": "^7.4.0",
     "tslib": "^2.0.0",
     "xterm": "^4.13.0",
