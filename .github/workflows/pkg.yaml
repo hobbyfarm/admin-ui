@@ -28,15 +28,16 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout
         uses: actions/checkout@master
-
-    - name: Cache docker buildx
-      uses: actions/cache@v2
-      with:
-        path: |
-          /home/runner/tmp
-        key: docker-tmp
+  
+      - name: Cache docker buildx
+        uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/tmp
+          key: docker-tmp
 
       - name: Prep build # also builds the conatiner when triggered via workflow_dispatch
         run: | 
