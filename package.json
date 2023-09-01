@@ -40,7 +40,7 @@
     "moment": "^2.29.4",
     "ng2-charts": "^3.1.2",
     "ng2-dragula": "^2.1.1",
-    "rxjs": "^6.6.7",
+    "rxjs": "^7.4.0",
     "tslib": "^2.0.0",
     "xterm": "^4.13.0",
     "xterm-addon-attach": "^0.4.0",
