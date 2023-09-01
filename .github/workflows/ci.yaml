@@ -41,4 +41,4 @@ jobs:
       # TODO: lint, sonar, tests
       - name: Create container image
         run: |
-          docker build -f .github/workflows/Dockerfile-ci -t ${{ github.action_repository }}:${GIT_COMMIT_SHORT_HASH:-dev} .
+          docker build -f .github/workflows/Dockerfile-ci -t ${{ github.repository }}:${GIT_COMMIT_SHORT_HASH:-dev} .
