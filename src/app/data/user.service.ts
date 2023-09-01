@@ -39,7 +39,7 @@ export class UserService {
           this.set(u);
         }),
         catchError((e: HttpErrorResponse) => {
-          return throwError(e.error);
+          return throwError(() => e.error);
         })
       );
     }
@@ -51,7 +51,7 @@ export class UserService {
         return of(JSON.parse(atou(s.content)));
       }),
       catchError((e: HttpErrorResponse) => {
-        return throwError(e.error);
+        return throwError(() => e.error);
       })
     );
   }
@@ -87,7 +87,7 @@ export class UserService {
   public deleteUser(id: string) {
     return this.http.delete(environment.server + '/a/user/' + id).pipe(
       catchError((e: HttpErrorResponse) => {
-        return throwError(e.error);
+        return throwError(() => e.error);
       }),
       tap(() => {
         this.cachedUserList = this.cachedUserList.filter(
