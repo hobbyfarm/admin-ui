@@ -22,8 +22,14 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
-            "allowedCommonJsDependencies": ["dragula"],
-            "assets": ["src/favicon.ico", "src/config.json", "src/assets"],
+            "allowedCommonJsDependencies": [
+              "dragula"
+            ],
+            "assets": [
+              "src/favicon.ico",
+              "src/config.json",
+              "src/assets"
+            ],
             "styles": [
               "node_modules/@clr/icons/clr-icons.min.css",
               "node_modules/xterm/css/xterm.css",
@@ -113,20 +119,30 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss"
+            ],
             "scripts": [],
-            "assets": ["src/favicon.ico", "src/assets"]
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ]
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
-  "defaultProject": "hobbyfarm-admin"
+  "defaultProject": "hobbyfarm-admin",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }
