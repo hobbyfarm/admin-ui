@@ -310,7 +310,7 @@ export class NewScheduledEventComponent implements OnInit {
         ) {
           // this template either doesn't exist in the environment, or doesn't match a minimum count
           meetsCriteria = false;
-          if(!this.invalidSimpleEnvironments.includes(ea.environment)){
+          if (!this.invalidSimpleEnvironments.includes(ea.environment)) {
             this.invalidSimpleEnvironments.push(ea.environment);
           }
         }
@@ -877,23 +877,23 @@ export class NewScheduledEventComponent implements OnInit {
   public save() {
     this.saving = true;
     if (this.event) {
-      this.ses.update(this.se).subscribe(
-        (reply: string) => {
+      this.ses.update(this.se).subscribe({
+        next: (_reply: string) => {
           this.updated.next(true);
         },
-        (err: any) => {
+        error: (_err: any) => {
           this.updated.next(true);
-        }
-      );
+        },
+      });
     } else {
-      this.ses.create(this.se).subscribe(
-        (reply: string) => {
+      this.ses.create(this.se).subscribe({
+        next: (_reply: string) => {
           this.updated.next(true);
         },
-        (err: any) => {
+        error: (_err: any) => {
           this.updated.next(true);
-        }
-      );
+        },
+      });
     }
     this.close();
   }

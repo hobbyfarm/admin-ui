@@ -1,4 +1,11 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  Output,
+  EventEmitter,
+  Input,
+} from '@angular/core';
 import { ClrModal } from '@clr/angular';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { User } from 'src/app/data/user';
@@ -7,13 +14,13 @@ import { UserService } from 'src/app/data/user.service';
 export interface deletionInformation {
   user: User;
   deleted: boolean;
-  message: string;  
+  message: string;
 }
 
 @Component({
   selector: 'delete-process-modal',
   templateUrl: './delete-process-modal.component.html',
-  styleUrls: ['./delete-process-modal.component.scss']
+  styleUrls: ['./delete-process-modal.component.scss'],
 })
 export class DeleteProcessModalComponent implements OnInit {
   public modalOpen: boolean = false;
@@ -24,35 +31,37 @@ export class DeleteProcessModalComponent implements OnInit {
   @Input()
   public selectedUsers: User[];
 
-
   public deletedUsers: number = 0;
   public deleteInfo: deletionInformation[] = [];
 
+  constructor(public userService: UserService) {}
 
-  constructor(
-    public userService: UserService
-  ) { }
+  @ViewChild('modal') modal: ClrModal;
 
-  @ViewChild("modal") modal: ClrModal;
-
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   open(): void {
     this.modal.open();
-    this.selectedUsers.forEach(user => {
-      this.userService.deleteUser(user.id).subscribe(
-        (s: ServerResponse) => {
-          this.deleteInfo.push({user: user, deleted: true, message: s.message})
+    this.selectedUsers.forEach((user) => {
+      this.userService.deleteUser(user.id).subscribe({
+        next: (s: ServerResponse) => {
+          this.deleteInfo.push({
+            user: user,
+            deleted: true,
+            message: s.message,
+          });
           this.deletedUsers++;
-
         },
-        (s: ServerResponse) => {
-          this.deleteInfo.push({user: user, deleted: false, message: s.message})
-          this.deletedUsers++
-        }
-      )
-    })
+        error: (s: ServerResponse) => {
+          this.deleteInfo.push({
+            user: user,
+            deleted: false,
+            message: s.message,
+          });
+          this.deletedUsers++;
+        },
+      });
+    });
   }
 
   deleteDone(): void {

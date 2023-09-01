@@ -24,9 +24,7 @@ export class NewCourseComponent {
 
   public newCourseOpen: boolean = false;
 
-  constructor(
-    public courseService: CourseService
-  ) { }
+  constructor(public courseService: CourseService) {}
 
   setupForm(fg: FormGroup) {
     this.form = fg;
@@ -42,26 +40,25 @@ export class NewCourseComponent {
   save() {
     this.course.name = this.form.get('course_name').value;
     this.course.description = this.form.get('course_description').value;
-    this.course.keepalive_duration = this.form.get('keepalive_amount').value +
+    this.course.keepalive_duration =
+      this.form.get('keepalive_amount').value +
       this.form.get('keepalive_unit').value;
     this.course.pause_duration = this.form.get('pause_duration').value + 'h';
     this.course.pauseable = this.form.get('pauseable').value;
     this.course.keep_vm = this.form.get('keep_vm').value;
 
-
-    this.courseService.create(this.course)
-      .subscribe(
-        (s: ServerResponse) => {
-          this.alertText = "Course created";
-          this.isAlert = true;
-          this.alertType = ClrAlertType.Success;
-          this.added.emit(true);
-          setTimeout(() => this.newCourseOpen = false, 1000);
-        },
-        (e: HttpErrorResponse) => {
-          this.alertText = "Error creating object: " + e.error.message;
-          this.isAlert = true;
-        }
-      )
+    this.courseService.create(this.course).subscribe({
+      next: (_s: ServerResponse) => {
+        this.alertText = 'Course created';
+        this.isAlert = true;
+        this.alertType = ClrAlertType.Success;
+        this.added.emit(true);
+        setTimeout(() => (this.newCourseOpen = false), 1000);
+      },
+      error: (e: HttpErrorResponse) => {
+        this.alertText = 'Error creating object: ' + e.error.message;
+        this.isAlert = true;
+      },
+    });
   }
 }

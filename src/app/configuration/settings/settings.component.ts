@@ -5,6 +5,7 @@ import {
   TypedSettingsService,
 } from 'src/app/data/typedSettings.service';
 import { AlertComponent } from 'src/app/alert/alert.component';
+import { ServerResponse } from 'src/app/step/ServerResponse';
 
 @Component({
   selector: 'app-settings',
@@ -45,8 +46,8 @@ export class SettingsComponent {
       return;
     }
     console.log(this.updatedSettings);
-    this.typedSettingsService.updateCollection(this.updatedSettings).subscribe(
-      (resp) => {
+    this.typedSettingsService.updateCollection(this.updatedSettings).subscribe({
+      next: (resp: ServerResponse) => {
         console.log(resp);
         this.hasChanges = false;
         this.alert.success(
@@ -55,37 +56,37 @@ export class SettingsComponent {
           this.alertTime
         );
       },
-      (err) => {
+      error: (err) => {
         this.alert.danger(err.error.message, true, this.alertErrorTime);
-      }
-    );
+      },
+    });
   }
 
   setScope(scope: PreparedScope) {
     this.loading = true;
     this.selectedScope = scope;
-    this.typedSettingsService.list(this.selectedScope.name).subscribe(
-      (typedSettings) => {
+    this.typedSettingsService.list(this.selectedScope.name).subscribe({
+      next: (typedSettings: TypedInput[]) => {
         this.settings = typedSettings;
         this.loading = false;
       },
-      (err) => {
+      error: (err) => {
         this.alert.danger(err.error.message, true, this.alertErrorTime);
-      }
-    );
+      },
+    });
   }
 
   getScopes() {
     this.scopes = [];
-    this.typedSettingsService.listScopes().subscribe(
-      (scopes) => {
+    this.typedSettingsService.listScopes().subscribe({
+      next: (scopes: PreparedScope[]) => {
         this.scopes = scopes;
         this.scopesLoading = false;
         this.setScope(this.scopes[0]);
       },
-      (err) => {
+      error: (err) => {
         this.alert.danger(err.error.message, true, this.alertErrorTime);
-      }
-    );
+      },
+    });
   }
 }

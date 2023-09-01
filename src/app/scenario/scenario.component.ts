@@ -267,14 +267,14 @@ export class ScenarioComponent implements OnInit {
       this.scenarioDetails.get('pause_duration').value + 'h';
 
     // should be able to save at this point
-    this.scenarioService.create(this.newScenario).subscribe(
-      (s: Scenario) => {
+    this.scenarioService.create(this.newScenario).subscribe({
+      next: (s: Scenario) => {
         this._displayAlert(s.name, true);
       },
-      (s: string) => {
+      error: (s: string) => {
         this._displayAlert(s, false);
-      }
-    );
+      },
+    });
 
     this.newScenarioModal.close();
   }

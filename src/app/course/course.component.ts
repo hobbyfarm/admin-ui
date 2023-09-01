@@ -210,20 +210,20 @@ export class CourseComponent implements OnInit {
   updateDynamicScenarios() {
     this.dynamicAddedScenarios = [];
     if (this.listScenarios) {
-      this.courseService.listDynamicScenarios(this.editCategories).subscribe(
-        (dynamicScenarios: String[]) => {
+      this.courseService.listDynamicScenarios(this.editCategories).subscribe({
+        next: (dynamicScenarios: String[]) => {
           this.scenarios.forEach((scenario) => {
             if (dynamicScenarios && dynamicScenarios.includes(scenario.id)) {
               this.dynamicAddedScenarios.push(scenario);
             }
           });
         },
-        (e: HttpErrorResponse) => {
+        error: (e: HttpErrorResponse) => {
           this.alertDanger(
             'Error listing dynmamic scenarios: ' + e.error.message
           );
-        }
-      );
+        },
+      });
     }
   }
 
@@ -265,15 +265,15 @@ export class CourseComponent implements OnInit {
     this.selectedCourse.scenarios = this.dragScenarios;
     this.selectedCourse.virtualmachines = this.editVirtualMachines;
 
-    this.courseService.update(this.selectedCourse).subscribe(
-      (s: ServerResponse) => {
+    this.courseService.update(this.selectedCourse).subscribe({
+      next: (_s: ServerResponse) => {
         this.clearModified();
         this.alertSuccess('Course successfully updated');
       },
-      (e: HttpErrorResponse) => {
+      error: (e: HttpErrorResponse) => {
         this.alertDanger('Error creating object: ' + e.error.message);
-      }
-    );
+      },
+    });
   }
 
   delete(): void {
@@ -281,17 +281,17 @@ export class CourseComponent implements OnInit {
   }
 
   deleteSelected(): void {
-    this.courseService.delete(this.selectedCourse).subscribe(
-      (s: ServerResponse) => {
+    this.courseService.delete(this.selectedCourse).subscribe({
+      next: (_s: ServerResponse) => {
         this.clearModified();
         this.alertSuccess('Course deleted');
         this.refresh();
         this.selectedCourse = null;
         this.courseDetailsActive = true; // return the user to the details tab
       },
-      (e: HttpErrorResponse) => {
+      error: (e: HttpErrorResponse) => {
         this.alertDanger('Error deleting object: ' + e.error.message);
-      }
-    );
+      },
+    });
   }
 }

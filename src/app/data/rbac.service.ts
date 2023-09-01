@@ -65,11 +65,6 @@ export class RbacService {
           [RbacService.all, resource].forEach((r) => {
             [RbacService.all, verb].forEach((v) => {
               const key = '/' + a + '/' + r + '/' + v;
-              // this.userAccess.pipe(filter(object => object != null)).subscribe(object => {
-              //   if(object && object.access[key]) {
-              //     allowed = true;
-              //   }
-              // })
               if (accessSet.access[key]) {
                 allowed = true;
               }
