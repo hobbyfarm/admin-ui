@@ -9,7 +9,7 @@ import { UserService } from '../data/user.service';
 import { RbacService } from '../data/rbac.service';
 import { Subject, Subscription } from 'rxjs';
 
-interface extendedScheduledEvent extends ScheduledEvent {
+interface ExtendedScheduledEvent extends ScheduledEvent {
   creatorEmail?: String;
   courseNames?: String[];
   scenarioNames?: String[];
@@ -20,7 +20,7 @@ interface extendedScheduledEvent extends ScheduledEvent {
   templateUrl: './event.component.html',
 })
 export class EventComponent implements OnInit, OnDestroy {
-  public events: extendedScheduledEvent[] = [];
+  public events: ExtendedScheduledEvent[] = [];
 
   public deleteopen: boolean = false;
 
