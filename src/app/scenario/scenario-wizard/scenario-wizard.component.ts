@@ -194,7 +194,7 @@ export class ScenarioWizardComponent implements OnInit {
 
   ngOnChanges() {
     this.wizardTitle =
-      this.wizardScenario == 'create' ? 'Create new Course' : 'Edit Course';
+      this.wizardScenario == 'create' ? 'Create new Scenario' : 'Edit Scenario';
   }
   open() {
     this.wizard.open();

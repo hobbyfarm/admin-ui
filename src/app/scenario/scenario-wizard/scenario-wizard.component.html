@@ -1,6 +1,10 @@
-<clr-wizard #wizard [(clrWizardOpen)]="_open" clrWizardSize="xl"
-(clrWizardOnFinish)="finishScenario()"
-(clrWizardOnCancel)="doCancel()">
+<clr-wizard
+  #wizard
+  [(clrWizardOpen)]="_open"
+  clrWizardSize="xl"
+  (clrWizardOnFinish)="finishScenario()"
+  (clrWizardOnCancel)="doCancel()"
+>
   <clr-wizard-title>{{ wizardTitle }} </clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
@@ -132,7 +136,11 @@
     *rbac="['scenarios.update']"
   >
     <ng-template clrPageTitle>Virtual Machine</ng-template>
-    <div class="alert alert-warning" role="alert" *ngIf="!scenarioHasVM(selectedscenario)">
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="!scenarioHasVM(selectedscenario)"
+    >
       <div class="alert-items">
         <div class="alert-item static">
           <div class="alert-icon-wrapper">
@@ -148,7 +156,7 @@
         </div>
       </div>
     </div>
-    <div class="clr-col-12 clr-col-md-6">
+    <div>
       <ng-container *ngIf="selectedscenario">
         <clr-stack-view>
           <clr-stack-header>
@@ -317,7 +325,7 @@
       </clr-datagrid>
     </ng-container>
   </clr-wizard-page>
-  
+
   <clr-wizard-page>
     <ng-template clrPageTitle>Tags</ng-template>
     <ng-container *ngIf="selectedscenario">
@@ -377,68 +385,49 @@
   </clr-wizard-page>
 
   <clr-wizard-page>
-    <ng-template clrPageTitle>Confirmation</ng-template>
-    <p>Confirm the following details before finalizing</p>
+    <ng-template clrPageTitle>Finalize</ng-template>
+    <p>Confirm the following details before finishing</p>
     <h4>Scenario</h4>
     <table class="table table-compact" *ngIf="selectedscenario">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Keepalive Duration</th>
-          <th>Pause Duration</th>
-          <th>Virtual Machine</th>
+ 
+          <th>Option</th>
+          <th>Value</th>
         </tr>
       </thead>
       <tbody>
         <tr>
+          <td>Name</td>
           <td>{{ selectedscenario.name }}</td>
+        </tr>
+        <tr>
+          <td>Description</td>
           <td>{{ selectedscenario.description }}</td>
+        </tr>
+        <tr>
+          <td>Keepalive Duration</td>
           <td>{{ selectedscenario.keepalive_duration }}</td>
+        </tr>
+        <tr>
+          <td>Pause Duration</td>
           <td>{{ selectedscenario.pause_duration }}</td>
+        </tr>
+        <tr>
+          <td>Virtual Machine</td>
           <td>{{ selectedscenario.virtualmachines.length }}</td>
         </tr>
-      </tbody>
-    </table>
-
-    <h4>Steps</h4>
-    <table class="table table-compact" *ngIf="selectedscenario">
-      <thead>
         <tr>
-          <th>Name</th>
+          <td>Steps</td>
+          <td><span class="label" *ngFor="let step of selectedscenario.steps"> {{step.title}}</span></td>
         </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let step of selectedscenario.steps">
-          <td>{{ step.title }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h4>Categories</h4>
-    <table class="table table-compact" *ngIf="selectedscenario">
-      <thead>
         <tr>
-          <th>Name</th>
+          <td>Categories</td>
+          <td><span class="label" *ngFor="let categorie of selectedscenario.categories"> {{categorie}}</span></td>
         </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let categorie of selectedscenario.categories">
-          <td>{{ categorie }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h4>Tags</h4>
-    <table class="table table-compact" *ngIf="selectedscenario">
-      <thead>
         <tr>
-          <th>Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let tag of selectedscenario.tags">
-          <td>{{ tag }}</td>
+          <td>Tags</td>
+          <td><span class="label" *ngFor="let tag of selectedscenario.tags"> {{tag}} </span></td>
         </tr>
       </tbody>
     </table>
@@ -470,7 +459,11 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-danger-outline" (click)="createVMOpen = false" type="submit">
+    <button
+      class="btn btn-danger-outline"
+      (click)="createVMOpen = false"
+      type="submit"
+    >
       Cancel
     </button>
     <button
@@ -484,7 +477,11 @@
   </div>
 </clr-modal>
 
-<clr-modal #deletevmsetmodal [(clrModalOpen)]="deleteVMSetOpen" [clrModalSize]="'xl'">
+<clr-modal
+  #deletevmsetmodal
+  [(clrModalOpen)]="deleteVMSetOpen"
+  [clrModalSize]="'xl'"
+>
   <h3 class="modal-title">Delete VM Set</h3>
   <div class="modal-body">
     <p>
@@ -592,21 +589,25 @@
   </div>
 </clr-modal>
 
-<clr-modal #deletestepmodal [(clrModalOpen)]="deleteStepOpen" [clrModalSize]="'xl'">
-    <h3 class="modal-title">Delete Step</h3>
-    <div class="modal-body">
-      <p>Are you sure you want to delete this step?</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-success-outline" (click)="deleteStepOpen = false">
-        Cancel
-      </button>
-      <button
-        class="btn btn-danger"
-        (click)="doDeleteStep()"
-        *rbac="['scenarios.update']"
-      >
-        Delete
-      </button>
-    </div>
-  </clr-modal>
+<clr-modal
+  #deletestepmodal
+  [(clrModalOpen)]="deleteStepOpen"
+  [clrModalSize]="'xl'"
+>
+  <h3 class="modal-title">Delete Step</h3>
+  <div class="modal-body">
+    <p>Are you sure you want to delete this step?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success-outline" (click)="deleteStepOpen = false">
+      Cancel
+    </button>
+    <button
+      class="btn btn-danger"
+      (click)="doDeleteStep()"
+      *rbac="['scenarios.update']"
+    >
+      Delete
+    </button>
+  </div>
+</clr-modal>
