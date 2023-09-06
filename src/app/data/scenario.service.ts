@@ -142,6 +142,8 @@ export class ScenarioService {
       .set('virtualmachines', JSON.stringify(s.virtualmachines))
       .set('steps', JSON.stringify(s.steps))
       .set('pause_duration', s.pause_duration)
+      .set('categories', JSON.stringify(s.categories))
+      .set('tags', JSON.stringify(s.tags))
       .set('keepalive_duration', s.keepalive_duration);
 
     return this.http.post(environment.server + '/a/scenario/new', params).pipe(
