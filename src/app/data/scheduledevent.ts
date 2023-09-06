@@ -12,7 +12,7 @@ export class ScheduledEvent {
     vmsets: string[];
     active: boolean;
     provisioned: boolean;
-    read: boolean;
+    ready: boolean;
     finished: boolean;
     access_code: string;
     disable_restriction: boolean;
