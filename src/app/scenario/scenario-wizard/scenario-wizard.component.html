@@ -391,7 +391,6 @@
     <table class="table table-compact" *ngIf="selectedscenario">
       <thead>
         <tr>
- 
           <th>Option</th>
           <th>Value</th>
         </tr>
@@ -419,15 +418,30 @@
         </tr>
         <tr>
           <td>Steps</td>
-          <td><span class="label" *ngFor="let step of selectedscenario.steps"> {{step.title}}</span></td>
+          <td>
+            <span class="label" *ngFor="let step of selectedscenario.steps">
+              {{ step.title }}</span
+            >
+          </td>
         </tr>
         <tr>
           <td>Categories</td>
-          <td><span class="label" *ngFor="let categorie of selectedscenario.categories"> {{categorie}}</span></td>
+          <td>
+            <span
+              class="label"
+              *ngFor="let categorie of selectedscenario.categories"
+            >
+              {{ categorie }}</span
+            >
+          </td>
         </tr>
         <tr>
           <td>Tags</td>
-          <td><span class="label" *ngFor="let tag of selectedscenario.tags"> {{tag}} </span></td>
+          <td>
+            <span class="label" *ngFor="let tag of selectedscenario.tags">
+              {{ tag }}
+            </span>
+          </td>
         </tr>
       </tbody>
     </table>
