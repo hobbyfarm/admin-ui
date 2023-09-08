@@ -28,6 +28,7 @@
                 <clr-icon shape="caret down"></clr-icon>
             </button>
             <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
+                <!-- TODO: Use [clrDisabled] instead of [disabled] after upgrade to clarity v15 -->
                 <div class="dropdown-item " (click)="openInfo()" clrDropdownItem>Info</div>                
                 <div class="dropdown-item"  (click)="openTerminalWindow()" [disabled]="progress.finished" clrDropdownItem *rbac="['sessions.get', 'courses.get','progresses.list', 'scenarios.get', 'virtualmachineclaims.get']">Join Session</div>
                 <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
