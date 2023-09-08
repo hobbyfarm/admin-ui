@@ -104,9 +104,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   async sortEventLists() {
-    this.loggedInAdminEmail = this.helper.decodeToken(
-      this.helper.tokenGetter()
-    ).email;
+    // we always load our token synchronously from local storage
+    // for symplicity we are using type assertion to string here, avoiding to handle promises we're not expecting
+    const token = this.helper.tokenGetter() as string;
+    this.loggedInAdminEmail = this.helper.decodeToken(token).email;
     let users = await lastValueFrom(this.userService.getUsers());
     this.scheduledEvents.forEach((sEvent) => {
       sEvent.creatorEmail = users.find(
