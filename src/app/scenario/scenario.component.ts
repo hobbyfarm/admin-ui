@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
 import { ClrDatagridSortOrder, ClrModal } from '@clr/angular';

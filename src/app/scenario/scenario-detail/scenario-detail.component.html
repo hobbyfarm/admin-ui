@@ -1,0 +1,60 @@
+<div>
+  <clr-stack-view>
+    <clr-stack-block>
+      <clr-stack-label>Basic Information</clr-stack-label>
+      <clr-stack-block>
+        <clr-stack-label class="stackbox-header">Option</clr-stack-label>
+        <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block>
+        <clr-stack-label>Name</clr-stack-label>
+        <clr-stack-content>{{ scenario.name }}</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block>
+        <clr-stack-label>Description</clr-stack-label>
+        <clr-stack-content>{{ scenario.description }}</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block>
+        <clr-stack-label>Keepalive Duration</clr-stack-label>
+        <clr-stack-content>{{ scenario.keepalive_duration }}</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block>
+        <clr-stack-label>Pause Duration</clr-stack-label>
+        <clr-stack-content>{{ scenario.pause_duration }}</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block>
+        <clr-stack-label>Virtual Machine</clr-stack-label>
+        <clr-stack-content>{{
+          scenario.virtualmachines.length
+        }}</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block>
+        <clr-stack-label>Steps</clr-stack-label>
+        <clr-stack-content
+          ><span class="label" *ngFor="let step of scenario.steps">
+            {{ step.title }}</span
+          ></clr-stack-content
+        >
+      </clr-stack-block>
+    </clr-stack-block>
+    <clr-stack-block *ngIf="scenario.categories.length > 0 || scenario.tags.length >0">
+      <clr-stack-label>Categories & Tags</clr-stack-label>
+      <clr-stack-block *ngIf="scenario.categories.length > 0">
+        <clr-stack-label>Categories</clr-stack-label>
+        <clr-stack-content
+          ><span class="label" *ngFor="let categorie of scenario.categories">
+            {{ categorie }}</span
+          ></clr-stack-content
+        >
+      </clr-stack-block>
+      <clr-stack-block *ngIf="scenario.tags.length > 0">
+        <clr-stack-label >Tags</clr-stack-label>
+        <clr-stack-content 
+          ><span class="label" *ngFor="let tag of scenario.tags">
+            {{ tag }}</span
+          ></clr-stack-content
+        >
+      </clr-stack-block>
+    </clr-stack-block>
+  </clr-stack-view>
+</div>

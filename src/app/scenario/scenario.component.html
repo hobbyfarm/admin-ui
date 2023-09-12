@@ -68,6 +68,11 @@
         </clr-dg-action-overflow>
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
         <clr-dg-cell>{{ s.name }}</clr-dg-cell>
+        <scenario-detail
+          *clrIfExpanded
+          [scenario]="s"
+          ngProjectAs="clr-dg-row-detail"
+        ></scenario-detail>
       </clr-dg-row>
     </clr-datagrid>
   </div>
