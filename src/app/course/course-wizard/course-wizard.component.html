@@ -41,7 +41,7 @@
   </clr-wizard-page>
 
   <clr-wizard-page (clrWizardPageNext)="saveCourseWizard()">
-    <ng-template clrPageTitle>Scenario</ng-template>
+    <ng-template clrPageTitle>Scenarios</ng-template>
     <ng-container *ngIf="listScenarios">
       <button
         class="btn btn-sm btn-success-outline"
@@ -108,7 +108,7 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page *ngIf="wizardCourse == 'edit'">
+  <clr-wizard-page>
     <ng-template clrPageTitle>Dynamic Scenario</ng-template>
     <ng-container>
       <p>
@@ -228,27 +228,61 @@
     </ng-container>
   </clr-wizard-page>
   <clr-wizard-page>
-    <ng-template clrPageTitle>Confirmation</ng-template>
-    <p>Confirm the following details before finalizing</p>
-    <h4>Basic Information</h4>
-    <table class="table">
+    <ng-template clrPageTitle>Finalize</ng-template>
+    <p>Confirm the following details before finishing</p>
+    <h4>Course</h4>
+    <table class="table table-compact" *ngIf="selectedCourse">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Virtual Machines</th>
-          <th>Scenarios</th>
+          <th>Option</th>
+          <th>Value</th>
         </tr>
       </thead>
       <tbody>
         <tr>
+          <td>Name</td>
           <td>
             {{ wizardCourse == "create" ? course.name : selectedCourse.name }}
           </td>
+        </tr>
+
+        <tr>
+          <td>Description</td>
+          <td>  {{ wizardCourse == "create" ? course.description : selectedCourse.description }}</td>
+        </tr>
+        <tr>
+          <td>Keepalive Duration</td>
+          <td>{{ wizardCourse == "create" ? course.keepalive_duration : selectedCourse.keepalive_duration }}</td>
+        </tr>
+        <tr>
+          <td>Pause Duration</td>
+          <td>{{ wizardCourse == "create" ? course.pause_duration : selectedCourse.pause_duration }}</td>
+        </tr>
+        <tr>
+          <td>Virtual Machines</td>
           <td>{{ editVirtualMachines.length }}</td>
+        </tr>
+        <tr>
+          <td>Scenario</td>
           <td>
-            <span *ngFor="let scenario of dragScenarios"
-              >{{ scenario.name }},
+            <span class="label" *ngFor="let scenario of dragScenarios"
+              >{{ scenario.name }}
             </span>
+          </td>
+        </tr>
+        <tr>
+          <td>Dynamic Scenario</td>
+          <td>
+            <ng-container *ngIf="wizardCourse == 'create'">
+              <span class="label" *ngFor="let categorie of course.categories"
+              >{{ categorie }}
+            </span>
+            </ng-container>
+            <ng-container *ngIf="wizardCourse == 'edit'">
+              <span class="label" *ngFor="let categorie of selectedCourse.categories"
+              >{{ categorie }}
+            </span>
+            </ng-container>
           </td>
         </tr>
       </tbody>

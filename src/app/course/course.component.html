@@ -23,9 +23,7 @@
 </div>
 <div class="clr-row">
   <div class="clr-col">
-    <clr-datagrid
-      [clrDisableSelection]="!selectRbac"
-    >
+    <clr-datagrid [clrDisableSelection]="!selectRbac">
       <clr-dg-column [clrDgField]="'id'">ID</clr-dg-column>
       <clr-dg-column [clrDgField]="'name'" [clrDgSortOrder]="ascSort"
         >Name</clr-dg-column
@@ -36,12 +34,30 @@
         [clrDgItem]="c"
         [clrDgSelectable]="!modified"
       >
-      <clr-dg-action-overflow>
-        <button class="action-item" (click)="openEditCourseWizard(c)" *ngIf="updateRbac">Edit</button>
-        <button class="action-item" (click)="delete(c)" *rbac="['courses.delete']">Delete</button>
-    </clr-dg-action-overflow>
+        <clr-dg-action-overflow>
+          <button
+            class="action-item"
+            (click)="openEditCourseWizard(c)"
+            *ngIf="updateRbac"
+          >
+            Edit
+          </button>
+          <button
+            class="action-item"
+            (click)="delete(c)"
+            *rbac="['courses.delete']"
+          >
+            Delete
+          </button>
+        </clr-dg-action-overflow>
         <clr-dg-cell>{{ c.id }}</clr-dg-cell>
         <clr-dg-cell>{{ c.name }}</clr-dg-cell>
+        <course-details
+          *clrIfExpanded
+          [course]="c"
+          [dragScenarios]="dragScenarios"
+          ngProjectAs="clr-dg-row-detail"
+        ></course-details>
       </clr-dg-row>
     </clr-datagrid>
   </div>
@@ -53,9 +69,20 @@
   (coursesRefresher)="refresh()"
 ></wizard-course>
 
-<wizard-course #editcourse [wizardCourse]="'edit'" [updateRbac]="updateRbac" [listScenarios]="listScenarios"></wizard-course>
-
+<wizard-course
+  #editcourse
+  [wizardCourse]="'edit'"
+  [updateRbac]="updateRbac"
+  [listScenarios]="listScenarios"
+></wizard-course>
 
 <new-course #newCourse (added)="refresh()"></new-course>
-<add-scenario #addScenario [scenarios]="scenarios" (selected)="addSelected($event)"></add-scenario>
-<delete-confirmation #deleteConfirmation (delete)="deleteSelected()"></delete-confirmation>
+<add-scenario
+  #addScenario
+  [scenarios]="scenarios"
+  (selected)="addSelected($event)"
+></add-scenario>
+<delete-confirmation
+  #deleteConfirmation
+  (delete)="deleteSelected()"
+></delete-confirmation>

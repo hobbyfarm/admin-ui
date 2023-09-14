@@ -41,7 +41,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   public wizardCourse: 'create' | 'edit';
 
   @Input()
-  @Input()
   public dragScenarios: Scenario[] = [];
 
   @Output()
@@ -314,6 +313,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   createCourse() {
+    console.log(this.course);
     this.courseService.create(this.course).subscribe(
       (s: ServerResponse) => {
         this.alertText = 'Course created';
