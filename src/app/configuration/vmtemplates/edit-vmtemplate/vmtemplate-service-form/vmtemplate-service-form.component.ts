@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { PredefinedServiceService } from 'src/app/data/predefinedservice.service';
 import {
   getCloudConfigString,
   VMTemplateServiceConfiguration,
 } from 'src/app/data/vm-template-service-configuration';
-import * as uuid from 'uuid'
+import * as uuid from 'uuid';
 
 @Component({
   selector: 'app-vmtemplate-service-form',
@@ -20,7 +20,18 @@ export class VMTemplateServiceFormComponent implements OnInit {
   public cloudConfig: CloudInitConfig;
 
   public selectedNewInterface: VMTemplateServiceConfiguration = undefined;
-  public newVMServiceFormGroup: FormGroup;
+  public newVMServiceFormGroup: FormGroup<{
+    name: FormControl<string>;
+    port: FormControl<number>;
+    path: FormControl<string>;
+    hasOwnTab: FormControl<boolean>;
+    noPathRewriting: FormControl<boolean>;
+    proxyHostHeaderRewriting: FormControl<boolean>;
+    proxyOriginHeaderRewriting: FormControl<boolean>;
+    disallowIFrame: FormControl<boolean>;
+    cloudConfigString: FormControl<string>;
+    hasWebinterface: FormControl<boolean>;
+  }>;
   public editVMService: VMTemplateServiceConfiguration;
 
   //Open/Close Modals
@@ -31,37 +42,50 @@ export class VMTemplateServiceFormComponent implements OnInit {
   private DEFAULT_PORT = 80;
   private DEFAULT_PATH = '/';
 
-  constructor(private fb: FormBuilder, private pdsService: PredefinedServiceService) {}
+  constructor(
+    private fb: NonNullableFormBuilder,
+    private pdsService: PredefinedServiceService
+  ) {}
 
   ngOnInit(): void {
     this.buildNewVMServiceDetails();
-    this.pdsService.list().subscribe((vmtsc: VMTemplateServiceConfiguration[]) => {
-      this.predefinedInterfaces = vmtsc;
-    });
+    this.pdsService
+      .list()
+      .subscribe((vmtsc: VMTemplateServiceConfiguration[]) => {
+        this.predefinedInterfaces = vmtsc;
+      });
   }
 
   public buildNewVMServiceDetails(edit: boolean = false) {
     this.newVMServiceFormGroup = this.fb.group({
-      name: [edit ? this.editVMService.name : ''],
-      port: [
-        edit ? this.editVMService.port ?? this.DEFAULT_PORT : this.DEFAULT_PORT,
-      ],
-      path: [
-        edit ? this.editVMService.path ?? this.DEFAULT_PATH : this.DEFAULT_PATH,
-      ],
-      hasOwnTab: [edit ? this.editVMService.hasOwnTab : false],
-      noPathRewriting: [edit ? this.editVMService.noRewriteRootPath : false],
-      proxyHostHeaderRewriting: [
-        edit ? this.editVMService.rewriteHostHeader : true,
-      ],
-      proxyOriginHeaderRewriting: [
-        edit ? this.editVMService.rewriteOriginHeader : false,
-      ],
-      disallowIFrame: [
-        edit ? this.editVMService.disallowIFrame : true,
-      ],
-      cloudConfigString: [edit ? getCloudConfigString(this.editVMService) : ''],
-      hasWebinterface: [edit ? this.editVMService.hasWebinterface : false],
+      name: this.fb.control<string>(edit ? this.editVMService.name : ''),
+      port: this.fb.control<number>(
+        edit ? this.editVMService.port ?? this.DEFAULT_PORT : this.DEFAULT_PORT
+      ),
+      path: this.fb.control<string>(
+        edit ? this.editVMService.path ?? this.DEFAULT_PATH : this.DEFAULT_PATH
+      ),
+      hasOwnTab: this.fb.control<boolean>(
+        edit ? this.editVMService.hasOwnTab : false
+      ),
+      noPathRewriting: this.fb.control<boolean>(
+        edit ? this.editVMService.noRewriteRootPath : false
+      ),
+      proxyHostHeaderRewriting: this.fb.control<boolean>(
+        edit ? this.editVMService.rewriteHostHeader : true
+      ),
+      proxyOriginHeaderRewriting: this.fb.control<boolean>(
+        edit ? this.editVMService.rewriteOriginHeader : false
+      ),
+      disallowIFrame: this.fb.control<boolean>(
+        edit ? this.editVMService.disallowIFrame : true
+      ),
+      cloudConfigString: this.fb.control<string>(
+        edit ? getCloudConfigString(this.editVMService) : ''
+      ),
+      hasWebinterface: this.fb.control<boolean>(
+        edit ? this.editVMService.hasWebinterface : false
+      ),
     });
   }
 
@@ -77,26 +101,24 @@ export class VMTemplateServiceFormComponent implements OnInit {
   newVMServiceClose() {
     let newVMService: VMTemplateServiceConfiguration =
       new VMTemplateServiceConfiguration();
-    newVMService.id = this.editVMService?.id ?? uuid.v4()
-    newVMService.name = this.newVMServiceFormGroup.get('name').value;
+    newVMService.id = this.editVMService?.id ?? uuid.v4();
+    newVMService.name = this.newVMServiceFormGroup.controls.name.value;
     newVMService.hasWebinterface =
-      this.newVMServiceFormGroup.get('hasWebinterface').value;
-    newVMService.port = this.newVMServiceFormGroup.get('port').value;
-    newVMService.path = this.newVMServiceFormGroup.get('path').value;
-    newVMService.hasOwnTab = this.newVMServiceFormGroup.get('hasOwnTab').value;
+      this.newVMServiceFormGroup.controls.hasWebinterface.value;
+    newVMService.port = this.newVMServiceFormGroup.controls.port.value;
+    newVMService.path = this.newVMServiceFormGroup.controls.path.value;
+    newVMService.hasOwnTab =
+      this.newVMServiceFormGroup.controls.hasOwnTab.value;
     newVMService.noRewriteRootPath =
-      this.newVMServiceFormGroup.get('noPathRewriting').value;
-    newVMService.rewriteHostHeader = this.newVMServiceFormGroup.get(
-      'proxyHostHeaderRewriting'
-    ).value;
-    newVMService.rewriteOriginHeader = this.newVMServiceFormGroup.get(
-      'proxyOriginHeaderRewriting'
-    ).value;
-    newVMService.disallowIFrame = this.newVMServiceFormGroup.get(
-      'disallowIFrame'
-    ).value;
+      this.newVMServiceFormGroup.controls.noPathRewriting.value;
+    newVMService.rewriteHostHeader =
+      this.newVMServiceFormGroup.controls.proxyHostHeaderRewriting.value;
+    newVMService.rewriteOriginHeader =
+      this.newVMServiceFormGroup.controls.proxyOriginHeaderRewriting.value;
+    newVMService.disallowIFrame =
+      this.newVMServiceFormGroup.controls.disallowIFrame.value;
     newVMService.cloudConfigString =
-      this.newVMServiceFormGroup.get('cloudConfigString').value;
+      this.newVMServiceFormGroup.controls.cloudConfigString.value;
     newVMService.cloudConfigMap = this.cloudConfig.buildMapFromString(
       newVMService.cloudConfigString
     );

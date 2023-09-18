@@ -20,11 +20,13 @@ export class EditAccessCodesComponent implements OnChanges {
 
   constructor(public userService: UserService) {}
 
-  public newAccessCodeForm: FormGroup = new FormGroup({
-    access_code: new FormControl(null, [
-      Validators.required,
-      Validators.minLength(4),
-    ]),
+  public newAccessCodeForm: FormGroup<{
+    access_code: FormControl<string>;
+  }> = new FormGroup({
+    access_code: new FormControl<string>('', {
+      validators: [Validators.required, Validators.minLength(4)],
+      nonNullable: true,
+    }),
   });
 
   ngOnChanges(): void {
@@ -32,9 +34,7 @@ export class EditAccessCodesComponent implements OnChanges {
   }
 
   public reset(): void {
-    this.newAccessCodeForm.reset({
-      access_code: '',
-    });
+    this.newAccessCodeForm.reset();
   }
 
   deleteAccessCode(a: string) {
@@ -64,7 +64,7 @@ export class EditAccessCodesComponent implements OnChanges {
 
   saveAccessCode() {
     this.user.access_codes.push(
-      this.newAccessCodeForm.get('access_code').value
+      this.newAccessCodeForm.controls.access_code.value
     );
 
     this.userService

@@ -8,10 +8,17 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  Validators,
+} from '@angular/forms';
 import { ClrWizard } from '@clr/angular';
 import { AlertComponent } from 'src/app/alert/alert.component';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
+import { KeyValueGroup } from 'src/app/data/forms';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { vmServiceToJSON } from 'src/app/data/vm-template-service-configuration';
 import { VMTemplate } from 'src/app/data/vmtemplate';
@@ -24,8 +31,13 @@ import * as uuid from 'uuid';
   styleUrls: ['./edit-vmtemplate.component.scss'],
 })
 export class EditVmtemplateComponent implements OnInit, OnChanges {
-  public templateDetails: FormGroup;
-  public configMap: FormGroup;
+  public templateDetails: FormGroup<{
+    name: FormControl<string>;
+    image: FormControl<string>;
+  }>;
+  public configMap: FormGroup<{
+    mappings: FormArray<KeyValueGroup>;
+  }>;
   public buttonsDisabled: boolean = false;
 
   public cloudConfigKey: string = 'cloud-config';
@@ -43,7 +55,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public newWebinterfaceModalOpen: boolean = false;
 
   constructor(
-    private _fb: FormBuilder,
+    private _fb: NonNullableFormBuilder,
     private vmTemplateService: VmtemplateService
   ) {}
 
@@ -71,22 +83,24 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
 
   public buildTemplateDetails(edit: boolean = false) {
-    this.templateDetails = null;
     this.templateDetails = this._fb.group({
-      name: [
-        edit ? this.editTemplate.name : '',
-        [Validators.required, Validators.minLength(4)],
-      ],
-      image: [edit ? this.editTemplate.image : '', [Validators.required]],
+      name: this._fb.control<string>(edit ? this.editTemplate.name : '', [
+        Validators.required,
+        Validators.minLength(4),
+      ]),
+      image: this._fb.control<string>(
+        edit ? this.editTemplate.image : '',
+        Validators.required
+      ),
     });
   }
 
   public buildConfigMap() {
     this.configMap = this._fb.group({
-      mappings: this._fb.array([
+      mappings: this._fb.array<KeyValueGroup>([
         this._fb.group({
-          key: ['', Validators.required],
-          value: ['', Validators.required],
+          key: this._fb.control<string>('', Validators.required),
+          value: this._fb.control<string>('', Validators.required),
         }),
       ]),
     });
@@ -116,10 +130,10 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     );
     this.cloudConfig.buildNewYAMLFile();
     this.configMap = this._fb.group({
-      mappings: this._fb.array([]),
+      mappings: this._fb.array<KeyValueGroup>([]),
     });
 
-    for (var i = 0; i < configKeys.length; i++) {
+    for (let i = 0; i < configKeys.length; i++) {
       this.newConfigMapping(
         configKeys[i],
         this.editTemplate.config_map[configKeys[i]]
@@ -134,35 +148,27 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
 
   public newConfigMapping(key: string = '', value: string = '') {
-    var newGroup = this._fb.group({
-      key: [key, Validators.required],
-      value: [value, Validators.required],
+    const newGroup: KeyValueGroup = this._fb.group({
+      key: this._fb.control<string>(key, Validators.required),
+      value: this._fb.control<string>(value, Validators.required),
     });
-    (this.configMap.get('mappings') as FormArray).push(newGroup);
+    this.configMap.controls.mappings.push(newGroup);
   }
 
   public deleteConfigMapping(mappingIndex: number) {
-    (this.configMap.get('mappings') as FormArray).removeAt(mappingIndex);
+    this.configMap.controls.mappings.removeAt(mappingIndex);
   }
 
   public copyTemplateDetails() {
-    this.template.name = this.templateDetails.get('name').value;
-    this.template.image = this.templateDetails.get('image').value;
+    this.template.name = this.templateDetails.controls.name.value;
+    this.template.image = this.templateDetails.controls.image.value;
   }
 
   public copyConfigMap() {
     this.template.config_map = {};
-    for (
-      var i = 0;
-      i < (this.configMap.get('mappings') as FormArray).length;
-      i++
-    ) {
-      var key = (this.configMap.get(['mappings', i]) as FormGroup).get(
-        'key'
-      ).value;
-      var value = (this.configMap.get(['mappings', i]) as FormGroup).get(
-        'value'
-      ).value;
+    for (let i = 0; i < this.configMap.controls.mappings.length; i++) {
+      const key = this.configMap.controls.mappings.at(i).controls.key.value;
+      const value = this.configMap.controls.mappings.at(i).controls.value.value;
       this.template.config_map[key] = value;
     }
     this.template.config_map[this.cloudConfigKey] =

@@ -13,12 +13,14 @@ import {
 } from './TypedInput';
 import {
   AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormControl,
+  UntypedFormGroup,
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+
+// TODO: Type reactive forms!
 
 @Component({
   selector: 'app-typed-form',
@@ -32,7 +34,7 @@ export class TypedFormComponent implements OnInit, OnChanges {
   @Input() groupType: FormGroupType = FormGroupType.LIST; // group Items, otherwise display all settings
   @Input() groupOrder: string[] = []; // start with this groups, other groups follow alphabetically.
 
-  formGroup: FormGroup = new FormGroup({}); // Form group to manage the dynamic form
+  formGroup: UntypedFormGroup = new UntypedFormGroup({}); // Form group to manage the dynamic form
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
   activeTab = 0; // Activate first tab per default
 
@@ -52,7 +54,7 @@ export class TypedFormComponent implements OnInit, OnChanges {
    */
   initForm(): void {
     this.typedInputs.forEach((input) => {
-      let control: FormControl | FormArray;
+      let control: UntypedFormControl | UntypedFormArray;
 
       if (input.representation === TypedInputRepresentation.SCALAR) {
         control = input.getTypedInputFormControl(input.value);
@@ -60,21 +62,21 @@ export class TypedFormComponent implements OnInit, OnChanges {
         const controls = (input.value as any[]).map((val) =>
           input.getTypedInputFormControl(val)
         );
-        control = new FormArray(controls);
+        control = new UntypedFormArray(controls);
       } else if (input.representation === TypedInputRepresentation.MAP) {
-        const mapControls: FormGroup[] = [];
+        const mapControls: UntypedFormGroup[] = [];
         if (input.value) {
           for (const key in input.value) {
             if (input.value.hasOwnProperty(key)) {
-              const mapControl = new FormGroup({
-                key: new FormControl(key, [Validators.required, this.uniquekeyvalidator]),
+              const mapControl = new UntypedFormGroup({
+                key: new UntypedFormControl(key, [Validators.required, this.uniquekeyvalidator]),
                 value: input.getTypedInputFormControl(input.value[key]),
               });
               mapControls.push(mapControl);
             }
           }
         }
-        control = new FormArray(mapControls);
+        control = new UntypedFormArray(mapControls);
       }
 
       this.formGroup.addControl(input.id, control);
@@ -109,13 +111,13 @@ export class TypedFormComponent implements OnInit, OnChanges {
         //is required but has no field
         if (
           input.validation.required &&
-          (control as FormArray).controls.length == 0
+          (control as UntypedFormArray).controls.length == 0
         ) {
           valid = false;
           return;
         }
         // When the TypedInput has the Array representation we need to check for errors on each control.
-        (control as FormArray).controls.forEach((arrayControl) => {
+        (control as UntypedFormArray).controls.forEach((arrayControl) => {
           if (arrayControl.errors) {
             valid = false;
             return;
@@ -125,16 +127,16 @@ export class TypedFormComponent implements OnInit, OnChanges {
         //is required but has no field
         if (
           input.validation.required &&
-          (control as FormArray).controls.length == 0
+          (control as UntypedFormArray).controls.length == 0
         ) {
           valid = false;
           return;
         }
         // When the TypedInput has the Map representation we need to check for errors on each FormGroup.
-        (control as FormArray).controls.forEach((formGroup) => {
+        (control as UntypedFormArray).controls.forEach((formGroup) => {
           if (
-            (formGroup as FormGroup).get('key').errors ||
-            (formGroup as FormGroup).get('value').errors
+            (formGroup as UntypedFormGroup).get('key').errors ||
+            (formGroup as UntypedFormGroup).get('value').errors
           ) {
             valid = false;
             return;
@@ -175,16 +177,16 @@ export class TypedFormComponent implements OnInit, OnChanges {
     if (input.representation === TypedInputRepresentation.SCALAR) {
       return input.getTypedInputScalarValue(formValue);
     } else if (input.representation === TypedInputRepresentation.ARRAY) {
-      return (this.formGroup.get(input.id) as FormArray).controls.map(
+      return (this.formGroup.get(input.id) as UntypedFormArray).controls.map(
         (control) => input.getTypedInputScalarValue(control.value)
       );
     } else if (input.representation === TypedInputRepresentation.MAP) {
-      let formGroup = this.formGroup.get(input.id) as FormArray;
+      let formGroup = this.formGroup.get(input.id) as UntypedFormArray;
       let result = new Map();
       formGroup.controls.forEach((group: AbstractControl) => {
-        let key = (group as FormGroup).controls['key'].value;
+        let key = (group as UntypedFormGroup).controls['key'].value;
         let value = input.getTypedInputScalarValue(
-          (group as FormGroup).controls['value'].value
+          (group as UntypedFormGroup).controls['value'].value
         );
         result.set(key, value);
       });
@@ -202,10 +204,10 @@ export class TypedFormComponent implements OnInit, OnChanges {
   }
 
   private uniquekeyvalidator(control: AbstractControl): ValidationErrors | null {
-    const parent = control.parent as FormGroup;
+    const parent = control.parent as UntypedFormGroup;
     if (!parent) return null;
     const key = control.value;
-    const siblings = (parent.parent as FormArray).controls as FormGroup[];
+    const siblings = (parent.parent as UntypedFormArray).controls as UntypedFormGroup[];
     const keys = siblings.map(sibling => sibling.controls.key.value);
     const duplicates = keys.filter(k => k === key);
     return duplicates.length > 1 ? { 'duplicate': true } : null;

@@ -2,7 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CourseService } from '../data/course.service';
 import { Course } from '../data/course';
 import { NewCourseComponent } from './new-course/new-course.component';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
 import { DragulaService } from 'ng2-dragula';
@@ -15,6 +21,7 @@ import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confi
 import { RbacService } from '../data/rbac.service';
 import { ClrDatagridSortOrder } from '@clr/angular';
 import { lastValueFrom } from 'rxjs';
+import { CategoryFormGroup, CourseDetailFormGroup } from '../data/forms';
 
 @Component({
   selector: 'app-course',
@@ -41,10 +48,8 @@ export class CourseComponent implements OnInit {
 
   public selectedCourse: Course;
 
-  public editForm: FormGroup;
-  public newCategoryForm: FormGroup = new FormGroup({
-    category: new FormControl(null, [Validators.required]),
-  });
+  public editForm: CourseDetailFormGroup;
+  public newCategoryForm: CategoryFormGroup;
 
   public scenarios: Scenario[] = [];
   public dragScenarios: Scenario[] = [];
@@ -87,6 +92,9 @@ export class CourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.newCategoryForm = new FormGroup({
+      category: new FormControl<string | null>(null, [Validators.required]),
+    });
     const authorizationRequests = Promise.all([
       this.rbacService.Grants('courses', 'get'),
       this.rbacService.Grants('courses', 'update'),
@@ -124,13 +132,13 @@ export class CourseComponent implements OnInit {
       .subscribe((cList: Course[]) => (this.courses = cList));
   }
 
-  setupForm(fg: FormGroup) {
+  setupForm(fg: CourseDetailFormGroup) {
     this.editForm = fg;
     if (!this.updateRbac) {
       this.editForm.disable();
     } else {
       this.editForm.enable();
-      this.editForm.valueChanges.subscribe((a: any) => {
+      this.editForm.valueChanges.subscribe(() => {
         if (this.editForm.dirty) {
           this.setModified();
         }
@@ -193,9 +201,8 @@ export class CourseComponent implements OnInit {
   }
 
   addCategory() {
-    let categories = this.newCategoryForm.get('category').value;
-    categories = categories.split(',');
-    categories.forEach((category) => {
+    const categories: string[] | undefined = this.newCategoryForm.controls.category.value?.split(',');
+    categories?.forEach((category) => {
       category = category.replace(/\s/g, ''); //remove all whitespaces
       if (category != '' && !this.editCategories.includes(category)) {
         this.editCategories.push(category);
@@ -251,16 +258,16 @@ export class CourseComponent implements OnInit {
   }
 
   saveCourse() {
-    this.selectedCourse.name = this.editForm.get('course_name').value;
+    this.selectedCourse.name = this.editForm.controls.course_name.value;
     this.selectedCourse.description =
-      this.editForm.get('course_description').value;
+      this.editForm.controls.course_description.value;
     this.selectedCourse.keepalive_duration =
-      this.editForm.get('keepalive_amount').value +
-      this.editForm.get('keepalive_unit').value;
+      this.editForm.controls.keepalive_amount.value +
+      this.editForm.controls.keepalive_unit.value;
     this.selectedCourse.pause_duration =
-      this.editForm.get('pause_duration').value + 'h';
-    this.selectedCourse.pauseable = this.editForm.get('pauseable').value;
-    this.selectedCourse.keep_vm = this.editForm.get('keep_vm').value;
+      this.editForm.controls.pause_duration.value + 'h';
+    this.selectedCourse.pauseable = this.editForm.controls.pauseable.value;
+    this.selectedCourse.keep_vm = this.editForm.controls.keep_vm.value;
     this.selectedCourse.categories = this.editCategories;
     this.selectedCourse.scenarios = this.dragScenarios;
     this.selectedCourse.virtualmachines = this.editVirtualMachines;

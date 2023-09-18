@@ -4,7 +4,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -55,27 +54,27 @@ export class EditUserComponent implements OnChanges {
     this.reset();
   }
 
-  public userDetailsForm: FormGroup = new FormGroup({
-    email: new FormControl(this.user.email, [
-      Validators.required,
-      Validators.email,
-    ]),
-    password: new FormControl(''),
+  public userDetailsForm: FormGroup<{
+    email: FormControl<string>;
+    password: FormControl<string>;
+  }> = new FormGroup({
+    email: new FormControl<string>(this.user.email, {
+      validators: [Validators.required, Validators.email],
+      nonNullable: true,
+    }),
+    password: new FormControl<string>('', { nonNullable: true }),
   });
 
   public reset(): void {
-    this.userDetailsForm.reset({
-      email: this.user.email,
-      password: '',
-    });
+    this.userDetailsForm.reset();
     this.alertText = '';
     this.alertClosed = true;
   }
 
   saveDetails() {
     this.saving = true;
-    var email = this.userDetailsForm.get('email').value;
-    var password = this.userDetailsForm.get('password').value;
+    var email = this.userDetailsForm.controls.email.value;
+    var password = this.userDetailsForm.controls.password.value;
 
     if (email == null) {
       email = '';

@@ -7,9 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import {
-  ClrDatagridSortOrder
-} from '@clr/angular';
+import { ClrDatagridSortOrder } from '@clr/angular';
 import { Observable, Subject } from 'rxjs';
 import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { OTAC } from 'src/app/data/otac.type';
@@ -40,11 +38,14 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   currentScheduledEvent: ScheduledEvent = null;
 
-  amountInputForm: FormGroup = new FormGroup({
-    amountInput: new FormControl(1, [Validators.required, Validators.min(1)]),
+  amountInputForm: FormGroup<{
+    amountInput: FormControl<number>;
+  }> = new FormGroup({
+    amountInput: new FormControl<number>(1, [
+      Validators.required,
+      Validators.min(1),
+    ]),
   });
-
-  amountNewOtacs: number = 1;
 
   otacs: iOTAC[] = [];
 
@@ -59,8 +60,8 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userService.getUsers().subscribe({
-      next: (users) => this.users = users,
-      error: () => this.users = []
+      next: (users) => (this.users = users),
+      error: () => (this.users = []),
     });
 
     this.scheduledEvents
@@ -96,12 +97,15 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   createOtacs() {
     this.seService
-      .addOtacs(this.currentScheduledEvent.id, this.amountNewOtacs)
+      .addOtacs(
+        this.currentScheduledEvent.id,
+        this.amountInputForm.controls.amountInput.value
+      )
       .subscribe((newOtacs: OTAC[]) => {
         this.otacs.push(
           ...newOtacs.map((otac) => this.addUserinformation(otac))
         );
-        this.amountNewOtacs = 1;
+        this.amountInputForm.controls.amountInput.setValue(1);
       });
   }
 

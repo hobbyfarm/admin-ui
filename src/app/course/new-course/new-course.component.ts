@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { CourseService } from 'src/app/data/course.service';
 import { Course } from 'src/app/data/course';
 import { ServerResponse } from 'src/app/data/serverresponse';
@@ -16,7 +16,7 @@ export class NewCourseComponent {
 
   public course: Course = new Course();
 
-  public form: FormGroup = new FormGroup({});
+  public form: UntypedFormGroup = new UntypedFormGroup({});
 
   public alertText: string = null;
   public isAlert: boolean = false;
@@ -26,7 +26,7 @@ export class NewCourseComponent {
 
   constructor(public courseService: CourseService) {}
 
-  setupForm(fg: FormGroup) {
+  setupForm(fg: UntypedFormGroup) {
     this.form = fg;
   }
 

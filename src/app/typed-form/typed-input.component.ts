@@ -2,12 +2,14 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TypedInput, TypedInputType } from './TypedInput';
 import {
   AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormControl,
+  UntypedFormGroup,
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+
+// TODO: Type reactive forms
 
 @Component({
   selector: 'app-typed-input',
@@ -16,7 +18,7 @@ import {
 })
 export class TypedInputComponent {
   @Input() input: TypedInput;
-  @Input() formGroup: FormGroup;
+  @Input() formGroup: UntypedFormGroup;
   @Output() change: EventEmitter<boolean> = new EventEmitter(null);
   readonly TypedInputType = TypedInputType; // Reference to TypedInputTypes enum for template use
   constructor() {}
@@ -26,34 +28,34 @@ export class TypedInputComponent {
   }
 
   getControls(inputId: string): AbstractControl[] {
-    return (this.formGroup.get(inputId) as FormArray).controls;
+    return (this.formGroup.get(inputId) as UntypedFormArray).controls;
   }
 
-  getMapFormControl(ctrl: AbstractControl, controlName: string): FormControl {
-    const formGroup = ctrl as FormGroup;
-    return formGroup.controls[controlName] as FormControl;
+  getMapFormControl(ctrl: AbstractControl, controlName: string): UntypedFormControl {
+    const formGroup = ctrl as UntypedFormGroup;
+    return formGroup.controls[controlName] as UntypedFormControl;
   }
 
-  getArrayFormControl(ctrl: AbstractControl): FormControl {
-    return ctrl as FormControl;
+  getArrayFormControl(ctrl: AbstractControl): UntypedFormControl {
+    return ctrl as UntypedFormControl;
   }
 
-  getFormControl(controlName: string): FormControl {
-    return this.formGroup.controls[controlName] as FormControl;
+  getFormControl(controlName: string): UntypedFormControl {
+    return this.formGroup.controls[controlName] as UntypedFormControl;
   }
 
   getArrayLength(typedInput: TypedInput) {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
+    const control = this.formGroup.get(typedInput.id) as UntypedFormArray;
     return control.length;
   }
 
   getMapSize(typedInput: TypedInput) {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
+    const control = this.formGroup.get(typedInput.id) as UntypedFormArray;
     return control.length;
   }
 
   addArrayElement(typedInput: TypedInput) {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
+    const control = this.formGroup.get(typedInput.id) as UntypedFormArray;
     let c = typedInput.getTypedInputFormControl('');
     control.push(c);
     c.updateValueAndValidity();
@@ -66,11 +68,11 @@ export class TypedInputComponent {
   }
 
   addMapElement(typedInput: TypedInput): void {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
+    const control = this.formGroup.get(typedInput.id) as UntypedFormArray;
     let vControl = typedInput.getTypedInputFormControl('');
-    let kControl = new FormControl('', [Validators.required, this.uniquekeyvalidator]);
+    let kControl = new UntypedFormControl('', [Validators.required, this.uniquekeyvalidator]);
     control.push(
-      new FormGroup({
+      new UntypedFormGroup({
         key: kControl,
         value: vControl,
       })
@@ -87,16 +89,16 @@ export class TypedInputComponent {
   }
 
   removeArrayElement(typedInput: TypedInput, index: number) {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
+    const control = this.formGroup.get(typedInput.id) as UntypedFormArray;
     control.removeAt(index);
     this.inputChanged();
   }
 
   private uniquekeyvalidator(control: AbstractControl): ValidationErrors | null {
-    const parent = control.parent as FormGroup;
+    const parent = control.parent as UntypedFormGroup;
     if (!parent) return null;
     const key = control.value;
-    const siblings = (parent.parent as FormArray).controls as FormGroup[];
+    const siblings = (parent.parent as UntypedFormArray).controls as UntypedFormGroup[];
     const keys = siblings.map(sibling => sibling.controls.key.value);
     const duplicates = keys.filter(k => k === key);
     return duplicates.length > 1 ? { 'duplicate': true } : null;

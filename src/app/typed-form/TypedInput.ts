@@ -1,11 +1,13 @@
 import {
   AbstractControl,
-  FormArray,
-  FormControl,
+  UntypedFormArray,
+  UntypedFormControl,
   ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+
+// TODO: Type reactive forms
 
 export enum TypedInputType {
   STRING,
@@ -92,24 +94,24 @@ export class TypedInput {
   getTypedInputFormControl(value: any) {
     // TODO what is format vs pattern?
 
-    let control: FormControl | FormArray;
+    let control: UntypedFormControl | UntypedFormArray;
     value = this.getTypedInputScalarValue(value);
 
     switch (this.type) {
       case TypedInputType.STRING:
-        control = new FormControl(value);
+        control = new UntypedFormControl(value);
         break;
       case TypedInputType.FLOAT:
-        control = new FormControl(value, [Validators.required]);
+        control = new UntypedFormControl(value, [Validators.required]);
         break;
       case TypedInputType.INTEGER:
-        control = new FormControl(value, [
+        control = new UntypedFormControl(value, [
           Validators.required,
           Validators.pattern('^[0-9]*$'),
         ]);
         break;
       case TypedInputType.BOOLEAN:
-        control = new FormControl(value);
+        control = new UntypedFormControl(value);
         break;
     }
 
@@ -239,7 +241,7 @@ export class TypedInput {
   }
 
   uniqueArrayValueValidator(control: AbstractControl): ValidationErrors | null {
-    const siblings = (control.parent as FormArray).controls as FormControl[];
+    const siblings = (control.parent as UntypedFormArray).controls as UntypedFormControl[];
     const values = siblings.map((sibling) => sibling.value);
     const duplicates = values.filter((v) => v === control.value);
     return duplicates.length > 1 ? { duplicatearrayvalue: true } : null;
