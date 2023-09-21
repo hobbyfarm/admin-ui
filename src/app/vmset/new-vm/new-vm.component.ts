@@ -6,13 +6,7 @@ import {
   Input,
   OnChanges,
 } from '@angular/core';
-import {
-  UntypedFormGroup,
-  UntypedFormControl,
-  Validators,
-  FormGroup,
-  FormControl,
-} from '@angular/forms';
+import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { ClrModal } from '@clr/angular';

@@ -1,10 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  UntypedFormControl,
-  UntypedFormGroup,
-} from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ClrDatagridSortOrder } from '@clr/angular';
 import { RbacService } from '../data/rbac.service';
 import { Scenario } from '../data/scenario';

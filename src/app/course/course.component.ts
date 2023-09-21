@@ -2,13 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CourseService } from '../data/course.service';
 import { Course } from '../data/course';
 import { NewCourseComponent } from './new-course/new-course.component';
-import {
-  FormControl,
-  FormGroup,
-  UntypedFormControl,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
 import { DragulaService } from 'ng2-dragula';
@@ -201,7 +195,8 @@ export class CourseComponent implements OnInit {
   }
 
   addCategory() {
-    const categories: string[] | undefined = this.newCategoryForm.controls.category.value?.split(',');
+    const categories: string[] | undefined =
+      this.newCategoryForm.controls.category.value?.split(',');
     categories?.forEach((category) => {
       category = category.replace(/\s/g, ''); //remove all whitespaces
       if (category != '' && !this.editCategories.includes(category)) {

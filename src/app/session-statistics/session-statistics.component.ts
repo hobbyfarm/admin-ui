@@ -1,10 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  ChartConfiguration,
-  ChartData,
-  ChartEvent,
-  ChartType,
-} from 'chart.js';
+import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
 import { Progress } from '../data/progress';
@@ -13,7 +8,6 @@ import {
   FormControl,
   FormGroup,
   NonNullableFormBuilder,
-  UntypedFormBuilder,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
@@ -107,8 +101,7 @@ export class SessionStatisticsComponent implements OnInit {
 
   constructor(
     public progressService: ProgressService,
-    private _fb: UntypedFormBuilder,
-    private fb: NonNullableFormBuilder
+    private _fb: NonNullableFormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -130,21 +123,21 @@ export class SessionStatisticsComponent implements OnInit {
       999
     );
 
-    this.chartDetails = this.fb.group(
+    this.chartDetails = this._fb.group(
       {
-        observationPeriod: this.fb.control<'daily' | 'weekly' | 'monthly'>(
+        observationPeriod: this._fb.control<'daily' | 'weekly' | 'monthly'>(
           'daily',
           Validators.required
         ),
-        scenarios: this.fb.control<string[]>(
+        scenarios: this._fb.control<string[]>(
           [],
           [Validators.required, Validators.minLength(1)]
         ),
-        startDate: this.fb.control<string>(
+        startDate: this._fb.control<string>(
           this.startDate.toLocaleDateString('en-US', this.options),
           [Validators.required, this.validateStartDate()]
         ),
-        endDate: this.fb.control<string>(
+        endDate: this._fb.control<string>(
           this.endDate.toLocaleDateString('en-US', this.options),
           Validators.required
         ),
