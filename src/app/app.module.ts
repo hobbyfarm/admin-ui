@@ -15,7 +15,7 @@ import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './header/header.component';
 import { EventComponent } from './event/event.component';
 import { HttpClientModule } from '@angular/common/http';
-import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { JwtModule, JWT_OPTIONS, JwtConfig } from '@auth0/angular-jwt';
 import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -102,13 +102,13 @@ const appInitializerFn = (appConfig: AppConfigService) => {
   };
 };
 
-export function jwtOptionsFactory() {
+export function jwtOptionsFactory(): JwtConfig {
   return {
     tokenGetter: () => {
       return localStorage.getItem('hobbyfarm_admin_token');
     },
-    whitelistedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
-    blacklistedRoutes: [
+    allowedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
+    disallowedRoutes: [
       environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + '/auth/authenticate',
     ],
   };
