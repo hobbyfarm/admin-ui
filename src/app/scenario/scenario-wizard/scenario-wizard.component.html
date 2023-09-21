@@ -128,7 +128,8 @@
           >
         </clr-input-container>
       </form>
-      <a *ngIf="wizardScenario == 'edit'"
+      <a
+        *ngIf="wizardScenario == 'edit'"
         [routerLink]="['/scenario', selectedscenario.id, 'printable']"
         target="_blank"
       >
@@ -227,47 +228,7 @@
   >
     <ng-template clrPageTitle>Steps</ng-template>
     <ng-container *ngIf="selectedscenario">
-      <button
-        class="btn btn-sm"
-        (click)="openEdit(selectedscenario?.steps[0] ?? undefined, 0)"
-        *rbac="['scenarios.update']"
-      >
-        Open Step Editor
-      </button>
-      <button
-        class="btn btn-success-outline btn-sm"
-        (click)="openNewStep()"
-        *rbac="['scenarios.update']"
-      >
-        <clr-icon shape="plus"></clr-icon> New Step
-      </button>
-      <clr-datagrid>
-        <clr-dg-column>Index</clr-dg-column>
-        <clr-dg-column>Title</clr-dg-column>
-
-        <clr-dg-row
-          *clrDgItems="let s of selectedscenario.steps; let i = index"
-        >
-          <clr-dg-action-overflow *rbac="['scenarios.update']">
-            <button class="action-item" *ngIf="i > 0" (click)="moveStepUp(i)">
-              Move Up
-            </button>
-            <button
-              class="action-item"
-              *ngIf="i < selectedscenario.steps.length - 1"
-              (click)="moveStepDown(i)"
-            >
-              Move Down
-            </button>
-            <button class="action-item" (click)="openEdit(s, i)">Edit</button>
-            <button class="action-item" (click)="openDeleteStep(i)">
-              Delete
-            </button>
-          </clr-dg-action-overflow>
-          <clr-dg-cell>{{ i + 1 }}</clr-dg-cell>
-          <clr-dg-cell>{{ s.title }}</clr-dg-cell>
-        </clr-dg-row>
-      </clr-datagrid>
+      <steps-scenario [scenario]="selectedscenario"></steps-scenario>
     </ng-container>
   </clr-wizard-page>
 
@@ -304,7 +265,7 @@
             >
           </clr-input-container>
           <div class="col-md-2">
-            <button 
+            <button
               class="btn btn-success btn-sm"
               [disabled]="!newCategoryForm.valid"
               *rbac="['scenarios.update']"
@@ -523,111 +484,4 @@
   </div>
 </clr-modal>
 
-<clr-modal #editmodal [(clrModalOpen)]="editOpen" [clrModalSize]="'xl'">
-  <h3 class="modal-title">
-    Edit Step {{ this.editingIndex + 1 }} of
-    {{ this.selectedscenario?.steps?.length }}
-  </h3>
-  <div class="modal-body">
-    <clr-alert
-      [clrAlertType]="'danger'"
-      [(clrAlertClosed)]="editDangerClosed"
-      [clrAlertClosable]="false"
-    >
-      <clr-alert-item>
-        <span class="alert-text">
-          {{ editDangerAlert }}
-        </span>
-      </clr-alert-item>
-    </clr-alert>
-    <clr-alert
-      [clrAlertType]="'success'"
-      [(clrAlertClosed)]="editSuccessClosed"
-      [clrAlertClosable]="false"
-    >
-      <clr-alert-item>
-        <span class="alert-text">
-          {{ editSuccessAlert }}
-        </span>
-      </clr-alert-item>
-    </clr-alert>
-    <div class="clr-row">
-      <div class="clr-col-6">
-        <form clrForm>
-          <clr-input-container class="step-input">
-            <label for="title">Step title</label>
-            <input
-              class="full-width"
-              clrInput
-              placeholder="Step title"
-              name="title"
-              [(ngModel)]="editingStep.title"
-              width="80%"
-            />
-          </clr-input-container>
-        </form>
-      </div>
-      <div class="clr-col-6">
-        <button
-          class="btn btn-info-outline"
-          (click)="previousStep()"
-          title="Navigate to the previous step"
-          [disabled]="this.isFirstStep()"
-        >
-          Previous
-        </button>
-        <button
-          class="btn btn-info-outline"
-          (click)="nextStep()"
-          title="Navigate to the next step"
-          [disabled]="this.isLastStep()"
-        >
-          Next
-        </button>
-        <button
-          class="btn btn-info-outline"
-          (click)="openNewStep()"
-          title="Create new step at the end"
-        >
-          New Step
-        </button>
-      </div>
-    </div>
-    <md-editor [(content)]="this.editingStep.content"></md-editor>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-danger-outline" (click)="cancelEdit()">
-      Cancel
-    </button>
-    <button
-      class="btn btn-success"
-      (click)="saveCreatedStep()"
-      *rbac="['scenarios.update']"
-    >
-      Save
-    </button>
-  </div>
-</clr-modal>
 
-<clr-modal
-  #deletestepmodal
-  [(clrModalOpen)]="deleteStepOpen"
-  [clrModalSize]="'xl'"
->
-  <h3 class="modal-title">Delete Step</h3>
-  <div class="modal-body">
-    <p>Are you sure you want to delete this step?</p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-success-outline" (click)="deleteStepOpen = false">
-      Cancel
-    </button>
-    <button
-      class="btn btn-danger"
-      (click)="doDeleteStep()"
-      *rbac="['scenarios.update']"
-    >
-      Delete
-    </button>
-  </div>
-</clr-modal>

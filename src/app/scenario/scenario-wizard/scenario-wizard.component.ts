@@ -12,7 +12,6 @@ import { RbacService } from 'src/app/data/rbac.service';
 import { Scenario } from 'src/app/data/scenario';
 import { ScenarioService } from 'src/app/data/scenario.service';
 import { ServerResponse } from 'src/app/data/serverresponse';
-import { Step } from 'src/app/data/step';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { deepCopy } from 'src/app/deepcopy';
@@ -64,7 +63,6 @@ export class ScenarioWizardComponent implements OnInit {
   public deletingStepIndex: number = 0;
   public editingIndex: number = 0;
 
-  public editingStep: Step = new Step();
 
   public vmtemplates: VMTemplate[] = [];
 
@@ -87,8 +85,7 @@ export class ScenarioWizardComponent implements OnInit {
 
   @ViewChild('deletevmsetmodal', { static: true }) deleteVMSetModal: ClrModal;
   @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
-  @ViewChild('editmodal', { static: true }) editModal: ClrModal;
-  @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
+
 
   constructor(
     public scenarioService: ScenarioService,
@@ -200,79 +197,11 @@ export class ScenarioWizardComponent implements OnInit {
     this.wizard.open();
   }
 
-  openEdit(s: Step, i: number) {
-    if (this.selectedscenario.steps.length == 0) {
-      this.openNewStep();
-      return;
-    }
-    this.editingStep = s;
-    this.editingIndex = i;
-    if (this.AddedStepsContents[i] == null) {
-      this.AddedStepsContents[i] = s.content;
-      this.AddedStepsTitle[i] = s.title;
-    }
-    this.editModal.open();
-  }
-  openNewStep() {
-    this.stepsToBeAdded++;
-    this.editingIndex = this.selectedscenario.steps.length;
-    this.editingStep = new Step();
-    this.editingStep.title = 'Step ' + (this.editingIndex + 1);
-    // Provide default content with syntax examples
-    this.editingStep.content =
-      "## Your Content\n```ctr:node1\necho 'hello world'\n```\n```hidden:Syntax reference\navailable at [the hobbyfarm docs](https://hobbyfarm.github.io/docs/appendix/markdown_syntax/)\n```";
-    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
-    this.editModal.open();
-  }
-  moveStepUp(i: number) {
-    this.scenarioTainted = true;
-    // get a copy of the to-be-moved item
-    const obj = <Step>deepCopy(this.selectedscenario.steps[i]);
-    // delete at the index currently
-    this.selectedscenario.steps.splice(i, 1);
-    // put into the i-1 index
-    this.selectedscenario.steps.splice(i - 1, 0, obj);
-  }
-  moveStepDown(i: number) {
-    this.scenarioTainted = true;
-    // get a copy of the to-be-moved item
-    const obj = <Step>deepCopy(this.selectedscenario.steps[i]);
-    // delete at the index currently
-    this.selectedscenario.steps.splice(i, 1);
-    // put into the i+1 index
-    this.selectedscenario.steps.splice(i + 1, 0, obj);
-  }
-  public doDeleteStep() {
-    this.selectedscenario.steps.splice(this.deletingStepIndex, 1);
-    this.deleteStepModal.close();
-    if (this.selectedscenario.steps.length == 0) this.isStepsLengthNull = true;
-  }
-  public openDeleteStep(i: number) {
-    this.deletingStepIndex = i;
-    this.deleteStepModal.open();
-  }
+ 
 
-  isFirstStep() {
-    return this.editingIndex == 0;
-  }
-  nextStep() {
-    if (this.isLastStep()) {
-      return;
-    }
-    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
-    this.editingIndex++;
-    this.editingStep = this.selectedscenario.steps[this.editingIndex];
-  }
-  isLastStep() {
-    return this.editingIndex >= this.selectedscenario?.steps.length - 1;
-  }
-  cancelEdit() {
-    this.reloadSteps();
-    this.editingStep.content = this.AddedStepsContents[this.editingIndex];
-    this.editingStep.title = this.AddedStepsTitle[this.editingIndex];
-    this.editOpen = false;
-    this.editModal.close();
-  }
+
+
+
   doCancel(): void {
     this.wizard.reset();
     this.resetScenarioForm();
@@ -284,18 +213,7 @@ export class ScenarioWizardComponent implements OnInit {
     this.scenarioTainted = false;
     this.wizard.close();
   }
-  reloadSteps() {
-    while (this.stepsToBeAdded > 0) {
-      this.stepsToBeAdded--;
-      this.selectedscenario.steps.pop();
-    }
-  }
-  saveCreatedStep() {
-    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
-    this.isStepsLengthNull = false;
-    this.stepsToBeAdded = 0;
-    this.editModal.close();
-  }
+
   next() {
     if (this.wizardScenario == 'create') {
       this.addNewScenario();
@@ -476,14 +394,7 @@ export class ScenarioWizardComponent implements OnInit {
     this.newvmindex = i;
     this.createVMModal.open();
   }
-  previousStep() {
-    if (this.isFirstStep()) {
-      return;
-    }
-    this.selectedscenario.steps[this.editingIndex] = this.editingStep;
-    this.editingIndex--;
-    this.editingStep = this.selectedscenario.steps[this.editingIndex];
-  }
+
   refreshFilteredScenario() {
     this.refreshFilteredScenarios.emit();
   }

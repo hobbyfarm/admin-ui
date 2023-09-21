@@ -97,6 +97,7 @@ import { TypedSettingsService } from './data/typedSettings.service';
 import { OTACManagementComponent } from './event/otacmanagement/otacmanagement.component';
 import { ScenarioWizardComponent } from './scenario/scenario-wizard/scenario-wizard.component';
 import { ScenarioDetailComponent } from './scenario/scenario-detail/scenario-detail.component';
+import { StepsScenarioComponent } from './scenario/steps-scenario/steps-scenario.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -179,6 +180,7 @@ export function jwtOptionsFactory() {
     OTACManagementComponent,
     ScenarioWizardComponent,
     ScenarioDetailComponent,
+    StepsScenarioComponent,
   ],
   imports: [
     BrowserModule,
