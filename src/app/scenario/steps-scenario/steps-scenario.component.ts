@@ -20,8 +20,8 @@ export class StepsScenarioComponent implements OnInit {
   public deleteStepOpen: boolean = false;
   public isStepsLengthNull: boolean = true;
 
-
   public editingStep: Step = new Step();
+  public editingSteps: Step[] = [];
 
   public editingIndex: number = 0;
   public stepsToBeAdded: number = 0;
@@ -29,10 +29,6 @@ export class StepsScenarioComponent implements OnInit {
 
   public editDangerAlert: string = '';
   public editSuccessAlert: string = '';
-
-
-  public AddedStepsContents: string[] = [];
-  public AddedStepsTitle: string[] = [];
 
   @ViewChild('editmodal', { static: true }) editModal: ClrModal;
   @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
@@ -61,28 +57,26 @@ export class StepsScenarioComponent implements OnInit {
   }
 
   openEdit(s: Step, i: number) {
-    if (this.scenario.steps.length == 0) {
+    this.editingSteps = this.scenario.steps;
+    if (this.editingSteps.length == 0) {
       this.openNewStep();
       return;
     }
     this.editingStep = s;
     this.editingIndex = i;
-    if (this.AddedStepsContents[i] == null) {
-      this.AddedStepsContents[i] = s.content;
-      this.AddedStepsTitle[i] = s.title;
-    }
     this.editModal.open();
   }
 
   openNewStep() {
     this.stepsToBeAdded++;
-    this.editingIndex = this.scenario.steps.length;
+    this.editingSteps = this.scenario.steps;
+    this.editingIndex = this.editingSteps.length;
     this.editingStep = new Step();
     this.editingStep.title = 'Step ' + (this.editingIndex + 1);
     // Provide default content with syntax examples
     this.editingStep.content =
       "## Your Content\n```ctr:node1\necho 'hello world'\n```\n```hidden:Syntax reference\navailable at [the hobbyfarm docs](https://hobbyfarm.github.io/docs/appendix/markdown_syntax/)\n```";
-    this.scenario.steps[this.editingIndex] = this.editingStep;
+    this.editingSteps[this.editingIndex] = this.editingStep;
     this.editModal.open();
   }
 
@@ -95,9 +89,9 @@ export class StepsScenarioComponent implements OnInit {
     if (this.isFirstStep()) {
       return;
     }
-    this.scenario.steps[this.editingIndex] = this.editingStep;
+    this.editingSteps[this.editingIndex] = this.editingStep;
     this.editingIndex--;
-    this.editingStep = this.scenario.steps[this.editingIndex];
+    this.editingStep = this.editingSteps[this.editingIndex];
   }
   isFirstStep() {
     return this.editingIndex == 0;
@@ -106,29 +100,25 @@ export class StepsScenarioComponent implements OnInit {
     if (this.isLastStep()) {
       return;
     }
-    this.scenario.steps[this.editingIndex] = this.editingStep;
+    this.editingSteps[this.editingIndex] = this.editingStep;
     this.editingIndex++;
-    this.editingStep = this.scenario.steps[this.editingIndex];
+    this.editingStep = this.editingSteps[this.editingIndex];
   }
   isLastStep() {
     return this.editingIndex >= this.scenario?.steps.length - 1;
   }
   cancelEdit() {
-    this.reloadSteps();
-    this.editingStep.content = this.AddedStepsContents[this.editingIndex];
-    this.editingStep.title = this.AddedStepsTitle[this.editingIndex];
+    while (this.stepsToBeAdded > 0) {
+      this.editingSteps.pop();
+      this.stepsToBeAdded--;
+    }
+    console.log(this.scenario.steps);
     this.editOpen = false;
     this.editModal.close();
   }
 
-  reloadSteps() {
-    while (this.stepsToBeAdded > 0) {
-      this.stepsToBeAdded--;
-      this.scenario.steps.pop();
-    }
-  }
   saveCreatedStep() {
-    this.scenario.steps[this.editingIndex] = this.editingStep;
+    this.scenario.steps = this.editingSteps;
     this.isStepsLengthNull = false;
     this.stepsToBeAdded = 0;
     this.editModal.close();
