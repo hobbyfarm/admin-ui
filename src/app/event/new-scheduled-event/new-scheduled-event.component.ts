@@ -128,24 +128,30 @@ export class NewScheduledEventComponent implements OnInit {
     on_demand: FormControl<boolean>;
     printable: FormControl<boolean>;
   }> = this._fb.group({
-    event_name: new FormControl<string>('', [
-      Validators.required,
-      Validators.minLength(4),
-      this.uniqueEventName(),
-    ]),
-    description: new FormControl<string>('', [
-      Validators.required,
-      Validators.minLength(4),
-    ]),
-    access_code: new FormControl<string>('', [
-      Validators.required,
-      Validators.minLength(5),
-      Validators.pattern(/^[a-z0-9][a-z0-9.-]{3,}[a-z0-9]$/),
-      this.uniqueAccessCode(),
-    ]),
-    restricted_bind: new FormControl<boolean>(true),
-    on_demand: new FormControl<boolean>(true),
-    printable: new FormControl<boolean>(false),
+    event_name: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+        Validators.minLength(4),
+        this.uniqueEventName(),
+      ],
+      nonNullable: true,
+    }),
+    description: new FormControl<string>('', {
+      validators: [Validators.required, Validators.minLength(4)],
+      nonNullable: true,
+    }),
+    access_code: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.pattern(/^[a-z0-9][a-z0-9.-]{3,}[a-z0-9]$/),
+        this.uniqueAccessCode(),
+      ],
+      nonNullable: true,
+    }),
+    restricted_bind: new FormControl<boolean>(true, { nonNullable: true }),
+    on_demand: new FormControl<boolean>(true, { nonNullable: true }),
+    printable: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   public vmCounts: VmCountFormGroup = new FormGroup<EnvToVmTemplatesMappings>(
