@@ -41,10 +41,10 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
   amountInputForm: FormGroup<{
     amountInput: FormControl<number>;
   }> = new FormGroup({
-    amountInput: new FormControl<number>(1, [
-      Validators.required,
-      Validators.min(1),
-    ]),
+    amountInput: new FormControl<number>(1, {
+      validators: [Validators.required, Validators.min(1)],
+      nonNullable: true,
+    }),
   });
 
   otacs: iOTAC[] = [];

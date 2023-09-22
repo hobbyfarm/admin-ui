@@ -251,10 +251,10 @@ export class TypedInput {
       for (const key in value) {
         if (value.hasOwnProperty(key)) {
           const mapControl = new FormGroup({
-            key: new FormControl<string>(key, [
-              Validators.required,
-              UniqueKeyValidator,
-            ]),
+            key: new FormControl<string>(key, {
+              validators: [Validators.required, UniqueKeyValidator],
+              nonNullable: true,
+            }),
             value: this.getTypedInputFormControl(value[key]) as FormControl<T>,
           });
           mapControls.push(mapControl);
