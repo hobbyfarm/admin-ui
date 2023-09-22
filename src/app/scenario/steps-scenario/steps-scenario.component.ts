@@ -9,7 +9,7 @@ import { deepCopy } from 'src/app/deepcopy';
   templateUrl: './steps-scenario.component.html',
   styleUrls: ['./steps-scenario.component.scss'],
 })
-export class StepsScenarioComponent implements OnInit {
+export class StepsScenarioComponent {
   @Input()
   scenario: Scenario;
 
@@ -33,10 +33,6 @@ export class StepsScenarioComponent implements OnInit {
   @ViewChild('editmodal', { static: true }) editModal: ClrModal;
   @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
 
-  constructor() {}
-
-  ngOnInit(): void {}
-
   moveStepUp(i: number) {
     this.scenarioTainted = true;
     // get a copy of the to-be-moved item
@@ -57,19 +53,19 @@ export class StepsScenarioComponent implements OnInit {
   }
 
   openEdit(s: Step, i: number) {
-    this.editingSteps = this.scenario.steps;
+    this.editingSteps = <Step[]>deepCopy(this.scenario.steps);
     if (this.editingSteps.length == 0) {
       this.openNewStep();
       return;
     }
-    this.editingStep = s;
     this.editingIndex = i;
+    this.editingStep = this.editingSteps[i];
     this.editModal.open();
   }
 
   openNewStep() {
     this.stepsToBeAdded++;
-    this.editingSteps = this.scenario.steps;
+    this.editingSteps = <Step[]>deepCopy(this.scenario.steps);
     this.editingIndex = this.editingSteps.length;
     this.editingStep = new Step();
     this.editingStep.title = 'Step ' + (this.editingIndex + 1);
@@ -112,7 +108,7 @@ export class StepsScenarioComponent implements OnInit {
       this.editingSteps.pop();
       this.stepsToBeAdded--;
     }
-    console.log(this.scenario.steps);
+    this.editingSteps = this.scenario.steps;
     this.editOpen = false;
     this.editModal.close();
   }

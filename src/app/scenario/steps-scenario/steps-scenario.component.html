@@ -39,7 +39,7 @@
 <clr-modal #editmodal [(clrModalOpen)]="editOpen" [clrModalSize]="'xl'">
   <h3 class="modal-title">
     Edit Step {{ this.editingIndex + 1 }} of
-    {{ this.scenario?.steps?.length }}
+    {{ this.editingSteps.length }}
   </h3>
   <div class="modal-body">
     <clr-alert
@@ -58,11 +58,7 @@
       [(clrAlertClosed)]="editSuccessClosed"
       [clrAlertClosable]="false"
     >
-      <clr-alert-item>
-        <span class="alert-text">
-          {{ editSuccessAlert }}
-        </span>
-      </clr-alert-item>
+
     </clr-alert>
     <div class="clr-row">
       <div class="clr-col-6">
@@ -106,7 +102,7 @@
         </button>
       </div>
     </div>
-    <md-editor [(content)]="this.editingStep.content"></md-editor>
+    <md-editor [(content)]="this.editingStep.content" ></md-editor>
   </div>
   <div class="modal-footer">
     <button class="btn btn-danger-outline" (click)="cancelEdit()">

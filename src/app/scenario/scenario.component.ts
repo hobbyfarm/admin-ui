@@ -164,5 +164,6 @@ export class ScenarioComponent implements OnInit {
   }
   reloadScenario(){
     this.scenarioFilter.reloadScenarios();
+    this.alertSuccess('Course successfully updated');
   }
 }
