@@ -1,0 +1,32 @@
+<div
+  *ngFor="let ctrl of map.controls; let i = index"
+  class="map-input-container"
+>
+  <clr-input-container>
+    <label class="clr-sr-only">Map Key {{ i + 1 }}</label>
+    <input
+      clrInput
+      [formControl]="getMapFormControl(ctrl, 'key')"
+      placeholder="Key"
+      (input)="inputChanged()"
+    />
+    <clr-control-error *clrIfError="'required'">Key required</clr-control-error>
+    <clr-control-error *clrIfError="'duplicate'"
+      >Key must be unique</clr-control-error
+    >
+  </clr-input-container>
+  <app-typed-input-field
+    [input]="input"
+    [formControlRef]="getMapFormControl(ctrl, 'value')"
+    (change)="inputChanged()"
+  >
+  </app-typed-input-field>
+  <button
+    class="btn btn-danger-outline"
+    type="button"
+    (click)="removeArrayElement(i)"
+    [disabled]="input.getMinLength() > i"
+  >
+    <clr-icon shape="trash"></clr-icon> Remove
+  </button>
+</div>

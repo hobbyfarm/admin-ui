@@ -21,12 +21,12 @@ import { EnvironmentService } from 'src/app/data/environment.service';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { RbacService } from 'src/app/data/rbac.service';
-import { KeyValueGroup } from 'src/app/data/forms';
+import { GenericKeyValueGroup } from 'src/app/data/forms';
 
 type TemplateMapping = FormGroup<{
   template: FormControl<string>;
   count: FormControl<number>;
-  params: FormArray<KeyValueGroup>;
+  params: FormArray<GenericKeyValueGroup<string>>;
 }>;
 
 type FromToGroup = FormGroup<{
@@ -48,7 +48,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   }>;
 
   public environmentSpecifics: FormGroup<{
-    params: FormArray<KeyValueGroup>;
+    params: FormArray<GenericKeyValueGroup<string>>;
   }>;
   public templateMappings: FormGroup<{
     templates: FormArray<TemplateMapping>;
@@ -140,7 +140,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     // values from an existing environment
     const envKeys = Object.keys(this.updateEnv.environment_specifics);
     this.environmentSpecifics = this._fb.group({
-      params: this._fb.array<KeyValueGroup>([]),
+      params: this._fb.array<GenericKeyValueGroup<string>>([]),
     });
     for (let i = 0; i < envKeys.length; i++) {
       this.newEnvironmentSpecific(
@@ -168,13 +168,13 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
           this.updateEnv.count_capacity[templateKeys[i]],
           [Validators.required, Validators.pattern(/-?\d+/)]
         ),
-        params: this._fb.array<KeyValueGroup>([]),
+        params: this._fb.array<GenericKeyValueGroup<string>>([]),
       });
       const paramKeys = Object.keys(
         this.updateEnv.template_mapping[templateKeys[i]]
       );
       for (let j = 0; j < paramKeys.length; j++) {
-        const newParam: KeyValueGroup = this._fb.group({
+        const newParam: GenericKeyValueGroup<string> = this._fb.group({
           key: this._fb.control<string>(paramKeys[j], Validators.required),
           value: this._fb.control<string>(
             this.updateEnv.template_mapping[templateKeys[i]][paramKeys[j]],
@@ -327,7 +327,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   }
 
   public newEnvironmentSpecific(key: string = '', value: string = '') {
-    const newGroup: KeyValueGroup = this._fb.group({
+    const newGroup: GenericKeyValueGroup<string> = this._fb.group({
       key: this._fb.control<string>(key, Validators.required),
       value: this._fb.control<string>(value, Validators.required),
     });
@@ -364,7 +364,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
         Validators.required,
         Validators.pattern(/-?\d+/),
       ]),
-      params: this._fb.array<KeyValueGroup>([]),
+      params: this._fb.array<GenericKeyValueGroup<string>>([]),
     });
     this.templateMappings.controls.templates.push(newGroup);
   }
@@ -412,7 +412,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   }
 
   public newTemplateParameter(templateIndex: number) {
-    const newParam: KeyValueGroup = this._fb.group({
+    const newParam: GenericKeyValueGroup<string> = this._fb.group({
       key: this._fb.control<string>('', Validators.required),
       value: this._fb.control<string>('', Validators.required),
     });

@@ -1,10 +1,10 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { UntypedFormGroup } from '@angular/forms';
 import { CourseService } from 'src/app/data/course.service';
 import { Course } from 'src/app/data/course';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { ClrAlertType } from 'src/app/clr-alert-type';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CourseDetailFormGroup } from 'src/app/data/forms';
 
 @Component({
   selector: 'new-course',
@@ -16,7 +16,7 @@ export class NewCourseComponent {
 
   public course: Course = new Course();
 
-  public form: UntypedFormGroup = new UntypedFormGroup({});
+  public form: CourseDetailFormGroup;
 
   public alertText: string = null;
   public isAlert: boolean = false;
@@ -26,7 +26,7 @@ export class NewCourseComponent {
 
   constructor(public courseService: CourseService) {}
 
-  setupForm(fg: UntypedFormGroup) {
+  setupForm(fg: CourseDetailFormGroup) {
     this.form = fg;
   }
 
@@ -38,14 +38,14 @@ export class NewCourseComponent {
   }
 
   save() {
-    this.course.name = this.form.get('course_name').value;
-    this.course.description = this.form.get('course_description').value;
+    this.course.name = this.form.controls.course_name.value;
+    this.course.description = this.form.controls.course_description.value;
     this.course.keepalive_duration =
-      this.form.get('keepalive_amount').value +
-      this.form.get('keepalive_unit').value;
-    this.course.pause_duration = this.form.get('pause_duration').value + 'h';
-    this.course.pauseable = this.form.get('pauseable').value;
-    this.course.keep_vm = this.form.get('keep_vm').value;
+      this.form.controls.keepalive_amount.value +
+      this.form.controls.keepalive_unit.value;
+    this.course.pause_duration = this.form.controls.pause_duration.value + 'h';
+    this.course.pauseable = this.form.controls.pauseable.value;
+    this.course.keep_vm = this.form.controls.keep_vm.value;
 
     this.courseService.create(this.course).subscribe({
       next: (_s: ServerResponse) => {

@@ -1,8 +1,8 @@
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
-export type KeyValueGroup = FormGroup<{
+export type GenericKeyValueGroup<T extends string | number | boolean> = FormGroup<{
   key: FormControl<string>;
-  value: FormControl<string>;
+  value: FormControl<T>;
 }>;
 
 export type CourseDetailFormGroup = FormGroup<{
@@ -26,8 +26,23 @@ export type ScenarioFormGroup = FormGroup<{
   keepalive_amount: FormControl<number>;
   keepalive_unit: FormControl<string>;
   pause_duration: FormControl<number>;
-}>
+}>;
 
 export type CategoryFormGroup = FormGroup<{
   category: FormControl<string | null>;
 }>;
+
+export type GenericFormControl =
+  | FormControl<string>
+  | FormControl<number>
+  | FormControl<boolean>;
+
+export type GenericFormArray =
+  | FormArray<FormControl<string>>
+  | FormArray<FormControl<number>>
+  | FormArray<FormControl<boolean>>;
+
+export type GenericKeyValueMapArray =
+  | FormArray<GenericKeyValueGroup<string>>
+  | FormArray<GenericKeyValueGroup<number>>
+  | FormArray<GenericKeyValueGroup<boolean>>;

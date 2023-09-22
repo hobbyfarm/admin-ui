@@ -95,6 +95,12 @@ import { TypedInputComponent } from './typed-form/typed-input.component';
 import { TypedInputFieldComponent } from './typed-form/typed-input-field.component';
 import { TypedSettingsService } from './data/typedSettings.service';
 import { OTACManagementComponent } from './event/otacmanagement/otacmanagement.component';
+import { TypedMapStringComponent } from './typed-form/typed-map-string.component';
+import { TypedMapNumberComponent } from './typed-form/typed-map-number.component';
+import { TypedMapBooleanComponent } from './typed-form/typed-map-boolean.component';
+import { TypedArrayStringComponent } from './typed-form/typed-array-string.component';
+import { TypedArrayNumberComponent } from './typed-form/typed-array-number.component';
+import { TypedArrayBooleanComponent } from './typed-form/typed-array-boolean.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -175,6 +181,12 @@ export function jwtOptionsFactory(): JwtConfig {
     TypedInputFieldComponent,
     SettingsComponent,
     OTACManagementComponent,
+    TypedMapStringComponent,
+    TypedMapNumberComponent,
+    TypedMapBooleanComponent,
+    TypedArrayStringComponent,
+    TypedArrayNumberComponent,
+    TypedArrayBooleanComponent,
   ],
   imports: [
     BrowserModule,

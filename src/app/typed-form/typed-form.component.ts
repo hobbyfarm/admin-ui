@@ -6,19 +6,14 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { TypedInput, FormGroupType } from './TypedInput';
+import { FormControl, FormGroup } from '@angular/forms';
 import {
-  TypedInput,
-  FormGroupType,
-  TypedInputRepresentation,
-} from './TypedInput';
-import {
-  AbstractControl,
-  UntypedFormArray,
-  UntypedFormControl,
-  UntypedFormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+  GenericFormArray,
+  GenericFormControl,
+  GenericKeyValueGroup,
+  GenericKeyValueMapArray,
+} from '../data/forms';
 
 // TODO: Type reactive forms!
 
@@ -34,7 +29,12 @@ export class TypedFormComponent implements OnInit, OnChanges {
   @Input() groupType: FormGroupType = FormGroupType.LIST; // group Items, otherwise display all settings
   @Input() groupOrder: string[] = []; // start with this groups, other groups follow alphabetically.
 
-  formGroup: UntypedFormGroup = new UntypedFormGroup({}); // Form group to manage the dynamic form
+  formGroup: FormGroup<{
+    [key: string]:
+      | GenericFormControl
+      | GenericFormArray
+      | GenericKeyValueMapArray;
+  }> = new FormGroup({}); // Form group to manage the dynamic form
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
   activeTab = 0; // Activate first tab per default
 
@@ -54,31 +54,30 @@ export class TypedFormComponent implements OnInit, OnChanges {
    */
   initForm(): void {
     this.typedInputs.forEach((input) => {
-      let control: UntypedFormControl | UntypedFormArray;
-
-      if (input.representation === TypedInputRepresentation.SCALAR) {
+      let control:
+        | GenericFormControl
+        | GenericFormArray
+        | GenericKeyValueMapArray;
+      if (
+        input.isString(input.value) ||
+        input.isNumber(input.value) ||
+        input.isBoolean(input.value)
+      ) {
         control = input.getTypedInputFormControl(input.value);
-      } else if (input.representation === TypedInputRepresentation.ARRAY) {
-        const controls = (input.value as any[]).map((val) =>
-          input.getTypedInputFormControl(val)
-        );
-        control = new UntypedFormArray(controls);
-      } else if (input.representation === TypedInputRepresentation.MAP) {
-        const mapControls: UntypedFormGroup[] = [];
-        if (input.value) {
-          for (const key in input.value) {
-            if (input.value.hasOwnProperty(key)) {
-              const mapControl = new UntypedFormGroup({
-                key: new UntypedFormControl(key, [Validators.required, this.uniquekeyvalidator]),
-                value: input.getTypedInputFormControl(input.value[key]),
-              });
-              mapControls.push(mapControl);
-            }
-          }
-        }
-        control = new UntypedFormArray(mapControls);
+      } else if (input.isStringArray(input.value)) {
+        // Use individual branches for each array type. getTypedInputFormArray() does not accept union types.
+        control = input.getTypedInputFormArray(input.value);
+      } else if (input.isNumberArray(input.value)) {
+        control = input.getTypedInputFormArray(input.value);
+      } else if (input.isBooleanArray(input.value)) {
+        control = input.getTypedInputFormArray(input.value);
+      } else if (input.isStringMap(input.value)) {
+        control = input.getTypedInputMap(input.value);
+      } else if (input.isNumberMap(input.value)) {
+        control = input.getTypedInputMap(input.value);
+      } else if (input.isBooleanMap(input.value)) {
+        control = input.getTypedInputMap(input.value);
       }
-
       this.formGroup.addControl(input.id, control);
     });
   }
@@ -103,45 +102,53 @@ export class TypedFormComponent implements OnInit, OnChanges {
 
     let valid = true;
     this.typedInputs.forEach((input) => {
-      const control = this.formGroup.get(input.id);
+      const control = this.formGroup.controls[input.id];
       if (control.errors) {
         valid = false;
         return;
-      } else if (input.representation === TypedInputRepresentation.ARRAY) {
+      } else if (input.isGenericFormArray(control)) {
         //is required but has no field
-        if (
-          input.validation.required &&
-          (control as UntypedFormArray).controls.length == 0
-        ) {
+        if (input.validation.required && control.controls.length == 0) {
           valid = false;
           return;
         }
         // When the TypedInput has the Array representation we need to check for errors on each control.
-        (control as UntypedFormArray).controls.forEach((arrayControl) => {
-          if (arrayControl.errors) {
-            valid = false;
-            return;
+        control.controls.forEach(
+          (
+            arrayControl:
+              | FormControl<string>
+              | FormControl<number>
+              | FormControl<boolean>
+          ) => {
+            if (arrayControl.errors) {
+              valid = false;
+              return;
+            }
           }
-        });
-      } else if (input.representation === TypedInputRepresentation.MAP) {
+        );
+      } else if (input.isGenericKeyValueMapArray(control)) {
         //is required but has no field
-        if (
-          input.validation.required &&
-          (control as UntypedFormArray).controls.length == 0
-        ) {
+        if (input.validation.required && control.controls.length == 0) {
           valid = false;
           return;
         }
         // When the TypedInput has the Map representation we need to check for errors on each FormGroup.
-        (control as UntypedFormArray).controls.forEach((formGroup) => {
-          if (
-            (formGroup as UntypedFormGroup).get('key').errors ||
-            (formGroup as UntypedFormGroup).get('value').errors
-          ) {
-            valid = false;
-            return;
+        control.controls.forEach(
+          (
+            formGroup:
+              | GenericKeyValueGroup<string>
+              | GenericKeyValueGroup<number>
+              | GenericKeyValueGroup<boolean>
+          ) => {
+            if (
+              formGroup.controls['key'].errors ||
+              formGroup.controls['value'].errors
+            ) {
+              valid = false;
+              return;
+            }
           }
-        });
+        );
       }
     });
     this.inputsValid.emit(valid);
@@ -173,43 +180,31 @@ export class TypedFormComponent implements OnInit, OnChanges {
   }
 
   getTypedInputValue(input: TypedInput) {
-    const formValue = this.formGroup.get(input.id).value;
-    if (input.representation === TypedInputRepresentation.SCALAR) {
-      return input.getTypedInputScalarValue(formValue);
-    } else if (input.representation === TypedInputRepresentation.ARRAY) {
-      return (this.formGroup.get(input.id) as UntypedFormArray).controls.map(
-        (control) => input.getTypedInputScalarValue(control.value)
-      );
-    } else if (input.representation === TypedInputRepresentation.MAP) {
-      let formGroup = this.formGroup.get(input.id) as UntypedFormArray;
-      let result = new Map();
-      formGroup.controls.forEach((group: AbstractControl) => {
-        let key = (group as UntypedFormGroup).controls['key'].value;
-        let value = input.getTypedInputScalarValue(
-          (group as UntypedFormGroup).controls['value'].value
-        );
-        result.set(key, value);
-      });
-      return result;
+    const formControl = this.formGroup.controls[input.id];
+    if (input.isGenericFormControl(formControl)) {
+      return input.getTypedInputScalarValue(formControl.value);
+    } else if (input.isFormArrayString(formControl)) {
+      return input.getTypedInputRawArray(formControl);
+    } else if (input.isFormArrayNumber(formControl)) {
+      return input.getTypedInputRawArray(formControl);
+    } else if (input.isFormArrayBoolean(formControl)) {
+      return input.getTypedInputRawArray(formControl);
+    } else if (input.isKeyValueMapArrayString(formControl)) {
+      return input.getTypedInputRawMap(formControl);
+    } else if (input.isKeyValueMapArrayNumber(formControl)) {
+      return input.getTypedInputRawMap(formControl);
+    } else {
+      // if(input.isKeyValueMapArrayNumber(formControl))
+      return input.getTypedInputRawMap(formControl);
     }
   }
 
-  getTypedInputEnumValues(input: TypedInput): any[] {
+  getTypedInputEnumValues(input: TypedInput) {
     if (!input.isEnum()) {
       return [];
     }
     return input.validation.enum.map((v) => {
       return input.getTypedInputScalarValue(v);
     });
-  }
-
-  private uniquekeyvalidator(control: AbstractControl): ValidationErrors | null {
-    const parent = control.parent as UntypedFormGroup;
-    if (!parent) return null;
-    const key = control.value;
-    const siblings = (parent.parent as UntypedFormArray).controls as UntypedFormGroup[];
-    const keys = siblings.map(sibling => sibling.controls.key.value);
-    const duplicates = keys.filter(k => k === key);
-    return duplicates.length > 1 ? { 'duplicate': true } : null;
   }
 }

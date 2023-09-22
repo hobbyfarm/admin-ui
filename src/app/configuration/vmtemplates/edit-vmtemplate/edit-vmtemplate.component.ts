@@ -18,7 +18,7 @@ import {
 import { ClrWizard } from '@clr/angular';
 import { AlertComponent } from 'src/app/alert/alert.component';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
-import { KeyValueGroup } from 'src/app/data/forms';
+import { GenericKeyValueGroup } from 'src/app/data/forms';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { vmServiceToJSON } from 'src/app/data/vm-template-service-configuration';
 import { VMTemplate } from 'src/app/data/vmtemplate';
@@ -36,7 +36,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     image: FormControl<string>;
   }>;
   public configMap: FormGroup<{
-    mappings: FormArray<KeyValueGroup>;
+    mappings: FormArray<GenericKeyValueGroup<string>>;
   }>;
   public buttonsDisabled: boolean = false;
 
@@ -97,7 +97,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   public buildConfigMap() {
     this.configMap = this._fb.group({
-      mappings: this._fb.array<KeyValueGroup>([
+      mappings: this._fb.array<GenericKeyValueGroup<string>>([
         this._fb.group({
           key: this._fb.control<string>('', Validators.required),
           value: this._fb.control<string>('', Validators.required),
@@ -130,7 +130,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     );
     this.cloudConfig.buildNewYAMLFile();
     this.configMap = this._fb.group({
-      mappings: this._fb.array<KeyValueGroup>([]),
+      mappings: this._fb.array<GenericKeyValueGroup<string>>([]),
     });
 
     for (let i = 0; i < configKeys.length; i++) {
@@ -148,7 +148,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
 
   public newConfigMapping(key: string = '', value: string = '') {
-    const newGroup: KeyValueGroup = this._fb.group({
+    const newGroup: GenericKeyValueGroup<string> = this._fb.group({
       key: this._fb.control<string>(key, Validators.required),
       value: this._fb.control<string>(value, Validators.required),
     });

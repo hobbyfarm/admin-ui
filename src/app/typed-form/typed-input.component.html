@@ -14,40 +14,43 @@
     <b
       ><label>{{ input.name }}</label></b
     >
-    <div
-      *ngFor="let ctrl of getControls(input.id); let i = index"
-      class="map-input-container"
-    >
-      <clr-input-container>
-        <label class="clr-sr-only">Map Key {{ i + 1 }}</label>
-        <input
-          clrInput
-          [formControl]="getMapFormControl(ctrl, 'key')"
-          placeholder="Key"
-          (input)="inputChanged()"
-        />
-        <clr-control-error *clrIfError="'required'"
-          >Key required</clr-control-error
+    <ng-container [ngSwitch]="input.type">
+      <ng-container *ngSwitchCase="TypedInputType.STRING">
+        <app-typed-map-string
+          [map]="getMapControlsString(input.id)"
+          [input]="input"
+          (inputChange)="inputChanged()"
         >
-        <clr-control-error *clrIfError="'duplicate'"
-          >Key must be unique</clr-control-error
+        </app-typed-map-string>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="TypedInputType.INTEGER">
+        <app-typed-map-number
+          [map]="getMapControlsNumber(input.id)"
+          [input]="input"
+          (inputChange)="inputChanged()"
         >
-      </clr-input-container>
-      <app-typed-input-field
-        [input]="input"
-        [formControlRef]="getMapFormControl(ctrl, 'value')"
-        (change)="inputChanged()"
-      >
-      </app-typed-input-field>
-      <button
-        class="btn btn-danger-outline"
-        type="button"
-        (click)="removeArrayElement(input, i)"
-        [disabled]="input.getMinLength() > i"
-      >
-        <clr-icon shape="trash"></clr-icon> Remove
-      </button>
-    </div>
+        </app-typed-map-number>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="TypedInputType.FLOAT">
+        <app-typed-map-number
+          [map]="getMapControlsNumber(input.id)"
+          [input]="input"
+          (inputChange)="inputChanged()"
+        >
+        </app-typed-map-number>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="TypedInputType.BOOLEAN">
+        <app-typed-map-boolean
+          [map]="getMapControlsBoolean(input.id)"
+          [input]="input"
+          (inputChange)="inputChanged()"
+        >
+        </app-typed-map-boolean>
+      </ng-container>
+    </ng-container>
     <button
       class="btn btn-outline"
       type="button"
@@ -60,14 +63,19 @@
   <div *ngIf="getMapSize(input) > input.getMaxLength()">
     <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
       <clr-alert-item>
-        <span class="alert-text"> {{input.name}} takes {{input.getMaxLength()}} key/value pairs at maximum. </span>
+        <span class="alert-text">
+          {{ input.name }} takes {{ input.getMaxLength() }} key/value pairs at
+          maximum.
+        </span>
       </clr-alert-item>
     </clr-alert>
   </div>
   <div *ngIf="input.isRequired() && getMapSize(input) == 0">
     <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
       <clr-alert-item>
-        <span class="alert-text"> {{input.name}} requires at least one value. </span>
+        <span class="alert-text">
+          {{ input.name }} requires at least one value.
+        </span>
       </clr-alert-item>
     </clr-alert>
   </div>
@@ -79,25 +87,43 @@
     <b
       ><label>{{ input.name }}</label></b
     >
-    <div
-      *ngFor="let ctrl of getControls(input.id); let i = index"
-      class="array-input-container"
-    >
-      <app-typed-input-field
-        [input]="input"
-        [formControlRef]="getArrayFormControl(ctrl)"
-        (change)="inputChanged()"
-      >
-      </app-typed-input-field>
-      <button
-        class="btn btn-danger-outline"
-        type="button"
-        (click)="removeArrayElement(input, i)"
-        [disabled]="input.getMinLength() > i"
-      >
-        <clr-icon shape="trash"></clr-icon> Remove
-      </button>
-    </div>
+    <ng-container [ngSwitch]="input.type">
+      <ng-container *ngSwitchCase="TypedInputType.STRING">
+        <app-typed-array-string
+          [array]="getArrayControlsString(input.id)"
+          [input]="input"
+          (inputChange)="inputChanged()"
+        >
+        </app-typed-array-string>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="TypedInputType.INTEGER">
+        <app-typed-array-number
+          [array]="getArrayControlsNumber(input.id)"
+          [input]="input"
+          (inputChange)="inputChanged()"
+        >
+        </app-typed-array-number>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="TypedInputType.FLOAT">
+        <app-typed-array-number
+          [array]="getArrayControlsNumber(input.id)"
+          [input]="input"
+          (inputChange)="inputChanged()"
+        >
+        </app-typed-array-number>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="TypedInputType.BOOLEAN">
+        <app-typed-array-boolean
+          [array]="getArrayControlsBoolean(input.id)"
+          [input]="input"
+          (inputChange)="inputChanged()"
+        >
+        </app-typed-array-boolean>
+      </ng-container>
+    </ng-container>
     <button
       class="btn btn-outline"
       type="button"
@@ -110,14 +136,18 @@
   <div *ngIf="getArrayLength(input) > input.getMaxLength()">
     <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
       <clr-alert-item>
-        <span class="alert-text"> {{input.name}} takes {{input.getMaxLength()}} values at maximum. </span>
+        <span class="alert-text">
+          {{ input.name }} takes {{ input.getMaxLength() }} values at maximum.
+        </span>
       </clr-alert-item>
     </clr-alert>
   </div>
   <div *ngIf="input.isRequired() && getArrayLength(input) == 0">
     <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
       <clr-alert-item>
-        <span class="alert-text"> {{input.name}} requires at least one value. </span>
+        <span class="alert-text">
+          {{ input.name }} requires at least one value.
+        </span>
       </clr-alert-item>
     </clr-alert>
   </div>
