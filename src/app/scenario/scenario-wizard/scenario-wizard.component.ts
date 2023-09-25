@@ -30,7 +30,7 @@ export class ScenarioWizardComponent implements OnInit {
   draggedScenario: Scenario;
 
   @Output()
-  refreshFilteredScenarios: EventEmitter<any> = new EventEmitter<any>();
+  refreshFilteredScenarios: EventEmitter<string> = new EventEmitter<string>();
 
   public wizardTitle: string;
   public editDangerAlert: string = '';
@@ -63,7 +63,6 @@ export class ScenarioWizardComponent implements OnInit {
   public deletingStepIndex: number = 0;
   public editingIndex: number = 0;
 
-
   public vmtemplates: VMTemplate[] = [];
 
   public newScenario: Scenario = new Scenario();
@@ -85,7 +84,6 @@ export class ScenarioWizardComponent implements OnInit {
 
   @ViewChild('deletevmsetmodal', { static: true }) deleteVMSetModal: ClrModal;
   @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
-
 
   constructor(
     public scenarioService: ScenarioService,
@@ -197,11 +195,6 @@ export class ScenarioWizardComponent implements OnInit {
     this.wizard.open();
   }
 
- 
-
-
-
-
   doCancel(): void {
     this.wizard.reset();
     this.resetScenarioForm();
@@ -217,6 +210,9 @@ export class ScenarioWizardComponent implements OnInit {
   next() {
     if (this.wizardScenario == 'create') {
       this.addNewScenario();
+    }
+    if (this.wizardScenario == 'edit') {
+      this.updateScenario();
     }
   }
   public addNewScenario() {
@@ -239,7 +235,8 @@ export class ScenarioWizardComponent implements OnInit {
 
   finishScenario() {
     if (this.wizardScenario == 'create') this.saveCreatedScenario();
-    if (this.wizardScenario == 'edit') this.updateScenario();
+    if (this.wizardScenario == 'edit') this.saveUpdatedScenario();
+    this.refreshFilteredScenario();
   }
   saveCreatedScenario() {
     this.scenarioService.create(this.selectedscenario).subscribe(
@@ -265,7 +262,8 @@ export class ScenarioWizardComponent implements OnInit {
     this.selectedscenario.description = this.editScenarioForm.get(
       'scenario_description'
     ).value;
-
+  }
+  saveUpdatedScenario() {
     this.scenarioService
       .update(this.selectedscenario)
       .subscribe((s: ServerResponse) => {
@@ -396,7 +394,7 @@ export class ScenarioWizardComponent implements OnInit {
   }
 
   refreshFilteredScenario() {
-    this.refreshFilteredScenarios.emit();
+    this.refreshFilteredScenarios.emit(this.wizardScenario);
   }
 
   editScenarioWizardfunction(scenario: Scenario) {

@@ -15,10 +15,8 @@ import { ScenarioWizardComponent } from './scenario-wizard/scenario-wizard.compo
   styleUrls: ['./scenario.component.scss'],
 })
 export class ScenarioComponent implements OnInit {
-
   public filteredScenarios: Scenario[] = [];
   public selectedscenario: Scenario;
-
 
   public scenarioAdded = false;
 
@@ -28,13 +26,12 @@ export class ScenarioComponent implements OnInit {
   public editSuccessClosed: boolean = true;
   public scenarioDangerClosed: boolean = true;
   public scenarioSuccessClosed: boolean = true;
+  public deleteScenarioSetOpen: boolean = false;
 
   public editDangerAlert: string = '';
   public editSuccessAlert: string = '';
   public scenarioDangerAlert: string = '';
   public scenarioSuccessAlert: string = '';
-
-
 
   public alertType: string = 'warning';
   public isAlert: boolean = false;
@@ -61,14 +58,20 @@ export class ScenarioComponent implements OnInit {
   @ViewChild('myForm') formData: any;
   @ViewChild('scenariowizard', { static: true })
   scenarioWizard: ScenarioWizardComponent;
-  @ViewChild('editselectedscenariowizard', {static: true}) editSelectedScenarioWizard: ScenarioWizardComponent;
+  @ViewChild('editselectedscenariowizard', { static: true })
+  editSelectedScenarioWizard: ScenarioWizardComponent;
 
   editScenario(s: Scenario) {
     if (s != undefined) {
       // this is only a partial scenario, we need to get the full
-      this.scenarioService.get(s.id).subscribe((s: Scenario) => {
-        this.selectedscenario = s;
-      });
+      this.scenarioService.get(s.id).subscribe(
+        (s: Scenario) => {
+          this.selectedscenario = s;
+        },
+        (e: HttpErrorResponse) => {
+          this.alertDanger('Error deleting object: ' + e.error.message);
+        }
+      );
     }
   }
 
@@ -76,8 +79,8 @@ export class ScenarioComponent implements OnInit {
     this.scenarioWizard.open();
   }
 
-  editSelectedScenario(scenario: Scenario){
-    this.editSelectedScenarioWizard.editScenarioWizardfunction(scenario)
+  editSelectedScenario(scenario: Scenario) {
+    this.editSelectedScenarioWizard.editScenarioWizardfunction(scenario);
     this.editSelectedScenarioWizard.open();
   }
 
@@ -106,7 +109,6 @@ export class ScenarioComponent implements OnInit {
     }
   }
 
-
   setScenarioList(scenarios: Scenario[]) {
     this.filteredScenarios = scenarios;
     if (this.scenarioAdded) {
@@ -115,9 +117,12 @@ export class ScenarioComponent implements OnInit {
   }
 
   refresh(): void {
-    this.scenarioService
-      .list(true)
-      .subscribe((sList: Scenario[]) => (this.filteredScenarios = sList));
+    this.scenarioService.list(true).subscribe(
+      (sList: Scenario[]) => (this.filteredScenarios = sList),
+      (e: HttpErrorResponse) => {
+        this.alertDanger('Error deleting object: ' + e.error.message);
+      }
+    );
   }
 
   deleteScenario(scenarioId: string) {
@@ -132,24 +137,25 @@ export class ScenarioComponent implements OnInit {
     );
   }
 
-    doDeleteScenario() {
+  doDeleteScenario() {
     this.deleteScenario(this.selectedscenario.id);
     this.deleteScenarioModal.close();
-    this.selectedscenario = this.filteredScenarios[this.filteredScenarios.length - 1];
+    this.selectedscenario =
+      this.filteredScenarios[this.filteredScenarios.length - 1];
   }
 
   alertSuccess(msg: string) {
     this.alertType = 'success';
-    this.scenarioDangerAlert = msg;
-    this.isAlert = true;
-    setTimeout(() => (this.isAlert = false), 1000);
+    this.scenarioSuccessAlert = msg;
+    this.scenarioSuccessClosed = false;
+    setTimeout(() => (this.scenarioSuccessClosed = true), 1000);
   }
 
   alertDanger(msg: string) {
     this.alertType = 'danger';
     this.scenarioDangerAlert = msg;
-    this.isAlert = true;
-    setTimeout(() => (this.isAlert = false), 3000);
+    this.scenarioDangerClosed = false;
+    setTimeout(() => (this.scenarioDangerClosed = true), 1000);
   }
   ngOnInit() {
     this.selectedscenario = new Scenario();
@@ -162,8 +168,12 @@ export class ScenarioComponent implements OnInit {
       this.selectRbac = allowed;
     });
   }
-  reloadScenario(){
+  reloadScenario(wizardScenario: string) {
     this.scenarioFilter.reloadScenarios();
-    this.alertSuccess('Course successfully updated');
+    this.refresh();
+    if (wizardScenario === 'edit')
+      this.alertSuccess('Scenarios successfully updated');
+    if (wizardScenario === 'create')
+      this.alertSuccess('Scenarios successfully created');
   }
 }
