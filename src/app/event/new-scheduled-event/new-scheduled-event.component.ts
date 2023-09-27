@@ -5,11 +5,18 @@ import {
   Output,
   EventEmitter,
   Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChildren,
+  QueryList,
+  AfterViewInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import {
   ClrWizard,
   ClrSignpostContent,
   ClrDatagridSortOrder,
+  ClrWizardPage,
 } from '@clr/angular';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { Scenario } from 'src/app/data/scenario';
@@ -46,7 +53,7 @@ import { of } from 'rxjs';
   templateUrl: './new-scheduled-event.component.html',
   styleUrls: ['./new-scheduled-event.component.scss'],
 })
-export class NewScheduledEventComponent implements OnInit {
+export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewInit {
   @Output()
   public updated: EventEmitter<boolean> = new EventEmitter(false);
 
@@ -55,6 +62,7 @@ export class NewScheduledEventComponent implements OnInit {
 
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
+  public uneditedScheduledEvent = new ScheduledEvent();
   public scenarios: Scenario[] = [];
   public filteredScenarios: Scenario[] = [];
   public filteredScenariosSelected: Scenario[] = [];
@@ -93,6 +101,9 @@ export class NewScheduledEventComponent implements OnInit {
   public maxUserCounts: {} = {};
   public invalidSimpleEnvironments: string[] = [];
 
+  public isStartDateEdited = false;
+  public isEndDateEdited = false;
+
   private onCloseFn: Function;
 
   constructor(
@@ -101,8 +112,18 @@ export class NewScheduledEventComponent implements OnInit {
     public cs: CourseService,
     public ses: ScheduledeventService,
     public es: EnvironmentService,
-    public rbacService: RbacService
+    public rbacService: RbacService,
+    private cdr: ChangeDetectorRef,
   ) {}
+  ngAfterViewInit(): void {
+    this.wizardPages.changes.subscribe((wizardPages: QueryList<ClrWizardPage>) => {
+      if(wizardPages.length === 7) {
+        this.wizard.navService.goTo(this.wizard.pages.last, true);
+        this.wizard.pages.first.makeCurrent();
+        this.cdr.detectChanges();
+      }
+    })
+  }
 
   public eventDetails: FormGroup = new FormGroup({
     event_name: new FormControl(this.se.event_name, [
@@ -200,6 +221,7 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   @ViewChild('wizard', { static: true }) wizard: ClrWizard;
+  @ViewChildren(ClrWizardPage) wizardPages: QueryList<ClrWizardPage>;
   @ViewChild('startTimeSignpost') startTimeSignpost: ClrSignpostContent;
   @ViewChild('endTimeSignpost') endTimeSignpost: ClrSignpostContent;
 
@@ -234,7 +256,7 @@ export class NewScheduledEventComponent implements OnInit {
     return Object.keys(this.keyedEnvironments.get(env).template_mapping);
   }
 
-  public setupVMSelection() {
+  private setupVMSelection() {
     this.calculateRequiredVms();
     this.maxUserCount();
     // reset
@@ -469,6 +491,11 @@ export class NewScheduledEventComponent implements OnInit {
     if (this.event) {
       this.simpleMode = false;
       this.se = this.event;
+      // TODO: structuredClone() is available as of typescript version 4.7 ... we should use it to clone objects in the future
+      // this.uneditedScheduledEvent = structuredClone(this.event);
+      this.uneditedScheduledEvent = JSON.parse(JSON.stringify(this.event))
+      this.uneditedScheduledEvent.start_time = new Date(this.uneditedScheduledEvent.start_time);
+      this.uneditedScheduledEvent.end_time = new Date(this.uneditedScheduledEvent.end_time);
       this.eventDetails.setValue({
         event_name: this.se.event_name,
         description: this.se.description,
@@ -485,16 +512,18 @@ export class NewScheduledEventComponent implements OnInit {
       this.se.courses = this.se.courses ?? [];
       this.updateCourseSelection(this.se.courses);
 
+      this.checkingEnvironments = true;
       this.rbacService
         .Grants('environments', 'list')
         .then((allowListEnvironments: boolean) => {
           if (allowListEnvironments) {
             this.checkEnvironments();
+          } else {
+            this.checkingEnvironments = false;
           }
+        }).catch(() => {
+          this.checkingEnvironments = false;
         });
-
-      this.wizard.navService.goTo(this.wizard.pages.last, true);
-      this.wizard.pages.first.makeCurrent();
     } else {
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
@@ -596,7 +625,6 @@ export class NewScheduledEventComponent implements OnInit {
   // for each environment, ask for available resources between start and end time
   // display those results
   public checkEnvironments() {
-    this.checkingEnvironments = true;
     this.noEnvironmentsAvailable = false;
     this.unavailableVMTs = [];
     var templates: Map<string, boolean> = new Map();
@@ -652,7 +680,6 @@ export class NewScheduledEventComponent implements OnInit {
       )
       .subscribe((ea: EnvironmentAvailability[]) => {
         this.availableEnvironments = ea;
-        this.checkingEnvironments = false;
         this.noEnvironmentsAvailable = ea.length == 0 ? true : false;
 
         ea.forEach((e) => {
@@ -687,6 +714,8 @@ export class NewScheduledEventComponent implements OnInit {
           // there exists fields filled in for vm counts - user probably went back in the form
           this._mapExistingEnvironments(Object.keys(this.vmCounts.controls));
         }
+        this.setupVMSelection();
+        this.checkingEnvironments = false;
       });
   }
 
@@ -760,6 +789,7 @@ export class NewScheduledEventComponent implements OnInit {
 
   public quickStartTime() {
     this.se.start_time = new Date();
+    this.markStartDateAsEdited();
   }
 
   public quickEndTime() {
@@ -802,11 +832,13 @@ export class NewScheduledEventComponent implements OnInit {
 
   public setStartTime(d: DlDateTimePickerChange<Date>) {
     this.se.start_time = d.value;
+    this.markStartDateAsEdited();
     this.startTimeSignpost.close();
   }
 
   public setEndTime(d: DlDateTimePickerChange<Date>) {
     this.se.end_time = d.value;
+    this.markEndDateAsEdited();
     this.endTimeSignpost.close();
   }
 
@@ -899,5 +931,30 @@ export class NewScheduledEventComponent implements OnInit {
   }
   setScenarioList(values: Scenario[]) {
     this.filteredScenarios = values;
+  }
+
+  updateFormValues() {
+    this.copyEventDetails();
+    this.copyVMCounts();
+  }
+
+  markStartDateAsEdited() {
+      this.isStartDateEdited = this.se.start_time.getTime() !== this.uneditedScheduledEvent.start_time.getTime();
+  }
+  markEndDateAsEdited() {
+    this.isEndDateEdited = this.se.end_time.getTime() !== this.uneditedScheduledEvent.end_time.getTime();
+  }
+
+  isScenarioInList(scenario: string, list: string[]): boolean {
+    return list.includes(scenario);
+  }
+  isCourseInList(course: string, list: string[]): boolean {
+    return list.includes(course);
+  }
+
+  setUpEnvironmentAndVmSelection(opened: boolean) {
+    if(opened) {
+      this.checkEnvironments();
+    }
   }
 }
