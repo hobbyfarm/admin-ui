@@ -23,8 +23,6 @@ export interface deletionInformation {
   styleUrls: ['./delete-process-modal.component.scss'],
 })
 export class DeleteProcessModalComponent implements OnInit {
-  public modalOpen: boolean = false;
-
   @Output()
   public done: EventEmitter<boolean> = new EventEmitter(null);
 
