@@ -15,6 +15,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^16.2.6",
+    "@angular/cdk": "^16.2.6",
     "@angular/common": "^16.2.6",
     "@angular/compiler": "^16.2.6",
     "@angular/core": "^16.2.6",
@@ -24,8 +25,8 @@
     "@angular/router": "^16.2.6",
     "@auth0/angular-jwt": "^5.1.2",
     "@cds/core": "^6.7.0",
-    "@clr/angular": "^15.12.2",
-    "@clr/ui": "^15.12.2",
+    "@clr/angular": "^16.0.0",
+    "@clr/ui": "^16.0.0",
     "@webcomponents/custom-elements": "^1.5.0",
     "@webcomponents/webcomponentsjs": "^2.0.0",
     "angular-bootstrap-datetimepicker": "^2.2.1",
