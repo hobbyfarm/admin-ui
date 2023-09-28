@@ -94,7 +94,7 @@ export class FilterScenariosComponent implements OnInit {
       this.selectRbac = allowed;
     });
 
-    this.scenarioService.list().subscribe((s: Scenario[]) => {
+    this.scenarioService.list(true).subscribe((s: Scenario[]) => {
       this.scenarios = s;
       this.calculateCategories();
       this.filterScenarioList();
