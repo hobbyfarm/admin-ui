@@ -42,12 +42,12 @@ export class UserService extends ListableResourceClient<User>{
 
   public deleteUser(id: string) {
     return this.http.delete(environment.server + '/a/user/' + id).pipe(
+      tap(() => {
+        this.deleteAndNotify(id);
+      }),
       catchError((e: HttpErrorResponse) => {
         return throwError(e.error);
       }),
-      tap(() => {
-        this.deleteAndNotify(id);
-      })
     );
   }
 }
