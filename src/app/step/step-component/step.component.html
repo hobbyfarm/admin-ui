@@ -11,7 +11,7 @@
             class="btn btn-next btn-warning-outline"
             (click)="goFinish()"
           >
-            <clr-icon shape="check"></clr-icon>
+          <cds-icon shape="check"></cds-icon>
             Terminate Session
           </button>
         </div>
@@ -40,7 +40,7 @@
               (click)="goPrevious()"
               [disabled]="this.stepnumber < 1"
             >
-              <clr-icon shape="arrow" dir="left"></clr-icon> Prev
+            <cds-icon shape="arrow" direction="left"></cds-icon> Prev
             </button>
             <span id="step-counter">
               {{ this.stepnumber + 1 }}/{{ this.scenario.stepcount }}
@@ -50,14 +50,14 @@
               *ngIf="!isLastStepActive"
               (click)="goNext()"
             >
-              Next <clr-icon shape="arrow" dir="right"></clr-icon>
+              Next <cds-icon shape="arrow" direction="right"></cds-icon>
             </button>
             <button
               class="btn btn-success btn-next"
               (click)="goFinish()"
               *ngIf="isLastStepActive"
             >
-              <clr-icon shape="check"></clr-icon> Finish
+              <cds-icon shape="check"></cds-icon> Finish
             </button>
           </div>
         </div>
@@ -68,7 +68,7 @@
         <clr-tabs>
           <clr-tab *ngFor="let v of vms | keyvalue" #tab>
             <button clrTabLink [id]="v.key">
-              <clr-icon size="24" shape="host"></clr-icon> {{ v.key }}
+              <cds-icon size="24" shape="host"></cds-icon> {{ v.key }}
             </button>
             <clr-tab-content #tabcontent>
               <table class="table compact">

@@ -17,7 +17,7 @@
                                         <span *ngIf="!!se.activeSessions" (click)="setActiveDashboard(se, 'session')"
                                             class="label tooltip tooltip-sm tooltip-left" role="tooltip"
                                             aria-haspopup="true">
-                                            <clr-icon shape="users"></clr-icon>
+                                            <cds-icon shape="users"></cds-icon>
                                             <span class="badge "
                                                 [class.badge-info]="!!se.activeSessions">{{se.activeSessions}}</span>
                                             <span class="tooltip-content">Active Sessions</span>
@@ -25,7 +25,7 @@
                                         <span *ngIf="!!se.provisionedVMs" (click)="setActiveDashboard(se, 'vm')"
                                             class="label tooltip tooltip-sm tooltip-left" role="tooltip"
                                             aria-haspopup="true">
-                                            <clr-icon shape="rack-server"></clr-icon>
+                                            <cds-icon shape="rack-server"></cds-icon>
                                             <span class="badge badge-info"
                                                 [class.badge-info]="!!se.provisionedVMs">{{se.provisionedVMs}}</span>
                                             <span class="tooltip-content">Provisioned VMs</span>

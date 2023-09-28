@@ -31,7 +31,6 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/@clr/icons/clr-icons.min.css",
               "node_modules/xterm/css/xterm.css",
               "src/styles.scss",
               "node_modules/prismjs/themes/prism.css"

@@ -20,7 +20,7 @@
       <div class="clr-row">
         <div class="clr-col">
           <button class="btn btn-success" (click)="openNew()" *rbac="['scheduledevents.create']">
-            <clr-icon shape="plus"></clr-icon> New
+            <cds-icon shape="plus"></cds-icon> New
           </button>
         </div>
       </div>
@@ -60,13 +60,13 @@
               </clr-dg-cell>
               <clr-dg-cell>
                 <ng-container *ngIf="se.active && se.provisioned && !se.finished && se.ready">
-                  <clr-icon shape="clock"></clr-icon> In Progress
+                  <cds-icon shape="clock"></cds-icon> In Progress
                 </ng-container>
                 <ng-container *ngIf="!se.active">
-                  <clr-icon shape="times"></clr-icon> Inactive
+                  <cds-icon shape="times"></cds-icon> Inactive
                 </ng-container>
                 <ng-container *ngIf="se.finished">
-                  <clr-icon shape="check"></clr-icon> Finished
+                  <cds-icon shape="check"></cds-icon> Finished
                 </ng-container>
               </clr-dg-cell>
             </clr-dg-row>

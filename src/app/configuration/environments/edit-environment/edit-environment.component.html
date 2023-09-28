@@ -88,7 +88,7 @@
     <ng-template clrPageTitle>Environment Specifics</ng-template>
 
     <button class="btn btn-table btn-link" (click)="newEnvironmentSpecific()">
-      <clr-icon shape="plus"></clr-icon> New Parameter
+      <cds-icon shape="plus"></cds-icon> New Parameter
     </button>
     <table class="table table-compact" [formGroup]="environmentSpecifics">
       <thead>
@@ -137,7 +137,7 @@
                 class="btn btn-danger-outline btn-no-margin"
                 (click)="deleteEnvironmentSpecific(i)"
               >
-                <clr-icon shape="trash"> </clr-icon>Delete
+                <cds-icon shape="trash"></cds-icon>Delete
               </button>
             </td>
           </tr>
@@ -179,7 +179,7 @@
         (click)="newTemplateMapping()"
         [disabled]="!hasTemplateSelection()"
       >
-        <clr-icon shape="plus"></clr-icon> Add VMT
+        <cds-icon shape="plus"></cds-icon> Add VMT
       </button>
     </ng-container>
     <span class="clr-subtext"
@@ -203,13 +203,13 @@
               class="btn btn-table btn-link"
               (click)="newTemplateParameter(it)"
             >
-              <clr-icon shape="plus"></clr-icon> Add Parameter
+              <cds-icon shape="plus"></cds-icon> Add Parameter
             </button>
             <button
               class="btn btn-table btn-danger-outline"
               (click)="deleteTemplateMapping(it)"
             >
-              <clr-icon shape="trash"></clr-icon> Delete
+              <cds-icon shape="trash"></cds-icon> Delete
             </button>
           </clr-stack-content>
           <clr-stack-block>
@@ -250,7 +250,7 @@
                 class="btn btn-table btn-danger-outline"
                 (click)="deleteTemplateParameter(it, ip)"
               >
-                <clr-icon shape="trash"></clr-icon> Delete Parameter
+                <cds-icon shape="trash"></cds-icon> Delete Parameter
               </button>
             </clr-stack-content>
           </clr-stack-block>
@@ -266,7 +266,7 @@
     <ng-template clrPageTitle>IP Mappings</ng-template>
 
     <button class="btn btn-table btn-link" (click)="newIpMapping()">
-      <clr-icon shape="plus"></clr-icon> New Mapping
+      <cds-icon shape="plus"></cds-icon> New Mapping
     </button>
     <table class="table table-compact" [formGroup]="ipMapping">
       <thead>

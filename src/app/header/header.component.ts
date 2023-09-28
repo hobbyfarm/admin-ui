@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ClarityIcons } from '@clr/icons';
+import '@cds/core/icon/register.js';
+import { ClarityIcons } from '@cds/core/icon';
 import { ClrModal } from '@clr/angular';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
@@ -31,9 +32,7 @@ export class HeaderComponent implements OnInit {
     private titleService: Title
   ) {
     this.configService.getLogo(this.logo).then((obj: string) => {
-      ClarityIcons.add({
-        logo: obj,
-      });
+      ClarityIcons.addIcons(['logo', obj]);
     });
     if (this.config.favicon) {
       let fi = <HTMLLinkElement>document.querySelector('#favicon');

@@ -9,7 +9,7 @@
 <div class="clr-row">
     <div class="clr-col">
         <button class="btn btn-success" (click)="openNew()" *rbac="['courses.create']">
-            <clr-icon shape="plus"></clr-icon> New Course
+            <cds-icon shape="plus"></cds-icon> New Course
         </button>
     </div>
 </div>
@@ -58,7 +58,7 @@
                         <tbody class="container" [dragula]="'scenarios'" [(dragulaModel)]="dragScenarios">
                             <tr *ngFor="let s of dragScenarios; let i = index">
                                 <td>
-                                    <clr-icon class="handle" shape="drag-handle" size="24"></clr-icon>
+                                    <cds-icon class="handle" shape="drag-handle" size="24"></cds-icon>
                                 </td>
                                 <td>
                                     {{ i+1 }}
@@ -98,10 +98,10 @@
                         There is no need to update the course (or any scheduled event that includes this course) if categories of a scenario are changed.<br>
                     </p>
                     <button class="btn btn-success-outline btn-sm" (click)="newCategory = true" *rbac="['courses.update']">
-                      <clr-icon shape="plus"></clr-icon> Add Query
+                      <cds-icon shape="plus"></cds-icon> Add Query
                     </button>
                     <button class="btn btn-success-outline btn-sm" (click)="seeExamples = !seeExamples" *rbac="['courses.update']">
-                        <clr-icon shape="plus"></clr-icon> Example Queries
+                        <cds-icon shape="plus"></cds-icon> Example Queries
                     </button>
                     <ng-container *ngIf="seeExamples">
                         <clr-datagrid class="datagrid-compact">

@@ -8,12 +8,12 @@
     </div>
     <div class="card-block">
         <div class="card-text">
-            <div><clr-icon shape="play" solid></clr-icon> {{progress.scenario_name}}</div>
-            <div *ngIf="progress.course"><clr-icon shape="layers" solid></clr-icon> {{progress.course_name}}</div>
-            <div *ngIf="progress.current_step > 0"><clr-icon shape="number-list"></clr-icon> {{ progress.current_step }} / {{ progress.total_step }}</div>
-            <div *ngIf="progress.current_step == 0"><clr-icon shape="number-list"></clr-icon> Not started yet</div>
-            <div *ngIf="!progress.finished" title="Since {{progress.started}}"><clr-icon shape="clock"></clr-icon> {{  timeSince(progress.started) }}</div>
-            <div *ngIf="progress.finished" title="{{progress.started}}-{{progress.last_update}}"><clr-icon shape="clock"></clr-icon> {{  timeSince(progress.started, progress.last_update) }}</div>
+            <div><cds-icon shape="play" solid></cds-icon> {{progress.scenario_name}}</div>
+            <div *ngIf="progress.course"><cds-icon shape="layers" solid></cds-icon> {{progress.course_name}}</div>
+            <div *ngIf="progress.current_step > 0"><cds-icon shape="number-list"></cds-icon> {{ progress.current_step }} / {{ progress.total_step }}</div>
+            <div *ngIf="progress.current_step == 0"><cds-icon shape="number-list"></cds-icon> Not started yet</div>
+            <div *ngIf="!progress.finished" title="Since {{progress.started}}"><cds-icon shape="clock"></cds-icon> {{  timeSince(progress.started) }}</div>
+            <div *ngIf="progress.finished" title="{{progress.started}}-{{progress.last_update}}"><cds-icon shape="clock"></cds-icon> {{  timeSince(progress.started, progress.last_update) }}</div>
         </div>
     </div>
 
@@ -25,7 +25,7 @@
         <clr-dropdown>
             <button class="dropdown-toggle btn btn-primary" clrDropdownTrigger>
                 Actions
-                <clr-icon shape="caret down"></clr-icon>
+                <cds-icon shape="angle" direction="down"></cds-icon>
             </button>
             <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
                 <!-- TODO: Use [clrDisabled] instead of [disabled] after upgrade to clarity v15 -->

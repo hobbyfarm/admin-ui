@@ -118,7 +118,7 @@
                 <option value="m">Month(s)</option>
               </select>
             </div>
-            <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+            <cds-icon class="clr-validate-icon" shape="exclamation-circle"></cds-icon>
           </div>
           <span class="clr-subtext" *ngIf="quicksetRequired">Please specify when your event should end.</span>
           <span class="clr-subtext" *ngIf="quicksetEndtimeForm.errors?.invalidQuicksetAmount">
@@ -242,10 +242,10 @@
     <ng-container *ngIf="!checkingEnvironments && !noEnvironmentsAvailable && unavailableVMTs.length == 0">
       <clr-datagrid [(clrDgSelected)]="selectedEnvironments">
         <clr-dg-column>
-          <clr-icon shape="building"></clr-icon>&nbsp;Environment
+          <cds-icon shape="building"></cds-icon>&nbsp;Environment
         </clr-dg-column>
         <clr-dg-column>
-          <clr-icon shape="host"></clr-icon>&nbsp;Count
+          <cds-icon shape="host"></cds-icon>&nbsp;Count
         </clr-dg-column>
         
         <clr-dg-row *clrDgItems="let ea of availableEnvironments" [clrDgItem]="ea">

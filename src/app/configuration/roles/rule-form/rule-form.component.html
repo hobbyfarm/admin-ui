@@ -7,7 +7,7 @@
             </ng-container>
             <clr-options>
                 <clr-option *clrOptionItems="let apiGroup of apiGroups" [clrValue]="apiGroup">
-                    <clr-icon shape="node-group"></clr-icon> {{ apiGroup }}
+                    <cds-icon shape="node-group"></cds-icon> {{ apiGroup }}
                 </clr-option>
             </clr-options>
         </clr-combobox>
@@ -32,7 +32,7 @@
             </ng-container>
             <clr-options>
                 <clr-option *clrOptionItems="let resource of resources" [clrValue]="resource">
-                    <clr-icon shape="node"></clr-icon> {{ resource }}
+                    <cds-icon shape="node"></cds-icon> {{ resource }}
                 </clr-option>
             </clr-options>
         </clr-combobox>
@@ -57,7 +57,7 @@
             </ng-container>
             <clr-options>
                 <clr-option *clrOptionItems="let verb of verbs" [clrValue]="verb">
-                    <clr-icon shape="bolt"></clr-icon> {{ verb }}
+                    <cds-icon shape="bolt"></cds-icon> {{ verb }}
                 </clr-option>
             </clr-options>
         </clr-combobox>

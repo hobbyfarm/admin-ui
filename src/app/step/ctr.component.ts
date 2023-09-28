@@ -13,7 +13,7 @@ import { CtrService } from '../data/ctr.service';
       #code
     ><ng-content></ng-content></pre>
     <i>
-      <clr-icon [attr.shape]="shape"></clr-icon> {{ statusText }}
+      <cds-icon [attr.shape]="shape"></cds-icon> {{ statusText }}
       <b>{{ target }}</b>
       <span> {{ countContent }}</span>
       <span> {{ disabledText }}</span>
@@ -31,7 +31,7 @@ export class CtrComponent implements OnInit {
 
   public countContent = '';
   public disabledText = '';
-  public shape = 'angle';
+  public shape: 'angle' | 'success-standard' = 'angle';
   public statusText = 'Click to run on';
   public executed = false;
   public file = false;

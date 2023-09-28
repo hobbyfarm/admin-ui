@@ -5,8 +5,6 @@ import {
   SecurityContext,
   APP_INITIALIZER,
 } from '@angular/core';
-import '@clr/icons';
-import '@clr/icons/shapes/all-shapes';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClarityModule } from '@clr/angular';
@@ -101,6 +99,85 @@ import { TypedMapBooleanComponent } from './typed-form/typed-map-boolean.compone
 import { TypedArrayStringComponent } from './typed-form/typed-array-string.component';
 import { TypedArrayNumberComponent } from './typed-form/typed-array-number.component';
 import { TypedArrayBooleanComponent } from './typed-form/typed-array-boolean.component';
+import '@cds/core/icon/register.js';
+import {
+  ClarityIcons,
+  plusIcon,
+  trashIcon,
+  angleIcon,
+  nodeIcon,
+  nodeGroupIcon,
+  infoCircleIcon,
+  boltIcon,
+  dragHandleIcon,
+  checkIcon,
+  filterIcon,
+  exclamationCircleIcon,
+  successStandardIcon,
+  errorStandardIcon,
+  hostIcon,
+  arrowIcon,
+  popOutIcon,
+  boldIcon,
+  italicIcon,
+  blockQuoteIcon,
+  linkIcon,
+  imageIcon,
+  noteIcon,
+  detailsIcon,
+  codeIcon,
+  treeViewIcon,
+  playIcon,
+  importIcon,
+  userIcon,
+  layersIcon,
+  usersIcon,
+  rackServerIcon,
+  childArrowIcon,
+  clockIcon,
+  timesIcon,
+  buildingIcon,
+  numberListIcon,
+} from '@cds/core/icon';
+
+ClarityIcons.addIcons(
+  plusIcon,
+  trashIcon,
+  angleIcon,
+  nodeIcon,
+  nodeGroupIcon,
+  infoCircleIcon,
+  boltIcon,
+  dragHandleIcon,
+  checkIcon,
+  filterIcon,
+  exclamationCircleIcon,
+  successStandardIcon,
+  errorStandardIcon,
+  hostIcon,
+  arrowIcon,
+  popOutIcon,
+  boldIcon,
+  italicIcon,
+  blockQuoteIcon,
+  linkIcon,
+  imageIcon,
+  noteIcon,
+  detailsIcon,
+  codeIcon,
+  treeViewIcon,
+  playIcon,
+  importIcon,
+  userIcon,
+  layersIcon,
+  usersIcon,
+  rackServerIcon,
+  childArrowIcon,
+  clockIcon,
+  timesIcon,
+  buildingIcon,
+  numberListIcon
+);
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
