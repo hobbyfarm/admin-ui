@@ -1,17 +1,17 @@
 <button
-        class="btn btn-sm"
-        (click)="openEdit(scenario?.steps[0] ?? undefined, 0)"
-        *rbac="['scenarios.update']"
-      >
-        Open Step Editor
-      </button>
-      <button
-        class="btn btn-success-outline btn-sm"
-        (click)="openNewStep()"
-        *rbac="['scenarios.update']"
-      >
-        <clr-icon shape="plus"></clr-icon> New Step
-      </button>
+  class="btn btn-sm"
+  (click)="openEdit(scenario?.steps[0] ?? undefined, 0)"
+  *rbac="['scenarios.update']"
+>
+  Open Step Editor
+</button>
+<button
+  class="btn btn-success-outline btn-sm"
+  (click)="openNewStep()"
+  *rbac="['scenarios.update']"
+>
+  <clr-icon shape="plus"></clr-icon> New Step
+</button>
 <clr-datagrid>
   <clr-dg-column>Index</clr-dg-column>
   <clr-dg-column>Title</clr-dg-column>
@@ -58,7 +58,6 @@
       [(clrAlertClosed)]="editSuccessClosed"
       [clrAlertClosable]="false"
     >
-
     </clr-alert>
     <div class="clr-row">
       <div class="clr-col-6">
@@ -102,7 +101,7 @@
         </button>
       </div>
     </div>
-    <md-editor [(content)]="this.editingStep.content" ></md-editor>
+    <md-editor [(content)]="this.editingStep.content"></md-editor>
   </div>
   <div class="modal-footer">
     <button class="btn btn-danger-outline" (click)="cancelEdit()">

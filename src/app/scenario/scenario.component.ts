@@ -27,6 +27,7 @@ export class ScenarioComponent implements OnInit {
   public scenarioDangerClosed: boolean = true;
   public scenarioSuccessClosed: boolean = true;
   public deleteScenarioSetOpen: boolean = false;
+  public showActionOverflow:boolean = false; 
 
   public editDangerAlert: string = '';
   public editSuccessAlert: string = '';
@@ -167,7 +168,23 @@ export class ScenarioComponent implements OnInit {
     this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
       this.selectRbac = allowed;
     });
+
+    
+    const authorizationRequests = Promise.all([
+      this.rbacService.Grants("scenarios", "get"),
+      this.rbacService.Grants("scenarios", "update"),
+      this.rbacService.Grants("scenarios", "delete")
+    ])
+    console.log(authorizationRequests)
+    authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
+      const allowGet: boolean = permissions[0];
+      const allowUpdate: boolean = permissions[1];
+      const allowDelete: boolean = permissions[2];
+      this.showActionOverflow = allowDelete || (allowGet && allowUpdate);
+    });
+    this.refresh();
   }
+  
   reloadScenario(wizardScenario: string) {
     this.scenarioFilter.reloadScenarios();
     this.refresh();

@@ -102,7 +102,7 @@ export class StepsScenarioComponent {
     this.editingStep = this.editingSteps[this.editingIndex];
   }
   isLastStep() {
-    return this.editingIndex >= this.scenario?.steps.length - 1;
+    return this.editingIndex >= this.editingSteps?.length - 1;
   }
   cancelEdit() {
     while (this.stepsToBeAdded > 0) {

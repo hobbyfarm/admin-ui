@@ -50,6 +50,7 @@
       (filterScenarioEventEmitter)="setScenarioList($event)"
     ></filter-scenarios>
     <clr-datagrid
+    
       (clrDgSingleSelectedChange)="editScenario($event)"
       [clrDisableSelection]="!selectRbac"
     >
@@ -58,11 +59,11 @@
         >Name</clr-dg-column
       >
       <clr-dg-row *clrDgItems="let s of filteredScenarios" [clrDgItem]="s">
-        <clr-dg-action-overflow>
-          <button class="action-item" (click)="editSelectedScenario(s)">
+        <clr-dg-action-overflow *ngIf="showActionOverflow">
+          <button class="action-item" (click)="editSelectedScenario(s)" *rbac="['scenarios.get', 'scenarios.update']; op 'AND'">
             Edit
           </button>
-          <button class="action-item" (click)="openDeleteScenario(s)">
+          <button class="action-item" (click)="openDeleteScenario(s)" *rbac="['scenarios.delete']">
             Delete
           </button>
         </clr-dg-action-overflow>
