@@ -27,7 +27,7 @@ export class ScenarioComponent implements OnInit {
   public scenarioDangerClosed: boolean = true;
   public scenarioSuccessClosed: boolean = true;
   public deleteScenarioSetOpen: boolean = false;
-  public showActionOverflow:boolean = false; 
+  public showActionOverflow: boolean = false;
 
   public editDangerAlert: string = '';
   public editSuccessAlert: string = '';
@@ -158,6 +158,9 @@ export class ScenarioComponent implements OnInit {
     this.scenarioDangerClosed = false;
     setTimeout(() => (this.scenarioDangerClosed = true), 1000);
   }
+  alertDangerScenarioDetails(e: HttpErrorResponse) {
+    this.alertDanger('Error from scenario details: ' + e.error.message);
+  }
   ngOnInit() {
     this.selectedscenario = new Scenario();
     this.selectedscenario.name = '';
@@ -169,13 +172,11 @@ export class ScenarioComponent implements OnInit {
       this.selectRbac = allowed;
     });
 
-    
     const authorizationRequests = Promise.all([
-      this.rbacService.Grants("scenarios", "get"),
-      this.rbacService.Grants("scenarios", "update"),
-      this.rbacService.Grants("scenarios", "delete")
-    ])
-    console.log(authorizationRequests)
+      this.rbacService.Grants('scenarios', 'get'),
+      this.rbacService.Grants('scenarios', 'update'),
+      this.rbacService.Grants('scenarios', 'delete'),
+    ]);
     authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
       const allowGet: boolean = permissions[0];
       const allowUpdate: boolean = permissions[1];
@@ -184,7 +185,7 @@ export class ScenarioComponent implements OnInit {
     });
     this.refresh();
   }
-  
+
   reloadScenario(wizardScenario: string) {
     this.scenarioFilter.reloadScenarios();
     this.refresh();

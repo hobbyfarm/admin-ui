@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Scenario } from 'src/app/data/scenario';
 import { ScenarioService } from 'src/app/data/scenario.service';
@@ -13,6 +13,9 @@ export class ScenarioDetailComponent implements OnInit {
   @Input()
   scenario: Scenario;
 
+  @Output()
+  emitError: EventEmitter<HttpErrorResponse>;
+
   constructor(public scenarioService: ScenarioService) {}
   ngOnInit(): void {
     let scenarioObservable: Observable<Scenario>;
@@ -22,7 +25,7 @@ export class ScenarioDetailComponent implements OnInit {
         this.scenario = S;
       },
       (e: HttpErrorResponse) => {
-        console.log(e);
+        this.emitError.emit(e);
       }
     );
   }
