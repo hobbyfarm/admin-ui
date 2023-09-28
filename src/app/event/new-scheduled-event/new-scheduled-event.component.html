@@ -14,7 +14,7 @@
   </ng-container>
 
   <ng-template #eventWizard>
-    <clr-wizard-page [clrWizardPageNextDisabled]="!eventDetails.valid">
+    <clr-wizard-page [clrWizardPageNextDisabled]="!eventDetails.valid" >
       <ng-template clrPageTitle>Event Details</ng-template>
       <form clrForm [formGroup]="eventDetails">
         <clr-input-container>
@@ -214,7 +214,7 @@
       </ng-container>
     </clr-wizard-page>
 
-    <clr-wizard-page
+    <clr-wizard-page (clrWizardPageOnLoad)="checkEnvironments()"
       [clrWizardPageNextDisabled]="selectedEnvironments.length == 0">
       <ng-template clrPageTitle>Select Environment(s)</ng-template>
       <ng-container *ngIf="checkingEnvironments">
@@ -267,7 +267,7 @@
       </ng-container>
     </clr-wizard-page>
 
-    <clr-wizard-page
+    <clr-wizard-page (clrWizardPageOnLoad)="setupVMSelection()" (clrWizardPageNext)="copyVMCounts()"
       [clrWizardPageNextDisabled]="!vmCounts.valid && !simpleMode || !simpleModeVmCounts.valid && simpleMode">
       <ng-template clrPageTitle>Select Virtual Machines</ng-template>
       <clr-toggle-wrapper>
@@ -360,96 +360,9 @@
           </tbody>
         </table>
       </ng-container>
-    </clr-wizard-page>
+    </clr-wizard-page>   
 
-    <!-- <clr-wizard-page [clrWizardPageNextDisabled]="isFinishWizardDisabled()">
-      <ng-template clrPageTitle>Finalize</ng-template>
-      <p>
-        Confirm the following details before finishing:
-      </p>
-      <h4>Basic Information</h4>
-      <table class="table table-compact">
-        <thead>
-          <tr>
-            <th>Option</th>
-            <th>Value</th>       
-                
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Name</td>
-            <td>{{ se.event_name }}</td>
-          
-          </tr>       
-          <tr>
-            <td>Description</td>
-            <td>{{ se.description }}</td>
-            
-          </tr>
-          
-          <tr>
-            <td>Access code</td>
-            <td>{{ se.access_code }}</td>
-          </tr>
-          <tr>
-            <td>Restricted Bind</td>
-            <td>{{ se.disable_restriction }}</td>
-          </tr>
-          <tr>
-            <td>On demand</td>
-            <td *ngIf="se.on_demand">
-              <div> VMs on demand</div>
-            </td>
-            <td *ngIf="!se.on_demand">
-              <div style="color:red"> VMs will be started right away</div>
-            </td>
-          
-        
-          </tr>             
-          <tr>
-            <td>Start Time</td>
-            <td>{{ se.start_time | date:'long' }}</td>
-          </tr>
-          <tr>
-            <td>End Time</td>
-            <td>{{ se.end_time | date:'long' }}</td>
-          </tr>
-          <tr>
-            <td>Courses</td>
-            <td>
-              <span *ngFor="let c of se.courses" class="label">{{c}}</span>
-            </td>
-          </tr>
-          <tr>
-            <td>Scenarios</td>
-            <td>
-              <span *ngFor="let s of se.scenarios" class="label">{{s}}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <h4>VM Information</h4>
-      <table class="table table-compact">
-        <thead>
-          <tr>
-            <th>Environment</th>
-            <th>Virtual Machines</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let i of se.required_vms | keyvalue">
-            <td>{{ i.key }}</td>
-            <td>
-              <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span class="badge badge-success">{{
-                  q.value }}</span></span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </clr-wizard-page>  -->
-
-    <!-- <clr-wizard-page [clrWizardPageNextDisabled]="isFinishWizardDisabled()">
+    <clr-wizard-page *ngIf="!isEditMode" [clrWizardPageNextDisabled]="isFinishWizardDisabled()" (clrWizardPageOnLoad)="updateFormValues()">
       <ng-template clrPageTitle>Finalize</ng-template>
       <p>
         Confirm the following details before finishing:
@@ -460,62 +373,39 @@
           <tr>
             <th>Option</th>
             <th>Value</th>
-            <th>New Value</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>Name</td>
             <td>{{ se.event_name }}</td>
-            <td>{{ eventDetails.get('event_name').value }}</td>
-          </tr>       
+          </tr>
           <tr>
             <td>Description</td>
             <td>{{ se.description }}</td>
-            <td>{{ eventDetails.get('description').value }}</td>
-          </tr>         
+          </tr>
           <tr>
             <td>Access code</td>
             <td>{{ se.access_code }}</td>
-            <td>{{ eventDetails.get('access_code').value }}</td>
           </tr>
           <tr>
             <td>Restricted Bind</td>
-            <td>{{ se.disable_restriction }}</td>
-            <td>{{ eventDetails.get('restricted_bind').value }}</td>
+            <td>{{ !se.disable_restriction  }}</td>
           </tr>
           <tr>
             <td>On demand</td>
-            <td *ngIf="se.on_demand">
-              <div> VMs on demand</div>
-            </td>
-            <td *ngIf="!se.on_demand">
-              <div style="color:red"> VMs will be started right away</div>
-            </td>
-    
-            <td *ngIf="eventDetails.get('on_demand').value">
-              <div> VMs on demand</div>
-            </td>
-              <td *ngIf="!eventDetails.get('on_demand').value">
-                <div style="color:red"> VMs will be started right away</div>
-              </td>   
-            
-          </tr>             
+            <td>{{ se.on_demand }}</td>
+          </tr>
           <tr>
             <td>Start Time</td>
-            <td>{{ se.start_time | date:'long' }}</td>
             <td>{{ se.start_time | date:'long' }}</td>
           </tr>
           <tr>
             <td>End Time</td>
             <td>{{ se.end_time | date:'long' }}</td>
-            <td>{{ se.end_time | date:'long' }}</td>
           </tr>
           <tr>
             <td>Courses</td>
-            <td>
-              <span *ngFor="let c of se.courses" class="label">{{c}}</span>
-            </td>
             <td>
               <span *ngFor="let c of se.courses" class="label">{{c}}</span>
             </td>
@@ -525,21 +415,9 @@
             <td>
               <span *ngFor="let s of se.scenarios" class="label">{{s}}</span>
             </td>
-            <td>
-              <span *ngFor="let s of se.scenarios" class="label">{{s}}</span>
-            </td>
           </tr>
         </tbody>
       </table>
-      <ng-container *ngIf="!se.on_demand">
-        <clr-alert [clrAlertSizeSmall]="true" [clrAlertType]="'warning'" [clrAlertClosable]="false" class="bottom">
-          <clr-alert-item>
-            <span class="alert-text">
-              VMs will be started right away
-            </span>
-          </clr-alert-item>
-        </clr-alert>
-      </ng-container>
       <h4>VM Information</h4>
       <table class="table table-compact">
         <thead>
@@ -558,28 +436,9 @@
           </tr>
         </tbody>
       </table>
+    </clr-wizard-page>
 
-      <h4>New VM Information</h4>
-      <table class="table table-compact">
-        <thead>
-          <tr>
-            <th>Environment</th>
-            <th>Virtual Machines</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let i of se.required_vms | keyvalue">
-            <td>{{ i.key }}</td>
-            <td>
-              <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span class="badge badge-success">{{
-                  q.value }}</span></span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </clr-wizard-page> -->
-
-    <clr-wizard-page (clrWizardPageOnLoad)="updateFormValues()" [clrWizardPageNextDisabled]="isFinishWizardDisabled()">
+    <clr-wizard-page *ngIf="isEditMode" (clrWizardPageOnLoad)="updateFormValues()" [clrWizardPageNextDisabled]="isFinishWizardDisabled()">
       <ng-template clrPageTitle>Finalize</ng-template>
       <p>
         Confirm the following details before finishing:
@@ -597,100 +456,83 @@
             <td>Name</td>
             <td *ngIf="se.event_name == uneditedScheduledEvent.event_name">{{ se.event_name }}</td>
             <td *ngIf="se.event_name != uneditedScheduledEvent.event_name">
-              <span  style="color:red">{{ uneditedScheduledEvent.event_name }}</span > ➜ 
-              <span  style="color:green">{{ se.event_name }}</span >
+              <span class="del-elem">{{ uneditedScheduledEvent.event_name }}</span > <clr-icon shape="arrow" dir="right"></clr-icon> 
+              <span class="add-elem">{{ se.event_name }}</span >
             </td>
           </tr>       
           <tr>
             <td>Description</td>
             <td *ngIf="se.description == uneditedScheduledEvent.description">{{ se.description }}</td>
             <td *ngIf="se.description != uneditedScheduledEvent.description">
-              <span  style="color:red">{{ uneditedScheduledEvent.description }}</span > ➜ 
-              <span  style="color:green">{{ se.description }}</span >
+              <span class="del-elem">{{ uneditedScheduledEvent.description }}</span > <clr-icon shape="arrow" dir="right"></clr-icon> 
+              <span class="add-elem">{{ se.description }}</span >
             </td>          
           </tr>         
           <tr>
             <td>Access code</td>
             <td *ngIf="se.access_code == uneditedScheduledEvent.access_code">{{ se.access_code }}</td>
             <td *ngIf="se.access_code != uneditedScheduledEvent.access_code">
-              <span  style="color:red">{{ uneditedScheduledEvent.access_code }}</span > ➜
-              <span  style="color:green">{{ se.access_code }}</span >
+              <span class="del-elem">{{ uneditedScheduledEvent.access_code }}</span > <clr-icon shape="arrow" dir="right"></clr-icon>
+              <span class="add-elem">{{ se.access_code }}</span >
             </td>          
           </tr>
           <tr>
             <td>Restricted Bind</td>
             <td *ngIf="!se.disable_restriction == !uneditedScheduledEvent.disable_restriction">{{ !se.disable_restriction }}</td>
             <td *ngIf="!se.disable_restriction != !uneditedScheduledEvent.disable_restriction">
-              <span  style="color:red">{{ !uneditedScheduledEvent.disable_restriction }}</span > ➜
-              <span  style="color:green">{{ !se.disable_restriction }}</span >
-            </td> 
-          <!--  <td>{{ !se.disable_restriction }}</td>-->
+              <span class="del-elem">{{ !uneditedScheduledEvent.disable_restriction }}</span > <clr-icon shape="arrow" dir="right"></clr-icon>
+              <span class="add-elem">{{ !se.disable_restriction }}</span >
+            </td>           
           </tr>
           <tr>
             <td>On demand</td>
             <td *ngIf="se.on_demand == uneditedScheduledEvent.on_demand">{{ se.on_demand }}</td>
             <td *ngIf="se.on_demand != uneditedScheduledEvent.on_demand">
-              <span  style="color:red">{{ uneditedScheduledEvent.on_demand }}</span > ➜ 
-              <span  style="color:green">{{ se.on_demand }}</span >
+              <span class="del-elem">{{ uneditedScheduledEvent.on_demand }}</span > <clr-icon shape="arrow" dir="right"></clr-icon>
+              <span class="add-elem">{{ se.on_demand }}</span >
             </td>
           </tr>             
           <tr>
             <td>Start Time</td>          
-            <td *ngIf="!isStartDateEdited">{{ se.start_time | date:'long' }}</td>
-            <td *ngIf="isStartDateEdited">
-              <span  style="color:red">{{ uneditedScheduledEvent.start_time | date:'long' }}</span > ➜ 
-              <span  style="color:green">{{ se.start_time | date:'long' }}</span >
-            </td> 
-            <!-- <td>{{ se.start_time | date:'long' }}</td> -->
+            <td *ngIf="!isStartDateAsEditedCheck()">{{ se.start_time | date:'long' }}</td>
+            <td *ngIf="isStartDateAsEditedCheck()">
+              <span class="del-elem">{{ uneditedScheduledEvent.start_time | date:'long' }}</span > <clr-icon shape="arrow" dir="right"></clr-icon> 
+              <span class="add-elem">{{ se.start_time | date:'long' }}</span >
+            </td>             
           </tr>
           <tr>
             <td>End Time</td>
-            <td *ngIf="!isEndDateEdited">{{ se.end_time | date:'long' }}</td>
-            <td *ngIf="isEndDateEdited">
-              <span  style="color:red">{{ uneditedScheduledEvent.end_time | date:'long' }}</span > ➜ 
-              <span  style="color:green">{{ se.end_time | date:'long' }}</span >
-            </td> 
-           
-            <!-- <td>{{ se.end_time | date:'long' }}</td> -->
+            <td *ngIf="!isEndDateAsEditedCheck()">{{ se.end_time | date:'long' }}</td>
+            <td *ngIf="isEndDateAsEditedCheck()">
+              <span class="del-elem">{{ uneditedScheduledEvent.end_time | date:'long' }}</span > <clr-icon shape="arrow" dir="right"></clr-icon> 
+              <span class="add-elem">{{ se.end_time | date:'long' }}</span >
+            </td>            
           </tr>
           <tr>
             <td>Courses</td>
-            <td>
-              <!-- <span *ngFor="let c of uneditedScheduledEvent.courses" class="label">{{c}}</span>
-              <span *ngFor="let c of se.courses" class="label">{{c}}</span> -->
-
+            <td>  
               <div *ngFor="let s of uneditedScheduledEvent.courses">
                 <span class="label" *ngIf="isCourseInList(s, se.courses)">{{s}}</span>
-                <span class="label" style="color:red; background-color:rgb(250, 250, 250)" *ngIf="!isCourseInList(s, se.courses)">{{s}}
-                <clr-icon shape="trash"></clr-icon></span>
+                <span class="label del-elem" *ngIf="!isCourseInList(s, se.courses)"><clr-icon shape="trash" ></clr-icon>{{s}}
+              </span>
               </div>
-              <div *ngFor="let s of se.courses">
-                <!-- <span *ngIf="isScenarioInList(s, uneditedScheduledEvent.scenarios)">{{s}}</span> -->
-                <span class="label" style="color:green; background-color:linen" *ngIf="!isCourseInList(s, uneditedScheduledEvent.courses)">{{s}}</span>
+              <div *ngFor="let s of se.courses">               
+                <span class="label add-elem" *ngIf="!isCourseInList(s, uneditedScheduledEvent.courses)"><clr-icon shape="plus"></clr-icon>{{s}}
+                </span>
               </div> 
-            </td>
-            <!-- <td>
-              <span *ngFor="let c of se.courses" class="label">{{c}}</span>
-            </td> -->
+            </td>            
           </tr>
           <tr>
             <td>Scenarios</td>
-            <td>
-              <!-- <span *ngFor="let s of uneditedScheduledEvent.scenarios" class="label">{{s}}</span>
-              <span *ngFor="let s of se.scenarios" class="label">{{s}}</span> 
-              ------------------- -->
+            <td>             
               <div *ngFor="let s of uneditedScheduledEvent.scenarios">
                 <span class="label" *ngIf="isScenarioInList(s, se.scenarios)">{{s}}</span>
-                <span class="label" style="background-color:lightcoral" *ngIf="!isScenarioInList(s, se.scenarios)">{{s}}</span>
+                <span class="label del-elem" *ngIf="!isScenarioInList(s, se.scenarios)"><clr-icon shape="trash"></clr-icon>{{s}}</span>
               </div>
-              <div *ngFor="let s of se.scenarios">
-                <!-- <span *ngIf="isScenarioInList(s, uneditedScheduledEvent.scenarios)">{{s}}</span> -->
-                <span class="label" style="background-color:lightgreen" *ngIf="!isScenarioInList(s, uneditedScheduledEvent.scenarios)">{{s}}</span>
+              <div *ngFor="let s of se.scenarios">                
+                <span class="label add-elem" *ngIf="!isScenarioInList(s, uneditedScheduledEvent.scenarios)"> <clr-icon shape="plus"></clr-icon>{{s}}</span>
               </div>             
-            </td>
-            <!-- <td>
-              <span *ngFor="let s of se.scenarios" class="label">{{s}}</span>
-            </td> -->
+            </td>           
           </tr>
         </tbody>
       </table>
@@ -720,41 +562,14 @@
                   <span class="badge badge-blue"> {{ q.value }}</span>
                 </span>
                 <span *ngIf="uneditedScheduledEvent.required_vms[i.key][q.key] != q.value">
-                 <span class="badge badge-danger"> {{uneditedScheduledEvent.required_vms[i.key][q.key]}}</span>➜
-                 <span class="badge badge-success" style="margin-right: 0;"> {{q.value }}</span>
+                 <span class="badge badge-danger" style="margin-right: 0;"> {{uneditedScheduledEvent.required_vms[i.key][q.key]}}</span><clr-icon shape="arrow" dir="right"></clr-icon>
+                 <span class="badge badge-success"> {{q.value }}</span>
                 </span>
-              </span>
-            
+              </span>            
             </td>            
-          </tr>
-          <!-- <tr *ngFor="let i of uneditedScheduledEvent.required_vms | keyvalue">
-            <td>{{ i.key }}</td>
-            <td>
-              <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span class="badge badge-success">{{
-                  q.value }}</span></span>
-            </td>
-          </tr> -->
+          </tr>          
         </tbody>
-      </table>
-
-      <!-- <h4>New VM Information</h4>
-      <table class="table table-compact">
-        <thead>
-          <tr>
-            <th>Environment</th>
-            <th>Virtual Machines</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let i of se.required_vms | keyvalue">
-            <td>{{ i.key }}</td>
-            <td>
-              <span class="label" *ngFor="let q of i.value | keyvalue">{{ q.key }} <span class="badge badge-success">{{
-                  q.value }}</span></span>
-            </td>
-          </tr>
-        </tbody>
-      </table> -->
+      </table>      
     </clr-wizard-page>
   </ng-template>
 </clr-wizard>

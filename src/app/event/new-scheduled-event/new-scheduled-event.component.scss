@@ -22,6 +22,16 @@ clr-alert.bottom {
     padding-left: 0;
 }
 
+.del-elem {    
+    color:red; 
+    font-weight: bold;
+}
+
+.add-elem {    
+    color:green; 
+    font-weight: bold;
+}
+
 [class*=" no-margin-top"] {
     margin-top: 0;
 }

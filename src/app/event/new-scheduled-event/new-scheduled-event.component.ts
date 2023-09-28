@@ -6,11 +6,9 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  SimpleChanges,
   ViewChildren,
   QueryList,
-  AfterViewInit,
-  ChangeDetectorRef,
+  AfterViewChecked,
 } from '@angular/core';
 import {
   ClrWizard,
@@ -30,6 +28,7 @@ import {
   map,
   filter,
   defaultIfEmpty,
+  first,
 } from 'rxjs/operators';
 import { Environment } from 'src/app/data/environment';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
@@ -53,7 +52,7 @@ import { of } from 'rxjs';
   templateUrl: './new-scheduled-event.component.html',
   styleUrls: ['./new-scheduled-event.component.scss'],
 })
-export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewInit {
+export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewChecked {
   @Output()
   public updated: EventEmitter<boolean> = new EventEmitter(false);
 
@@ -103,6 +102,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewI
 
   public isStartDateEdited = false;
   public isEndDateEdited = false;
+  public isEditMode = false;
 
   private onCloseFn: Function;
 
@@ -113,14 +113,14 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewI
     public ses: ScheduledeventService,
     public es: EnvironmentService,
     public rbacService: RbacService,
-    private cdr: ChangeDetectorRef,
   ) {}
-  ngAfterViewInit(): void {
-    this.wizardPages.changes.subscribe((wizardPages: QueryList<ClrWizardPage>) => {
-      if(wizardPages.length === 7) {
-        this.wizard.navService.goTo(this.wizard.pages.last, true);
-        this.wizard.pages.first.makeCurrent();
-        this.cdr.detectChanges();
+  ngAfterViewChecked(): void {
+    this.wizardPages.changes.pipe(first()).subscribe((wizardPages: QueryList<ClrWizardPage>) => {
+      if(wizardPages.length == 7) {
+        setTimeout(() => {
+          this.wizard.navService.goTo(this.wizard.pages.last, true);
+          this.wizard.pages.first.makeCurrent();
+        })
       }
     })
   }
@@ -256,7 +256,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewI
     return Object.keys(this.keyedEnvironments.get(env).template_mapping);
   }
 
-  private setupVMSelection() {
+  setupVMSelection() {
     this.calculateRequiredVms();
     this.maxUserCount();
     // reset
@@ -488,7 +488,10 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewI
   }
 
   ngOnChanges() {
+    this.checkingEnvironments = true;
     if (this.event) {
+      this.isEditMode = true;
+      console.log("if ="+this.event);
       this.simpleMode = false;
       this.se = this.event;
       // TODO: structuredClone() is available as of typescript version 4.7 ... we should use it to clone objects in the future
@@ -508,11 +511,9 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewI
       // auto-select the environments
       this.se.scenarios = this.se.scenarios ?? [];
       this.updateScenarioSelection(this.se.scenarios);
-
       this.se.courses = this.se.courses ?? [];
       this.updateCourseSelection(this.se.courses);
 
-      this.checkingEnvironments = true;
       this.rbacService
         .Grants('environments', 'list')
         .then((allowListEnvironments: boolean) => {
@@ -524,10 +525,17 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewI
         }).catch(() => {
           this.checkingEnvironments = false;
         });
+ 
     } else {
-      this.se = new ScheduledEvent();
-      this.se.required_vms = {};
+      // If we do not edit an existing environment but create a new one, we do not need to check environments  
+      this.checkingEnvironments = false;
+      this.isEditMode = false;
+      this.se = new ScheduledEvent();     
+      this.se.required_vms = {};   
+      console.log("else ="+this.se);
     }
+    console.log("isEditMode ="+this.isEditMode);
+    console.log("checkingEnvironments ="+this.checkingEnvironments);
   }
 
   public simpleUserTotal() {
@@ -544,9 +552,9 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewI
 
   ngOnInit() {
     if (this.event) {
-      // we have passed in an event for editing
+      // we have passed in an event for editing     
       this.se = this.event;
-    } else {
+    } else {      
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
     }
@@ -833,7 +841,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewI
   public setStartTime(d: DlDateTimePickerChange<Date>) {
     this.se.start_time = d.value;
     this.markStartDateAsEdited();
-    this.startTimeSignpost.close();
+    this.startTimeSignpost.close(); 
   }
 
   public setEndTime(d: DlDateTimePickerChange<Date>) {
@@ -939,22 +947,23 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewI
   }
 
   markStartDateAsEdited() {
-      this.isStartDateEdited = this.se.start_time.getTime() !== this.uneditedScheduledEvent.start_time.getTime();
+      this.isStartDateEdited = this.uneditedScheduledEvent.start_time ? this.se.start_time.getTime() !== this.uneditedScheduledEvent.start_time.getTime() : false;
+  }
+  
+  isStartDateAsEditedCheck() {
+    return this.uneditedScheduledEvent.start_time ? this.se.start_time.getTime() !== this.uneditedScheduledEvent.start_time.getTime() : false;
   }
   markEndDateAsEdited() {
-    this.isEndDateEdited = this.se.end_time.getTime() !== this.uneditedScheduledEvent.end_time.getTime();
+    this.isEndDateEdited = this.uneditedScheduledEvent.end_time ? this.se.end_time.getTime() !== this.uneditedScheduledEvent.end_time.getTime() : false;
+  }
+  isEndDateAsEditedCheck() {
+    return this.uneditedScheduledEvent.end_time ? this.se.end_time.getTime() !== this.uneditedScheduledEvent.end_time.getTime() : false;
   }
 
-  isScenarioInList(scenario: string, list: string[]): boolean {
-    return list.includes(scenario);
+  isScenarioInList(scenario: string, list?: string[]): boolean {
+    return list ? list.includes(scenario) : false;
   }
-  isCourseInList(course: string, list: string[]): boolean {
-    return list.includes(course);
-  }
-
-  setUpEnvironmentAndVmSelection(opened: boolean) {
-    if(opened) {
-      this.checkEnvironments();
-    }
+  isCourseInList(course: string, list?: string[]): boolean {
+    return list ? list.includes(course) : false;
   }
 }
