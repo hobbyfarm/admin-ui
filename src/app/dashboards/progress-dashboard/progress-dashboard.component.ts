@@ -115,7 +115,7 @@ export class ProgressDashboardComponent implements OnInit {
 
     combineLatest([
       this.progressService.listByScheduledEvent(this.selectedEvent.id, true),
-      this.userService.getUsers(),
+      this.userService.list(),
       this.scenarioService.list(),
       this.courseService.list(),
     ]).subscribe(([progressList, users, scenarios, courses]) => {

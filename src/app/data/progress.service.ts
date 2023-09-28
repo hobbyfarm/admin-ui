@@ -102,15 +102,10 @@ export class ProgressService {
     });
     return pList;
   }
+  
   public set(list: Progress[]) {
     this.cachedProgressList = list;
     this.fetchedList = true;
     this.bh.next(list);
-  }
-
-  public update(session: string, step: number) {
-    const body = new HttpParams().set('step', step.toString());
-
-    return this.garg.post('/update/' + session, body);
   }
 }

@@ -101,7 +101,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   async sortEventLists() {
     this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;
-    let users = await this.userService.getUsers().toPromise()
+    let users = await this.userService.list().toPromise()
     this.scheduledEvents.forEach((sEvent) => {
       sEvent.creatorEmail = users.find(user => user.id == sEvent.creator)?.email
     })
