@@ -310,7 +310,7 @@ export class NewScheduledEventComponent implements OnInit {
         ) {
           // this template either doesn't exist in the environment, or doesn't match a minimum count
           meetsCriteria = false;
-          if(!this.invalidSimpleEnvironments.includes(ea.environment)){
+          if (!this.invalidSimpleEnvironments.includes(ea.environment)) {
             this.invalidSimpleEnvironments.push(ea.environment);
           }
         }

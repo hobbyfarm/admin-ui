@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpParams,
+} from '@angular/common/http';
 import { ScheduledEvent } from './scheduledevent';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
@@ -70,12 +74,12 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
     return this.http
       .post(environment.server + '/a/scheduledevent/new', params)
       .pipe(
-        tap(()=>{
-          this.list("", true);
+        tap(() => {
+          this.list('', true);
         }),
         switchMap((s: ServerResponse) => {
           return from(JSON.parse(atou(s.message)));
-        }),
+        })
       );
   }
 

@@ -14,11 +14,10 @@ interface DashboardScheduledEvent extends ScheduledEvent {
   provisionedVMs?: Number;
 }
 
-
 @Component({
   selector: 'app-dashboards',
   templateUrl: './dashboards.component.html',
-  styleUrls: ['./dashboards.component.scss']
+  styleUrls: ['./dashboards.component.scss'],
 })
 export class DashboardsComponent implements OnInit, OnDestroy {
   public sessionDashboardActive: boolean = true;
@@ -41,53 +40,57 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     public userService: UserService,
     public progressService: ProgressService,
     public rbacService: RbacService
-  ) { }
+  ) {}
 
   ngOnInit() {
-
     // verify rbac permissions before we display this page
     this.setRbacCheck(
-      ["scheduledevents", "sessions", "progresses", "users", "courses", "scenarios"],
-      ["list", "get"]
-    ).then((rbacCheckSessions: boolean) => {      
-        this.rbacSuccessSessions = rbacCheckSessions      
+      [
+        'scheduledevents',
+        'sessions',
+        'progresses',
+        'users',
+        'courses',
+        'scenarios',
+      ],
+      ['list', 'get']
+    ).then((rbacCheckSessions: boolean) => {
+      this.rbacSuccessSessions = rbacCheckSessions;
     });
 
-    this.setRbacCheck(["scheduledevents", "virtualmachines", "virtualmachinesets", "users"], ["list", "get"]).then((rbacCheck: boolean) => {
-      this.rbacSuccessVms = rbacCheck
-    })
+    this.setRbacCheck(
+      ['scheduledevents', 'virtualmachines', 'virtualmachinesets', 'users'],
+      ['list', 'get']
+    ).then((rbacCheck: boolean) => {
+      this.rbacSuccessVms = rbacCheck;
+    });
 
-
-    this.scheduledeventService.list().subscribe(
-      (s: DashboardScheduledEvent[]) => {
+    this.scheduledeventService
+      .list()
+      .subscribe((s: DashboardScheduledEvent[]) => {
         this.scheduledEvents = s;
-        this.activeEvents = s.filter(se => !se.finished);
-        this.finishedEvents = s.filter(se => se.finished);
+        this.activeEvents = s.filter((se) => !se.finished);
+        this.finishedEvents = s.filter((se) => se.finished);
         if (this.activeEvents.length > 0) {
           this.selectedEvent = this.activeEvents[0];
-
         }
-        this.rbacService.Grants("users", "list").then((rbacUsers) => {
-          rbacUsers && this.sortEventLists()
-        });        
-        this.setActiveSessionsCount()
+        this.rbacService.Grants('users', 'list').then((rbacUsers) => {
+          rbacUsers && this.sortEventLists();
+        });
+        this.setActiveSessionsCount();
         this.updateInterval = setInterval(() => {
-          this.setActiveSessionsCount()
+          this.setActiveSessionsCount();
         }, 30 * 1000);
-
-      }
-    )
+      });
   }
 
-
   /**
-   * 
+   *
    * @returns true if all grants are successful; else false
    */
   async setRbacCheck(resources: Resource[], verbs: Verb[]) {
     let rbacCheck = true;
-    outerForLoop:
-    for (let resource of resources) {
+    outerForLoop: for (let resource of resources) {
       for (let verb of verbs) {
         const allowed: boolean = await this.rbacService.Grants(resource, verb);
         if (!allowed) {
@@ -100,17 +103,22 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   async sortEventLists() {
-    this.loggedInAdminEmail = this.helper.decodeToken(this.helper.tokenGetter()).email;
-    let users = await this.userService.list().toPromise()
+    this.loggedInAdminEmail = this.helper.decodeToken(
+      this.helper.tokenGetter()
+    ).email;
+    let users = await this.userService.list().toPromise();
     this.scheduledEvents.forEach((sEvent) => {
-      sEvent.creatorEmail = users.find(user => user.id == sEvent.creator)?.email
-    })
-    this.sortByLoggedInAdminUser(this.scheduledEvents)
-    this.sortByLoggedInAdminUser(this.activeEvents)
-    this.sortByLoggedInAdminUser(this.finishedEvents)
+      sEvent.creatorEmail = users.find(
+        (user) => user.id == sEvent.creator
+      )?.email;
+    });
+    this.sortByLoggedInAdminUser(this.scheduledEvents);
+    this.sortByLoggedInAdminUser(this.activeEvents);
+    this.sortByLoggedInAdminUser(this.finishedEvents);
   }
   sortByLoggedInAdminUser(eventArray: DashboardScheduledEvent[]) {
-    const isCreatedByMe = (e: DashboardScheduledEvent) => Number(e.creatorEmail === this.loggedInAdminEmail);
+    const isCreatedByMe = (e: DashboardScheduledEvent) =>
+      Number(e.creatorEmail === this.loggedInAdminEmail);
     return eventArray.sort((a, b) => isCreatedByMe(b) - isCreatedByMe(a));
   }
   setScheduledEvent(ev: DashboardScheduledEvent) {
@@ -121,9 +129,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     if (this.rbacSuccessVms) {
       this.vmService.count().subscribe((countMap) => {
         this.scheduledEvents.forEach((se) => {
-          se.provisionedVMs = countMap[se.id] || 0
-        })
-      })
+          se.provisionedVMs = countMap[se.id] || 0;
+        });
+      });
     }
     if (this.rbacSuccessSessions) {
       this.progressService.count().subscribe((c: ProgressCount) => {
@@ -132,22 +140,21 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         });
       });
     }
-    
   }
 
   setActiveDashboard(event: DashboardScheduledEvent, value: String) {
-    this.setScheduledEvent(event)
-    if (value == "session") {
-      this.vmDashboardActive = false
-      this.sessionDashboardActive = true
+    this.setScheduledEvent(event);
+    if (value == 'session') {
+      this.vmDashboardActive = false;
+      this.sessionDashboardActive = true;
     }
-    if (value == "vm") {
-      this.sessionDashboardActive = false
-      this.vmDashboardActive = true
+    if (value == 'vm') {
+      this.sessionDashboardActive = false;
+      this.vmDashboardActive = true;
     }
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.updateInterval)
+    clearInterval(this.updateInterval);
   }
 }

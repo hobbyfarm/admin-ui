@@ -47,7 +47,7 @@ export class UserComponent implements OnInit {
   }
 
   refresh(force?: boolean) {
-    this.userService.list("", force).subscribe(
+    this.userService.list('', force).subscribe(
       (u: User[]) => {
         this.users = u;
       },

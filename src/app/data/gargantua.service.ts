@@ -93,7 +93,7 @@ export class ListableResourceClient<
     }
   }
 
-  addAndNotify(t: T){
+  addAndNotify(t: T) {
     const cacheKey = '/list';
     let subject = this.listCache.get(cacheKey);
     if (!subject) {
@@ -114,17 +114,19 @@ export class ListableResourceClient<
       return cachedResult.asObservable();
 
     if (!cachedResult) {
-      cachedResult = new BehaviorSubject<T[]>([])
+      cachedResult = new BehaviorSubject<T[]>([]);
       this.listCache.set(cacheKey, cachedResult);
-    } 
+    }
 
     // Perform the request if no cached result or in-flight request is found.
-    this.garg.get(cacheKey).pipe(
-      map(extractResponseContent),
-      tap((arr: T[]) => {
-        if (!arr) return;
+    this.garg
+      .get(cacheKey)
+      .pipe(
+        map(extractResponseContent),
+        tap((arr: T[]) => {
+          if (!arr) return;
 
-        /*
+          /*
 
         // Normally we would popuplate the single item cache with elements from the list, however /list sometimes only gives basic information like the id and name, and /get would give back more information.
 
@@ -140,20 +142,21 @@ export class ListableResourceClient<
 
         */
 
-        // Cache the list result.
-        let subject = this.listCache.get(cacheKey);
-        if (!subject) {
-          subject = new BehaviorSubject<T[]>(arr);
-          this.listCache.set(cacheKey, subject);
-        } else {
-          subject.next(arr);
-        }
-      }),
-      // Ensure we are always returning an array
-      map((arr) => arr || []),
-      // Share the result of Observable
-      shareReplay(1)
-    ).subscribe();
+          // Cache the list result.
+          let subject = this.listCache.get(cacheKey);
+          if (!subject) {
+            subject = new BehaviorSubject<T[]>(arr);
+            this.listCache.set(cacheKey, subject);
+          } else {
+            subject.next(arr);
+          }
+        }),
+        // Ensure we are always returning an array
+        map((arr) => arr || []),
+        // Share the result of Observable
+        shareReplay(1)
+      )
+      .subscribe();
 
     // Store in-flight request.
     return cachedResult;

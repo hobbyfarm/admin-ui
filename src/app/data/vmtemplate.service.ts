@@ -7,7 +7,10 @@ import { of } from 'rxjs';
 import { atou } from '../unicode';
 import { VMTemplate } from './vmtemplate';
 import { HttpParameterCodec } from '@angular/common/http';
-import { GargantuaClientFactory, ListableResourceClient } from './gargantua.service';
+import {
+  GargantuaClientFactory,
+  ListableResourceClient,
+} from './gargantua.service';
 
 // Custom Encoder to prevent Angulars default En-/Decoder from decoding special Characters again after encoding them, see https://github.com/angular/angular/blob/875851776c2f1a688554e91b8f5352984a71d16b/packages/common/http/src/params.ts#L94.
 // This behaviour lead to the Data not being saved in Gargantua if it contains ';'.
