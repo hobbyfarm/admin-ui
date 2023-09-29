@@ -13,9 +13,6 @@ export class ScenarioDetailComponent implements OnInit {
   @Input()
   scenario: Scenario;
 
-  @Output()
-  emitError: EventEmitter<HttpErrorResponse>;
-
   constructor(public scenarioService: ScenarioService) {}
   ngOnInit(): void {
     let scenarioObservable: Observable<Scenario>;
@@ -25,7 +22,7 @@ export class ScenarioDetailComponent implements OnInit {
         this.scenario = S;
       },
       (e: HttpErrorResponse) => {
-        this.emitError.emit(e);
+        console.log(e);
       }
     );
   }

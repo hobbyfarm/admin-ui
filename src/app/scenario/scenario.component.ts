@@ -158,9 +158,7 @@ export class ScenarioComponent implements OnInit {
     this.scenarioDangerClosed = false;
     setTimeout(() => (this.scenarioDangerClosed = true), 1000);
   }
-  alertDangerScenarioDetails(e: HttpErrorResponse) {
-    this.alertDanger('Error from scenario details: ' + e.error.message);
-  }
+
   ngOnInit() {
     this.selectedscenario = new Scenario();
     this.selectedscenario.name = '';
