@@ -100,8 +100,8 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   public maxUserCounts: {} = {};
   public invalidSimpleEnvironments: string[] = [];
 
-  public isStartDateEdited = false;
-  public isEndDateEdited = false;
+ // public isStartDateEdited = false;
+ // public isEndDateEdited = false;
   public isEditMode = false;
 
   private onCloseFn: Function;
@@ -116,7 +116,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   ) {}
   ngAfterViewChecked(): void {
     this.wizardPages.changes.pipe(first()).subscribe((wizardPages: QueryList<ClrWizardPage>) => {
-      if(wizardPages.length == 7) {
+      if(this.wizardPages.length != 0) {
         setTimeout(() => {
           this.wizard.navService.goTo(this.wizard.pages.last, true);
           this.wizard.pages.first.makeCurrent();
@@ -491,7 +491,6 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
     this.checkingEnvironments = true;
     if (this.event) {
       this.isEditMode = true;
-      console.log("if ="+this.event);
       this.simpleMode = false;
       this.se = this.event;
       // TODO: structuredClone() is available as of typescript version 4.7 ... we should use it to clone objects in the future
@@ -531,11 +530,8 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
       this.checkingEnvironments = false;
       this.isEditMode = false;
       this.se = new ScheduledEvent();     
-      this.se.required_vms = {};   
-      console.log("else ="+this.se);
-    }
-    console.log("isEditMode ="+this.isEditMode);
-    console.log("checkingEnvironments ="+this.checkingEnvironments);
+      this.se.required_vms = {};         
+    }    
   }
 
   public simpleUserTotal() {
@@ -796,8 +792,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   }
 
   public quickStartTime() {
-    this.se.start_time = new Date();
-    this.markStartDateAsEdited();
+    this.se.start_time = new Date();    
   }
 
   public quickEndTime() {
@@ -840,13 +835,11 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
 
   public setStartTime(d: DlDateTimePickerChange<Date>) {
     this.se.start_time = d.value;
-    this.markStartDateAsEdited();
     this.startTimeSignpost.close(); 
   }
 
   public setEndTime(d: DlDateTimePickerChange<Date>) {
     this.se.end_time = d.value;
-    this.markEndDateAsEdited();
     this.endTimeSignpost.close();
   }
 
@@ -870,6 +863,8 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   }
 
   public close() {
+    this.se.courses = this.uneditedScheduledEvent.courses;
+    this.se.scenarios=this.uneditedScheduledEvent.scenarios;
     if (this.onCloseFn) {
       this.onCloseFn();
     }
@@ -946,16 +941,10 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
     this.copyVMCounts();
   }
 
-  markStartDateAsEdited() {
-      this.isStartDateEdited = this.uneditedScheduledEvent.start_time ? this.se.start_time.getTime() !== this.uneditedScheduledEvent.start_time.getTime() : false;
-  }
-  
   isStartDateAsEditedCheck() {
     return this.uneditedScheduledEvent.start_time ? this.se.start_time.getTime() !== this.uneditedScheduledEvent.start_time.getTime() : false;
   }
-  markEndDateAsEdited() {
-    this.isEndDateEdited = this.uneditedScheduledEvent.end_time ? this.se.end_time.getTime() !== this.uneditedScheduledEvent.end_time.getTime() : false;
-  }
+
   isEndDateAsEditedCheck() {
     return this.uneditedScheduledEvent.end_time ? this.se.end_time.getTime() !== this.uneditedScheduledEvent.end_time.getTime() : false;
   }

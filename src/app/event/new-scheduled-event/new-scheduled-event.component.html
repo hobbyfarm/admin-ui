@@ -511,27 +511,27 @@
           <tr>
             <td>Courses</td>
             <td>  
-              <div *ngFor="let s of uneditedScheduledEvent.courses">
+              <ng-container *ngFor="let s of uneditedScheduledEvent.courses">
                 <span class="label" *ngIf="isCourseInList(s, se.courses)">{{s}}</span>
-                <span class="label del-elem" *ngIf="!isCourseInList(s, se.courses)"><clr-icon shape="trash" ></clr-icon>{{s}}
+                <span class="label del-elem" *ngIf="!isCourseInList(s, se.courses)">{{s}}<clr-icon shape="trash" ></clr-icon>
               </span>
-              </div>
-              <div *ngFor="let s of se.courses">               
-                <span class="label add-elem" *ngIf="!isCourseInList(s, uneditedScheduledEvent.courses)"><clr-icon shape="plus"></clr-icon>{{s}}
+              </ng-container>
+              <ng-container *ngFor="let s of se.courses">               
+                <span class="label add-elem" *ngIf="!isCourseInList(s, uneditedScheduledEvent.courses)">{{s}}<clr-icon shape="plus"></clr-icon>
                 </span>
-              </div> 
+              </ng-container> 
             </td>            
           </tr>
           <tr>
             <td>Scenarios</td>
             <td>             
-              <div *ngFor="let s of uneditedScheduledEvent.scenarios">
+              <ng-container *ngFor="let s of uneditedScheduledEvent.scenarios">
                 <span class="label" *ngIf="isScenarioInList(s, se.scenarios)">{{s}}</span>
-                <span class="label del-elem" *ngIf="!isScenarioInList(s, se.scenarios)"><clr-icon shape="trash"></clr-icon>{{s}}</span>
-              </div>
-              <div *ngFor="let s of se.scenarios">                
-                <span class="label add-elem" *ngIf="!isScenarioInList(s, uneditedScheduledEvent.scenarios)"> <clr-icon shape="plus"></clr-icon>{{s}}</span>
-              </div>             
+                <span class="label del-elem" *ngIf="!isScenarioInList(s, se.scenarios)">{{s}}<clr-icon shape="trash"></clr-icon></span>
+              </ng-container>
+              <ng-container *ngFor="let s of se.scenarios">                
+                <span class="label add-elem" *ngIf="!isScenarioInList(s, uneditedScheduledEvent.scenarios)">{{s}} <clr-icon shape="plus"></clr-icon></span>
+              </ng-container>             
             </td>           
           </tr>
         </tbody>
