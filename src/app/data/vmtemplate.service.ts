@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
 import { of } from 'rxjs';
 import { atou } from '../unicode';
@@ -56,7 +56,13 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
       .set('image', template.image)
       .set('config_map', JSON.stringify(template.config_map));
 
-    return this.http.post(environment.server + '/a/vmtemplate/create', params);
+    return this.http
+      .post(environment.server + '/a/vmtemplate/create', params)
+      .pipe(
+        tap(() => {
+          this.list('', true);
+        })
+      );
   }
 
   public get(id: string) {
@@ -68,8 +74,12 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
   }
 
   public delete(id: string) {
-    return this.http.delete(
-      environment.server + '/a/vmtemplate/' + id + '/delete'
-    );
+    return this.http
+      .delete(environment.server + '/a/vmtemplate/' + id + '/delete')
+      .pipe(
+        tap(() => {
+          this.deleteAndNotify(id);
+        })
+      );
   }
 }
