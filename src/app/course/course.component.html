@@ -34,7 +34,7 @@
         [clrDgItem]="c"
         [clrDgSelectable]="!modified"
       >
-        <clr-dg-action-overflow>
+        <clr-dg-action-overflow *ngIf="showActionOverflow">
           <button
             class="action-item"
             (click)="openEditCourseWizard(c)"

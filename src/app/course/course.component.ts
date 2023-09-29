@@ -62,6 +62,7 @@ export class CourseComponent implements OnInit {
   public newCategory: boolean = false;
 
   public courseDetailsActive: boolean = false;
+  public showActionOverflow: boolean = false;
 
   public selectRbac: boolean = false;
   public updateRbac: boolean = false;
@@ -93,15 +94,18 @@ export class CourseComponent implements OnInit {
       this.rbacService.Grants('courses', 'get'),
       this.rbacService.Grants('courses', 'update'),
       this.rbacService.Grants('scenarios', 'list'),
+      this.rbacService.Grants('courses', 'delete'),
     ]);
 
     authorizationRequests
-      .then((permissions: [boolean, boolean, boolean]) => {
+      .then((permissions: [boolean, boolean, boolean, boolean]) => {
         const allowedGet: boolean = permissions[0];
         const allowedUpdate: boolean = permissions[1];
         const allowListScenarios: boolean = permissions[2];
+        const allowDelete: boolean = permissions[3];
         // Enable permission to list courses if either "get" or "update" on courses is granted
         this.selectRbac = allowedGet || allowedUpdate;
+        this.showActionOverflow = allowDelete || (allowedGet && allowedUpdate);
         this.listScenarios = allowListScenarios;
         // Enable permission to update courses
         this.updateRbac = allowedUpdate && this.listScenarios;
