@@ -8,6 +8,7 @@ import { RbacService } from '../data/rbac.service';
 import { FilterScenariosComponent } from '../filter-scenarios/filter-scenarios.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ScenarioWizardComponent } from './scenario-wizard/scenario-wizard.component';
+import { StepsScenarioComponent } from './steps-scenario/steps-scenario.component';
 
 @Component({
   selector: 'app-scenario',
@@ -37,6 +38,7 @@ export class ScenarioComponent implements OnInit {
   public alertType: string = 'warning';
   public isAlert: boolean = false;
   public modified: boolean = false;
+  public errorMessage: string = '';
 
   public newScenario: Scenario = new Scenario();
 
@@ -159,6 +161,10 @@ export class ScenarioComponent implements OnInit {
     setTimeout(() => (this.scenarioDangerClosed = true), 1000);
   }
 
+  readErrorMessage(errorMessage: string) {
+    this.errorMessage = errorMessage;
+  }
+
   ngOnInit() {
     this.selectedscenario = new Scenario();
     this.selectedscenario.name = '';
@@ -189,7 +195,12 @@ export class ScenarioComponent implements OnInit {
     this.refresh();
     if (wizardScenario === 'edit')
       this.alertSuccess('Scenarios successfully updated');
-    if (wizardScenario === 'create')
-      this.alertSuccess('Scenarios successfully created');
+    if (wizardScenario === 'create') {
+      if (this.errorMessage) this.alertDanger(this.errorMessage);
+      setTimeout(() => {
+        this.errorMessage = '';
+        return;
+      }, 3000);
+    }
   }
 }

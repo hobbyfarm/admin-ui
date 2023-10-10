@@ -14,8 +14,9 @@ import { ScenarioService } from 'src/app/data/scenario.service';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
-import { deepCopy } from 'src/app/deepcopy';
 import { KeepaliveValidator } from 'src/app/validators/keepalive.validator';
+import { StepsScenarioComponent } from '../steps-scenario/steps-scenario.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'scenario-wizard',
@@ -32,14 +33,14 @@ export class ScenarioWizardComponent implements OnInit {
   @Output()
   refreshFilteredScenarios: EventEmitter<string> = new EventEmitter<string>();
 
+  @Output()
+  emitMessageError: EventEmitter<string> = new EventEmitter<string>();
+
   public wizardTitle: string;
   public editDangerAlert: string = '';
   public editSuccessAlert: string = '';
   public scenarioDangerAlert: string = '';
   public scenarioSuccessAlert: string = '';
-
-  public AddedStepsContents: string[] = [];
-  public AddedStepsTitle: string[] = [];
 
   public _open: boolean = false;
   public selectRbac: boolean = false;
@@ -84,6 +85,8 @@ export class ScenarioWizardComponent implements OnInit {
 
   @ViewChild('deletevmsetmodal', { static: true }) deleteVMSetModal: ClrModal;
   @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
+  @ViewChild('stepsscenario', { static: true })
+  stepScenario: StepsScenarioComponent;
 
   constructor(
     public scenarioService: ScenarioService,
@@ -194,14 +197,10 @@ export class ScenarioWizardComponent implements OnInit {
   open() {
     this.wizard.open();
   }
-
   doCancel(): void {
     this.wizard.reset();
     this.resetScenarioForm();
-    this.selectedscenario.virtualmachines = [];
-    this.selectedscenario.steps = [];
-    this.selectedscenario.categories = [];
-    this.selectedscenario.tags = [];
+
     this.isStepsLengthNull = true;
     this.scenarioTainted = false;
     this.wizard.close();
@@ -243,10 +242,10 @@ export class ScenarioWizardComponent implements OnInit {
       (s: Scenario) => {
         this._displayAlert(s.name, true);
         this.scenarioAdded = true;
-        // this.scenarioFilter.reloadScenarios(); Create output to fire this function from parent
       },
-      (s: string) => {
-        this._displayAlert(s, false);
+      (e: HttpErrorResponse) => {
+        const errorMessage: string = e.message;
+        this.emitMessageError.emit(errorMessage);
       }
     );
     this.resetScenarioForm();
@@ -290,6 +289,10 @@ export class ScenarioWizardComponent implements OnInit {
       keepalive_unit: 'm',
       pause_duration: 1,
     });
+    this.selectedscenario.virtualmachines = [];
+    this.selectedscenario.steps = [];
+    this.selectedscenario.categories = [];
+    this.selectedscenario.tags = [];
   }
   addCategory() {
     let categories = this.newCategoryForm.get('category').value;

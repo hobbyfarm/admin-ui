@@ -90,6 +90,7 @@
   #scenariowizard
   [wizardScenario]="'create'"
   (refreshFilteredScenarios)="reloadScenario($event)"
+  (emitMessageError)="alertDanger($event)"
 ></scenario-wizard>
 <scenario-wizard
   #editselectedscenariowizard
