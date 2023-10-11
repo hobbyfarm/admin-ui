@@ -641,9 +641,6 @@ export class NewScheduledEventComponent
         });
       }
     });
-    this.ses.watch().subscribe((se: ScheduledEvent[]) => {
-      this.scheduledEvents = se;
-    });
     this.ses.list().subscribe((se: ScheduledEvent[]) => {
       this.scheduledEvents = se;
     });
