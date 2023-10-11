@@ -814,27 +814,28 @@
           <tr *ngFor="let i of se.required_vms | keyvalue">
             <td>{{ getEnvironmentName(i.key) }}</td>
             <td>
-              <span class="label" *ngFor="let q of i.value | keyvalue"
-                >{{ getVirtualMachineTemplateName(q.key) }}&nbsp;
+              <span class="label" *ngFor="let q of i.value | keyvalue">
+                {{ getVirtualMachineTemplateName(q.key) }}&nbsp;
                 <span
                   *ngIf="
-                    uneditedScheduledEvent.required_vms[i.key][q.key] == q.value
+                  getUneditedScheduledEventVMCount(i.key, q.key) == q.value
                   "
                 >
                   <span class="badge badge-blue"> {{ q.value }}</span>
                 </span>
                 <span
                   *ngIf="
-                    uneditedScheduledEvent.required_vms[i.key][q.key] != q.value
+                  getUneditedScheduledEventVMCount(i.key, q.key) != q.value
                   "
                 >
                   <span class="badge badge-danger" style="margin-right: 0">
                     {{
-                      uneditedScheduledEvent.required_vms[i.key][q.key]
+                      getUneditedScheduledEventVMCount(i.key, q.key)
                     }}</span
                   ><clr-icon shape="arrow" dir="right"></clr-icon>
                   <span class="badge badge-success"> {{ q.value }}</span>
                 </span>
+
               </span>
             </td>
           </tr>

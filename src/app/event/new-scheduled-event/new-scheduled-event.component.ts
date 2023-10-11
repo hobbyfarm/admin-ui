@@ -344,7 +344,7 @@ export class NewScheduledEventComponent
 
   public checkIfSimplePageCanBeDone() {
     let simpleUserCounts: {} = {};
-    for (let env in this.se.required_vms) {
+    for (let env in this.uneditedScheduledEvent.required_vms) {
       const [template, count] = Object.entries(this.se.required_vms[env]).pop();
       const userRatio = Math.ceil(count / this.requiredVmCounts[template]); // Calculate ratio of VMs, for example when 2 are needed but 4 are present 2 users could use them.
       // if userRatio is not a true integer
@@ -405,7 +405,7 @@ export class NewScheduledEventComponent
 
     if (this.simpleMode) {
       this.selectedEnvironments.forEach((env, i) => {
-        var users = this.simpleModeVmCounts.get(['envs', i]).value;
+        var users = this.simpleModeVmCounts.get(['envs', i])?.value ?? 0;
         this.simpleUserCounts[env.environment] = users;
         if (users == 0) {
           return;
@@ -1029,5 +1029,11 @@ export class NewScheduledEventComponent
   }
   isCourseInList(course: string, list?: string[]): boolean {
     return list ? list.includes(course) : false;
+  }
+
+  getUneditedScheduledEventVMCount(environment: string, vmtemplate: string) {
+    return (
+      this.uneditedScheduledEvent.required_vms[environment]?.[vmtemplate] ?? 0
+    );
   }
 }
