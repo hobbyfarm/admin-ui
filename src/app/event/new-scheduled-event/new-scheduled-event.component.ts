@@ -998,10 +998,11 @@ export class NewScheduledEventComponent
   }
 
   getEnvironmentName(environment: any) {
-    return (
-      this.environments.filter((env) => env.name == environment)?.pop()
-        .display_name ?? environment
+    const envList: Environment[] = this.environments.filter(
+      (env) => env.name == environment
     );
+    if (envList.length == 0) return environment;
+    return envList.pop().display_name ?? environment;
   }
 
   updateFormValues() {
