@@ -100,8 +100,6 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   public maxUserCounts: {} = {};
   public invalidSimpleEnvironments: string[] = [];
 
- // public isStartDateEdited = false;
- // public isEndDateEdited = false;
   public isEditMode = false;
 
   private onCloseFn: Function;
@@ -863,8 +861,9 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   }
 
   public close() {
+    // After close rollback courses and scenarios in se(se value caching on front) 
     this.se.courses = this.uneditedScheduledEvent.courses;
-    this.se.scenarios=this.uneditedScheduledEvent.scenarios;
+    this.se.scenarios = this.uneditedScheduledEvent.scenarios;
     if (this.onCloseFn) {
       this.onCloseFn();
     }
