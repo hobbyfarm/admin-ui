@@ -397,7 +397,7 @@
             <clr-dg-cell>
               <ng-container *ngFor="let item of ea.available_count | keyvalue">
                 <span class="label"
-                  >{{ item.key }}
+                  >{{ getVirtualMachineTemplateName(item.key) }}
                   <span class="badge badge-success">{{
                     item.value
                   }}</span></span
@@ -480,20 +480,22 @@
           </tbody>
         </table>
         <br />
-        <i>The following environments are incompatible with simple mode: </i>
-        <clr-signpost>
-          <clr-signpost-content *clrIfOpen>
-            <h3>Simple Mode Compatibility</h3>
-            <p>
-              An environment must be able to support the creation of all types
-              of required VMs, as well as have enough capacity for at least one
-              user (and all their associated VMs).
-            </p>
-          </clr-signpost-content>
-        </clr-signpost>
-        <ul>
-          <li *ngFor="let s of invalidSimpleEnvironments">{{ s }}</li>
-        </ul>
+        <ng-container *ngIf="invalidSimpleEnvironments.length != 0">
+          <i>The following environments are incompatible with simple mode: </i>
+          <clr-signpost>
+            <clr-signpost-content *clrIfOpen>
+              <h3>Simple Mode Compatibility</h3>
+              <p>
+                An environment must be able to support the creation of all types
+                of required VMs, as well as have enough capacity for at least
+                one user (and all their associated VMs).
+              </p>
+            </clr-signpost-content>
+          </clr-signpost>
+          <ul>
+            <li *ngFor="let s of invalidSimpleEnvironments">{{ s }}</li>
+          </ul>
+        </ng-container>
       </ng-container>
       <ng-container *ngIf="!simpleMode">
         <i
@@ -818,24 +820,21 @@
                 {{ getVirtualMachineTemplateName(q.key) }}&nbsp;
                 <span
                   *ngIf="
-                  getUneditedScheduledEventVMCount(i.key, q.key) == q.value
+                    getUneditedScheduledEventVMCount(i.key, q.key) == q.value
                   "
                 >
                   <span class="badge badge-blue"> {{ q.value }}</span>
                 </span>
                 <span
                   *ngIf="
-                  getUneditedScheduledEventVMCount(i.key, q.key) != q.value
+                    getUneditedScheduledEventVMCount(i.key, q.key) != q.value
                   "
                 >
                   <span class="badge badge-danger" style="margin-right: 0">
-                    {{
-                      getUneditedScheduledEventVMCount(i.key, q.key)
-                    }}</span
+                    {{ getUneditedScheduledEventVMCount(i.key, q.key) }}</span
                   ><clr-icon shape="arrow" dir="right"></clr-icon>
                   <span class="badge badge-success"> {{ q.value }}</span>
                 </span>
-
               </span>
             </td>
           </tr>
