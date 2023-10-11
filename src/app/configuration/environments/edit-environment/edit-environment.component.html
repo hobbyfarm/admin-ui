@@ -196,7 +196,7 @@
           formGroupName="{{ it }}"
         >
           <clr-stack-label>
-            {{ t["controls"].template.value }}
+            {{ getVirtualMachineTemplateName(t["controls"].template.value) }}
           </clr-stack-label>
           <clr-stack-content>
             <button
@@ -215,16 +215,16 @@
           <clr-stack-block>
             <clr-stack-label> Limit </clr-stack-label>
             <clr-stack-content>
-                <clr-input-container class="no-margin-top">
-                    <input
-                    clrInput
-                    type="number"
-                    placeholder="Max. count e.g. 10"
-                    name="count"
-                    width="48"
-                    formControlName="count"
-                  />
-                </clr-input-container>
+              <clr-input-container class="no-margin-top">
+                <input
+                  clrInput
+                  type="number"
+                  placeholder="Max. count e.g. 10"
+                  name="count"
+                  width="48"
+                  formControlName="count"
+                />
+              </clr-input-container>
             </clr-stack-content>
           </clr-stack-block>
           <clr-stack-block
@@ -389,7 +389,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let template of env.template_mapping | keyvalue">
-          <td>{{ template.key }}</td>
+          <td>{{ getVirtualMachineTemplateName(template.key) }}</td>
           <td>{{ getTeplateCount(template.key) }}</td>
           <td>
             <table class="table table-compact">
