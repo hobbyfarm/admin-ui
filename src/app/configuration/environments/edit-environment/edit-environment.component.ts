@@ -28,7 +28,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   public event: EventEmitter<boolean> = new EventEmitter(false);
 
   public env: Environment = new Environment();
-
+  public uneditedEnv = new Environment();
   constructor(
     private _fb: FormBuilder,
     private envService: EnvironmentService,
@@ -148,8 +148,9 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.updateEnv) {
-      this.fixNullValues();
+      this.fixNullValues();      
       this.env = this.updateEnv;
+      this.uneditedEnv = JSON.parse(JSON.stringify(this.updateEnv))
       this._prepare();
       this.wizard.navService.goTo(this.wizard.pages.last, true);
       this.wizard.pages.first.makeCurrent();
@@ -344,5 +345,16 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
         )
       this.env = new Environment();
     }
+  }
+
+  updateFormValues() {
+    this.copyEnvironmentDetails();
+    this.copyEnvironmentSpecifics();
+    this.copyTemplateMapping();
+    this.copyIpMapping();
+  }
+
+  isSpecificsInList(scenario: string, list?: string[]): boolean {
+    return list ? list.includes(scenario) : false;
   }
 }
