@@ -12,6 +12,12 @@ import { RbacService } from '../data/rbac.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
+
+  public showPassword = false;
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
   public email: string = "";
   public password: string = "";
   public error: string = "";

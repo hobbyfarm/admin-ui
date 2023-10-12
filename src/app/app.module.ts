@@ -95,7 +95,10 @@ import { TypedInputComponent } from './typed-form/typed-input.component';
 import { TypedInputFieldComponent } from './typed-form/typed-input-field.component';
 import { TypedSettingsService } from './data/typedSettings.service';
 import { OTACManagementComponent } from './event/otacmanagement/otacmanagement.component';
+import '@cds/core/icon/register.js';
+import { eyeIcon, eyeHideIcon, ClarityIcons } from '@cds/core/icon';
 
+ClarityIcons.addIcons(eyeIcon, eyeHideIcon);
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
     return appConfig.loadAppConfig();

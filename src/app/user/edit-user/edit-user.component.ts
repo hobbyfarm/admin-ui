@@ -8,10 +8,17 @@ import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-
 @Component({
   selector: 'edit-user',
   templateUrl: './edit-user.component.html',
+  styleUrls: ['./edit-user.component.scss']
 })
 export class EditUserComponent implements OnChanges {
   @Input()
   public user: User = new User();
+
+  public showPassword = false;
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 
   public alertClosed: boolean = true;
   public alertType: string = "danger";
