@@ -916,9 +916,21 @@ export class NewScheduledEventComponent
   }
 
   public close() {
-    // After close rollback courses and scenarios in se(se value caching on front)
+    // After close rollback courses and scenarios in se(se value caching on front) 
+    this.se.event_name = this.uneditedScheduledEvent.event_name;
+    this.se.description = this.uneditedScheduledEvent.description;
+    this.se.on_demand = this.uneditedScheduledEvent.on_demand;
+    this.se.disable_restriction = this.uneditedScheduledEvent.disable_restriction;
     this.se.courses = this.uneditedScheduledEvent.courses;
     this.se.scenarios = this.uneditedScheduledEvent.scenarios;
+    this.se.start_time = new Date(
+      this.uneditedScheduledEvent.start_time
+    );
+    this.se.end_time = new Date(
+      this.uneditedScheduledEvent.end_time
+    );
+    this.se.required_vms = this.uneditedScheduledEvent.required_vms;
+    this.se.vmsets = this.uneditedScheduledEvent.vmsets;
     if (this.onCloseFn) {
       this.onCloseFn();
     }
