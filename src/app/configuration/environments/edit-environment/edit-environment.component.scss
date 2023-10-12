@@ -24,6 +24,12 @@
     font-weight: bold;        
 }
 
+.arrow-after::after {   
+    color:black;    
+    content: ' \1F862 ';     
+    vertical-align: middle;   
+}
+
 .add-elem {    
     color:green; 
     font-weight: bold;

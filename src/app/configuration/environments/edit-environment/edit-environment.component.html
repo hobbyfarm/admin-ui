@@ -347,20 +347,33 @@
           <td>Display Name</td>
           <td *ngIf="env.display_name == uneditedEnv.display_name">{{ env.display_name }}</td>
           <td *ngIf="env.display_name != uneditedEnv.display_name">
-            <span class="del-elem">{{ uneditedEnv.display_name }}</span > <clr-icon shape="arrow" dir="right"></clr-icon> 
-            <span class="add-elem">{{ env.display_name }}</span >          
+            <span class="del-elem arrow-after">{{ uneditedEnv.display_name }}</span > 
+            <span class="add-elem">{{ env.display_name }}</span >     
+          </td>     
         </tr>
         <tr>
           <td>DNS Suffix</td>
-          <td>{{ env.dnssuffix }}</td>
+          <td *ngIf="env.dnssuffix == uneditedEnv.dnssuffix">{{ env.dnssuffix }}</td>
+          <td *ngIf="env.dnssuffix != uneditedEnv.dnssuffix">
+            <span class="del-elem arrow-after">{{ uneditedEnv.dnssuffix }}</span > 
+            <span class="add-elem">{{ env.dnssuffix }}</span >  
+          </td>          
         </tr>
         <tr>
           <td>Provider</td>
-          <td>{{ env.provider }}</td>
+          <td *ngIf="env.provider == uneditedEnv.provider">{{ env.provider }}</td>
+          <td *ngIf="env.provider != uneditedEnv.provider">
+            <span class="del-elem arrow-after">{{ uneditedEnv.provider }}</span > 
+            <span class="add-elem">{{ env.provider }}</span >
+          </td>
         </tr>
         <tr>
           <td>Websocket Endpoint</td>
-          <td>{{ env.ws_endpoint }}</td>
+          <td *ngIf="env.ws_endpoint == uneditedEnv.ws_endpoint">{{ env.ws_endpoint }}</td>
+          <td *ngIf="env.ws_endpoint != uneditedEnv.ws_endpoint">
+            <span class="del-elem arrow-after">{{ uneditedEnv.ws_endpoint }}</span > 
+            <span class="add-elem">{{ env.ws_endpoint }}</span >
+          </td>          
         </tr>
       </tbody>
     </table>
@@ -375,10 +388,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of env.environment_specifics | keyvalue">         
-          <td >{{ item.key }}</td>
+          <td *ngIf="!uneditedEnv.environment_specifics.hasOwnProperty(item.key)" class="add-elem">{{ item.key }}</td>
+          <td *ngIf="uneditedEnv.environment_specifics.hasOwnProperty(item.key)">{{ item.key }}</td>
           <td *ngIf="item.value == uneditedEnv.environment_specifics[item.key]">{{ item.value }}</td>          
           <td *ngIf="item.value != uneditedEnv.environment_specifics[item.key]">
-            <span class="del-elem">{{ uneditedEnv.environment_specifics[item.key] }}</span > <clr-icon shape="arrow" dir="right"></clr-icon> 
+            <span class="del-elem">{{ uneditedEnv.environment_specifics[item.key] }}</span > 
             <span class="add-elem">{{ item.value }}</span > 
           </td>
         </tr>
