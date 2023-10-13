@@ -90,6 +90,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.scenarios)
     const authorizationRequests = Promise.all([
       this.rbacService.Grants('courses', 'get'),
       this.rbacService.Grants('courses', 'update'),
