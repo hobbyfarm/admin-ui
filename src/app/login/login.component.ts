@@ -69,7 +69,7 @@ export class LoginComponent {
       )
   }
 
-  togglePasswordVisibility() {
+  public togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 }
