@@ -1021,6 +1021,7 @@ export class NewScheduledEventComponent
 
   updateFormValues() {
     this.copyEventDetails();
+    this.setupVMSelection();
     this.copyVMCounts();
   }
 
