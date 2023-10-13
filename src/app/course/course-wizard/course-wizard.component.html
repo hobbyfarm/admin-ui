@@ -40,7 +40,75 @@
     ></vmset>
   </clr-wizard-page>
 
-  <clr-wizard-page (clrWizardPageNext)="saveCourseWizard()" [clrWizardPageNextDisabled]="dragScenarios.length == 0 && editCategories.length == 0">
+  <clr-wizard-page (clrWizardPageNext)="saveCourseWizard()" [clrWizardPageNextDisabled]="dragScenarios.length == 0 && editCategories.length == 0" *ngIf="wizardCourse=='edit'">
+    <ng-template clrPageTitle>Scenarios</ng-template>
+    <ng-container *ngIf="listScenarios">
+      <button
+        class="btn btn-sm btn-success-outline"
+        *rbac="['courses.update']"
+        (click)="openAdd()"
+      >
+        Add Scenario
+      </button>
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>Move</th>
+            <th>Order</th>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody
+          class="container"
+          [dragula]="'scenarios'"
+          [(dragulaModel)]="dragScenarios"
+        >
+          <tr *ngFor="let s of dragScenarios; let i = index">
+            <td>
+              <clr-icon class="handle" shape="drag-handle" size="24"></clr-icon>
+            </td>
+            <td>
+              {{ i + 1 }}
+            </td>
+            <td>
+              {{ s.id }}
+            </td>
+            <td>
+              {{ s.name }}
+            </td>
+            <td>
+              <button
+                class="btn btn-link btn-sm btn-link-danger"
+                (click)="deleteScenario(i)"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The following scenarios are added dynamically to this course. Edit them
+        in the "Dynamic Scenarios" Tab.
+      </p>
+      <clr-datagrid class="datagrid-compact">
+        <clr-dg-column>Id</clr-dg-column>
+        <clr-dg-column>Name</clr-dg-column>
+        <clr-dg-row
+          *clrDgItems="let s of dynamicAddedScenarios"
+          [clrDgItem]="s"
+        >
+          <clr-dg-cell>{{ s.id }}</clr-dg-cell>
+          <clr-dg-cell>{{ s.name }}</clr-dg-cell>
+        </clr-dg-row>
+      </clr-datagrid>
+    </ng-container>
+  </clr-wizard-page>
+
+  <clr-wizard-page (clrWizardPageNext)="saveCourseWizard()"  *ngIf="wizardCourse=='create'">
     <ng-template clrPageTitle>Scenarios</ng-template>
     <ng-container *ngIf="listScenarios">
       <button
@@ -202,6 +270,7 @@
             <clr-control-error *clrIfError="'required'"
               >Query required.</clr-control-error
             >
+            <clr-control-error *clrIfError="'pattern'">Query shouldn't be empty or have non-latin letter</clr-control-error>
           </clr-input-container>
           <div class="col-md-2">
             <button

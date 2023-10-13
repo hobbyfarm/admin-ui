@@ -59,7 +59,10 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   public form: FormGroup = new FormGroup({});
   public newCategoryForm: FormGroup = new FormGroup({
-    category: new FormControl(null, [Validators.required]),
+    category: new FormControl(null, [
+      Validators.required,
+      Validators.pattern(/^[a-zA-Z0-9,;]+$/),
+    ]),
   });
 
   public alertText: string = null;
@@ -90,7 +93,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log(this.scenarios)
+    console.log(this.scenarios);
     const authorizationRequests = Promise.all([
       this.rbacService.Grants('courses', 'get'),
       this.rbacService.Grants('courses', 'update'),
