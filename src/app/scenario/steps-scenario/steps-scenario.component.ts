@@ -58,13 +58,12 @@ export class StepsScenarioComponent {
       return;
     }
     this.editingIndex = i;
-    this.editingStep = this.editingSteps[i];
+    this.editingStep = s;
     this.editModal.open();
   }
 
   openNewStep() {
     this.editingSteps = <Step[]>deepCopy(this.scenario.steps);
-
     this.editingIndex = this.editingSteps.length;
     this.editingStep = new Step();
     this.editingStep.title = 'Step ' + (this.editingIndex + 1);
@@ -107,7 +106,7 @@ export class StepsScenarioComponent {
   }
 
   saveCreatedStep() {
-    this.scenario.steps = this.editingSteps;
+    this.scenario.steps =  <Step[]>deepCopy(this.editingSteps);
     this.isStepsLengthNull = false;
     this.stepsToBeAdded = 0;
     this.editModal.close();
