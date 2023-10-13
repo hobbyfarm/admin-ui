@@ -13,6 +13,9 @@ export class StepsScenarioComponent {
   @Input()
   scenario: Scenario;
 
+  @Input()
+  wizardScenario: 'create' | 'edit';;
+
   public scenarioTainted: boolean = false;
   public editOpen: boolean = false;
   public editDangerClosed: boolean = true;
@@ -53,12 +56,13 @@ export class StepsScenarioComponent {
   }
 
   openEdit(s: Step, i: number) {
-    if (this.editingSteps.length == 0) {
+    this.editingSteps = <Step[]>deepCopy(this.scenario.steps);
+    if (this.editingSteps.length == 0 && this.wizardScenario == 'create') {
       this.openNewStep();
       return;
     }
     this.editingIndex = i;
-    this.editingStep = s;
+    this.editingStep = this.editingSteps[i];
     this.editModal.open();
   }
 
