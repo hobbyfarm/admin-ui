@@ -64,23 +64,20 @@ export class EditUserComponent implements OnChanges {
       'email': this.user.email,
       'password': "",
     });
-    this.alertText = "";
-    this.alertClosed = true;
   }
 
   saveDetails() {
     this.saving = true;
     var email = this.userDetailsForm.get("email").value;
     var password = this.userDetailsForm.get("password").value;
-
+  
     if (email == null) {
       email = "";
     }
-
+  
     if (password == null) {
       password = "";
     }
-
     this.userService.saveUser(this.user.id, email, password)
       .subscribe(
         (s: ServerResponse) => {
@@ -88,8 +85,10 @@ export class EditUserComponent implements OnChanges {
           this.alertType = "success";
           this.alertClosed = false;
           this.saving = false;
+          this.reset();
           setTimeout(() => {
             this.alertClosed = true;
+            this.alertText = "";
           }, 2000);
         },
         (s: ServerResponse) => {
@@ -97,13 +96,14 @@ export class EditUserComponent implements OnChanges {
           this.alertType = "danger";
           this.alertClosed = false;
           this.saving = false;
+          this.reset();
           setTimeout(() => {
             this.alertClosed = true;
+            this.alertText = "";
           }, 2000);
         }
       )
   }
-
   delete() {
     this.deleteConfirmModal.open();
   }
@@ -120,6 +120,7 @@ export class EditUserComponent implements OnChanges {
           this.alertClosed = false;
           setTimeout(() => {
             this.alertClosed = true;
+            this.alertText = "";
           }, 2000);
         }
       )
