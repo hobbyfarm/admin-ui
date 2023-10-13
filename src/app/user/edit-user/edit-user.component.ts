@@ -15,11 +15,6 @@ export class EditUserComponent implements OnChanges {
   public user: User = new User();
 
   public showPassword = false;
-
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
-  }
-
   public alertClosed: boolean = true;
   public alertType: string = "danger";
   public alertText: string = "";
@@ -125,4 +120,8 @@ export class EditUserComponent implements OnChanges {
         }
       )
     }
+
+  public togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 }
