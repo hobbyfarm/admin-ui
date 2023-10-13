@@ -40,14 +40,14 @@ export class UserComponent implements OnInit {
       .then(async (allowedGet: boolean) => {
         this.selectRbac = await this.rbacService.Grants('users', 'get');
         this.refresh();
-        this.userService.watch().subscribe((u: User[]) => {
+        this.userService.list().subscribe((u: User[]) => {
           this.users = u;
         });
       });
   }
 
   refresh(force?: boolean) {
-    this.userService.getUsers(force).subscribe(
+    this.userService.list('', force).subscribe(
       (u: User[]) => {
         this.users = u;
       },

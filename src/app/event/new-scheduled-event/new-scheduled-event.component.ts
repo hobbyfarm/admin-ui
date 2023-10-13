@@ -5,11 +5,16 @@ import {
   Output,
   EventEmitter,
   Input,
+  OnChanges,
+  ViewChildren,
+  QueryList,
+  AfterViewChecked,
 } from '@angular/core';
 import {
   ClrWizard,
   ClrSignpostContent,
   ClrDatagridSortOrder,
+  ClrWizardPage,
 } from '@clr/angular';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { Scenario } from 'src/app/data/scenario';
@@ -23,6 +28,7 @@ import {
   map,
   filter,
   defaultIfEmpty,
+  first,
 } from 'rxjs/operators';
 import { Environment } from 'src/app/data/environment';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
@@ -40,13 +46,17 @@ import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 import { RbacService } from 'src/app/data/rbac.service';
 import { of } from 'rxjs';
+import { VMTemplate } from 'src/app/data/vmtemplate';
+import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 
 @Component({
   selector: 'new-scheduled-event',
   templateUrl: './new-scheduled-event.component.html',
   styleUrls: ['./new-scheduled-event.component.scss'],
 })
-export class NewScheduledEventComponent implements OnInit {
+export class NewScheduledEventComponent
+  implements OnInit, OnChanges, AfterViewChecked
+{
   @Output()
   public updated: EventEmitter<boolean> = new EventEmitter(false);
 
@@ -55,6 +65,7 @@ export class NewScheduledEventComponent implements OnInit {
 
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
+  public uneditedScheduledEvent = new ScheduledEvent();
   public scenarios: Scenario[] = [];
   public filteredScenarios: Scenario[] = [];
   public filteredScenariosSelected: Scenario[] = [];
@@ -93,6 +104,9 @@ export class NewScheduledEventComponent implements OnInit {
   public maxUserCounts: {} = {};
   public invalidSimpleEnvironments: string[] = [];
 
+  public virtualMachineTemplateList: Map<string, string> = new Map();
+  public isEditMode = false;
+
   private onCloseFn: Function;
 
   constructor(
@@ -101,8 +115,37 @@ export class NewScheduledEventComponent implements OnInit {
     public cs: CourseService,
     public ses: ScheduledeventService,
     public es: EnvironmentService,
-    public rbacService: RbacService
-  ) {}
+    public rbacService: RbacService,
+    public vmTemplateService: VmtemplateService
+  ) {
+    this.rbacService
+      .Grants('virtualmachinetemplates', 'list')
+      .then((allowVMTemplateList: boolean) => {
+        if (!allowVMTemplateList) {
+          return;
+        }
+        vmTemplateService
+          .list()
+          .subscribe((list: VMTemplate[]) =>
+            list.forEach((v) =>
+              this.virtualMachineTemplateList.set(v.id, v.name)
+            )
+          );
+      });
+  }
+
+  ngAfterViewChecked(): void {
+    this.wizardPages.changes
+      .pipe(first())
+      .subscribe((wizardPages: QueryList<ClrWizardPage>) => {
+        if (this.wizardPages.length != 0) {
+          setTimeout(() => {
+            this.wizard.navService.goTo(this.wizard.pages.last, true);
+            this.wizard.pages.first.makeCurrent();
+          });
+        }
+      });
+  }
 
   public eventDetails: FormGroup = new FormGroup({
     event_name: new FormControl(this.se.event_name, [
@@ -200,6 +243,7 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   @ViewChild('wizard', { static: true }) wizard: ClrWizard;
+  @ViewChildren(ClrWizardPage) wizardPages: QueryList<ClrWizardPage>;
   @ViewChild('startTimeSignpost') startTimeSignpost: ClrSignpostContent;
   @ViewChild('endTimeSignpost') endTimeSignpost: ClrSignpostContent;
 
@@ -234,7 +278,7 @@ export class NewScheduledEventComponent implements OnInit {
     return Object.keys(this.keyedEnvironments.get(env).template_mapping);
   }
 
-  public setupVMSelection() {
+  setupVMSelection() {
     this.calculateRequiredVms();
     this.maxUserCount();
     // reset
@@ -298,6 +342,30 @@ export class NewScheduledEventComponent implements OnInit {
     this.vmCounts.addControl(ea.environment, newFormGroup);
   }
 
+  public checkIfSimplePageCanBeDone() {
+    let simpleUserCounts: {} = {};
+    for (let env in this.uneditedScheduledEvent.required_vms) {
+      const [template, count] = Object.entries(this.se.required_vms[env]).pop();
+      const userRatio = Math.ceil(count / this.requiredVmCounts[template]); // Calculate ratio of VMs, for example when 2 are needed but 4 are present 2 users could use them.
+      // if userRatio is not a true integer
+      if (userRatio * this.requiredVmCounts[template] != count) {
+        return false;
+      }
+      // Filter all entries that do not have the same userRatio
+      const list = Object.entries(this.se.required_vms[env]).filter(
+        (requiredCount) => requiredCount[1] / userRatio != count
+      );
+      // If not all entries have the same userRatio we can not use simple mode
+      if (list.length != Object.entries(this.se.required_vms[env]).length) {
+        return false;
+      }
+      simpleUserCounts[env] = userRatio;
+    }
+
+    this.simpleUserCounts = simpleUserCounts;
+    return true;
+  }
+
   public setupSimpleVMPage(ea: EnvironmentAvailability) {
     // go through each required VM (and its count) and verify that a) it exists in the selected environment and b) there is a minimum count that supports a single user
     // (otherwise don't list it)
@@ -310,7 +378,7 @@ export class NewScheduledEventComponent implements OnInit {
         ) {
           // this template either doesn't exist in the environment, or doesn't match a minimum count
           meetsCriteria = false;
-          if(!this.invalidSimpleEnvironments.includes(ea.environment)){
+          if (!this.invalidSimpleEnvironments.includes(ea.environment)) {
             this.invalidSimpleEnvironments.push(ea.environment);
           }
         }
@@ -337,7 +405,7 @@ export class NewScheduledEventComponent implements OnInit {
 
     if (this.simpleMode) {
       this.selectedEnvironments.forEach((env, i) => {
-        var users = this.simpleModeVmCounts.get(['envs', i]).value;
+        var users = this.simpleModeVmCounts.get(['envs', i])?.value ?? 0;
         this.simpleUserCounts[env.environment] = users;
         if (users == 0) {
           return;
@@ -466,9 +534,20 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   ngOnChanges() {
+    this.checkingEnvironments = true;
     if (this.event) {
+      this.isEditMode = true;
       this.simpleMode = false;
       this.se = this.event;
+      // TODO: structuredClone() is available as of typescript version 4.7 ... we should use it to clone objects in the future
+      // this.uneditedScheduledEvent = structuredClone(this.event);
+      this.uneditedScheduledEvent = JSON.parse(JSON.stringify(this.event));
+      this.uneditedScheduledEvent.start_time = new Date(
+        this.uneditedScheduledEvent.start_time
+      );
+      this.uneditedScheduledEvent.end_time = new Date(
+        this.uneditedScheduledEvent.end_time
+      );
       this.eventDetails.setValue({
         event_name: this.se.event_name,
         description: this.se.description,
@@ -481,21 +560,31 @@ export class NewScheduledEventComponent implements OnInit {
       // auto-select the environments
       this.se.scenarios = this.se.scenarios ?? [];
       this.updateScenarioSelection(this.se.scenarios);
-
       this.se.courses = this.se.courses ?? [];
       this.updateCourseSelection(this.se.courses);
+
+      //Test if simple mode can be done
+      this.calculateRequiredVms();
+      if (this.checkIfSimplePageCanBeDone()) {
+        this.simpleMode = true;
+      }
 
       this.rbacService
         .Grants('environments', 'list')
         .then((allowListEnvironments: boolean) => {
           if (allowListEnvironments) {
             this.checkEnvironments();
+          } else {
+            this.checkingEnvironments = false;
           }
+        })
+        .catch(() => {
+          this.checkingEnvironments = false;
         });
-
-      this.wizard.navService.goTo(this.wizard.pages.last, true);
-      this.wizard.pages.first.makeCurrent();
     } else {
+      // If we do not edit an existing environment but create a new one, we do not need to check environments
+      this.checkingEnvironments = false;
+      this.isEditMode = false;
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
     }
@@ -552,9 +641,6 @@ export class NewScheduledEventComponent implements OnInit {
         });
       }
     });
-    this.ses.watch().subscribe((se: ScheduledEvent[]) => {
-      this.scheduledEvents = se;
-    });
     this.ses.list().subscribe((se: ScheduledEvent[]) => {
       this.scheduledEvents = se;
     });
@@ -596,7 +682,6 @@ export class NewScheduledEventComponent implements OnInit {
   // for each environment, ask for available resources between start and end time
   // display those results
   public checkEnvironments() {
-    this.checkingEnvironments = true;
     this.noEnvironmentsAvailable = false;
     this.unavailableVMTs = [];
     var templates: Map<string, boolean> = new Map();
@@ -652,7 +737,6 @@ export class NewScheduledEventComponent implements OnInit {
       )
       .subscribe((ea: EnvironmentAvailability[]) => {
         this.availableEnvironments = ea;
-        this.checkingEnvironments = false;
         this.noEnvironmentsAvailable = ea.length == 0 ? true : false;
 
         ea.forEach((e) => {
@@ -687,6 +771,8 @@ export class NewScheduledEventComponent implements OnInit {
           // there exists fields filled in for vm counts - user probably went back in the form
           this._mapExistingEnvironments(Object.keys(this.vmCounts.controls));
         }
+        this.setupVMSelection();
+        this.checkingEnvironments = false;
       });
   }
 
@@ -830,6 +916,9 @@ export class NewScheduledEventComponent implements OnInit {
   }
 
   public close() {
+    // After close rollback courses and scenarios in se(se value caching on front)
+    this.se.courses = this.uneditedScheduledEvent.courses;
+    this.se.scenarios = this.uneditedScheduledEvent.scenarios;
     if (this.onCloseFn) {
       this.onCloseFn();
     }
@@ -899,5 +988,49 @@ export class NewScheduledEventComponent implements OnInit {
   }
   setScenarioList(values: Scenario[]) {
     this.filteredScenarios = values;
+  }
+
+  getVirtualMachineTemplateName(template: any) {
+    return this.virtualMachineTemplateList.get(template as string) ?? template;
+  }
+
+  getEnvironmentName(environment: any) {
+    const envList: Environment[] = this.environments.filter(
+      (env) => env.name == environment
+    );
+    if (envList.length == 0) return environment;
+    return envList.pop().display_name ?? environment;
+  }
+
+  updateFormValues() {
+    this.copyEventDetails();
+    this.copyVMCounts();
+  }
+
+  isStartDateAsEditedCheck() {
+    return this.uneditedScheduledEvent.start_time
+      ? this.se.start_time.getTime() !==
+          this.uneditedScheduledEvent.start_time.getTime()
+      : false;
+  }
+
+  isEndDateAsEditedCheck() {
+    return this.uneditedScheduledEvent.end_time
+      ? this.se.end_time.getTime() !==
+          this.uneditedScheduledEvent.end_time.getTime()
+      : false;
+  }
+
+  isScenarioInList(scenario: string, list?: string[]): boolean {
+    return list ? list.includes(scenario) : false;
+  }
+  isCourseInList(course: string, list?: string[]): boolean {
+    return list ? list.includes(course) : false;
+  }
+
+  getUneditedScheduledEventVMCount(environment: string, vmtemplate: string) {
+    return (
+      this.uneditedScheduledEvent.required_vms[environment]?.[vmtemplate] ?? 0
+    );
   }
 }

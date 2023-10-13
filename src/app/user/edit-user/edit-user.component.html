@@ -13,8 +13,12 @@
   <div class="clr-col">
     <form clrForm [formGroup]="userDetailsForm">
       <clr-input-container>
+        <label for="email">ID</label>
+        <input clrInput name="id" value="{{ this.user.id }}" disabled />
+      </clr-input-container>
+      <clr-input-container>
         <label for="email">Email</label>
-        <input clrInput id="email" name="email" formControlName="email" required />
+        <input clrInput name="email" formControlName="email" required />
         <clr-control-error *clrIfError="'required'"
           >Email is required</clr-control-error
         >
@@ -53,8 +57,8 @@
               status="info"
             ></cds-icon>
             <clr-control-helper
-            >Blank leaves password unchanged.</clr-control-helper
-          >
+              >Blank leaves password unchanged.</clr-control-helper
+            >
           </div>
         </div>
       </div>

@@ -1,74 +1,99 @@
 <div [clrLoading]="loading">
-    <clr-stack-view *ngIf="currentEnvironment; else noContent">
+  <clr-stack-view *ngIf="currentEnvironment; else noContent">
+    <clr-stack-block>
+      <clr-stack-label>Basic Information</clr-stack-label>
+      <clr-stack-block>
+        <clr-stack-label class="stackbox-header">Option</clr-stack-label>
+        <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block>
+        <clr-stack-label>DNS Suffix</clr-stack-label>
+        <clr-stack-content>{{
+          currentEnvironment.dnssuffix
+        }}</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block>
+        <clr-stack-label>Websocket Endpoint</clr-stack-label>
+        <clr-stack-content>{{
+          currentEnvironment.ws_endpoint
+        }}</clr-stack-content>
+      </clr-stack-block>
+    </clr-stack-block>
+    <clr-stack-block>
+      <clr-stack-label>Environment Specifics</clr-stack-label>
+      <clr-stack-block>
+        <clr-stack-label class="stackbox-header">Key</clr-stack-label>
+        <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block
+        *ngFor="let item of currentEnvironment.environment_specifics | keyvalue"
+      >
+        <clr-stack-label>{{ item.key }}</clr-stack-label>
+        <clr-stack-content>{{ item.value }}</clr-stack-content>
+      </clr-stack-block>
+    </clr-stack-block>
+    <clr-stack-block [(clrSbExpanded)]="templateMappingsExpanded">
+      <clr-stack-label>Template Mappings</clr-stack-label>
+      <clr-stack-content>
+        <button
+          class="btn btn-sm btn-link btn-link-stack"
+          (click)="expandAll($event)"
+        >
+          Expand All
+        </button>
+        <button
+          class="btn btn-sm btn-link btn-link-stack"
+          (click)="collapseAll($event)"
+        >
+          Collapse All
+        </button>
+      </clr-stack-content>
+      <clr-stack-block
+        *ngFor="
+          let template of currentEnvironment.template_mapping | keyvalue;
+          let i = index
+        "
+        [(clrSbExpanded)]="stackBoxExpanded[i]"
+      >
+        <clr-stack-label>{{
+          getVirtualMachineTemplateName(template.key)
+        }}</clr-stack-label>
+        (Limit: {{ getLimit(template.key) }})
         <clr-stack-block>
-            <clr-stack-label>Basic Information</clr-stack-label>
-            <clr-stack-block>
-                <clr-stack-label class="stackbox-header">Option</clr-stack-label>
-                <clr-stack-content class="stackbox-header">Value</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block>
-                <clr-stack-label>DNS Suffix</clr-stack-label>
-                <clr-stack-content>{{ currentEnvironment.dnssuffix }}</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block>
-                <clr-stack-label>Websocket Endpoint</clr-stack-label>
-                <clr-stack-content>{{ currentEnvironment.ws_endpoint }}</clr-stack-content>
-            </clr-stack-block>
+          <clr-stack-label class="stackbox-header">Key</clr-stack-label>
+          <clr-stack-content class="stackbox-header">Value</clr-stack-content>
         </clr-stack-block>
-        <clr-stack-block>
-            <clr-stack-label>Environment Specifics</clr-stack-label>
-            <clr-stack-block>
-                <clr-stack-label class="stackbox-header">Key</clr-stack-label>
-                <clr-stack-content class="stackbox-header">Value</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block *ngFor="let item of currentEnvironment.environment_specifics | keyvalue">
-                <clr-stack-label>{{ item.key }}</clr-stack-label>
-                <clr-stack-content>{{ item.value }}</clr-stack-content>
-            </clr-stack-block>
+        <clr-stack-block *ngFor="let item of template.value | keyvalue">
+          <clr-stack-label>{{ item.key }}</clr-stack-label>
+          <clr-stack-content>{{ item.value }}</clr-stack-content>
         </clr-stack-block>
-        <clr-stack-block [(clrSbExpanded)]="templateMappingsExpanded">
-            <clr-stack-label>Template Mappings</clr-stack-label>
-            <clr-stack-content>
-                <button class="btn btn-sm btn-link btn-link-stack" (click)="expandAll($event)">
-                    Expand All
-                </button>
-                <button class="btn btn-sm btn-link btn-link-stack" (click)="collapseAll($event)">
-                    Collapse All
-                </button>
-            </clr-stack-content>
-            <clr-stack-block *ngFor="let template of currentEnvironment.template_mapping | keyvalue; let i = index" [(clrSbExpanded)]="stackBoxExpanded[i]">
-                <clr-stack-label>{{ template.key }}</clr-stack-label>
-                (Limit: {{ getLimit(template.key) }})
-                <clr-stack-block>
-                    <clr-stack-label class="stackbox-header">Key</clr-stack-label>
-                    <clr-stack-content class="stackbox-header">Value</clr-stack-content>
-                </clr-stack-block>
-                <clr-stack-block *ngFor="let item of template.value | keyvalue">
-                    <clr-stack-label>{{ item.key }}</clr-stack-label>
-                    <clr-stack-content>{{ item.value }}</clr-stack-content>
-                </clr-stack-block>
-            </clr-stack-block>
-        </clr-stack-block>
-        <clr-stack-block *ngIf="currentEnvironment.ip_translation_map && !isEmpty(currentEnvironment.ip_translation_map)">
-            <clr-stack-label>IP Mappings</clr-stack-label>
-            <clr-stack-block>
-                <clr-stack-label class="stackbox-header">From</clr-stack-label>
-                <clr-stack-content class="stackbox-header">To</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block *ngFor="let item of currentEnvironment.ip_translation_map | keyvalue">
-                <clr-stack-label>{{ item.key }}</clr-stack-label>
-                <clr-stack-content>{{ item.value }}</clr-stack-content>
-            </clr-stack-block>
-        </clr-stack-block>
-    </clr-stack-view>
+      </clr-stack-block>
+    </clr-stack-block>
+    <clr-stack-block
+      *ngIf="
+        currentEnvironment.ip_translation_map &&
+        !isEmpty(currentEnvironment.ip_translation_map)
+      "
+    >
+      <clr-stack-label>IP Mappings</clr-stack-label>
+      <clr-stack-block>
+        <clr-stack-label class="stackbox-header">From</clr-stack-label>
+        <clr-stack-content class="stackbox-header">To</clr-stack-content>
+      </clr-stack-block>
+      <clr-stack-block
+        *ngFor="let item of currentEnvironment.ip_translation_map | keyvalue"
+      >
+        <clr-stack-label>{{ item.key }}</clr-stack-label>
+        <clr-stack-content>{{ item.value }}</clr-stack-content>
+      </clr-stack-block>
+    </clr-stack-block>
+  </clr-stack-view>
 
-    <ng-template #noContent>
-        <clr-alert [clrAlertType]="'warning'" [clrAlertClosable]="false">
-            <clr-alert-item>
-                <span class="alert-text">
-                    No content available!
-                </span>
-            </clr-alert-item>
-        </clr-alert>
-    </ng-template>
+  <ng-template #noContent>
+    <clr-alert [clrAlertType]="'warning'" [clrAlertClosable]="false">
+      <clr-alert-item>
+        <span class="alert-text"> No content available! </span>
+      </clr-alert-item>
+    </clr-alert>
+  </ng-template>
 </div>
