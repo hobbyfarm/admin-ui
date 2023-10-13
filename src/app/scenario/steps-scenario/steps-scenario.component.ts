@@ -13,8 +13,7 @@ export class StepsScenarioComponent {
   @Input()
   scenario: Scenario;
 
-  @Input()
-  wizardScenario: 'create' | 'edit';;
+
 
   public scenarioTainted: boolean = false;
   public editOpen: boolean = false;
@@ -57,7 +56,7 @@ export class StepsScenarioComponent {
 
   openEdit(s: Step, i: number) {
     this.editingSteps = <Step[]>deepCopy(this.scenario.steps);
-    if (this.editingSteps.length == 0 && this.wizardScenario == 'create') {
+    if (this.editingSteps.length == 0) {
       this.openNewStep();
       return;
     }
