@@ -95,6 +95,8 @@ import { TypedInputComponent } from './typed-form/typed-input.component';
 import { TypedInputFieldComponent } from './typed-form/typed-input-field.component';
 import { TypedSettingsService } from './data/typedSettings.service';
 import { OTACManagementComponent } from './event/otacmanagement/otacmanagement.component';
+import { CourseWizardComponent } from './course/course-wizard/course-wizard.component';
+import { CourseDetailsComponent } from './course/course-details/course-details.component';
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -130,6 +132,7 @@ export function jwtOptionsFactory() {
     EditEnvironmentComponent,
     ContentComponent,
     CourseComponent,
+    CourseDetailsComponent,
     NewCourseComponent,
     CourseFormComponent,
     AddScenarioComponent,
@@ -175,6 +178,7 @@ export function jwtOptionsFactory() {
     TypedInputFieldComponent,
     SettingsComponent,
     OTACManagementComponent,
+    CourseWizardComponent,
   ],
   imports: [
     BrowserModule,
