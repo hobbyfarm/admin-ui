@@ -139,7 +139,6 @@ export class ScenarioService {
 
     return this.http.post(environment.server + '/a/scenario/new', params).pipe(
       catchError((e: HttpErrorResponse) => {
-        console.log("I am the error, I am showing you my face")
         return throwError(e.error);
       }),
       map((s: ServerResponse) => {

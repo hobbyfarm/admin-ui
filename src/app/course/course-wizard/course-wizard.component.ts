@@ -93,7 +93,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log(this.scenarios);
     const authorizationRequests = Promise.all([
       this.rbacService.Grants('courses', 'get'),
       this.rbacService.Grants('courses', 'update'),
@@ -317,7 +316,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   createCourse() {
-    console.log(this.course);
     this.courseService.create(this.course).subscribe(
       (s: ServerResponse) => {
         this.alertText = 'Course created';
