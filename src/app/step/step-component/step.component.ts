@@ -215,7 +215,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private _loadUser() {
     this.userService
-      .getUserByID(this.session.user)
+      .get(this.session.user)
       .subscribe((user) => (this.username = user.email));
   }
 

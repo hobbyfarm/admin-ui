@@ -58,7 +58,7 @@ export class VmDashboardComponent implements OnInit {
     combineLatest([
       this.vmService.listByScheduledEvent(this.selectedEvent.id),
       this.vmSetService.getVMSetByScheduledEvent(this.selectedEvent.id),
-      this.userService.getUsers(),
+      this.userService.list(),
     ]).subscribe(([vmList, vmSet, users]) => {
       const userMap = new Map(users.map((u) => [u.id, u.email]));
       this.vms = vmList.map((vm) => ({
@@ -103,7 +103,7 @@ export class VmDashboardComponent implements OnInit {
   openUsersTerminal(vm: VirtualMachine) {
     if (!vm.user) return;
     var userId: string; //get the Users ID who has the VM allocated to him
-    this.userService.getUsers().subscribe((users) => {
+    this.userService.list().subscribe((users) => {
       userId = users.filter((user) => user.email === vm.user)[0]?.id;
     });
     if (!userId) return;

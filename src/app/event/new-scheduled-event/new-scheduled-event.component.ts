@@ -46,13 +46,17 @@ import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 import { RbacService } from 'src/app/data/rbac.service';
 import { of } from 'rxjs';
+import { VMTemplate } from 'src/app/data/vmtemplate';
+import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 
 @Component({
   selector: 'new-scheduled-event',
   templateUrl: './new-scheduled-event.component.html',
   styleUrls: ['./new-scheduled-event.component.scss'],
 })
-export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewChecked {
+export class NewScheduledEventComponent
+  implements OnInit, OnChanges, AfterViewChecked
+{
   @Output()
   public updated: EventEmitter<boolean> = new EventEmitter(false);
 
@@ -100,6 +104,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   public maxUserCounts: {} = {};
   public invalidSimpleEnvironments: string[] = [];
 
+  public virtualMachineTemplateList: Map<string, string> = new Map();
   public isEditMode = false;
 
   private onCloseFn: Function;
@@ -111,16 +116,35 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
     public ses: ScheduledeventService,
     public es: EnvironmentService,
     public rbacService: RbacService,
-  ) {}
+    public vmTemplateService: VmtemplateService
+  ) {
+    this.rbacService
+      .Grants('virtualmachinetemplates', 'list')
+      .then((allowVMTemplateList: boolean) => {
+        if (!allowVMTemplateList) {
+          return;
+        }
+        vmTemplateService
+          .list()
+          .subscribe((list: VMTemplate[]) =>
+            list.forEach((v) =>
+              this.virtualMachineTemplateList.set(v.id, v.name)
+            )
+          );
+      });
+  }
+
   ngAfterViewChecked(): void {
-    this.wizardPages.changes.pipe(first()).subscribe((wizardPages: QueryList<ClrWizardPage>) => {
-      if(this.wizardPages.length != 0) {
-        setTimeout(() => {
-          this.wizard.navService.goTo(this.wizard.pages.last, true);
-          this.wizard.pages.first.makeCurrent();
-        })
-      }
-    })
+    this.wizardPages.changes
+      .pipe(first())
+      .subscribe((wizardPages: QueryList<ClrWizardPage>) => {
+        if (this.wizardPages.length != 0) {
+          setTimeout(() => {
+            this.wizard.navService.goTo(this.wizard.pages.last, true);
+            this.wizard.pages.first.makeCurrent();
+          });
+        }
+      });
   }
 
   public eventDetails: FormGroup = new FormGroup({
@@ -318,6 +342,30 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
     this.vmCounts.addControl(ea.environment, newFormGroup);
   }
 
+  public checkIfSimplePageCanBeDone() {
+    let simpleUserCounts: {} = {};
+    for (let env in this.uneditedScheduledEvent.required_vms) {
+      const [template, count] = Object.entries(this.se.required_vms[env]).pop();
+      const userRatio = Math.ceil(count / this.requiredVmCounts[template]); // Calculate ratio of VMs, for example when 2 are needed but 4 are present 2 users could use them.
+      // if userRatio is not a true integer
+      if (userRatio * this.requiredVmCounts[template] != count) {
+        return false;
+      }
+      // Filter all entries that do not have the same userRatio
+      const list = Object.entries(this.se.required_vms[env]).filter(
+        (requiredCount) => requiredCount[1] / userRatio != count
+      );
+      // If not all entries have the same userRatio we can not use simple mode
+      if (list.length != Object.entries(this.se.required_vms[env]).length) {
+        return false;
+      }
+      simpleUserCounts[env] = userRatio;
+    }
+
+    this.simpleUserCounts = simpleUserCounts;
+    return true;
+  }
+
   public setupSimpleVMPage(ea: EnvironmentAvailability) {
     // go through each required VM (and its count) and verify that a) it exists in the selected environment and b) there is a minimum count that supports a single user
     // (otherwise don't list it)
@@ -330,7 +378,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
         ) {
           // this template either doesn't exist in the environment, or doesn't match a minimum count
           meetsCriteria = false;
-          if(!this.invalidSimpleEnvironments.includes(ea.environment)){
+          if (!this.invalidSimpleEnvironments.includes(ea.environment)) {
             this.invalidSimpleEnvironments.push(ea.environment);
           }
         }
@@ -357,7 +405,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
 
     if (this.simpleMode) {
       this.selectedEnvironments.forEach((env, i) => {
-        var users = this.simpleModeVmCounts.get(['envs', i]).value;
+        var users = this.simpleModeVmCounts.get(['envs', i])?.value ?? 0;
         this.simpleUserCounts[env.environment] = users;
         if (users == 0) {
           return;
@@ -493,9 +541,13 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
       this.se = this.event;
       // TODO: structuredClone() is available as of typescript version 4.7 ... we should use it to clone objects in the future
       // this.uneditedScheduledEvent = structuredClone(this.event);
-      this.uneditedScheduledEvent = JSON.parse(JSON.stringify(this.event))
-      this.uneditedScheduledEvent.start_time = new Date(this.uneditedScheduledEvent.start_time);
-      this.uneditedScheduledEvent.end_time = new Date(this.uneditedScheduledEvent.end_time);
+      this.uneditedScheduledEvent = JSON.parse(JSON.stringify(this.event));
+      this.uneditedScheduledEvent.start_time = new Date(
+        this.uneditedScheduledEvent.start_time
+      );
+      this.uneditedScheduledEvent.end_time = new Date(
+        this.uneditedScheduledEvent.end_time
+      );
       this.eventDetails.setValue({
         event_name: this.se.event_name,
         description: this.se.description,
@@ -511,6 +563,12 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
       this.se.courses = this.se.courses ?? [];
       this.updateCourseSelection(this.se.courses);
 
+      //Test if simple mode can be done
+      this.calculateRequiredVms();
+      if (this.checkIfSimplePageCanBeDone()) {
+        this.simpleMode = true;
+      }
+
       this.rbacService
         .Grants('environments', 'list')
         .then((allowListEnvironments: boolean) => {
@@ -519,17 +577,17 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
           } else {
             this.checkingEnvironments = false;
           }
-        }).catch(() => {
+        })
+        .catch(() => {
           this.checkingEnvironments = false;
         });
- 
     } else {
-      // If we do not edit an existing environment but create a new one, we do not need to check environments  
+      // If we do not edit an existing environment but create a new one, we do not need to check environments
       this.checkingEnvironments = false;
       this.isEditMode = false;
-      this.se = new ScheduledEvent();     
-      this.se.required_vms = {};         
-    }    
+      this.se = new ScheduledEvent();
+      this.se.required_vms = {};
+    }
   }
 
   public simpleUserTotal() {
@@ -546,9 +604,9 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
 
   ngOnInit() {
     if (this.event) {
-      // we have passed in an event for editing     
+      // we have passed in an event for editing
       this.se = this.event;
-    } else {      
+    } else {
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
     }
@@ -582,9 +640,6 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
           this.updateCourseSelection(this.se.courses ?? []);
         });
       }
-    });
-    this.ses.watch().subscribe((se: ScheduledEvent[]) => {
-      this.scheduledEvents = se;
     });
     this.ses.list().subscribe((se: ScheduledEvent[]) => {
       this.scheduledEvents = se;
@@ -790,7 +845,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   }
 
   public quickStartTime() {
-    this.se.start_time = new Date();    
+    this.se.start_time = new Date();
   }
 
   public quickEndTime() {
@@ -833,7 +888,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
 
   public setStartTime(d: DlDateTimePickerChange<Date>) {
     this.se.start_time = d.value;
-    this.startTimeSignpost.close(); 
+    this.startTimeSignpost.close();
   }
 
   public setEndTime(d: DlDateTimePickerChange<Date>) {
@@ -861,7 +916,7 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   }
 
   public close() {
-    // After close rollback courses and scenarios in se(se value caching on front) 
+    // After close rollback courses and scenarios in se(se value caching on front)
     this.se.courses = this.uneditedScheduledEvent.courses;
     this.se.scenarios = this.uneditedScheduledEvent.scenarios;
     if (this.onCloseFn) {
@@ -935,17 +990,35 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
     this.filteredScenarios = values;
   }
 
+  getVirtualMachineTemplateName(template: any) {
+    return this.virtualMachineTemplateList.get(template as string) ?? template;
+  }
+
+  getEnvironmentName(environment: any) {
+    const envList: Environment[] = this.environments.filter(
+      (env) => env.name == environment
+    );
+    if (envList.length == 0) return environment;
+    return envList.pop().display_name ?? environment;
+  }
+
   updateFormValues() {
     this.copyEventDetails();
     this.copyVMCounts();
   }
 
   isStartDateAsEditedCheck() {
-    return this.uneditedScheduledEvent.start_time ? this.se.start_time.getTime() !== this.uneditedScheduledEvent.start_time.getTime() : false;
+    return this.uneditedScheduledEvent.start_time
+      ? this.se.start_time.getTime() !==
+          this.uneditedScheduledEvent.start_time.getTime()
+      : false;
   }
 
   isEndDateAsEditedCheck() {
-    return this.uneditedScheduledEvent.end_time ? this.se.end_time.getTime() !== this.uneditedScheduledEvent.end_time.getTime() : false;
+    return this.uneditedScheduledEvent.end_time
+      ? this.se.end_time.getTime() !==
+          this.uneditedScheduledEvent.end_time.getTime()
+      : false;
   }
 
   isScenarioInList(scenario: string, list?: string[]): boolean {
@@ -953,5 +1026,11 @@ export class NewScheduledEventComponent implements OnInit, OnChanges, AfterViewC
   }
   isCourseInList(course: string, list?: string[]): boolean {
     return list ? list.includes(course) : false;
+  }
+
+  getUneditedScheduledEventVMCount(environment: string, vmtemplate: string) {
+    return (
+      this.uneditedScheduledEvent.required_vms[environment]?.[vmtemplate] ?? 0
+    );
   }
 }
