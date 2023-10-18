@@ -792,6 +792,7 @@ export class NewScheduledEventComponent
   }
 
   private _mapExistingEnvironments(envs: string[]) {
+    this.selectedEnvironments = [];
     envs.forEach((eid: string) => {
       this.availableEnvironments.forEach((ea: EnvironmentAvailability) => {
         if (ea.environment == eid) {
@@ -1021,8 +1022,7 @@ export class NewScheduledEventComponent
 
   updateFormValues() {
     this.copyEventDetails();
-    this.setupVMSelection();
-    this.copyVMCounts();
+    this.copyVMCounts(); 
   }
 
   isStartDateAsEditedCheck() {
