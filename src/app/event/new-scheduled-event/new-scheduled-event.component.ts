@@ -188,6 +188,29 @@ export class NewScheduledEventComponent
     this.se.printable = this.eventDetails.get('printable').value;
   }
 
+  /**
+   * If we close our new-scheduled-event modal,
+   * we need to reset the values that were changed on our referenced input object.
+   * We are operating on "this.se" because it was initially assigned to "this.event" in ngOnChanges().
+   * This way we don't need to reload the datagrid after modifications. 
+   */
+  private resetEventDetails() {
+    this.se.event_name = this.uneditedScheduledEvent.event_name;
+    this.se.description = this.uneditedScheduledEvent.description;
+    this.se.on_demand = this.uneditedScheduledEvent.on_demand;
+    this.se.disable_restriction = this.uneditedScheduledEvent.disable_restriction;
+    this.se.courses = this.uneditedScheduledEvent.courses;
+    this.se.scenarios = this.uneditedScheduledEvent.scenarios;
+    this.se.start_time = new Date(
+      this.uneditedScheduledEvent.start_time
+    );
+    this.se.end_time = new Date(
+      this.uneditedScheduledEvent.end_time
+    );
+    this.se.required_vms = this.uneditedScheduledEvent.required_vms;
+    this.se.vmsets = this.uneditedScheduledEvent.vmsets;
+  }
+
   private validateNonZeroFormControl(): ValidatorFn {
     return (control: AbstractControl) => {
       const formArray = control as FormArray;
@@ -603,14 +626,6 @@ export class NewScheduledEventComponent
   }
 
   ngOnInit() {
-    if (this.event) {
-      // we have passed in an event for editing
-      this.se = this.event;
-    } else {
-      this.se = new ScheduledEvent();
-      this.se.required_vms = {};
-    }
-
     const authorizationRequests = Promise.all([
       this.rbacService.Grants('scenarios', 'list'),
       this.rbacService.Grants('courses', 'list'),
@@ -777,6 +792,7 @@ export class NewScheduledEventComponent
   }
 
   private _mapExistingEnvironments(envs: string[]) {
+    this.selectedEnvironments = [];
     envs.forEach((eid: string) => {
       this.availableEnvironments.forEach((ea: EnvironmentAvailability) => {
         if (ea.environment == eid) {
@@ -916,9 +932,11 @@ export class NewScheduledEventComponent
   }
 
   public close() {
-    // After close rollback courses and scenarios in se(se value caching on front)
-    this.se.courses = this.uneditedScheduledEvent.courses;
-    this.se.scenarios = this.uneditedScheduledEvent.scenarios;
+    if(!this.saving) {
+      this.resetEventDetails();
+    } else {
+      this.saving = false;
+    }
     if (this.onCloseFn) {
       this.onCloseFn();
     }
@@ -1004,7 +1022,7 @@ export class NewScheduledEventComponent
 
   updateFormValues() {
     this.copyEventDetails();
-    this.copyVMCounts();
+    this.copyVMCounts(); 
   }
 
   isStartDateAsEditedCheck() {
