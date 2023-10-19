@@ -372,14 +372,14 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     (this.templateMappings.get('templates') as FormArray).removeAt(index);
   }
 
-  public getTeplateCount(vmt: string) {
+  public getTemplateCount(vmt: string) {
     if (!this.env.count_capacity) {
       return 0;
     }
     return this.env.count_capacity[vmt] ?? 0;
   }
 
-  public getTeplateUnEditEnvCount(vmt: string){
+  public getTemplateUnEditEnvCount(vmt: string){
     if(!this.uneditedEnv.count_capacity){
       return 0;
     }
@@ -471,8 +471,14 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   isSpecificsInList(scenario: string, list?: string[]): boolean {
     return list ? list.includes(scenario) : false;
   }
-  
+
   getVirtualMachineTemplateName(template: any) {
     return this.virtualMachineTemplateList.get(template as string) ?? template;
+  }
+
+  isVMTemplateInUneditedEnv(template: string) {
+    return (
+      this.uneditedEnv.template_mapping.hasOwnProperty(template)
+    );
   }
 }
