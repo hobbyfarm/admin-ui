@@ -388,18 +388,21 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of env.environment_specifics | keyvalue">         
-          <td *ngIf="!uneditedEnv.environment_specifics.hasOwnProperty(item.key)" class="add-elem">{{ item.key }}</td>
+          <!-- view of unedit value -->
           <td *ngIf="uneditedEnv.environment_specifics.hasOwnProperty(item.key)">{{ item.key }}</td>
-          <td *ngIf="item.value == uneditedEnv.environment_specifics[item.key]">{{ item.value }}</td>          
-          <td *ngIf="item.value != uneditedEnv.environment_specifics[item.key]">
-            <span class="del-elem">{{ uneditedEnv.environment_specifics[item.key] }}</span > 
+          <td *ngIf="item.value == uneditedEnv.environment_specifics[item.key]">{{ item.value }}</td>  
+          <!-- view of new key -->
+          <td *ngIf="!uneditedEnv.environment_specifics.hasOwnProperty(item.key)" class="add-elem">{{ item.key }}</td>
+          <td *ngIf="!uneditedEnv.environment_specifics.hasOwnProperty(item.key)" class="add-elem">{{ item.value }}</td> 
+          <!-- view of edit value -->
+          <td *ngIf="uneditedEnv.environment_specifics.hasOwnProperty(item.key) && item.value != uneditedEnv.environment_specifics[item.key]">
+            <span class="del-elem arrow-after">{{ uneditedEnv.environment_specifics[item.key] }}</span > 
             <span class="add-elem">{{ item.value }}</span > 
           </td>
         </tr>
+        <!-- view deleted key -->
         <tr *ngFor="let item of uneditedEnv.environment_specifics | keyvalue">
-          <td *ngIf="!env.environment_specifics.hasOwnProperty(item.key)" class="del-elem">
-            {{ item.key }}            
-          </td>       
+          <td *ngIf="!env.environment_specifics.hasOwnProperty(item.key)" class="del-elem">{{ item.key }}</td>       
           <td *ngIf="!env.environment_specifics.hasOwnProperty(item.key)" class="del-elem">{{ item.value }}</td >   
         </tr>
       </tbody>
@@ -416,8 +419,13 @@
       </thead>
       <tbody>
         <tr *ngFor="let template of env.template_mapping | keyvalue">
-          <td>{{ template.key }}</td>
-          <td>{{ getTeplateCount(template.key) }}</td>
+          <td>{{ template.key }} </td>
+          <!-- <td>{{ getTeplateCount(template.key) }} </td> -->
+          <td *ngIf="getTeplateCount(template.key) == getTeplateUnEditEnvCount(template.key)"> {{ getTeplateCount(template.key) }} </td>
+          <td *ngIf="getTeplateCount(template.key) != getTeplateUnEditEnvCount(template.key)">
+            <span class="del-elem arrow-after">{{ getTeplateUnEditEnvCount(template.key) }}</span > 
+            <span class="add-elem">{{ getTeplateCount(template.key) }}</span >
+          </td>  
           <td>
             <table class="table table-compact">
               <thead>
@@ -427,9 +435,27 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of template.value | keyvalue">
+                <!-- <tr *ngFor="let item of template.value | keyvalue">
                   <td>{{ item.key }}</td>
                   <td>{{ item.value }}</td>
+                </tr> -->
+                <tr *ngFor="let item of template.value | keyvalue">         
+                  <!-- view of unedit value -->
+                  <td *ngIf="uneditedEnv.template_mapping[template.key].hasOwnProperty(item.key)">{{ item.key }}</td>
+                  <td *ngIf="item.value == uneditedEnv.template_mapping[template.key][item.key]">{{ item.value }}</td>  
+                  <!-- view of new key -->
+                  <td *ngIf="!uneditedEnv.template_mapping[template.key].hasOwnProperty(item.key)" class="add-elem">{{ item.key }}</td>
+                  <td *ngIf="!uneditedEnv.template_mapping[template.key].hasOwnProperty(item.key)" class="add-elem">{{ item.value }}</td> 
+                  <!-- view of edit value -->
+                  <td *ngIf="uneditedEnv.template_mapping[template.key].hasOwnProperty(item.key) && item.value != uneditedEnv.template_mapping[template.key][item.key]">
+                    <span class="del-elem arrow-after">{{ uneditedEnv.template_mapping[template.key][item.key] }}</span > 
+                    <span class="add-elem">{{ item.value }}</span > 
+                  </td>
+                </tr>
+                <!-- view deleted key -->
+                <tr *ngFor="let item of uneditedEnv.template_mapping[template.key] | keyvalue">
+                  <td *ngIf="!env.template_mapping[template.key].hasOwnProperty(item.key)" class="del-elem">{{ item.key }}</td>       
+                  <td *ngIf="!env.template_mapping[template.key].hasOwnProperty(item.key)" class="del-elem">{{ item.value }}</td >   
                 </tr>
               </tbody>
             </table>
@@ -447,9 +473,27 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of env.ip_translation_map | keyvalue">
+        <!-- <tr *ngFor="let item of env.ip_translation_map | keyvalue">
           <td>{{ item.key }}</td>
           <td>{{ item.value }}</td>
+        </tr> -->
+        <tr *ngFor="let item of env.ip_translation_map | keyvalue">         
+          <!-- view of unedit value -->
+          <td *ngIf="uneditedEnv.ip_translation_map.hasOwnProperty(item.key)">{{ item.key }}</td>
+          <td *ngIf="item.value == uneditedEnv.ip_translation_map[item.key]">{{ item.value }}</td>  
+          <!-- view of new key -->
+          <td *ngIf="!uneditedEnv.ip_translation_map.hasOwnProperty(item.key)" class="add-elem">{{ item.key }}</td>
+          <td *ngIf="!uneditedEnv.ip_translation_map.hasOwnProperty(item.key)" class="add-elem">{{ item.value }}</td> 
+          <!-- view of edit value -->
+          <td *ngIf="uneditedEnv.ip_translation_map.hasOwnProperty(item.key) && item.value != uneditedEnv.ip_translation_map[item.key]">
+            <span class="del-elem arrow-after">{{ uneditedEnv.ip_translation_map[item.key] }}</span > 
+            <span class="add-elem">{{ item.value }}</span > 
+          </td>
+        </tr>
+        <!-- view deleted key -->
+        <tr *ngFor="let item of uneditedEnv.ip_translation_map | keyvalue">
+          <td *ngIf="!env.ip_translation_map.hasOwnProperty(item.key)" class="del-elem">{{ item.key }}</td>       
+          <td *ngIf="!env.ip_translation_map.hasOwnProperty(item.key)" class="del-elem">{{ item.value }}</td >   
         </tr>
       </tbody>
     </table>

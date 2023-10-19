@@ -297,6 +297,13 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     return this.env.count_capacity[vmt] ?? 0
   }
 
+  public getTeplateUnEditEnvCount(vmt: string){
+    if(!this.uneditedEnv.count_capacity){
+      return 0;
+    }
+    return this.uneditedEnv.count_capacity[vmt] ?? 0
+  }
+
   public copyTemplateMapping() {
     this.env.template_mapping = {};
     this.env.count_capacity = {};
