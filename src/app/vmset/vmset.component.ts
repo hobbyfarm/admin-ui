@@ -59,4 +59,9 @@ export class VmsetComponent implements OnInit {
     this.vms.splice(i, 1);
     this.vmsChange.emit(this.vms);
   }
+
+  resetVmSet(){
+    this.vms = [];
+    this.vmsChange.emit(this.vms);
+  }
 }
