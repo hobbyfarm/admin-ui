@@ -1,4 +1,7 @@
-<clr-wizard #wizard clrWizardSize="xl" (clrWizardOnFinish)="saveEnvironment()">
+<clr-wizard #wizard clrWizardSize="xl" 
+(clrWizardOnFinish)="saveEnvironment()"
+(clrWizardOnCancel)="close()"
+>
   <clr-wizard-title>Edit Environment</clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
@@ -8,7 +11,7 @@
 
   <clr-wizard-page
     [clrWizardPageNextDisabled]="!environmentDetails.valid"
-    (clrWizardPageNext)="copyEnvironmentDetails()"
+    (clrWizardPageNext)="copyEnvironmentDetails()"    
   >
     <ng-template clrPageTitle>Basic Information</ng-template>
 

@@ -286,6 +286,11 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this.wizard.open();
   }
 
+  public close(){
+    // when close/cancel clean env
+    this.updateEnv = null;
+  }
+
   public copyEnvironmentDetails() {
     this.env.display_name = this.environmentDetails.get('display_name').value;
     this.env.dnssuffix = this.environmentDetails.get('dnssuffix').value;
