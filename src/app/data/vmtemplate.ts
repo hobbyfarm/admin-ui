@@ -2,5 +2,5 @@ export class VMTemplate {
     id: string;
     name: string;
     image: string;
-    config_map: any;
+    config_map: Record<string, string>;
 }
