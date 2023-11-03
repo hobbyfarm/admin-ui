@@ -88,7 +88,6 @@
             <tbody>
                 <tr>
                     <td>Name</td>
-                    <!-- <td>{{ template.name }}</td>                     -->
                     <td *ngIf="template.name == uneditedTemplate.name">{{ template.name }}</td>
                     <td *ngIf="template.name != uneditedTemplate.name">
                       <span class="del-elem arrow-after">{{ uneditedTemplate.name }}</span > 
@@ -97,8 +96,6 @@
                 </tr>
                 <tr>
                     <td>Image</td>
-                    <!-- <td>{{ template.image }}</td>
-                    <td>{{ uneditedTemplate.image }}</td> -->
                     <td *ngIf="template.image == uneditedTemplate.image">{{ template.image }}</td>
                     <td *ngIf="template.image != uneditedTemplate.image">
                       <span class="del-elem arrow-after">{{ uneditedTemplate.image }}</span > 
@@ -132,7 +129,7 @@
                         </td>
                     </ng-container>
                     <ng-container *ngIf="item.key === vmServiceKey">
-                        <td>{{ item.key }}</td>
+                        <td>{{ item.key }}</td>                        
                         <td>
                             <table class="table table-compact">
                                 <th>Name</th>
@@ -140,7 +137,7 @@
                                 <th>Tab</th>
                                 <tbody>
                                     <tr *ngFor="let interface of cloudConfig.vmServices | keyvalue">
-                                        <td>{{ interface.value.name }}</td>
+                                        <td>{{ interface.value.name }}</td>                                     
                                         <td>
                                             {{ interface.value.hasWebinterface ? interface.value.port : "-" }}
                                         </td>
@@ -151,8 +148,6 @@
                         </td>
                     </ng-container>
                     <ng-container *ngIf="item.key !== cloudConfigKey && item.key !== vmServiceKey">
-                        <!-- <td>{{ item.key }}</td>
-                        <td>{{ item.value }}</td> -->
                          <!-- view of unedit value -->
                         <td *ngIf="uneditedTemplate.config_map.hasOwnProperty(item.key)">{{ item.key }}</td>
                         <td *ngIf="item.value == uneditedTemplate.config_map[item.key]">{{ item.value }}</td>  

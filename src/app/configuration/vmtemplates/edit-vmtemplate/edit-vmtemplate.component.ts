@@ -23,7 +23,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public cloudConfigKey: string = 'cloud-config'
   public vmServiceKey: string = 'webinterfaces'
   public cloudConfig: CloudInitConfig = new CloudInitConfig();   
-
+  
   @Input()
   public editTemplate: VMTemplate;  
 
