@@ -296,7 +296,8 @@
       </clr-datagrid>
     </ng-container>
   </clr-wizard-page>
-  <clr-wizard-page>
+  <clr-wizard-page 
+    (clrWizardPageOnLoad)="updateFinalPageWizard()" >
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>Confirm the following details before finishing</p>
     <h4>Course</h4>
@@ -310,22 +311,83 @@
       <tbody>
         <tr>
           <td>Name</td>
-          <td>
-            {{ wizardCourse == "create" ? course.name : selectedCourse.name }}
-          </td>
+          
+            <!-- <td> {{ wizardCourse == "create" ? course.name : selectedCourse.name }} </td>-->
+            <ng-container *ngIf="wizardCourse == 'create'">
+              <td>{{course.name}} </td>
+            </ng-container>
+            <ng-container *ngIf="wizardCourse == 'edit'">            
+              <td *ngIf="selectedCourse.name == editSelectedCourse.name">
+                {{ selectedCourse.name }}
+              </td>
+              <td *ngIf="selectedCourse.name != editSelectedCourse.name">
+                <span class="del-elem">{{
+                  selectedCourse.name
+                }}</span>
+                <clr-icon shape="arrow" dir="right"></clr-icon>
+               <span class="add-elem">{{ editSelectedCourse.name }}</span>
+               </td>
+            </ng-container>  
+          
         </tr>
 
         <tr>
           <td>Description</td>
-          <td>  {{ wizardCourse == "create" ? course.description : selectedCourse.description }}</td>
+          <!-- <td>  {{ wizardCourse == "create" ? course.description : selectedCourse.description }} </td> -->
+          <ng-container *ngIf="wizardCourse == 'create'">
+            <td>{{course.description}} </td>
+          </ng-container>
+          <ng-container *ngIf="wizardCourse == 'edit'">            
+            <td *ngIf="selectedCourse.description == editSelectedCourse.description">
+              {{ selectedCourse.description }}
+            </td>
+            <td *ngIf="selectedCourse.description != editSelectedCourse.description">
+              <span class="del-elem">{{
+                selectedCourse.description
+              }}</span>
+              <clr-icon shape="arrow" dir="right"></clr-icon>
+             <span class="add-elem">{{ editSelectedCourse.description }}</span>
+             </td>
+          </ng-container>  
+         
         </tr>
         <tr>
           <td>Keepalive Duration</td>
-          <td>{{ wizardCourse == "create" ? course.keepalive_duration : selectedCourse.keepalive_duration }}</td>
+          <!-- <td>{{ wizardCourse == "create" ? course.keepalive_duration : selectedCourse.keepalive_duration }}</td> -->
+          <ng-container *ngIf="wizardCourse == 'create'">
+            <td>{{course.keepalive_duration}} </td>
+          </ng-container>
+          <ng-container *ngIf="wizardCourse == 'edit'">            
+            <td *ngIf="selectedCourse.keepalive_duration == editSelectedCourse.keepalive_duration">
+              {{ selectedCourse.keepalive_duration }}
+            </td>
+            <td *ngIf="selectedCourse.keepalive_duration != editSelectedCourse.keepalive_duration">
+              <span class="del-elem">{{
+                selectedCourse.keepalive_duration
+              }}</span>
+              <clr-icon shape="arrow" dir="right"></clr-icon>
+             <span class="add-elem">{{ editSelectedCourse.keepalive_duration }}</span>
+             </td>
+          </ng-container>  
         </tr>
         <tr>
           <td>Pause Duration</td>
-          <td>{{ wizardCourse == "create" ? course.pause_duration : selectedCourse.pause_duration }}</td>
+          <!-- <td>{{ wizardCourse == "create" ? course.pause_duration : selectedCourse.pause_duration }}</td> -->
+          <ng-container *ngIf="wizardCourse == 'create'">
+            <td>{{course.pause_duration}} </td>
+          </ng-container>
+          <ng-container *ngIf="wizardCourse == 'edit'">            
+            <td *ngIf="selectedCourse.pause_duration == editSelectedCourse.pause_duration">
+              {{ selectedCourse.pause_duration }}
+            </td>
+            <td *ngIf="selectedCourse.pause_duration != editSelectedCourse.pause_duration">
+              <span class="del-elem">{{
+                selectedCourse.pause_duration
+              }}</span>
+              <clr-icon shape="arrow" dir="right"></clr-icon>
+             <span class="add-elem">{{ editSelectedCourse.pause_duration }}</span>
+             </td>
+          </ng-container>  
         </tr>
         <tr>
           <td>Virtual Machines</td>

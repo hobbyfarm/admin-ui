@@ -30,7 +30,7 @@ import { cloneDeep } from 'lodash-es';
 export class CourseWizardComponent implements OnChanges, OnInit {
   public course: Course = new Course();
   public selectedCourse: Course = new Course();
-
+  public editSelectedCourse: Course = new Course();
   @Input()
   public updateRbac: boolean;
 
@@ -303,8 +303,12 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     }
   }
   whenFinish() {
+
     if (this.wizardCourse == 'create') this.createCourse();
-    if (this.wizardCourse == 'edit') this.updateCourse();
+    if (this.wizardCourse == 'edit') { 
+      this.updateCourseWizard();
+      this.updateCourse();
+    }
     this.courseForm.resetFormToRenew();
     this.virtualMachine.resetVmSet();
     this.dragScenarios = [];
@@ -342,5 +346,21 @@ export class CourseWizardComponent implements OnChanges, OnInit {
         this.isAlert = true;
       }
     );
+  }
+  updateFinalPageWizard() {    
+    if (this.wizardCourse == 'edit'){
+    this.editSelectedCourse.name = this.form.get('course_name').value;
+    this.editSelectedCourse.description = this.form.get('course_description').value;
+    this.editSelectedCourse.keepalive_duration =
+      this.form.get('keepalive_amount').value +
+      this.form.get('keepalive_unit').value;
+    this.editSelectedCourse.pause_duration =
+      this.form.get('pause_duration').value + 'h';
+    this.editSelectedCourse.pauseable = this.form.get('pauseable').value;
+    this.editSelectedCourse.keep_vm = this.form.get('keep_vm').value;
+    this.editSelectedCourse.categories = this.editCategories;
+    this.editSelectedCourse.scenarios = this.dragScenarios;
+    this.editSelectedCourse.virtualmachines = this.editVirtualMachines;
+  }
   }
 }
