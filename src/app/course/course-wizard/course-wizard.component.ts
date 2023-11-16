@@ -21,7 +21,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { AddScenarioComponent } from '../add-scenario/add-scenario.component';
 import { cloneDeep } from 'lodash-es';
-
+import { Environment } from 'src/app/data/environment';
 @Component({
   selector: 'wizard-course',
   templateUrl: './course-wizard.component.html',
@@ -186,7 +186,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   saveCourseWizard() {
     if (this.wizardCourse == 'create') this.newCourseWizard();
   }
-  
+
   setCourseValues(course: Course) {
     course.name = this.form.get('course_name').value;
     course.description = this.form.get('course_description').value;
@@ -210,6 +210,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     if (this.wizardCourse == 'edit'){
       this.setCourseValues(this.editSelectedCourse)    
   }
+  console.log(this.editSelectedCourse.virtualmachines)
   }
 
   setVM(vms: {}[]) {
@@ -226,7 +227,8 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   deleteScenario(i: number) {
-    this.dragScenarios.splice(i, 1);
+    this.selectedCourse.scenarios.splice(i, 1);
+   // this.dragScenarios.splice(i, 1);
     this.setModified();
   }
 
@@ -344,4 +346,26 @@ export class CourseWizardComponent implements OnChanges, OnInit {
       }
     );
   } 
+
+  // getVirtualMachineTemplateName(template: any) {
+  //   return this.virtualMachine[template as string] ?? template;
+  // }
+
+  // getEnvironmentName(environment: any) {
+  //   const envList: Environment[] = this.environments.filter(
+  //     (env) => env.name == environment
+  //   );
+  //   if (envList.length == 0) return environment;
+  //   return envList.pop().display_name ?? environment;
+  // }
+  getUneditedScheduledEventVMCount(index: any, vmname: any) {
+    const selectedCourseVMs = new Map(Object.entries(JSON.parse(JSON.stringify( this.selectedCourse.virtualmachines[index]))))
+    return selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname) : 0;   
+  }
+  showVM(vms: any) {  
+    return new Map(Object.entries(JSON.parse(JSON.stringify(vms) )))
+  }
+  isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {
+    return list.some(item => item.name === scenario.name);
+  }
 }

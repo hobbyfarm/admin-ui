@@ -389,16 +389,34 @@
              </td>
           </ng-container>  
         </tr>
-        <tr>
+        <!-- <tr>
           <td>Virtual Machines</td>
           <td>{{ editVirtualMachines.length }}</td>
-        </tr>
+        </tr> -->
         <tr>
           <td>Scenario</td>
           <td>
-            <span class="label" *ngFor="let scenario of dragScenarios"
+            <!-- <span class="label" *ngFor="let scenario of dragScenarios"
               >{{ scenario.name }}
-            </span>
+            </span> -->
+
+            <ng-container *ngFor="let s of selectedCourse.scenarios">
+              <span class="label" *ngIf="isScenarioInList(s, editSelectedCourse.scenarios)">{{
+                s.name
+              }}</span>
+              <span
+                class="label del-elem"
+                *ngIf="!isScenarioInList(s, editSelectedCourse.scenarios)"
+                >{{ s.name }}<clr-icon shape="trash"></clr-icon
+              ></span>
+            </ng-container>
+            <ng-container *ngFor="let s of editSelectedCourse.scenarios">
+              <span
+                class="label add-elem"
+                *ngIf="!isScenarioInList(s, selectedCourse.scenarios)"
+                >{{ s.name }} <clr-icon shape="plus"></clr-icon
+              ></span>
+            </ng-container>
           </td>
         </tr>
         <tr>
@@ -418,6 +436,43 @@
         </tr>
       </tbody>
     </table>
+    <h4>VM Information</h4>
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>VM Name</th>
+            <th>VM Template</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let i of editSelectedCourse.virtualmachines | keyvalue">
+          
+              <tr *ngFor="let q of showVM(i.value) | keyvalue">
+                <td>{{ q.key }}</td> 
+                <td> 
+                  <span
+                  *ngIf="
+                    getUneditedScheduledEventVMCount(i.key, q.key) == q.value
+                  "
+                >
+                  <span > {{ q.value }}</span>
+               
+                <span
+                  *ngIf="
+                    getUneditedScheduledEventVMCount(i.key, q.key) != q.value
+                  "
+                >
+                  <span class=" badge-danger" style="margin-right: 0">
+                    {{ getUneditedScheduledEventVMCount(i.key, q.key) }}</span
+                  ><clr-icon shape="arrow" dir="right"></clr-icon>
+                  <span class=" badge-success"> {{ q.value }}</span>
+                  </span>
+                </span> 
+              </td>          
+            </tr>  
+         </ng-container>
+        </tbody>
+      </table>
   </clr-wizard-page>
 </clr-wizard>
 <add-scenario
