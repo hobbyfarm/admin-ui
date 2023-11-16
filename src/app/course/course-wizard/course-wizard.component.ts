@@ -185,34 +185,31 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   saveCourseWizard() {
     if (this.wizardCourse == 'create') this.newCourseWizard();
-    if (this.wizardCourse == 'edit') this.updateCourseWizard();
+  }
+  
+  setCourseValues(course: Course) {
+    course.name = this.form.get('course_name').value;
+    course.description = this.form.get('course_description').value;
+    course.keepalive_duration =
+      this.form.get('keepalive_amount').value +
+      this.form.get('keepalive_unit').value;
+    course.pause_duration = this.form.get('pause_duration').value + 'h';
+    course.pauseable = this.form.get('pauseable').value;
+    course.keep_vm = this.form.get('keep_vm').value;
+    course.virtualmachines = this.editVirtualMachines;
+    course.scenarios = this.dragScenarios;
+    course.categories = this.editCategories;
   }
   newCourseWizard() {
-    this.course.name = this.form.get('course_name').value;
-    this.course.description = this.form.get('course_description').value;
-    this.course.keepalive_duration =
-      this.form.get('keepalive_amount').value +
-      this.form.get('keepalive_unit').value;
-    this.course.pause_duration = this.form.get('pause_duration').value + 'h';
-    this.course.pauseable = this.form.get('pauseable').value;
-    this.course.keep_vm = this.form.get('keep_vm').value;
-    this.course.virtualmachines = this.editVirtualMachines;
-    this.course.scenarios = this.dragScenarios;
-    this.course.categories = this.editCategories;
+    this.setCourseValues(this.course)   
   }
   updateCourseWizard() {
-    this.selectedCourse.name = this.form.get('course_name').value;
-    this.selectedCourse.description = this.form.get('course_description').value;
-    this.selectedCourse.keepalive_duration =
-      this.form.get('keepalive_amount').value +
-      this.form.get('keepalive_unit').value;
-    this.selectedCourse.pause_duration =
-      this.form.get('pause_duration').value + 'h';
-    this.selectedCourse.pauseable = this.form.get('pauseable').value;
-    this.selectedCourse.keep_vm = this.form.get('keep_vm').value;
-    this.selectedCourse.categories = this.editCategories;
-    this.selectedCourse.scenarios = this.dragScenarios;
-    this.selectedCourse.virtualmachines = this.editVirtualMachines;
+    this.setCourseValues(this.selectedCourse)   
+  }
+  updateFinalPageWizard() {    
+    if (this.wizardCourse == 'edit'){
+      this.setCourseValues(this.editSelectedCourse)    
+  }
   }
 
   setVM(vms: {}[]) {
@@ -346,21 +343,5 @@ export class CourseWizardComponent implements OnChanges, OnInit {
         this.isAlert = true;
       }
     );
-  }
-  updateFinalPageWizard() {    
-    if (this.wizardCourse == 'edit'){
-    this.editSelectedCourse.name = this.form.get('course_name').value;
-    this.editSelectedCourse.description = this.form.get('course_description').value;
-    this.editSelectedCourse.keepalive_duration =
-      this.form.get('keepalive_amount').value +
-      this.form.get('keepalive_unit').value;
-    this.editSelectedCourse.pause_duration =
-      this.form.get('pause_duration').value + 'h';
-    this.editSelectedCourse.pauseable = this.form.get('pauseable').value;
-    this.editSelectedCourse.keep_vm = this.form.get('keep_vm').value;
-    this.editSelectedCourse.categories = this.editCategories;
-    this.editSelectedCourse.scenarios = this.dragScenarios;
-    this.editSelectedCourse.virtualmachines = this.editVirtualMachines;
-  }
-  }
+  } 
 }
