@@ -210,8 +210,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     if (this.wizardCourse == 'edit'){
       this.setCourseValues(this.editSelectedCourse)    
   }
-  console.log("editselectVM "+ JSON.stringify( this.editSelectedCourse.virtualmachines[0]))
-  console.log("selectVM "+JSON.stringify( this.selectedCourse.virtualmachines[0]))
   }
 
   setVM(vms: {}[]) {
@@ -287,6 +285,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     this.updateDynamicScenarios();
     this.setModified();
   }
+
   openAdd() {
     this.addScenario.open();
   }
@@ -296,12 +295,13 @@ export class CourseWizardComponent implements OnChanges, OnInit {
       // because this can be called when unsetting the selected course
       this.courseDetailsActive = true;
       setTimeout(() => this.courseForm.reset(), 200); // hack
-      this.dragScenarios = c.scenarios;
+      this.dragScenarios = cloneDeep(c.scenarios);
       this.editVirtualMachines = cloneDeep(c.virtualmachines);
       this.editCategories = c.categories;
       this.updateDynamicScenarios();
     }
   }
+
   whenFinish() {
 
     if (this.wizardCourse == 'create') this.createCourse();
@@ -333,6 +333,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
       }
     );
   }
+
   updateCourse() {
     this.courseService.update(this.selectedCourse).subscribe(
       (s: ServerResponse) => {
@@ -348,30 +349,20 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     );
   } 
 
-  // getVirtualMachineTemplateName(template: any) {
-  //   return this.virtualMachine[template as string] ?? template;
-  // }
-
-  // getEnvironmentName(environment: any) {
-  //   const envList: Environment[] = this.environments.filter(
-  //     (env) => env.name == environment
-  //   );
-  //   if (envList.length == 0) return environment;
-  //   return envList.pop().display_name ?? environment;
-  // }
   getSelectedCourseVM(index: any, vmname: any) {     
-    const selectedCourseVMs = this.showVM( this.selectedCourse.virtualmachines[index]) 
-    const vmtemplate = selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname) : 0;
-    console.log(vmtemplate)
-    return vmtemplate   
+    const selectedCourseVMs = this.showVM( this.selectedCourse.virtualmachines[index])   
+    return selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname) : 0;   
   }
+
   getEditSelectedCourseVM(index: any, vmname: any) {   
     const editSelectedCourseVMs = this.showVM( this.editSelectedCourse.virtualmachines[index]) 
     return editSelectedCourseVMs.has(vmname) ? editSelectedCourseVMs.get(vmname) : 0;   
   }
+
   showVM(vms: any) {  
     return new Map(Object.entries(JSON.parse(JSON.stringify(vms) )))
   }
+
   isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {   
     return list.some(item => item.name === scenario.name);
   }
