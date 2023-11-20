@@ -197,7 +197,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     course.pauseable = this.form.get('pauseable').value;
     course.keep_vm = this.form.get('keep_vm').value;
     course.virtualmachines = this.editVirtualMachines;
-    course.scenarios = this.dragScenarios;
+    course.scenarios = cloneDeep(this.dragScenarios);
     course.categories = this.editCategories;
   }
   newCourseWizard() {
@@ -210,7 +210,8 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     if (this.wizardCourse == 'edit'){
       this.setCourseValues(this.editSelectedCourse)    
   }
-  console.log(this.editSelectedCourse.virtualmachines)
+  console.log("editselectVM "+ JSON.stringify( this.editSelectedCourse.virtualmachines[0]))
+  console.log("selectVM "+JSON.stringify( this.selectedCourse.virtualmachines[0]))
   }
 
   setVM(vms: {}[]) {
@@ -227,8 +228,8 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   deleteScenario(i: number) {
-    this.selectedCourse.scenarios.splice(i, 1);
-   // this.dragScenarios.splice(i, 1);
+    this.editSelectedCourse.scenarios.splice(i, 1);
+    this.dragScenarios.splice(i, 1);
     this.setModified();
   }
 
@@ -358,14 +359,20 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   //   if (envList.length == 0) return environment;
   //   return envList.pop().display_name ?? environment;
   // }
-  getUneditedScheduledEventVMCount(index: any, vmname: any) {
-    const selectedCourseVMs = new Map(Object.entries(JSON.parse(JSON.stringify( this.selectedCourse.virtualmachines[index]))))
-    return selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname) : 0;   
+  getSelectedCourseVM(index: any, vmname: any) {     
+    const selectedCourseVMs = this.showVM( this.selectedCourse.virtualmachines[index]) 
+    const vmtemplate = selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname) : 0;
+    console.log(vmtemplate)
+    return vmtemplate   
+  }
+  getEditSelectedCourseVM(index: any, vmname: any) {   
+    const editSelectedCourseVMs = this.showVM( this.editSelectedCourse.virtualmachines[index]) 
+    return editSelectedCourseVMs.has(vmname) ? editSelectedCourseVMs.get(vmname) : 0;   
   }
   showVM(vms: any) {  
     return new Map(Object.entries(JSON.parse(JSON.stringify(vms) )))
   }
-  isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {
+  isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {   
     return list.some(item => item.name === scenario.name);
   }
 }
