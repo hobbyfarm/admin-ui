@@ -151,10 +151,12 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     this.wizard.open();
   }
   VMSAllow() {
+    if(this.editVirtualMachines.length!=0){
     if (Object.keys(this.editVirtualMachines[0]).length !== 0)
       this.VMAllowNext = true;
     if (Object.keys(this.editVirtualMachines[0]).length == 0)
       this.VMAllowNext = false;
+    }
   }
   openEditCourse(course: Course) {
     this.wizard.reset();
@@ -213,6 +215,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   setVM(vms: {}[]) {
+    console.log("vms = " + vms)
     this.editVirtualMachines = vms;
     this.VMSAllow();
     this.setModified();
