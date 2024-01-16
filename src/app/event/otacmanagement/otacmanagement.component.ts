@@ -7,9 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import {
-  ClrDatagridSortOrder
-} from '@clr/angular';
+import { ClrDatagridSortOrder } from '@clr/angular';
 import { Observable, Subject } from 'rxjs';
 import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { OTAC } from 'src/app/data/otac.type';
@@ -18,10 +16,11 @@ import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { User } from 'src/app/data/user';
 import { UserService } from 'src/app/data/user.service';
+import parse from 'parse-duration';
 
 interface iOTAC extends OTAC {
   userEmail?: string;
-  status: 'free' | 'taken';
+  status: 'free' | 'taken' | 'out-of-time';
 }
 
 @Component({
@@ -40,11 +39,20 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   currentScheduledEvent: ScheduledEvent = null;
 
+  // The Validator Pattern for the duration only accepts strings that make up a valid duration
+  // For example "1d2h3m" for 1 day, 2 hours and 3 minutes
+  // "30m1d" would not be allowed because the highest gratitude has to be stated first
+  // Any single "1d", "20h", "30m" or any combination "1d20h" is also allowed
+  // "1d2d" would also not be allowed because of day being stated twice.
   amountInputForm: FormGroup = new FormGroup({
     amountInput: new FormControl(1, [Validators.required, Validators.min(1)]),
+    duration: new FormControl('', [
+      Validators.pattern(/^(\d+[d]){0,1}(\d+[h]){0,1}(\d+[m]){0,1}$/),
+    ]),
   });
 
   amountNewOtacs: number = 1;
+  duration: string = '';
 
   otacs: iOTAC[] = [];
 
@@ -59,8 +67,8 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userService.list().subscribe({
-      next: (users) => this.users = users,
-      error: () => this.users = []
+      next: (users) => (this.users = users),
+      error: () => (this.users = []),
     });
 
     this.scheduledEvents
@@ -83,7 +91,7 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
     if (otac.user) {
       return {
         ...otac,
-        status: 'taken',
+        status: this.hasRunOutOfTime(otac) ? 'taken' : 'out-of-time',
         userEmail: this.getUsername(otac.user),
       };
     }
@@ -96,7 +104,11 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   createOtacs() {
     this.seService
-      .addOtacs(this.currentScheduledEvent.id, this.amountNewOtacs)
+      .addOtacs(
+        this.currentScheduledEvent.id,
+        this.amountNewOtacs,
+        this.duration
+      )
       .subscribe((newOtacs: OTAC[]) => {
         this.otacs.push(
           ...newOtacs.map((otac) => this.addUserinformation(otac))
@@ -131,6 +143,10 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
           this.getUsername(otac.user) +
           ', ' +
           otac.redeemed_timestamp +
+          ', ' +
+          otac.max_duration +
+          ', ' +
+          otac.status +
           '\n'
       );
     });
@@ -156,5 +172,22 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy.next('');
     this.onDestroy.complete();
+  }
+
+  hasMaxDuration(otac: OTAC) {
+    return otac.max_duration != '';
+  }
+
+  hasRunOutOfTime(otac: OTAC) {
+    if (!otac.user || !otac.redeemed_timestamp || !otac.max_duration) {
+      return false;
+    }
+    const redeemedTimestamp = Date.parse(otac.redeemed_timestamp);
+    const duration = parse(otac.max_duration);
+    if (redeemedTimestamp + duration > Date.now()) {
+      return true;
+    }
+
+    return false;
   }
 }
