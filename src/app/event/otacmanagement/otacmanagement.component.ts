@@ -40,15 +40,10 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
   currentScheduledEvent: ScheduledEvent = null;
 
   // The Validator Pattern for the duration only accepts strings that make up a valid duration
-  // For example "1d2h3m" for 1 day, 2 hours and 3 minutes
-  // "30m1d" would not be allowed because the highest gratitude has to be stated first
-  // Any single "1d", "20h", "30m" or any combination "1d20h" is also allowed
-  // "1d2d" would also not be allowed because of day being stated twice.
+  // For example "1d" for 1 day, "24h" for 24 Hours, "60m" for 60 minutes.
   amountInputForm: FormGroup = new FormGroup({
     amountInput: new FormControl(1, [Validators.required, Validators.min(1)]),
-    duration: new FormControl('', [
-      Validators.pattern(/^(\d+[d]){0,1}(\d+[h]){0,1}(\d+[m]){0,1}$/),
-    ]),
+    duration: new FormControl('', [Validators.pattern(/^(\d+[dhm]){1}$/)]),
   });
 
   amountNewOtacs: number = 1;
