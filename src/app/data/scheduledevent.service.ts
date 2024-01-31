@@ -133,10 +133,17 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
       );
   }
 
-  public addOtacs(seId: string, count: number) {
+  public addOtacs(seId: string, count: number, duration: string = '') {
+    var params = new HttpParams().set('max_duration', duration);
+
     return this.http
-      .get(
-        environment.server + '/a/scheduledevent/' + seId + '/otacs/add/' + count
+      .post(
+        environment.server +
+          '/a/scheduledevent/' +
+          seId +
+          '/otacs/add/' +
+          count,
+        params
       )
       .pipe(
         switchMap((s: ServerResponse) => {

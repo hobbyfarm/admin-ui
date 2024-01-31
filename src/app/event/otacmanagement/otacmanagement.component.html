@@ -1,53 +1,113 @@
-<clr-modal [(clrModalOpen)]="open" [clrModalSize]="'xl'" [clrModalClosable]="false">
-    <h3 class="modal-title" *ngIf="open">
-        OTACs for {{ currentScheduledEvent.event_name }}
-    </h3>
-    <div class="modal-body">
-        <form clrForm [formGroup]="amountInputForm" class="flexbox" *rbac="['scheduledevents.update']">
-            <div>New OTACs:</div>
-            <clr-input-container class="input-container">
-                <input formControlName="amountInput" type="number" clrInput name="amountNewOtacsInput"
-                    [(ngModel)]="amountNewOtacs" />
-                <clr-control-error>Input must be a positive Number</clr-control-error>
-            </clr-input-container>
-            <button [disabled]="!amountInputForm.valid" type="button" class="btn btn-primary" (click)="createOtacs()">
-                generate
+<clr-modal
+  [(clrModalOpen)]="open"
+  [clrModalSize]="'xl'"
+  [clrModalClosable]="false"
+>
+  <h3 class="modal-title" *ngIf="open">
+    OTACs for {{ currentScheduledEvent.event_name }}
+  </h3>
+  <div class="modal-body">
+    <form
+      clrForm
+      [formGroup]="amountInputForm"
+      class="flexbox"
+      *rbac="['scheduledevents.update']"
+    >
+      <div>New OTACs:</div>
+      <clr-input-container class="input-container">
+        <label class="otac-label">Count</label>
+        <input
+          formControlName="amountInput"
+          type="number"
+          clrInput
+          name="amountNewOtacsInput"
+          [(ngModel)]="amountNewOtacs"
+        />
+        <clr-control-error>Input must be a positive Number</clr-control-error>
+      </clr-input-container>
+
+      <clr-input-container class="input-container">
+        <label class="otac-label">Duration</label>
+        <input
+          formControlName="duration"
+          type="text"
+          clrInput
+          name="duration"
+          placeholder="e.g. 1d, 24h, 60m"
+          title="Duration"
+          [(ngModel)]="duration"
+        />
+        <clr-control-error
+          >Input must be a valid duration consisting of a number followed by
+          (d,h,m).</clr-control-error
+        >
+      </clr-input-container>
+      <button
+        [disabled]="!amountInputForm.valid"
+        type="button"
+        class="btn btn-primary"
+        (click)="createOtacs()"
+      >
+        generate
+      </button>
+    </form>
+
+    <div class="datagrid-container">
+      <clr-datagrid>
+        <clr-dg-column [clrDgField]="'status'" [clrDgSortOrder]="descSort"
+          >Status</clr-dg-column
+        >
+        <clr-dg-column>OTAC</clr-dg-column>
+        <clr-dg-column [clrDgField]="'userEmail'">Claimed by</clr-dg-column>
+        <clr-dg-column>Claimed at</clr-dg-column>
+        <clr-dg-column>Max. Duration</clr-dg-column>
+        <clr-dg-column *rbac="['scheduledevents.update']">Delete</clr-dg-column>
+
+        <clr-dg-row *clrDgItems="let otac of otacs">
+          <clr-dg-cell>
+            <span class="badge badge-success" *ngIf="otac.status == 'free'"
+              >free</span
+            >
+            <span class="badge badge-info" *ngIf="otac.status == 'taken'"
+              >taken</span
+            >
+            <span
+              class="badge badge-danger"
+              *ngIf="otac.status == 'out-of-time'"
+              >out-of-time</span
+            >
+          </clr-dg-cell>
+          <clr-dg-cell>{{ otac.name }}</clr-dg-cell>
+          <clr-dg-cell>{{ otac.userEmail }}</clr-dg-cell>
+          <clr-dg-cell>{{ otac.redeemed_timestamp }}</clr-dg-cell>
+          <clr-dg-cell *ngIf="hasMaxDuration(otac)"
+            ><clr-icon shape="clock"></clr-icon>
+            {{ otac.max_duration }}</clr-dg-cell
+          >
+          <clr-dg-cell *ngIf="!hasMaxDuration(otac)"
+            >Until Event ends</clr-dg-cell
+          >
+          <clr-dg-cell *rbac="['scheduledevents.update']">
+            <button
+              type="button"
+              class="btn btn-warning-outline"
+              (click)="deleteOtac(otac)"
+            >
+              Delete
             </button>
-        </form>
+          </clr-dg-cell>
+        </clr-dg-row>
 
-        <div class="datagrid-container">
-            <clr-datagrid>
-                <clr-dg-column [clrDgField]="'status'" [clrDgSortOrder]="descSort">Status</clr-dg-column>
-                <clr-dg-column>OTAC</clr-dg-column>
-                <clr-dg-column [clrDgField]="'userEmail'">Claimed by</clr-dg-column>
-                <clr-dg-column>Claimed at</clr-dg-column>
-                <clr-dg-column *rbac="['scheduledevents.update']">Delete</clr-dg-column>
-
-                <clr-dg-row *clrDgItems="let otac of otacs">
-                    <clr-dg-cell>
-                        <span class="badge badge-success" *ngIf="otac.status == 'free'">free</span>
-                        <span class="badge badge-info" *ngIf="otac.status == 'taken'">taken</span>
-                    </clr-dg-cell>
-                    <clr-dg-cell>{{ otac.name }}</clr-dg-cell>
-                    <clr-dg-cell>{{ otac.userEmail }}</clr-dg-cell>
-                    <clr-dg-cell>{{ otac.redeemed_timestamp }}</clr-dg-cell>
-                    <clr-dg-cell *rbac="['scheduledevents.update']">
-                        <button type="button" class="btn btn-warning-outline" (click)="deleteOtac(otac)">
-                            Delete
-                        </button>
-                    </clr-dg-cell>
-                </clr-dg-row>
-
-                <clr-dg-footer>{{ getOverallInfo() }}</clr-dg-footer>
-            </clr-datagrid>
-        </div>
+        <clr-dg-footer>{{ getOverallInfo() }}</clr-dg-footer>
+      </clr-datagrid>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="exportCSV()">
-            Export to csv
-        </button>
-        <button type="button" class="btn btn-flat-primary" (click)="close()">
-            Close
-        </button>
-    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="exportCSV()">
+      Export to csv
+    </button>
+    <button type="button" class="btn btn-flat-primary" (click)="close()">
+      Close
+    </button>
+  </div>
 </clr-modal>
