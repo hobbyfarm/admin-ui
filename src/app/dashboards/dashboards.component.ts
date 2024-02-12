@@ -74,8 +74,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         if (this.activeEvents.length > 0) {
           this.selectedEvent = this.activeEvents[0];
         }
-        this.rbacService.Grants('users', 'list').then((rbacUsers) => {
-          rbacUsers && this.sortEventLists();
+        this.rbacService.Grants('users', 'list').then(() => {
+          this.sortEventLists();
         });
         this.setActiveSessionsCount();
         this.updateInterval = setInterval(() => {
@@ -106,11 +106,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.loggedInAdminEmail = this.helper.decodeToken(
       this.helper.tokenGetter()
     ).email;
-    let users = await this.userService.list().toPromise();
-    this.scheduledEvents.forEach((sEvent) => {
-      sEvent.creatorEmail = users.find(
-        (user) => user.id == sEvent.creator
-      )?.email;
+    this.userService.list().subscribe((users) => {
+      this.scheduledEvents.forEach((se) => {
+        se.creatorEmail = users.filter((u) => u.id == se.creator)[0]?.email;
+      });
     });
     this.sortByLoggedInAdminUser(this.scheduledEvents);
     this.sortByLoggedInAdminUser(this.activeEvents);
