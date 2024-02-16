@@ -109,10 +109,10 @@ export class ScenarioService {
     );
   }
 
-  public update(iScenario: Scenario) {
-    var s = <Scenario>deepCopy(iScenario);
+  public update(s: Scenario) {
+    var steps = <Step[]>deepCopy(s.steps);
     // step by step, re-encode to b64
-    s.steps.forEach((st: Step) => {
+    steps.forEach((st: Step) => {
       st.title = utoa(st.title);
       st.content = utoa(st.content);
     });
@@ -120,14 +120,29 @@ export class ScenarioService {
     var params = new HttpParams({ encoder: new CustomEncoder() })
       .set('name', utoa(s.name))
       .set('description', utoa(s.description))
-      .set('steps', JSON.stringify(s.steps))
+      .set('steps', JSON.stringify(steps))
       .set('categories', JSON.stringify(s.categories))
       .set('tags', JSON.stringify(s.tags))
       .set('virtualmachines', JSON.stringify(s.virtualmachines))
       .set('pause_duration', s.pause_duration)
       .set('keepalive_duration', s.keepalive_duration);
 
-    return this.http.put(environment.server + '/a/scenario/' + s.id, params);
+    return this.http
+      .put(environment.server + '/a/scenario/' + s.id, params)
+      .pipe(
+        tap(() => {
+          // Find the index of the scenario in the cached list
+          const index = this.cachedScenarioList.findIndex(
+            (scenario) => scenario.id === s.id
+          );
+          if (index !== -1) {
+            // Replace the old scenario with the updated one
+            this.cachedScenarioList[index] = s;
+          }
+          // Update the cache with the new list
+          this.set(this.cachedScenarioList);
+        })
+      );
   }
 
   public create(s: Scenario) {
