@@ -74,6 +74,8 @@ export class EditUserComponent implements OnChanges {
       password = "";
     }
 
+    this.reset();
+
     this.userService.saveUser(this.user.id, email, password)
       .subscribe(
         (s: ServerResponse) => {
