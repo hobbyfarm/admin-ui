@@ -87,27 +87,26 @@ export class EditUserComponent implements OnChanges {
 
     this.reset();
 
-    this.userService.saveUser(this.user.id, email, password)
-      .subscribe(
-        (s: ServerResponse) => {
-          this.alertText = "User updated";
-          this.alertType = "success";
-          this.alertClosed = false;
-          this.saving = false;
-          setTimeout(() => {
-            this.alertClosed = true;
-          }, 2000);
-        },
-        (s: ServerResponse) => {
-          this.alertText = "Error updating user: " + s.message;
-          this.alertType = "danger";
-          this.alertClosed = false;
-          this.saving = false;
-          setTimeout(() => {
-            this.alertClosed = true;
-          }, 2000);
-        }
-      )
+    this.userService.saveUser(this.user.id, email, password).subscribe(
+      (s: ServerResponse) => {
+        this.alertText = 'User updated';
+        this.alertType = 'success';
+        this.alertClosed = false;
+        this.saving = false;
+        setTimeout(() => {
+          this.alertClosed = true;
+        }, 2000);
+      },
+      (s: ServerResponse) => {
+        this.alertText = 'Error updating user: ' + s.message;
+        this.alertType = 'danger';
+        this.alertClosed = false;
+        this.saving = false;
+        setTimeout(() => {
+          this.alertClosed = true;
+        }, 2000);
+      }
+    );
   }
 
   delete() {
