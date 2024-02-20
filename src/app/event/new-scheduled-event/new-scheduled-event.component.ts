@@ -80,6 +80,7 @@ export class NewScheduledEventComponent
   public availableEnvironments: EnvironmentAvailability[] = [];
   public checkingEnvironments: boolean = true;
   public noEnvironmentsAvailable: boolean = false;
+  public noVirtualMachinesNeeded: boolean = false;
   public unavailableVMTs: string[] = [];
   public environments: Environment[] = [];
   public keyedEnvironments: Map<string, Environment> = new Map();
@@ -192,21 +193,18 @@ export class NewScheduledEventComponent
    * If we close our new-scheduled-event modal,
    * we need to reset the values that were changed on our referenced input object.
    * We are operating on "this.se" because it was initially assigned to "this.event" in ngOnChanges().
-   * This way we don't need to reload the datagrid after modifications. 
+   * This way we don't need to reload the datagrid after modifications.
    */
   private resetEventDetails() {
     this.se.event_name = this.uneditedScheduledEvent.event_name;
     this.se.description = this.uneditedScheduledEvent.description;
     this.se.on_demand = this.uneditedScheduledEvent.on_demand;
-    this.se.disable_restriction = this.uneditedScheduledEvent.disable_restriction;
+    this.se.disable_restriction =
+      this.uneditedScheduledEvent.disable_restriction;
     this.se.courses = this.uneditedScheduledEvent.courses;
     this.se.scenarios = this.uneditedScheduledEvent.scenarios;
-    this.se.start_time = new Date(
-      this.uneditedScheduledEvent.start_time
-    );
-    this.se.end_time = new Date(
-      this.uneditedScheduledEvent.end_time
-    );
+    this.se.start_time = new Date(this.uneditedScheduledEvent.start_time);
+    this.se.end_time = new Date(this.uneditedScheduledEvent.end_time);
     this.se.required_vms = this.uneditedScheduledEvent.required_vms;
     this.se.vmsets = this.uneditedScheduledEvent.vmsets;
   }
@@ -717,6 +715,17 @@ export class NewScheduledEventComponent
       });
     });
 
+    //If there are no templates needed, we do not need virtual machines and have content only scenarios / courses
+    this.noVirtualMachinesNeeded = templates.size == 0;
+
+    if (this.noVirtualMachinesNeeded) {
+      this.noEnvironmentsAvailable = true;
+      this.unavailableVMTs = [];
+      this.availableEnvironments = [];
+      this.checkingEnvironments = false;
+      return;
+    }
+
     this.es
       .list()
       .pipe(
@@ -932,7 +941,7 @@ export class NewScheduledEventComponent
   }
 
   public close() {
-    if(!this.saving) {
+    if (!this.saving) {
       this.resetEventDetails();
     } else {
       this.saving = false;
@@ -955,15 +964,22 @@ export class NewScheduledEventComponent
       return true;
     }
 
-    //no environment selected
-    if (this.selectedEnvironments.length == 0) {
+    //no environment selected but VMs are required
+    if (
+      this.selectedEnvironments.length == 0 &&
+      !this.noVirtualMachinesNeeded
+    ) {
       return true;
     }
 
     //vm count is valid
     if (
-      (!this.simpleMode && !this.vmCounts.valid) ||
-      (this.simpleMode && !this.simpleModeVmCounts.valid)
+      (!this.simpleMode &&
+        !this.vmCounts.valid &&
+        !this.noVirtualMachinesNeeded) ||
+      (this.simpleMode &&
+        !this.simpleModeVmCounts.valid &&
+        !this.noVirtualMachinesNeeded)
     ) {
       return true;
     }
@@ -1022,7 +1038,7 @@ export class NewScheduledEventComponent
 
   updateFormValues() {
     this.copyEventDetails();
-    this.copyVMCounts(); 
+    this.copyVMCounts();
   }
 
   isStartDateAsEditedCheck() {
