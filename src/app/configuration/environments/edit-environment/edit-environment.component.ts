@@ -36,6 +36,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   public event: EventEmitter<boolean> = new EventEmitter(false);
 
   public env: Environment = new Environment();
+  public uneditedEnv = new Environment();
   public virtualMachineTemplateList: Map<string, string> = new Map();
 
   constructor(
@@ -200,8 +201,9 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.updateEnv) {
-      this.fixNullValues();
+      this.fixNullValues();      
       this.env = this.updateEnv;
+      this.uneditedEnv = JSON.parse(JSON.stringify(this.updateEnv))
       this._prepare();
       this.wizard.navService.goTo(this.wizard.pages.last, true);
       this.wizard.pages.first.makeCurrent();
@@ -282,6 +284,11 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       this._prepare();
     }
     this.wizard.open();
+  }
+
+  public close(){
+    // when close/cancel clean env
+    this.updateEnv = null;
   }
 
   public copyEnvironmentDetails() {
@@ -370,11 +377,18 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     (this.templateMappings.get('templates') as FormArray).removeAt(index);
   }
 
-  public getTeplateCount(vmt: string) {
+  public getTemplateCount(vmt: string) {
     if (!this.env.count_capacity) {
       return 0;
     }
     return this.env.count_capacity[vmt] ?? 0;
+  }
+
+  public getTemplateUnEditEnvCount(vmt: string){
+    if(!this.uneditedEnv.count_capacity){
+      return 0;
+    }
+    return this.uneditedEnv.count_capacity[vmt] ?? 0
   }
 
   public copyTemplateMapping() {
@@ -452,7 +466,24 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     }
   }
 
+  updateFormValues() {
+    this.copyEnvironmentDetails();
+    this.copyEnvironmentSpecifics();
+    this.copyTemplateMapping();
+    this.copyIpMapping();
+  }
+
+  isSpecificsInList(scenario: string, list?: string[]): boolean {
+    return list ? list.includes(scenario) : false;
+  }
+
   getVirtualMachineTemplateName(template: any) {
     return this.virtualMachineTemplateList.get(template as string) ?? template;
+  }
+
+  isVMTemplateInUneditedEnv(template: string) {
+    return (
+      this.uneditedEnv.template_mapping.hasOwnProperty(template)
+    );
   }
 }

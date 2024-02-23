@@ -23,7 +23,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public cloudConfigKey: string = 'cloud-config'
   public vmServiceKey: string = 'webinterfaces'
   public cloudConfig: CloudInitConfig = new CloudInitConfig();   
-
+  
   @Input()
   public editTemplate: VMTemplate;  
 
@@ -31,6 +31,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public event: EventEmitter<boolean> = new EventEmitter(false);
 
   public template: VMTemplate = new VMTemplate();
+  public uneditedTemplate: VMTemplate = new VMTemplate();
   public selectWebinterfaceModalOpen: boolean = false
   public newWebinterfaceModalOpen: boolean = false
 
@@ -190,17 +191,20 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   private _prepare() {
     this.buildTemplateDetails(true);
     this.prepareConfigMap();
+    
   }
 
   ngOnChanges() {
     if (this.editTemplate) {
       this.fixNullValues();
-      this._prepare();
+      this._prepare();      
       this.wizard.navService.goTo(this.wizard.pages.last, true);
       this.wizard.pages.first.makeCurrent();
     } else {
       this.buildTemplateDetails();
       this.buildConfigMap();
     }
+    this.uneditedTemplate = JSON.parse(JSON.stringify(this.template))
   }
+  
 }

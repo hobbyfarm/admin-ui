@@ -1,26 +1,30 @@
 .datagrid-container {
-    height: 60vh;
-    max-height: 60vh
+  height: 60vh;
+  max-height: 60vh;
 }
 
 .datagrid-container clr-datagrid {
-    max-height: 100%;
+  max-height: 100%;
 }
 
 .flexbox {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    height: fit-content;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  height: fit-content;
+  width: 100%;
 }
 
 .input-container {
-    width: min-content;
-    padding-right: 2vw;
+  width: min-content;
+  padding-right: 2vw;
 }
 
 .flexbox * {
-    margin: 0;
+  margin: 0;
+}
+
+.otac-label.clr-col-md-2 {
+  max-width: fit-content;
 }

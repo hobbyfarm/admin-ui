@@ -14,7 +14,7 @@
     <form clrForm [formGroup]="userDetailsForm">
       <clr-input-container>
         <label for="email">ID</label>
-        <input clrInput name="id" value="{{this.user.id}}" disabled />
+        <input clrInput name="id" value="{{ this.user.id }}" disabled />
       </clr-input-container>
       <clr-input-container>
         <label for="email">Email</label>
@@ -37,6 +37,38 @@
         <clr-control-helper
           >Blank leaves password unchanged.</clr-control-helper
         >
+      </clr-input-container>
+      <clr-input-container>
+        <label for="email">Last Login</label>
+        <input
+          clrInput
+          *ngIf="this.user.last_login_timestamp"
+          name="last_login_timestamp"
+          value="{{
+            getFormattedDate(this.user.last_login_timestamp)
+              | date : 'MMMM d, y, HH:mm:ss z'
+          }}"
+          disabled
+        />
+        <input
+          clrInput
+          *ngIf="!this.user.last_login_timestamp"
+          name="last_login_timestamp"
+          value="-"
+          disabled
+        />
+      </clr-input-container>
+      <clr-input-container>
+        <label for="email">Registered</label>
+        <input
+          clrInput
+          name="registered_timestamp"
+          value="{{
+            getFormattedDate(this.user.registered_timestamp)
+              | date : 'MMMM d, y, HH:mm:ss z'
+          }}"
+          disabled
+        />
       </clr-input-container>
     </form>
   </div>
