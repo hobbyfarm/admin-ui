@@ -651,10 +651,9 @@
               {{ se.event_name }}
             </td>
             <td *ngIf="se.event_name != uneditedScheduledEvent.event_name">
-              <span class="del-elem">{{
+              <span class="del-elem arrow-after">{{
                 uneditedScheduledEvent.event_name
               }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
               <span class="add-elem">{{ se.event_name }}</span>
             </td>
           </tr>
@@ -664,11 +663,10 @@
               {{ se.description }}
             </td>
             <td *ngIf="se.description != uneditedScheduledEvent.description">
-              <span class="del-elem">{{
+              <span class="del-elem arrow-after">{{
                 uneditedScheduledEvent.description
               }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
-              <span class="add-elem">{{ se.description }}</span>
+             <span class="add-elem">{{ se.description }}</span>
             </td>
           </tr>
           <tr>
@@ -677,10 +675,9 @@
               {{ se.access_code }}
             </td>
             <td *ngIf="se.access_code != uneditedScheduledEvent.access_code">
-              <span class="del-elem">{{
+              <span class="del-elem arrow-after">{{
                 uneditedScheduledEvent.access_code
               }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
               <span class="add-elem">{{ se.access_code }}</span>
             </td>
           </tr>
@@ -700,10 +697,9 @@
                 !uneditedScheduledEvent.disable_restriction
               "
             >
-              <span class="del-elem">{{
+              <span class="del-elem arrow-after">{{
                 !uneditedScheduledEvent.disable_restriction
               }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
               <span class="add-elem">{{ !se.disable_restriction }}</span>
             </td>
           </tr>
@@ -713,10 +709,9 @@
               {{ se.on_demand }}
             </td>
             <td *ngIf="se.on_demand != uneditedScheduledEvent.on_demand">
-              <span class="del-elem">{{
+              <span class="del-elem arrow-after">{{
                 uneditedScheduledEvent.on_demand
               }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
               <span class="add-elem">{{ se.on_demand }}</span>
             </td>
           </tr>
@@ -726,10 +721,9 @@
               {{ se.start_time | date : "long" }}
             </td>
             <td *ngIf="isStartDateAsEditedCheck()">
-              <span class="del-elem">{{
+              <span class="del-elem arrow-after">{{
                 uneditedScheduledEvent.start_time | date : "long"
               }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
               <span class="add-elem">{{ se.start_time | date : "long" }}</span>
             </td>
           </tr>
@@ -739,10 +733,9 @@
               {{ se.end_time | date : "long" }}
             </td>
             <td *ngIf="isEndDateAsEditedCheck()">
-              <span class="del-elem">{{
+              <span class="del-elem arrow-after">{{
                 uneditedScheduledEvent.end_time | date : "long"
-              }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
+              }}</span>              
               <span class="add-elem">{{ se.end_time | date : "long" }}</span>
             </td>
           </tr>

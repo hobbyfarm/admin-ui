@@ -369,6 +369,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {   
     return list.some(item => item.name === scenario.name);
   }
+  
   isEditedVM(index: any, vmname: string, templateName: any): boolean {
     // This function determines if the currently selected VM is either beeing edited throug the following condition:
     const isEdited = this.getSelectedCourseVM(index, vmname) != templateName && this.getSelectedCourseVM(index, vmname) != 0
