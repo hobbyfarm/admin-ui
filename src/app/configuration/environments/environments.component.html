@@ -1,36 +1,59 @@
 <div class="clr-row">
-    <div class="clr-col">
-        <h3>Environments</h3>
-    </div>
+  <div class="clr-col">
+    <h3>Environments</h3>
+  </div>
 </div>
 <div class="clr-row">
-    <div class="clr-col">
-        <button class="btn btn-success" (click)="openNew()" *rbac="['environments.create']">
-            <cds-icon shape="plus"></cds-icon> New
-        </button>
-    </div>
+  <div class="clr-col">
+    <button
+      class="btn btn-success"
+      (click)="openNew()"
+      *rbac="['environments.create']"
+    >
+      <cds-icon shape="plus"></cds-icon> New Environment
+    </button>
+  </div>
 </div>
 <div class="clr-row">
-    <div class="clr-col">
-        <clr-datagrid>
-            <clr-dg-column>Name</clr-dg-column>
-            <clr-dg-column>Provider</clr-dg-column>
-            <clr-dg-column>Object Id</clr-dg-column>
+  <div class="clr-col">
+    <clr-datagrid>
+      <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-column>Provider</clr-dg-column>
+      <clr-dg-column>Object Id</clr-dg-column>
 
-            <clr-dg-row *clrDgItems="let e of environments; let i = index">
-                <clr-dg-action-overflow *ngIf="showActionOverflow">
-                    <button class="action-item" (click)="openUpdate(i)" *rbac="['environments.get', 'environments.update']; op 'AND'">Edit</button>
-                    <button class="action-item" disabled *rbac="['environments.delete']">Delete</button>
-                </clr-dg-action-overflow>
-                <clr-dg-cell>{{ e.display_name }}</clr-dg-cell>
-                <clr-dg-cell>{{ e.provider }}</clr-dg-cell>
-                <clr-dg-cell>{{ e.name }}</clr-dg-cell>
-                <ng-container ngProjectAs="clr-dg-row-detail" *rbac="['environments.get']">
-                    <environment-detail *clrIfExpanded [id]="e.name" ngProjectAs="clr-dg-row-detail"></environment-detail>
-                </ng-container>
-            </clr-dg-row>
-        </clr-datagrid>
-    </div>
+      <clr-dg-row *clrDgItems="let e of environments; let i = index">
+        <clr-dg-action-overflow *ngIf="showActionOverflow">
+          <button
+            class="action-item"
+            (click)="openUpdate(i)"
+            *rbac="['environments.get', 'environments.update']; op: 'AND'"
+          >
+            Edit
+          </button>
+          <button class="action-item" disabled *rbac="['environments.delete']">
+            Delete
+          </button>
+        </clr-dg-action-overflow>
+        <clr-dg-cell>{{ e.display_name }}</clr-dg-cell>
+        <clr-dg-cell>{{ e.provider }}</clr-dg-cell>
+        <clr-dg-cell>{{ e.name }}</clr-dg-cell>
+        <ng-container
+          ngProjectAs="clr-dg-row-detail"
+          *rbac="['environments.get']"
+        >
+          <environment-detail
+            *clrIfExpanded
+            [id]="e.name"
+            ngProjectAs="clr-dg-row-detail"
+          ></environment-detail>
+        </ng-container>
+      </clr-dg-row>
+    </clr-datagrid>
+  </div>
 </div>
 
-<edit-environment-wizard [updateEnv]="updateEnv" (event)="refresh()" #editEnvironmentWizard></edit-environment-wizard>
+<edit-environment-wizard
+  [updateEnv]="updateEnv"
+  (event)="refresh()"
+  #editEnvironmentWizard
+></edit-environment-wizard>

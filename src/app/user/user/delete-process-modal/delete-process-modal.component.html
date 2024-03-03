@@ -15,13 +15,13 @@
     </ul>
   </div>
   <div class="modal-footer">
-    <div *ngIf="selectedUsers.length != deletedUsers">
+    <div *ngIf="initialUsers != deletedUsers">
       <span class="spinner spinner-inline"> Deleting Users... </span>
       <span> Deleting Users... </span>
     </div>
     <button
       class="btn btn-success-outline"
-      *ngIf="selectedUsers.length == deletedUsers"
+      *ngIf="initialUsers == deletedUsers"
       (click)="deleteDone()"
     >
       Done

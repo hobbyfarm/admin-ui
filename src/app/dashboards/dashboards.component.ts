@@ -108,11 +108,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     // for symplicity we are using type assertion to string here, avoiding to handle promises we're not expecting
     const token = this.helper.tokenGetter() as string;
     this.loggedInAdminEmail = this.helper.decodeToken(token).email;
-    let users = await lastValueFrom(this.userService.getUsers());
-    this.scheduledEvents.forEach((sEvent) => {
-      sEvent.creatorEmail = users.find(
-        (user) => user.id == sEvent.creator
-      )?.email;
+    this.userService.list().subscribe((users) => {
+      this.scheduledEvents.forEach((se) => {
+        se.creatorEmail = users.filter((u) => u.id == se.creator)[0]?.email;
+      });
     });
     this.sortByLoggedInAdminUser(this.scheduledEvents);
     this.sortByLoggedInAdminUser(this.activeEvents);

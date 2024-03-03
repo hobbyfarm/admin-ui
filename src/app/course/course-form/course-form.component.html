@@ -5,12 +5,18 @@
       <clr-control-error *clrIfError="'required'">Course name is required</clr-control-error>
       <clr-control-error *clrIfError="'minlength'">Course name must be longer than 4 characters
       </clr-control-error>
+      <clr-control-error *clrIfError="'pattern'">
+        Non latin letters is forbidden
+      </clr-control-error>
     </clr-input-container>
     <clr-input-container>
       <label>Description</label>
       <input clrInput type="text" formControlName="course_description" required>
       <clr-control-error *clrIfError="'required'">Course description is required</clr-control-error>
       <clr-control-error *clrIfError="'minlength'">Course description must be longer than 4 characters
+      </clr-control-error>
+      <clr-control-error *clrIfError="'pattern'">
+        Non latin letters is forbidden
       </clr-control-error>
     </clr-input-container>
     <div class="clr-form-control clr-row">

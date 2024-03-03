@@ -86,11 +86,12 @@ export class FilterScenariosComponent implements OnInit {
       this.selectRbac = allowed;
     });
 
+    this.scenarioService.watch().subscribe((s: Scenario[]) => {
+      this.updateScenarios(s);
+    });
+
     this.scenarioService.list().subscribe((s: Scenario[]) => {
-      this.scenarios = s;
-      this.calculateCategories();
-      this.filterScenarioList();
-      this.emitScenarios(this.scenarios);
+      this.updateScenarios(s);
     });
 
     this.rbacService
@@ -110,5 +111,12 @@ export class FilterScenariosComponent implements OnInit {
       // TODO: Refactor
       this.emitScenarios(this.filteredScenarios);
     });
+  }
+
+  updateScenarios(s: Scenario[]) {
+    this.scenarios = s;
+    this.calculateCategories();
+    this.filterScenarioList();
+    this.emitScenarios(this.scenarios);
   }
 }

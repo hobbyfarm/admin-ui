@@ -4,6 +4,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -17,7 +18,7 @@ import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-
   selector: 'edit-user',
   templateUrl: './edit-user.component.html',
 })
-export class EditUserComponent implements OnChanges {
+export class EditUserComponent implements OnInit, OnChanges {
   @Input()
   public user: User = new User();
 
@@ -124,5 +125,12 @@ export class EditUserComponent implements OnChanges {
         }, 2000);
       },
     });
+  }
+
+  getFormattedDate(timestamp: string) {
+    if (!timestamp || timestamp == '') {
+      return '';
+    }
+    return new Date(timestamp);
   }
 }

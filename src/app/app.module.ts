@@ -20,9 +20,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewScheduledEventComponent } from './event/new-scheduled-event/new-scheduled-event.component';
 import { ScenarioService } from './data/scenario.service';
 import {
-  DlDateTimePickerDateModule,
+  DlDateTimeDateModule,
+  DlDateTimeInputModule,
   DlDateTimePickerModule,
-} from 'angular-bootstrap-datetimepicker';
+  
+} from 'angular-bootstrap-datetimepicker/src/lib';
 import { ScenarioComponent } from './scenario/scenario.component';
 import { UserComponent } from './user/user/user.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
@@ -99,6 +101,8 @@ import { TypedMapBooleanComponent } from './typed-form/typed-map-boolean.compone
 import { TypedArrayStringComponent } from './typed-form/typed-array-string.component';
 import { TypedArrayNumberComponent } from './typed-form/typed-array-number.component';
 import { TypedArrayBooleanComponent } from './typed-form/typed-array-boolean.component';
+import { CourseWizardComponent } from './course/course-wizard/course-wizard.component';
+import { CourseDetailsComponent } from './course/course-details/course-details.component';
 import '@cds/core/icon/register.js';
 import {
   ClarityIcons,
@@ -213,6 +217,7 @@ export function jwtOptionsFactory(): JwtConfig {
     EditEnvironmentComponent,
     ContentComponent,
     CourseComponent,
+    CourseDetailsComponent,
     NewCourseComponent,
     CourseFormComponent,
     AddScenarioComponent,
@@ -264,6 +269,7 @@ export function jwtOptionsFactory(): JwtConfig {
     TypedArrayStringComponent,
     TypedArrayNumberComponent,
     TypedArrayBooleanComponent,
+    CourseWizardComponent,
   ],
   imports: [
     BrowserModule,
@@ -272,7 +278,8 @@ export function jwtOptionsFactory(): JwtConfig {
     FormsModule,
     ReactiveFormsModule,
     AngularSplitModule,
-    DlDateTimePickerDateModule,
+    DlDateTimeDateModule,
+    DlDateTimeInputModule,
     DlDateTimePickerModule,
     ClarityModule,
     NgChartsModule,

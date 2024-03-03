@@ -11,7 +11,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
+import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker/src/lib';
 import { ClrDatagridSortOrder, ClrSignpostContent } from '@clr/angular';
 import '../date.extension';
 

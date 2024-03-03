@@ -7,6 +7,7 @@ import {
   GargantuaClientFactory,
   extractResponseContent,
 } from './gargantua.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class SessionService extends ResourceClient<Session> {
@@ -22,8 +23,8 @@ export class SessionService extends ResourceClient<Session> {
     return this.garg.post('/new', params).pipe(
       map(extractResponseContent),
       tap((s: Session) => {
-        this.cache.set(s.id, s);
-      }),
+        this.cache.set(s.id, new BehaviorSubject(s));
+      })
     );
   }
 

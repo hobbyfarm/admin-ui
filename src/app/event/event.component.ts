@@ -55,10 +55,7 @@ export class EventComponent implements OnInit, OnDestroy {
   @ViewChild('deletemodal', { static: true }) deletemodal: ClrModal;
 
   ngOnInit() {
-    this.seService.list().subscribe((se) => {
-      this.events = se;
-      this.updateFields();
-    });
+    this.refresh(false);
 
     // list permissions for the following ressources are required in order to edit scheduled events
     const authorizationRequests = Promise.all([
@@ -73,9 +70,10 @@ export class EventComponent implements OnInit, OnDestroy {
         const listScenarios: boolean = permissions[0];
         const listCourses: boolean = permissions[1];
         const listEnvironments: boolean = permissions[2];
-        const deleteEvents: boolean = permissions[2];
+        const deleteEvents: boolean = permissions[3];
         this.allowEdit = (listScenarios || listCourses) && listEnvironments;
         this.showActionOverflow = this.allowEdit || deleteEvents;
+        this.refresh(true);
       }
     );
   }
@@ -119,8 +117,8 @@ export class EventComponent implements OnInit, OnDestroy {
     this.wizard.open();
   }
 
-  public refresh() {
-    this.seService.list(true).subscribe((se) => {
+  public refresh(force = false) {
+    this.seService.list('', force).subscribe((se) => {
       this.events = se;
       this.updateFields();
     });
@@ -154,7 +152,7 @@ export class EventComponent implements OnInit, OnDestroy {
     }
 
     if (await this.rbacService.Grants('users', 'list')) {
-      this.userService.getUsers().subscribe((users) => {
+      this.userService.list().subscribe((users) => {
         this.events.forEach((se) => {
           se.creatorEmail = users.filter((u) => u.id == se.creator)[0]?.email;
         });

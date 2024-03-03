@@ -15,6 +15,7 @@
     >
       <div>New OTACs:</div>
       <clr-input-container class="input-container">
+        <label class="otac-label">Count</label>
         <input
           formControlName="amountInput"
           type="number"
@@ -22,6 +23,22 @@
           name="amountNewOtacsInput"
         />
         <clr-control-error>Input must be a positive Number</clr-control-error>
+      </clr-input-container>
+
+      <clr-input-container class="input-container">
+        <label class="otac-label">Duration</label>
+        <input
+          formControlName="duration"
+          type="text"
+          clrInput
+          name="duration"
+          placeholder="e.g. 1d, 24h, 60m"
+          title="Duration"
+        />
+        <clr-control-error
+          >Input must be a valid duration consisting of a number followed by
+          (d,h,m).</clr-control-error
+        >
       </clr-input-container>
       <button
         [disabled]="!amountInputForm.valid"
@@ -41,6 +58,7 @@
         <clr-dg-column>OTAC</clr-dg-column>
         <clr-dg-column [clrDgField]="'userEmail'">Claimed by</clr-dg-column>
         <clr-dg-column>Claimed at</clr-dg-column>
+        <clr-dg-column>Max. Duration</clr-dg-column>
         <clr-dg-column *rbac="['scheduledevents.update']">Delete</clr-dg-column>
 
         <clr-dg-row *clrDgItems="let otac of otacs">
@@ -51,10 +69,22 @@
             <span class="badge badge-info" *ngIf="otac.status == 'taken'"
               >taken</span
             >
+            <span
+              class="badge badge-danger"
+              *ngIf="otac.status == 'out-of-time'"
+              >out-of-time</span
+            >
           </clr-dg-cell>
           <clr-dg-cell>{{ otac.name }}</clr-dg-cell>
           <clr-dg-cell>{{ otac.userEmail }}</clr-dg-cell>
           <clr-dg-cell>{{ otac.redeemed_timestamp }}</clr-dg-cell>
+          <clr-dg-cell *ngIf="hasMaxDuration(otac)"
+            ><cds-icon shape="clock"></cds-icon>
+            {{ otac.max_duration }}</clr-dg-cell
+          >
+          <clr-dg-cell *ngIf="!hasMaxDuration(otac)"
+            >Until Event ends</clr-dg-cell
+          >
           <clr-dg-cell *rbac="['scheduledevents.update']">
             <button
               type="button"

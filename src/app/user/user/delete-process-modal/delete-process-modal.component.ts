@@ -29,6 +29,7 @@ export class DeleteProcessModalComponent implements OnInit {
   @Input()
   public selectedUsers: User[];
 
+  public initialUsers: number = -1;
   public deletedUsers: number = 0;
   public deleteInfo: deletionInformation[] = [];
 
@@ -40,6 +41,7 @@ export class DeleteProcessModalComponent implements OnInit {
 
   open(): void {
     this.modal.open();
+    this.initialUsers = this.selectedUsers.length;
     this.selectedUsers.forEach((user) => {
       this.userService.deleteUser(user.id).subscribe({
         next: (s: ServerResponse) => {

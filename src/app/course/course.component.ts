@@ -16,6 +16,7 @@ import { RbacService } from '../data/rbac.service';
 import { ClrDatagridSortOrder } from '@clr/angular';
 import { lastValueFrom } from 'rxjs';
 import { CategoryFormGroup, CourseDetailFormGroup } from '../data/forms';
+import { CourseWizardComponent } from './course-wizard/course-wizard.component';
 
 @Component({
   selector: 'app-course',
@@ -26,6 +27,8 @@ export class CourseComponent implements OnInit {
   public courses: Course[] = [];
 
   @ViewChild('newCourse') newCourse: NewCourseComponent;
+  @ViewChild('addNewCourse') addNewCourse: CourseWizardComponent;
+  @ViewChild('editcourse') editCourseWizard: CourseWizardComponent;
   @ViewChild('addScenario') addScenario: AddScenarioComponent;
   @ViewChild('deleteConfirmation')
   deleteConfirmation: DeleteConfirmationComponent;
@@ -43,7 +46,10 @@ export class CourseComponent implements OnInit {
   public selectedCourse: Course;
 
   public editForm: CourseDetailFormGroup;
-  public newCategoryForm: CategoryFormGroup;
+  // public newCategoryForm: CategoryFormGroup;
+  public newCategoryForm: CategoryFormGroup = new FormGroup({
+    category: new FormControl<string | null>(null, [Validators.required]),
+  });
 
   public scenarios: Scenario[] = [];
   public dragScenarios: Scenario[] = [];
@@ -59,6 +65,7 @@ export class CourseComponent implements OnInit {
   public newCategory: boolean = false;
 
   public courseDetailsActive: boolean = false;
+  public showActionOverflow: boolean = false;
 
   public selectRbac: boolean = false;
   public updateRbac: boolean = false;
@@ -86,22 +93,22 @@ export class CourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.newCategoryForm = new FormGroup({
-      category: new FormControl<string | null>(null, [Validators.required]),
-    });
     const authorizationRequests = Promise.all([
       this.rbacService.Grants('courses', 'get'),
       this.rbacService.Grants('courses', 'update'),
       this.rbacService.Grants('scenarios', 'list'),
+      this.rbacService.Grants('courses', 'delete'),
     ]);
 
     authorizationRequests
-      .then((permissions: [boolean, boolean, boolean]) => {
+      .then((permissions: [boolean, boolean, boolean, boolean]) => {
         const allowedGet: boolean = permissions[0];
         const allowedUpdate: boolean = permissions[1];
         const allowListScenarios: boolean = permissions[2];
+        const allowDelete: boolean = permissions[3];
         // Enable permission to list courses if either "get" or "update" on courses is granted
         this.selectRbac = allowedGet || allowedUpdate;
+        this.showActionOverflow = allowDelete || (allowedGet && allowedUpdate);
         this.listScenarios = allowListScenarios;
         // Enable permission to update courses
         this.updateRbac = allowedUpdate && this.listScenarios;
@@ -121,9 +128,9 @@ export class CourseComponent implements OnInit {
   }
 
   refresh(): void {
-    this.courseService
-      .list(true)
-      .subscribe((cList: Course[]) => (this.courses = cList));
+    this.courseService.list(true).subscribe((cList: Course[]) => {
+      this.courses = cList;
+    });
   }
 
   setupForm(fg: CourseDetailFormGroup) {
@@ -180,6 +187,10 @@ export class CourseComponent implements OnInit {
 
   openNew() {
     this.newCourse.open();
+  }
+
+  openNewWizard() {
+    this.addNewCourse.openNewCourse();
   }
 
   openAdd() {
@@ -252,6 +263,11 @@ export class CourseComponent implements OnInit {
     }
   }
 
+  openEditCourseWizard(course: Course) {
+    this.selectedCourse = course;
+    this.editCourseWizard.openEditCourse(course);
+  }
+
   saveCourse() {
     this.selectedCourse.name = this.editForm.controls.course_name.value;
     this.selectedCourse.description =
@@ -278,7 +294,8 @@ export class CourseComponent implements OnInit {
     });
   }
 
-  delete(): void {
+  delete(course: Course): void {
+    this.selectedCourse = course;
     this.deleteConfirmation.open();
   }
 

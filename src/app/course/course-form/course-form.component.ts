@@ -75,7 +75,7 @@ export class CourseFormComponent implements OnInit, OnChanges {
         course_description: this.course.description,
       });
 
-      const pauseDuration = Number(this.course.pause_duration?.slice(0, -1))
+      const pauseDuration = Number(this.course.pause_duration?.slice(0, -1));
       if (!Number.isNaN(pauseDuration)) {
         this.courseDetails.patchValue({
           pause_duration: pauseDuration,
@@ -108,6 +108,19 @@ export class CourseFormComponent implements OnInit, OnChanges {
         });
       }
     }
+  }
+
+  resetFormToRenew(): void {
+    this.courseDetails.reset({
+      course_name: null,
+      course_description: null,
+      keepalive_amount: 10,
+      keepalive_unit: 'm',
+      pauseable: true,
+      keep_vm: true,
+      pause_duration: 1,
+    });
+    this.formReady.emit(this.courseDetails);
   }
 
   ngOnChanges(): void {

@@ -51,6 +51,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public event: EventEmitter<boolean> = new EventEmitter(false);
 
   public template: VMTemplate = new VMTemplate();
+  public uneditedTemplate: VMTemplate = new VMTemplate();
   public selectWebinterfaceModalOpen: boolean = false;
   public newWebinterfaceModalOpen: boolean = false;
 
@@ -239,5 +240,6 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       this.buildTemplateDetails();
       this.buildConfigMap();
     }
+    this.uneditedTemplate = JSON.parse(JSON.stringify(this.template));
   }
 }
