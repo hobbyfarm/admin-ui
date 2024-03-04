@@ -102,6 +102,7 @@ import { TypedArrayNumberComponent } from './typed-form/typed-array-number.compo
 import { TypedArrayBooleanComponent } from './typed-form/typed-array-boolean.component';
 import { CourseWizardComponent } from './course/course-wizard/course-wizard.component';
 import { CourseDetailsComponent } from './course/course-details/course-details.component';
+import { DashboardDetailsComponent } from './dashboards/dashboard-details/dashboard-details.component';
 import '@cds/core/icon/register.js';
 import {
   ClarityIcons,
@@ -269,6 +270,7 @@ export function jwtOptionsFactory(): JwtConfig {
     TypedArrayNumberComponent,
     TypedArrayBooleanComponent,
     CourseWizardComponent,
+    DashboardDetailsComponent,
   ],
   imports: [
     BrowserModule,

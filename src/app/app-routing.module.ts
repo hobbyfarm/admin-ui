@@ -18,6 +18,7 @@ import { TerminalComponent } from './step/terminal/terminal.component';
 import { RolesComponent } from './configuration/roles/roles/roles.component';
 import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
 import {SettingsComponent} from './configuration/settings/settings.component';
+import { DashboardDetailsComponent } from './dashboards/dashboard-details/dashboard-details.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -40,6 +41,12 @@ const routes: Routes = [
     component: DashboardsComponent,
     canActivate: [
       AuthGuard
+    ],
+    children: [
+      {
+        path: 'event/:id',
+        component: DashboardDetailsComponent
+      }
     ]
   },
   {

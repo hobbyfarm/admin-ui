@@ -1,20 +1,38 @@
 <div class="main-container">
-    <header class="header header-7" app-header></header>
-    <div class="content-container">
-        <nav class="sidenav">
-            <section class="sidenav-content">
-                <a href="javascript://" class="nav-link" [routerLink]="['settings']" [routerLinkActive]="'active'" *rbac="['environments.list']">
-                Settings</a>
-                <a href="javascript://" class="nav-link" [routerLink]="['environments']" [routerLinkActive]="'active'" *rbac="['environments.list']">
-                    Environments</a>
-                <a href="javascript://" class="nav-link" [routerLink]="['vmtemplates']" [routerLinkActive]="'active'" *rbac="['virtualmachinetemplates.list']">
-                    VM Templates</a>
-                <a href="javascript://" class="nav-link" [routerLink]="['roles']" [routerLinkActive]="'active'" *rbac="['roles.list']">
-                    Roles</a>
-            </section>
-        </nav>
-        <div class="content-area">
-            <router-outlet></router-outlet>
-        </div>
+  <header class="header header-7" app-header></header>
+  <div class="content-container">
+    <clr-vertical-nav>
+      <a
+        clrVerticalNavLink
+        routerLink="./settings"
+        routerLinkActive="active"
+        *rbac="['environments.list']"
+        >Settings</a
+      >
+      <a
+        clrVerticalNavLink
+        routerLink="./environments"
+        routerLinkActive="active"
+        *rbac="['environments.list']"
+        >Environments</a
+      >
+      <a
+        clrVerticalNavLink
+        routerLink="./vmtemplates"
+        routerLinkActive="active"
+        *rbac="['virtualmachinetemplates.list']"
+        >VM Templates</a
+      >
+      <a
+        clrVerticalNavLink
+        routerLink="./roles"
+        routerLinkActive="active"
+        *rbac="['roles.list']"
+        >Roles</a
+      >
+    </clr-vertical-nav>
+    <div class="content-area">
+      <router-outlet></router-outlet>
     </div>
+  </div>
 </div>
