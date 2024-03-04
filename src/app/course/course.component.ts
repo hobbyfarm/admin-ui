@@ -8,7 +8,6 @@ import { ScenarioService } from '../data/scenario.service';
 import { DragulaService } from 'ng2-dragula';
 import { AddScenarioComponent } from './add-scenario/add-scenario.component';
 import { CourseFormComponent } from './course-form/course-form.component';
-import { cloneDeep } from 'lodash-es';
 import { ServerResponse } from '../data/serverresponse';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
@@ -245,7 +244,7 @@ export class CourseComponent implements OnInit {
     setTimeout(() => this.courseForm.reset(), 200); // hack
 
     this.dragScenarios = this.selectedCourse.scenarios;
-    this.editVirtualMachines = cloneDeep(this.selectedCourse.virtualmachines);
+    this.editVirtualMachines = structuredClone(this.selectedCourse.virtualmachines);
     this.editCategories = this.selectedCourse.categories;
     this.clearModified();
     this.updateDynamicScenarios();
@@ -257,7 +256,7 @@ export class CourseComponent implements OnInit {
       this.courseDetailsActive = true;
       setTimeout(() => this.courseForm.reset(), 200); // hack
       this.dragScenarios = c.scenarios;
-      this.editVirtualMachines = cloneDeep(c.virtualmachines);
+      this.editVirtualMachines = structuredClone(c.virtualmachines);
       this.editCategories = c.categories;
       this.updateDynamicScenarios();
     }
