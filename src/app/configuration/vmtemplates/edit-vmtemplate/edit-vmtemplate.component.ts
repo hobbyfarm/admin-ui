@@ -18,7 +18,7 @@ import * as uuid from 'uuid'
 export class EditVmtemplateComponent implements OnInit, OnChanges {
   public templateDetails: FormGroup;
   public configMap: FormGroup;
-  public buttonsDisabled: boolean = false;
+  public buttonsDisabled: boolean = false; 
 
   public cloudConfigKey: string = 'cloud-config'
   public vmServiceKey: string = 'webinterfaces'
@@ -42,7 +42,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-    this._build();
+    this._build();    
   }
 
   @ViewChild("wizard", {static: true}) wizard: ClrWizard;
@@ -206,5 +206,5 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     }
     this.uneditedTemplate = JSON.parse(JSON.stringify(this.template))
   }
-  
+
 }
