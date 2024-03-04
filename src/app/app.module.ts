@@ -23,8 +23,7 @@ import {
   DlDateTimeDateModule,
   DlDateTimeInputModule,
   DlDateTimePickerModule,
-  
-} from 'angular-bootstrap-datetimepicker/src/lib';
+} from 'angular-bootstrap-datetimepicker';
 import { ScenarioComponent } from './scenario/scenario.component';
 import { UserComponent } from './user/user/user.component';
 import { ConfigurationComponent } from './configuration/configuration.component';

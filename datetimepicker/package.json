@@ -1,0 +1,68 @@
+{
+  "name": "angular-bootstrap-datetimepicker",
+  "version": "0.0.0-semantic-release",
+  "engines": {
+    "node": ">=14"
+  },
+  "license": "MIT",
+  "author": "https://github.com/dalelotts/angular-bootstrap-datetimepicker/graphs/contributors",
+  "bugs": {
+    "url": "https://github.com/dalelotts/angular-bootstrap-datetimepicker/issues"
+  },
+  "homepage": "https://dalelotts.github.io/angular-bootstrap-datetimepicker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dalelotts/angular-bootstrap-datetimepicker.git"
+  },
+  "keywords": [
+    "angular",
+    "calendar",
+    "component",
+    "date picker",
+    "date time picker",
+    "date",
+    "directive",
+    "moment",
+    "time picker",
+    "time"
+  ],
+  "peerDependencies": {
+    "@angular/animations": ">=13.0.0",
+    "@angular/common": ">=13.0.0",
+    "@angular/compiler": ">=13.0.0",
+    "@angular/core": ">=13.0.0",
+    "@angular/forms": ">=13.0.0",
+    "@angular/platform-browser": ">=13.0.0",
+    "@angular/platform-browser-dynamic": ">=13.0.0",
+    "@angular/router": ">=13.0.0",
+    "moment": ">=2.0.0",
+    "rxjs": ">=7.0.0",
+    "zone.js": ">=0.11.4"
+  },
+  "release": {
+    "pkgRoot": "dist"
+  },
+  "module": "fesm2015/angular-bootstrap-datetimepicker.mjs",
+  "es2020": "fesm2020/angular-bootstrap-datetimepicker.mjs",
+  "esm2020": "esm2020/angular-bootstrap-datetimepicker.mjs",
+  "fesm2020": "fesm2020/angular-bootstrap-datetimepicker.mjs",
+  "fesm2015": "fesm2015/angular-bootstrap-datetimepicker.mjs",
+  "typings": "angular-bootstrap-datetimepicker.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./angular-bootstrap-datetimepicker.d.ts",
+      "esm2020": "./esm2020/angular-bootstrap-datetimepicker.mjs",
+      "es2020": "./fesm2020/angular-bootstrap-datetimepicker.mjs",
+      "es2015": "./fesm2015/angular-bootstrap-datetimepicker.mjs",
+      "node": "./fesm2015/angular-bootstrap-datetimepicker.mjs",
+      "default": "./fesm2020/angular-bootstrap-datetimepicker.mjs"
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
+}
