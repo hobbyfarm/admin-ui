@@ -620,7 +620,7 @@
             <td>{{ getEnvironmentName(i.key) }}</td>
             <td>
               <span class="label" *ngFor="let q of i.value | keyvalue"
-                >{{ getVirtualMachineTemplateName(i.key) }}
+                >{{ getVirtualMachineTemplateName(q.key) }}
                 <span class="badge badge-success">{{ q.value }}</span></span
               >
             </td>
