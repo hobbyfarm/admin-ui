@@ -31,7 +31,7 @@ export class ScenarioComponent implements OnInit {
   public editingStep: Step = new Step();
   public editingIndex: number = 0;
 
-  public scenarioTainted: boolean = false;
+  public scenarioNotTainted: boolean = true;
 
   public editDangerClosed: boolean = true;
   public editSuccessClosed: boolean = true;
@@ -340,12 +340,12 @@ export class ScenarioComponent implements OnInit {
   }
 
   public deleteVM(setIndex: number, key: string) {
-    this.scenarioTainted = true;
+    this.scenarioNotTainted = false;
     delete this.selectedscenario.virtualmachines[setIndex][key];
   }
 
   addVM() {
-    this.scenarioTainted = true;
+    this.scenarioNotTainted = false;
     // TODO: As soon as we introduce strictNullChecks, this will fail...
     // ... and we need to check if this.vmform.controls.vm_name.value and this.vmform.controls.vm_template.value are not null
     this.selectedscenario.virtualmachines[this.newvmindex][
@@ -373,7 +373,7 @@ export class ScenarioComponent implements OnInit {
           this.scenarioSuccessClosed = false;
           setTimeout(() => {
             this.scenarioSuccessClosed = true;
-            this.scenarioTainted = false;
+            this.scenarioNotTainted = true;
           }, 1000);
         } else {
           this.scenarioDangerAlert = 'Unable to update scenario: ' + s.message;
@@ -386,7 +386,7 @@ export class ScenarioComponent implements OnInit {
   }
 
   moveStepUp(i: number) {
-    this.scenarioTainted = true;
+    this.scenarioNotTainted = false;
     // get a copy of the to-be-moved item
     var obj = <Step>deepCopy(this.selectedscenario.steps[i]);
     // delete at the index currently
@@ -396,7 +396,7 @@ export class ScenarioComponent implements OnInit {
   }
 
   moveStepDown(i: number) {
-    this.scenarioTainted = true;
+    this.scenarioNotTainted = false;
     // get a copy of the to-be-moved item
     var obj = <Step>deepCopy(this.selectedscenario.steps[i]);
     // delete at the index currently
@@ -448,12 +448,12 @@ export class ScenarioComponent implements OnInit {
   }
 
   addVMSet() {
-    this.scenarioTainted = true;
+    this.scenarioNotTainted = false;
     this.selectedscenario.virtualmachines.push({});
   }
 
   deleteVMSet(i: number) {
-    this.scenarioTainted = true;
+    this.scenarioNotTainted = false;
     this.deletingVMSetIndex = i;
     this.deleteVMSetModal.open();
   }

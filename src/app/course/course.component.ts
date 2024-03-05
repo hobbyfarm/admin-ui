@@ -58,7 +58,7 @@ export class CourseComponent implements OnInit {
 
   public alertType: string = 'warning';
   public alertText: string = null;
-  public isAlert: boolean = false;
+  public alertClosed: boolean = true;
   public modified: boolean = false;
 
   public newCategory: boolean = false;
@@ -160,12 +160,12 @@ export class CourseComponent implements OnInit {
     this.alertText =
       'Course has been modified, please save your changes or discard';
     this.alertType = 'warning';
-    this.isAlert = true;
+    this.alertClosed = false;
     this.modified = true;
   }
 
   clearModified() {
-    this.isAlert = false;
+    this.alertClosed = true;
     this.alertText = '';
     this.modified = false;
   }
@@ -173,15 +173,15 @@ export class CourseComponent implements OnInit {
   alertSuccess(msg: string) {
     this.alertType = 'success';
     this.alertText = msg;
-    this.isAlert = true;
-    setTimeout(() => (this.isAlert = false), 1000);
+    this.alertClosed = false;
+    setTimeout(() => (this.alertClosed = true), 1000);
   }
 
   alertDanger(msg: string) {
     this.alertType = 'danger';
     this.alertText = msg;
-    this.isAlert = true;
-    setTimeout(() => (this.isAlert = false), 3000);
+    this.alertClosed = false;
+    setTimeout(() => (this.alertClosed = true), 3000);
   }
 
   openNew() {

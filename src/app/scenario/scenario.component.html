@@ -1,6 +1,6 @@
 <clr-alert
   [clrAlertType]="'warning'"
-  [(clrAlertClosed)]="!scenarioTainted"
+  [(clrAlertClosed)]="scenarioNotTainted"
   [clrAlertClosable]="false"
 >
   <clr-alert-item>
@@ -303,7 +303,7 @@
                 <clr-dg-cell>{{ s.title }}</clr-dg-cell>
               </clr-dg-row>
             </clr-datagrid>
-            <ng-container *ngIf="scenarioTainted">
+            <ng-container *ngIf="!scenarioNotTainted">
               <button
                 class="btn btn-success"
                 (click)="savescenario()"
