@@ -1,20 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CourseService } from '../data/course.service';
 import { Course } from '../data/course';
-import { NewCourseComponent } from './new-course/new-course.component';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
-import { DragulaService } from 'ng2-dragula';
-import { AddScenarioComponent } from './add-scenario/add-scenario.component';
-import { CourseFormComponent } from './course-form/course-form.component';
 import { ServerResponse } from '../data/serverresponse';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 import { RbacService } from '../data/rbac.service';
 import { ClrDatagridSortOrder } from '@clr/angular';
-import { lastValueFrom } from 'rxjs';
-import { CategoryFormGroup, CourseDetailFormGroup } from '../data/forms';
 import { CourseWizardComponent } from './course-wizard/course-wizard.component';
 
 @Component({
@@ -25,70 +17,30 @@ import { CourseWizardComponent } from './course-wizard/course-wizard.component';
 export class CourseComponent implements OnInit {
   public courses: Course[] = [];
 
-  @ViewChild('newCourse') newCourse: NewCourseComponent;
   @ViewChild('addNewCourse') addNewCourse: CourseWizardComponent;
   @ViewChild('editcourse') editCourseWizard: CourseWizardComponent;
-  @ViewChild('addScenario') addScenario: AddScenarioComponent;
   @ViewChild('deleteConfirmation')
   deleteConfirmation: DeleteConfirmationComponent;
 
-  private courseForm: CourseFormComponent;
-
-  @ViewChild('courseform', { static: false }) set content(
-    content: CourseFormComponent
-  ) {
-    if (content) {
-      this.courseForm = content;
-    }
-  }
-
   public selectedCourse: Course;
 
-  public editForm: CourseDetailFormGroup;
-  // public newCategoryForm: CategoryFormGroup;
-  public newCategoryForm: CategoryFormGroup = new FormGroup({
-    category: new FormControl<string | null>(null, [Validators.required]),
-  });
-
-  public scenarios: Scenario[] = [];
-  public dragScenarios: Scenario[] = [];
-  public dynamicAddedScenarios: Scenario[] = [];
-  public editVirtualMachines: {}[] = [];
-  public editCategories: string[] = [];
-
   public alertType: string = 'warning';
-  public alertText: string = null;
+  public alertText: string = '';
   public alertClosed: boolean = true;
-  public modified: boolean = false;
 
-  public newCategory: boolean = false;
-
-  public courseDetailsActive: boolean = false;
   public showActionOverflow: boolean = false;
 
   public selectRbac: boolean = false;
   public updateRbac: boolean = false;
   public listScenarios: boolean = false;
-  public seeExamples = false;
 
   public ascSort = ClrDatagridSortOrder.ASC;
 
   constructor(
     public courseService: CourseService,
     public scenarioService: ScenarioService,
-    public dragulaService: DragulaService,
     public rbacService: RbacService
   ) {
-    dragulaService.destroy('scenarios');
-    dragulaService.createGroup('scenarios', {
-      moves: (el, container, handle) => {
-        return handle.className == 'handle';
-      },
-    });
-
-    dragulaService.drop('scenarios').subscribe(() => {
-      this.setModified();
-    });
   }
 
   ngOnInit(): void {
@@ -113,16 +65,7 @@ export class CourseComponent implements OnInit {
         this.updateRbac = allowedUpdate && this.listScenarios;
         return this.listScenarios;
       })
-      .then((allowListScenarios: boolean) => {
-        if (allowListScenarios) {
-          return lastValueFrom(this.scenarioService.list());
-        } else {
-          return [];
-        }
-      })
-      .then((s: Scenario[]) => {
-        this.scenarios = s;
-      });
+
     this.refresh();
   }
 
@@ -130,44 +73,6 @@ export class CourseComponent implements OnInit {
     this.courseService.list(true).subscribe((cList: Course[]) => {
       this.courses = cList;
     });
-  }
-
-  setupForm(fg: CourseDetailFormGroup) {
-    this.editForm = fg;
-    if (!this.updateRbac) {
-      this.editForm.disable();
-    } else {
-      this.editForm.enable();
-      this.editForm.valueChanges.subscribe(() => {
-        if (this.editForm.dirty) {
-          this.setModified();
-        }
-      });
-    }
-  }
-
-  addSelected(s: Scenario[]) {
-    this.dragScenarios = this.dragScenarios.concat(s);
-    this.setModified();
-  }
-
-  deleteScenario(i: number) {
-    this.dragScenarios.splice(i, 1);
-    this.setModified();
-  }
-
-  setModified() {
-    this.alertText =
-      'Course has been modified, please save your changes or discard';
-    this.alertType = 'warning';
-    this.alertClosed = false;
-    this.modified = true;
-  }
-
-  clearModified() {
-    this.alertClosed = true;
-    this.alertText = '';
-    this.modified = false;
   }
 
   alertSuccess(msg: string) {
@@ -184,113 +89,13 @@ export class CourseComponent implements OnInit {
     setTimeout(() => (this.alertClosed = true), 3000);
   }
 
-  openNew() {
-    this.newCourse.open();
-  }
-
   openNewWizard() {
     this.addNewCourse.openNewCourse();
-  }
-
-  openAdd() {
-    this.addScenario.open();
-  }
-
-  deleteCategory(category: string) {
-    this.editCategories.forEach((element, index) => {
-      if (element == category) this.editCategories.splice(index, 1);
-    });
-    this.updateDynamicScenarios();
-    this.setModified();
-  }
-
-  addCategory() {
-    const categories: string[] | undefined =
-      this.newCategoryForm.controls.category.value?.split(',');
-    categories?.forEach((category) => {
-      category = category.replace(/\s/g, ''); //remove all whitespaces
-      if (category != '' && !this.editCategories.includes(category)) {
-        this.editCategories.push(category);
-      }
-    });
-    this.newCategoryForm.reset();
-    this.newCategory = false;
-    this.updateDynamicScenarios();
-    this.setModified();
-  }
-
-  updateDynamicScenarios() {
-    this.dynamicAddedScenarios = [];
-    if (this.listScenarios) {
-      this.courseService.listDynamicScenarios(this.editCategories).subscribe({
-        next: (dynamicScenarios: String[]) => {
-          this.scenarios.forEach((scenario) => {
-            if (dynamicScenarios && dynamicScenarios.includes(scenario.id)) {
-              this.dynamicAddedScenarios.push(scenario);
-            }
-          });
-        },
-        error: (e: HttpErrorResponse) => {
-          this.alertDanger(
-            'Error listing dynmamic scenarios: ' + e.error.message
-          );
-        },
-      });
-    }
-  }
-
-  discardChanges() {
-    this.courseDetailsActive = true;
-    setTimeout(() => this.courseForm.reset(), 200); // hack
-
-    this.dragScenarios = this.selectedCourse.scenarios;
-    this.editVirtualMachines = structuredClone(this.selectedCourse.virtualmachines);
-    this.editCategories = this.selectedCourse.categories;
-    this.clearModified();
-    this.updateDynamicScenarios();
-  }
-
-  editCourse(c: Course) {
-    if (c) {
-      // because this can be called when unsetting the selected course
-      this.courseDetailsActive = true;
-      setTimeout(() => this.courseForm.reset(), 200); // hack
-      this.dragScenarios = c.scenarios;
-      this.editVirtualMachines = structuredClone(c.virtualmachines);
-      this.editCategories = c.categories;
-      this.updateDynamicScenarios();
-    }
   }
 
   openEditCourseWizard(course: Course) {
     this.selectedCourse = course;
     this.editCourseWizard.openEditCourse(course);
-  }
-
-  saveCourse() {
-    this.selectedCourse.name = this.editForm.controls.course_name.value;
-    this.selectedCourse.description =
-      this.editForm.controls.course_description.value;
-    this.selectedCourse.keepalive_duration =
-      this.editForm.controls.keepalive_amount.value +
-      this.editForm.controls.keepalive_unit.value;
-    this.selectedCourse.pause_duration =
-      this.editForm.controls.pause_duration.value + 'h';
-    this.selectedCourse.pauseable = this.editForm.controls.pauseable.value;
-    this.selectedCourse.keep_vm = this.editForm.controls.keep_vm.value;
-    this.selectedCourse.categories = this.editCategories;
-    this.selectedCourse.scenarios = this.dragScenarios;
-    this.selectedCourse.virtualmachines = this.editVirtualMachines;
-
-    this.courseService.update(this.selectedCourse).subscribe({
-      next: (_s: ServerResponse) => {
-        this.clearModified();
-        this.alertSuccess('Course successfully updated');
-      },
-      error: (e: HttpErrorResponse) => {
-        this.alertDanger('Error creating object: ' + e.error.message);
-      },
-    });
   }
 
   delete(course: Course): void {
@@ -301,11 +106,9 @@ export class CourseComponent implements OnInit {
   deleteSelected(): void {
     this.courseService.delete(this.selectedCourse).subscribe({
       next: (_s: ServerResponse) => {
-        this.clearModified();
         this.alertSuccess('Course deleted');
         this.refresh();
         this.selectedCourse = null;
-        this.courseDetailsActive = true; // return the user to the details tab
       },
       error: (e: HttpErrorResponse) => {
         this.alertDanger('Error deleting object: ' + e.error.message);

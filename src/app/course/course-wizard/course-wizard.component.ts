@@ -32,6 +32,8 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   public course: Course = new Course();
   public selectedCourse: Course = new Course();
   public editSelectedCourse: Course = new Course();
+  public dragScenarios: Scenario[] = [];
+
   @Input()
   public updateRbac: boolean;
 
@@ -40,9 +42,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   @Input()
   public wizardCourse: 'create' | 'edit';
-
-  @Input()
-  public dragScenarios: Scenario[] = [];
 
   @Output()
   textChanged: EventEmitter<string> = new EventEmitter<string>();

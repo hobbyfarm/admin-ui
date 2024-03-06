@@ -1,7 +1,7 @@
 <clr-alert
   [clrAlertType]="alertType"
-  [clrAlertClosable]="false"
   [(clrAlertClosed)]="alertClosed"
+  [clrAlertClosable]="false"
 >
   <clr-alert-item>
     <span class="alert-text">
@@ -28,7 +28,7 @@
       <clr-dg-row
         *clrDgItems="let c of courses"
         [clrDgItem]="c"
-        [clrDgSelectable]="!modified"
+        [clrDgSelectable]="false"
       >
         <clr-dg-action-overflow *ngIf="showActionOverflow">
           <button
@@ -51,7 +51,6 @@
         <course-details
           *clrIfExpanded
           [course]="c"
-          [dragScenarios]="dragScenarios"
           ngProjectAs="clr-dg-row-detail"
         ></course-details>
       </clr-dg-row>
@@ -60,7 +59,6 @@
 </div>
 <wizard-course
   #addNewCourse
-  [dragScenarios]="dragScenarios"
   [wizardCourse]="'create'"
   (coursesRefresher)="refresh()"
 ></wizard-course>
@@ -72,12 +70,6 @@
   [listScenarios]="listScenarios"
 ></wizard-course>
 
-<new-course #newCourse (added)="refresh()"></new-course>
-<add-scenario
-  #addScenario
-  [scenarios]="scenarios"
-  (selected)="addSelected($event)"
-></add-scenario>
 <delete-confirmation
   #deleteConfirmation
   (delete)="deleteSelected()"
