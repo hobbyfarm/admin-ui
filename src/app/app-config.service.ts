@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
+import { AppConfig } from './data/config';
 
 @Injectable()
 export class AppConfigService {
-  private appConfig;
+  private appConfig: AppConfig;
 
   constructor(private http: HttpClient) {}
 
