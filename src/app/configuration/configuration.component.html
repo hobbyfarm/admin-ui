@@ -6,28 +6,28 @@
         clrVerticalNavLink
         routerLink="./settings"
         routerLinkActive="active"
-        *rbac="['environments.list']"
+        *ngIf="showSettings"
         >Settings</a
       >
       <a
         clrVerticalNavLink
         routerLink="./environments"
         routerLinkActive="active"
-        *rbac="['environments.list']"
+        *ngIf="listEnvironments"
         >Environments</a
       >
       <a
         clrVerticalNavLink
         routerLink="./vmtemplates"
         routerLinkActive="active"
-        *rbac="['virtualmachinetemplates.list']"
+        *ngIf="listVMTemplates"
         >VM Templates</a
       >
       <a
         clrVerticalNavLink
         routerLink="./roles"
         routerLinkActive="active"
-        *rbac="['roles.list']"
+        *ngIf="listRoles"
         >Roles</a
       >
     </clr-vertical-nav>
