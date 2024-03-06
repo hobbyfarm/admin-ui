@@ -25,7 +25,7 @@ export class FilterScenariosComponent implements OnInit {
   public vmtemplates: VMTemplate[] = [];
 
   public categoryFilterForm = new FormGroup({
-    categoryControl: new FormControl<string[]>([], { nonNullable: true }),
+    categoryControl: new FormControl<string[] | null>([]),
   });
   event: any;
 
@@ -40,7 +40,7 @@ export class FilterScenariosComponent implements OnInit {
   }
   clearCategoryFilter() {
     this.selectedCategories = [];
-    this.categoryFilterForm.reset();
+    this.categoryFilterForm.reset({ categoryControl: [] });
   }
 
   filterScenarioList() {
@@ -106,7 +106,7 @@ export class FilterScenariosComponent implements OnInit {
 
     this.categoryFilterForm.valueChanges.subscribe(() => {
       this.selectedCategories =
-        this.categoryFilterForm.controls.categoryControl.value;
+        this.categoryFilterForm.controls.categoryControl.value ?? [];
       this.filterScenarioList();
       // TODO: Refactor
       this.emitScenarios(this.filteredScenarios);
