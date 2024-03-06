@@ -21,7 +21,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { AddScenarioComponent } from '../add-scenario/add-scenario.component';
 import { cloneDeep } from 'lodash-es';
-import { Environment } from 'src/app/data/environment';
 import { CategoryFormGroup, CourseDetailFormGroup } from 'src/app/data/forms';
 @Component({
   selector: 'wizard-course',
