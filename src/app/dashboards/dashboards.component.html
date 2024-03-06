@@ -5,7 +5,7 @@
       <clr-vertical-nav-group routerLinkActive="active">
         <a routerLink="./dashboards" hidden aria-hidden="true"></a>
         Active Events
-        <clr-vertical-nav-group-children *clrIfExpanded #activeChildren>
+        <clr-vertical-nav-group-children *clrIfExpanded="expandActiveEvents" #activeChildren>
           <a
             *ngFor="let se of activeEvents"
             clrVerticalNavLink

@@ -25,6 +25,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   private listVMs: boolean = false;
   private updateInterval: any;
 
+  public expandActiveEvents = true;
+
   constructor(
     private scheduledeventService: ScheduledeventService,
     private helper: JwtHelperService,
