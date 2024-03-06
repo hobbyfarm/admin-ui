@@ -22,6 +22,6 @@ export class ScheduledEvent {
 }
 
 export interface DashboardScheduledEvent extends ScheduledEvent {
-  creatorEmail?: String;
+  creatorEmail?: string;
   provisionedVMs?: number;
 }

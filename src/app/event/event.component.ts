@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { NewScheduledEventComponent } from './new-scheduled-event/new-scheduled-event.component';
@@ -7,7 +7,7 @@ import { CourseService } from '../data/course.service';
 import { ScenarioService } from '../data/scenario.service';
 import { UserService } from '../data/user.service';
 import { RbacService } from '../data/rbac.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 
 interface ExtendedScheduledEvent extends ScheduledEvent {
   creatorEmail?: String;
@@ -19,7 +19,7 @@ interface ExtendedScheduledEvent extends ScheduledEvent {
   selector: 'app-event',
   templateUrl: './event.component.html',
 })
-export class EventComponent implements OnInit, OnDestroy {
+export class EventComponent implements OnInit {
   public events: ExtendedScheduledEvent[] = [];
 
   public deleteopen: boolean = false;
@@ -37,8 +37,9 @@ export class EventComponent implements OnInit, OnDestroy {
 
   public allowEdit: boolean = false;
   public showActionOverflow: boolean = false;
-
-  private scenarioSubscription: Subscription;
+  private listCourses = false;
+  private listScenarios = false;
+  private listUsers = false;
 
   otacModalOpen: boolean = false;
   openModalEvents: Subject<ScheduledEvent> = new Subject<ScheduledEvent>();
@@ -55,23 +56,23 @@ export class EventComponent implements OnInit, OnDestroy {
   @ViewChild('deletemodal', { static: true }) deletemodal: ClrModal;
 
   ngOnInit() {
-    this.refresh(false);
-
     // list permissions for the following ressources are required in order to edit scheduled events
     const authorizationRequests = Promise.all([
       this.rbacService.Grants('scenarios', 'list'),
       this.rbacService.Grants('courses', 'list'),
       this.rbacService.Grants('environments', 'list'),
       this.rbacService.Grants('scheduledevents', 'delete'),
+      this.rbacService.Grants('users', 'list'),
     ]);
 
     authorizationRequests.then(
-      (permissions: [boolean, boolean, boolean, boolean]) => {
-        const listScenarios: boolean = permissions[0];
-        const listCourses: boolean = permissions[1];
+      (permissions: [boolean, boolean, boolean, boolean, boolean]) => {
+        this.listScenarios = permissions[0];
+        this.listCourses = permissions[1];
         const listEnvironments: boolean = permissions[2];
         const deleteEvents: boolean = permissions[3];
-        this.allowEdit = (listScenarios || listCourses) && listEnvironments;
+        this.listUsers = permissions[4];
+        this.allowEdit = (this.listScenarios || this.listCourses) && listEnvironments;
         this.showActionOverflow = this.allowEdit || deleteEvents;
         this.refresh(true);
       }
@@ -125,7 +126,7 @@ export class EventComponent implements OnInit, OnDestroy {
   }
 
   public async updateFields() {
-    if (await this.rbacService.Grants('courses', 'list')) {
+    if (this.listCourses) {
       this.courseService.list().subscribe((courseList) => {
         this.events.forEach((se) => {
           if (se.courses) {
@@ -137,8 +138,8 @@ export class EventComponent implements OnInit, OnDestroy {
       });
     }
 
-    if (await this.rbacService.Grants('scenarios', 'list')) {
-      this.scenarioSubscription = this.scenarioService
+    if (this.listScenarios) {
+      this.scenarioService
         .list()
         .subscribe((scenarioList) => {
           this.events.forEach((se) => {
@@ -151,7 +152,7 @@ export class EventComponent implements OnInit, OnDestroy {
         });
     }
 
-    if (await this.rbacService.Grants('users', 'list')) {
+    if (this.listUsers) {
       this.userService.list().subscribe((users) => {
         this.events.forEach((se) => {
           se.creatorEmail = users.filter((u) => u.id == se.creator)[0]?.email;
@@ -167,12 +168,5 @@ export class EventComponent implements OnInit, OnDestroy {
   openOtac(se: ScheduledEvent) {
     this.openModalEvents.next(se);
     this.otacModalOpen = true;
-  }
-
-  ngOnDestroy() {
-    // only if cached -> unsubscribe!
-    if (this.scenarioSubscription) {
-      this.scenarioSubscription.unsubscribe();
-    }
   }
 }
