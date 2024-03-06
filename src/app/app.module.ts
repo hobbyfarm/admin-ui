@@ -33,6 +33,7 @@ import { ContentComponent } from './content/content.component';
 import { CourseComponent } from './course/course.component';
 import { NewCourseComponent } from './course/new-course/new-course.component';
 import { CourseFormComponent } from './course/course-form/course-form.component';
+import { DragulaModule } from 'ng2-dragula';
 import { AddScenarioComponent } from './course/add-scenario/add-scenario.component';
 import { VmsetComponent } from './vmset/vmset.component';
 import { NewVmComponent } from './vmset/new-vm/new-vm.component';
@@ -298,6 +299,7 @@ export function jwtOptionsFactory(): JwtConfig {
       globalParsers: [{ component: CtrComponent }],
     }),
     BrowserAnimationsModule,
+    DragulaModule.forRoot(),
     MarkdownModule.forRoot({
       sanitize: SecurityContext.NONE,
     }),
