@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { first, switchMap } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 import { ScenarioService } from '../data/scenario.service';
 
 @Component({
@@ -19,7 +19,7 @@ export class PrintableComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
-        first(),
+        take(1),
         switchMap((p: ParamMap) => {
           return this.scenarioService.printable(p.get('scenario'));
         })

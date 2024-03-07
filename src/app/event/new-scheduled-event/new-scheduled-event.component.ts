@@ -28,7 +28,7 @@ import {
   map,
   filter,
   defaultIfEmpty,
-  first,
+  take,
 } from 'rxjs/operators';
 import { Environment } from 'src/app/data/environment';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
@@ -152,7 +152,7 @@ export class NewScheduledEventComponent
 
   ngAfterViewChecked(): void {
     this.wizardPages.changes
-      .pipe(first())
+      .pipe(take(1))
       .subscribe((wizardPages: QueryList<ClrWizardPage>) => {
         if (this.wizardPages.length != 0) {
           setTimeout(() => {

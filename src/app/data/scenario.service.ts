@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { catchError, first, map, tap } from 'rxjs/operators';
+import { catchError, map, take, tap } from 'rxjs/operators';
 import { Scenario } from './scenario';
 import { Step } from './step';
 import { deepCopy } from '../deepcopy';
@@ -51,7 +51,7 @@ export class ScenarioService {
 
   public list(force = false) {
     if (!force && (this.fetchedList || this.startedFetchedList)) {
-      return this.bh.pipe(first());
+      return this.bh.pipe(take(1));
     } else {
       this.startedFetchedList = true;
       return this.http.get(environment.server + '/a/scenario/list').pipe(
