@@ -23,11 +23,11 @@ import { Course } from 'src/app/data/course';
 import { CourseService } from 'src/app/data/course.service';
 import { EnvironmentService } from 'src/app/data/environment.service';
 import {
-  combineAll,
   concatMap,
   map,
   filter,
   defaultIfEmpty,
+  combineLatestAll,
   take,
 } from 'rxjs/operators';
 import { Environment } from 'src/app/data/environment';
@@ -783,7 +783,7 @@ export class NewScheduledEventComponent
         map((ea: EnvironmentAvailability) => {
           return of(ea);
         }),
-        combineAll(),
+        combineLatestAll(),
         defaultIfEmpty([])
       )
       .subscribe((ea: EnvironmentAvailability[]) => {
