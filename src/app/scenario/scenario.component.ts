@@ -8,14 +8,11 @@ import { deepCopy } from '../deepcopy';
 import { VmtemplateService } from '../data/vmtemplate.service';
 import { VMTemplate } from '../data/vmtemplate';
 import { VirtualMachine } from '../data/virtualmachine';
-import {
-  Validators,
-  FormGroup,
-  FormControl,
-} from '@angular/forms';
+import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { KeepaliveValidator } from '../validators/keepalive.validator';
 import { RbacService } from '../data/rbac.service';
 import { CategoryFormGroup, ScenarioFormGroup } from '../data/forms';
+import { delay, tap } from 'rxjs';
 
 @Component({
   selector: 'app-scenario',
@@ -67,7 +64,7 @@ export class ScenarioComponent implements OnInit {
   constructor(
     public scenarioService: ScenarioService,
     public vmTemplateService: VmtemplateService,
-    public rbacService: RbacService
+    public rbacService: RbacService,
   ) {}
 
   public vmform: FormGroup<{
@@ -367,22 +364,28 @@ export class ScenarioComponent implements OnInit {
 
     this.scenarioService
       .update(this.selectedscenario)
-      .subscribe((s: ServerResponse) => {
-        if (s.type == 'updated') {
-          this.scenarioSuccessAlert = 'Scenario updated';
-          this.scenarioSuccessClosed = false;
-          setTimeout(() => {
+      .pipe(
+        tap((s: ServerResponse) => {
+          if (s.type == 'updated') {
+            this.scenarioSuccessAlert = 'Scenario updated';
+            this.scenarioSuccessClosed = false;
+          } else {
+            this.scenarioDangerAlert =
+              'Unable to update scenario: ' + s.message;
+            this.scenarioDangerClosed = false;
+          }
+        }),
+        delay(1000),
+        tap((s: ServerResponse) => {
+          if (s.type == 'updated') {
             this.scenarioSuccessClosed = true;
             this.scenarioNotTainted = true;
-          }, 1000);
-        } else {
-          this.scenarioDangerAlert = 'Unable to update scenario: ' + s.message;
-          this.scenarioDangerClosed = false;
-          setTimeout(() => {
+          } else {
             this.scenarioDangerClosed = true;
-          }, 1000);
-        }
-      });
+          }
+        })
+      )
+      .subscribe();
   }
 
   moveStepUp(i: number) {
