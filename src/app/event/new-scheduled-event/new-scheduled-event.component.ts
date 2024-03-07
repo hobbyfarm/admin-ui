@@ -8,7 +8,8 @@ import {
   OnChanges,
   ViewChildren,
   QueryList,
-  AfterViewChecked,
+  AfterViewInit,
+  OnDestroy,
 } from '@angular/core';
 import {
   ClrWizard,
@@ -28,7 +29,6 @@ import {
   filter,
   defaultIfEmpty,
   combineLatestAll,
-  take,
 } from 'rxjs/operators';
 import { Environment } from 'src/app/data/environment';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
@@ -44,7 +44,7 @@ import {
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 import { RbacService } from 'src/app/data/rbac.service';
-import { of } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { QuickSetEndTimeFormGroup } from 'src/app/data/forms';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
@@ -71,7 +71,7 @@ type VmCountFormGroup = FormGroup<EnvToVmTemplatesMappings>;
   styleUrls: ['./new-scheduled-event.component.scss'],
 })
 export class NewScheduledEventComponent
-  implements OnInit, OnChanges, AfterViewChecked
+  implements OnInit, OnChanges, AfterViewInit, OnDestroy
 {
   @Output()
   public updated: EventEmitter<boolean> = new EventEmitter(false);
@@ -125,6 +125,8 @@ export class NewScheduledEventComponent
 
   private onCloseFn: Function;
 
+  private wizardSubscription: Subscription;
+
   constructor(
     private _fb: NonNullableFormBuilder,
     public ss: ScenarioService,
@@ -149,17 +151,19 @@ export class NewScheduledEventComponent
           );
       });
   }
+  ngOnDestroy(): void {
+    this.wizardSubscription.unsubscribe();
+  }
 
-  ngAfterViewChecked(): void {
-    this.wizardPages.changes
-      .pipe(take(1))
+  ngAfterViewInit(): void {
+    this.wizardSubscription = this.wizardPages.changes
+      .pipe(filter((wizardPages: QueryList<ClrWizardPage>) => wizardPages.length != 0))
       .subscribe((wizardPages: QueryList<ClrWizardPage>) => {
-        if (this.wizardPages.length != 0) {
-          setTimeout(() => {
-            this.wizard.navService.goTo(this.wizard.pages.last, true);
-            this.wizard.pages.first.makeCurrent();
-          });
-        }
+        console.log("Wizard Change registered!")
+        setTimeout(() => {
+          this.wizard.navService.goTo(wizardPages.last, true);
+          wizardPages.first.makeCurrent();
+        });
       });
   }
 
