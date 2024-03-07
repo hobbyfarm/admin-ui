@@ -159,7 +159,6 @@ export class NewScheduledEventComponent
     this.wizardSubscription = this.wizardPages.changes
       .pipe(filter((wizardPages: QueryList<ClrWizardPage>) => wizardPages.length != 0))
       .subscribe((wizardPages: QueryList<ClrWizardPage>) => {
-        console.log("Wizard Change registered!")
         setTimeout(() => {
           this.wizard.navService.goTo(wizardPages.last, true);
           wizardPages.first.makeCurrent();
