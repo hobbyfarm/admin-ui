@@ -3,8 +3,8 @@ export class ScheduledEvent {
   creator: string;
   event_name: string;
   description: string;
-  start_time: Date;
-  end_time: Date;
+  start_time: Date | null = null;
+  end_time: Date | null = null;
   // Maps from (envName, vmTemplateName) to vmCount
   required_vms: Record<string, Record<string, number>>;
   scenarios: string[];
