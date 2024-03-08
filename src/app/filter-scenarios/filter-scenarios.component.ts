@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ClrDatagridSortOrder } from '@clr/angular';
 import { RbacService } from '../data/rbac.service';
@@ -25,7 +25,7 @@ export class FilterScenariosComponent implements OnInit {
   public vmtemplates: VMTemplate[] = [];
 
   public categoryFilterForm = new FormGroup({
-    categoryControl: new FormControl([], []),
+    categoryControl: new FormControl<string[] | null>([]),
   });
   event: any;
 
@@ -40,7 +40,7 @@ export class FilterScenariosComponent implements OnInit {
   }
   clearCategoryFilter() {
     this.selectedCategories = [];
-    this.categoryFilterForm.get('categoryControl').setValue([]);
+    this.categoryFilterForm.reset({ categoryControl: [] });
   }
 
   reloadScenarios(){
@@ -114,7 +114,7 @@ export class FilterScenariosComponent implements OnInit {
 
     this.categoryFilterForm.valueChanges.subscribe(() => {
       this.selectedCategories =
-        this.categoryFilterForm.get('categoryControl').value ?? [];
+        this.categoryFilterForm.controls.categoryControl.value ?? [];
       this.filterScenarioList();
       // TODO: Refactor
       this.emitScenarios(this.filteredScenarios);

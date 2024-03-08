@@ -7,18 +7,18 @@ import { ScheduledEvent } from 'src/app/data/scheduledevent';
   selector: 'event-status-filter',
   templateUrl: './event-status-filter.component.html',
 })
-export class EventStatusFilterComponent implements ClrDatagridFilterInterface<ScheduledEvent> {
+export class EventStatusFilterComponent implements ClrDatagridFilterInterface<ScheduledEvent, boolean> {
   enabled: boolean = true;
 
   constructor(filterContainer: ClrDatagridFilter) {
     filterContainer.setFilter(this);
   }
 
-  changes = new Subject<any>();
+  changes = new Subject<boolean>();
 
   setActive(active: boolean): void {
     this.enabled = active;
-    this.changes.next();
+    this.changes.next(this.enabled);
   }
 
   isActive(): boolean {

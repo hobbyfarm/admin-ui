@@ -8,7 +8,7 @@
 <div class="clr-row">
     <div class="clr-col-4">
         <button class="btn btn-success-outline btn-sm" (click)="newAccessCode = true" *rbac="['users.update']">
-            <clr-icon shape="plus"></clr-icon> Add Access Code
+            <cds-icon shape="plus"></cds-icon> Add Access Code
         </button>
         <ng-container *ngIf="newAccessCode">
             <form clrForm [formGroup]="newAccessCodeForm">

@@ -3,10 +3,10 @@ import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Subject, concat, throwError } from 'rxjs';
 import {
   catchError,
-  first,
   map,
   shareReplay,
   switchMap,
+  take,
   tap,
 } from 'rxjs/operators';
 import { themes } from '../step/terminal-themes/themes';
@@ -44,7 +44,7 @@ export class SettingsService {
     const params = new HttpParams({ fromObject: newSettings });
     return this.garg.post('/settings', params).pipe(
       catchError((e: HttpErrorResponse) => {
-        return throwError(e.error);
+        return throwError(() => e.error);
       }),
       tap(() => this.subject.next(newSettings))
     );
@@ -52,7 +52,7 @@ export class SettingsService {
 
   update(update: Partial<Readonly<Settings>>) {
     return this.settings$.pipe(
-      first(),
+      take(1),
       switchMap((currentSettings) => {
         return this.set({ ...currentSettings, ...update });
       })

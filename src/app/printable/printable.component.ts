@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { first, switchMap } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 import { ScenarioService } from '../data/scenario.service';
 
 @Component({
@@ -9,8 +9,7 @@ import { ScenarioService } from '../data/scenario.service';
   templateUrl: './printable.component.html',
 })
 export class PrintableComponent implements OnInit {
-
-  public scenario: string = "";
+  public scenario: string = '';
 
   constructor(
     public route: ActivatedRoute,
@@ -19,19 +18,21 @@ export class PrintableComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap
-    .pipe(
-      first(),
-      switchMap((p: ParamMap) => {
-        return this.scenarioService.printable(p.get("scenario"))
-      })
-    ).subscribe(
-      (content: any) => {
-        this.scenario = content;
-      },
-      (error: HttpErrorResponse) => {
-        this.scenario = "There was an error rendering printable scenario content: " + error.message
-      }
-    )
+      .pipe(
+        take(1),
+        switchMap((p: ParamMap) => {
+          return this.scenarioService.printable(p.get('scenario'));
+        })
+      )
+      .subscribe({
+        next: (content: string) => {
+          this.scenario = content;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.scenario =
+            'There was an error rendering printable scenario content: ' +
+            error.message;
+        },
+      });
   }
-
 }

@@ -17,6 +17,7 @@ import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { KeepaliveValidator } from 'src/app/validators/keepalive.validator';
 import { StepsScenarioComponent } from '../steps-scenario/steps-scenario.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CategoryFormGroup, ScenarioFormGroup } from 'src/app/data/forms';
 
 @Component({
   selector: 'scenario-wizard',
@@ -70,8 +71,8 @@ export class ScenarioWizardComponent implements OnInit {
   public selectedscenario: Scenario;
 
   get keepaliveRequired() {
-    const ka = this.newScenarioDetails.get('keepalive_amount');
-    const ku = this.newScenarioDetails.get('keepalive_unit');
+    const ka = this.newScenarioDetails.controls.keepalive_amount;
+    const ku = this.newScenarioDetails.controls.keepalive_unit;
 
     // validate
     if ((ka.dirty || ka.touched) && ka.invalid && ka.errors.required) {
@@ -96,65 +97,86 @@ export class ScenarioWizardComponent implements OnInit {
 
   @ViewChild('wizard', { static: true }) wizard: ClrWizard;
 
-  public scenarioDetails: FormGroup;
+  public scenarioDetails: ScenarioFormGroup;
 
-  public newScenarioDetails: FormGroup = new FormGroup(
+  public newScenarioDetails: ScenarioFormGroup = new FormGroup(
     {
-      scenario_name: new FormControl(null, [
+      scenario_name: new FormControl<string | null>(null, [
         Validators.required,
         Validators.minLength(4),
-        Validators.pattern(/^[a-zA-Z0-9 ]+$/),
       ]),
-      scenario_description: new FormControl(null, [
+      scenario_description: new FormControl<string | null>(null, [
         Validators.required,
         Validators.minLength(4),
-        Validators.pattern(/^[a-zA-Z0-9 ]+$/),
       ]),
-      keepalive_amount: new FormControl(10, [Validators.required]),
-      keepalive_unit: new FormControl('m', [Validators.required]),
-      pause_duration: new FormControl(1, [
-        Validators.required,
-        Validators.min(1),
-        Validators.pattern('^[0-9]+$'),
-      ]),
+      keepalive_amount: new FormControl<number>(10, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
+      keepalive_unit: new FormControl<string>('m', {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
+      pause_duration: new FormControl<number>(1, {
+        validators: [
+          Validators.required,
+          Validators.min(1),
+          Validators.pattern('^[0-9]+$'),
+        ],
+        nonNullable: true,
+      }),
     },
     { validators: KeepaliveValidator }
   );
 
-  public editScenarioForm: FormGroup = new FormGroup(
+  public editScenarioForm: ScenarioFormGroup = new FormGroup(
     {
-      scenario_name: new FormControl(null, [
+      scenario_name: new FormControl<string | null>(null, [
         Validators.required,
         Validators.minLength(4),
       ]),
-      scenario_description: new FormControl(null, [
+      scenario_description: new FormControl<string | null>(null, [
         Validators.required,
         Validators.minLength(4),
       ]),
-      keepalive_amount: new FormControl(10, [Validators.required]),
-      keepalive_unit: new FormControl('m', [Validators.required]),
-      pause_duration: new FormControl(1, [
-        Validators.required,
-        Validators.min(1),
-        Validators.pattern('^[0-9]+$'),
-      ]),
+      keepalive_amount: new FormControl<number>(10, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
+      keepalive_unit: new FormControl<string>('m', {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
+      pause_duration: new FormControl<number>(1, {
+        validators: [
+          Validators.required,
+          Validators.min(1),
+          Validators.pattern('^[0-9]+$'),
+        ],
+        nonNullable: true,
+      }),
     },
     { validators: KeepaliveValidator }
   );
 
-  public vmform: FormGroup = new FormGroup({
-    vm_name: new FormControl(null, [
+  public vmform: FormGroup<{
+    vm_name: FormControl<string | null>;
+    vm_template: FormControl<string | null>;
+  }> = new FormGroup({
+    vm_name: new FormControl<string | null>(null, [
       Validators.required,
       Validators.minLength(4),
     ]),
-    vm_template: new FormControl(null, [Validators.required]),
+    vm_template: new FormControl<string | null>(null, [Validators.required]),
   });
 
-  public newCategoryForm: FormGroup = new FormGroup({
-    category: new FormControl(null, [Validators.required]),
+  public newCategoryForm: CategoryFormGroup = new FormGroup({
+    category: new FormControl<string | null>(null, [Validators.required]),
   });
-  public newTagForm: FormGroup = new FormGroup({
-    tag: new FormControl(null, [Validators.required]),
+  public newTagForm: FormGroup<{
+    tag: FormControl<string>;
+  }> = new FormGroup({
+    tag: new FormControl<string | null>(null, [Validators.required]),
   });
   ngOnInit() {
     if (this.wizardScenario == 'create') {
@@ -215,15 +237,13 @@ export class ScenarioWizardComponent implements OnInit {
     }
   }
   public addNewScenario() {
-    this.newScenario.name = this.newScenarioDetails.get('scenario_name').value;
-    this.newScenario.description = this.newScenarioDetails.get(
-      'scenario_description'
-    ).value;
+    this.newScenario.name = this.newScenarioDetails.controls.scenario_name.value;
+    this.newScenario.description = this.newScenarioDetails.controls.scenario_description.value;
     this.newScenario.keepalive_duration =
-      this.newScenarioDetails.get('keepalive_amount').value +
-      this.newScenarioDetails.get('keepalive_unit').value;
+      this.newScenarioDetails.controls.keepalive_amount.value +
+      this.newScenarioDetails.controls.keepalive_unit.value;
     this.newScenario.pause_duration =
-      this.newScenarioDetails.get('pause_duration').value + 'h';
+      this.newScenarioDetails.controls.pause_duration.value + 'h';
     if (this.newScenario.steps == null) this.newScenario.steps = [];
     if (this.newScenario.virtualmachines == null)
       this.newScenario.virtualmachines = [];
@@ -252,15 +272,13 @@ export class ScenarioWizardComponent implements OnInit {
   }
   updateScenario() {
     this.selectedscenario.keepalive_duration =
-      this.editScenarioForm.get('keepalive_amount').value +
-      this.editScenarioForm.get('keepalive_unit').value;
+      this.editScenarioForm.controls.keepalive_amount.value +
+      this.editScenarioForm.controls.keepalive_unit.value;
     this.selectedscenario.pause_duration =
-      this.editScenarioForm.get('pause_duration').value + 'h';
+      this.editScenarioForm.controls.pause_duration.value + 'h';
     this.selectedscenario.name =
-      this.editScenarioForm.get('scenario_name').value;
-    this.selectedscenario.description = this.editScenarioForm.get(
-      'scenario_description'
-    ).value;
+      this.editScenarioForm.controls.scenario_name.value;
+    this.selectedscenario.description = this.editScenarioForm.controls.scenario_description.value;
   }
   saveUpdatedScenario() {
     this.scenarioService
@@ -295,9 +313,9 @@ export class ScenarioWizardComponent implements OnInit {
     this.selectedscenario.tags = [];
   }
   addCategory() {
-    let categories = this.newCategoryForm.get('category').value;
-    categories = categories.split(',');
-    categories.forEach((category) => {
+    const categories: string[] | undefined =
+      this.newCategoryForm.controls.category.value?.split(',');
+    categories?.forEach((category) => {
       category = category.replace(/\s/g, ''); //remove all whitespaces
       if (
         category != '' &&
@@ -316,9 +334,9 @@ export class ScenarioWizardComponent implements OnInit {
     });
   }
   addTag() {
-    let tags = this.newTagForm.get('tag').value;
-    tags = tags.split(',');
-    tags.forEach((tag) => {
+    const tags: string[] | undefined =
+      this.newTagForm.controls.tag.value?.split(',');
+    tags?.forEach((tag) => {
       tag = tag.replace(/\s/g, ''); //remove all whitespaces
       if (tag != '' && !this.selectedscenario.tags.includes(tag)) {
         this.selectedscenario.tags.push(tag);
@@ -371,8 +389,8 @@ export class ScenarioWizardComponent implements OnInit {
     this.scenarioHasVM(this.selectedscenario);
     this.scenarioTainted = true;
     this.selectedscenario.virtualmachines[this.newvmindex][
-      this.vmform.get('vm_name').value
-    ] = this.vmform.get('vm_template').value;
+      this.vmform.controls.vm_name.value
+    ] = this.vmform.controls.vm_template.value;
     this.createVMModal.close();
   }
 
@@ -418,19 +436,20 @@ export class ScenarioWizardComponent implements OnInit {
         this.editScenarioForm.reset({
           scenario_name: s.name,
           scenario_description: s.description,
-          keepalive_amount: s.keepalive_duration.substring(
-            0,
-            s.keepalive_duration.length - 1
+          keepalive_amount: Number(
+            s.keepalive_duration.substring(0, s.keepalive_duration.length - 1)
           ),
           keepalive_unit: s.keepalive_duration.substring(
             s.keepalive_duration.length - 1,
             s.keepalive_duration.length
           ),
-          pause_duration: s.pause_duration.substring(
-            0,
-            s.pause_duration.length - 1
-          ),
         });
+        const pauseDuration = Number(s.pause_duration?.slice(0, -1));
+        if (!Number.isNaN(pauseDuration)) {
+          this.editScenarioForm.patchValue({
+            pause_duration: pauseDuration,
+          });
+        }
       });
     }
   }

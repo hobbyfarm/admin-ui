@@ -21,7 +21,7 @@
             </ng-container>
             <clr-options>
                 <clr-option *clrOptionItems="let scenario of scenariosWithSession" [clrValue]="scenario">
-                    <clr-icon shape="node-group"></clr-icon> {{ scenario }}
+                    <cds-icon shape="node-group"></cds-icon> {{ scenario }}
                 </clr-option>
             </clr-options>
           </clr-combobox>
@@ -85,7 +85,7 @@
           </clr-signpost-content>
         </clr-signpost>
         <span class="clr-subtext" *ngIf="chartDetails.errors?.endDateLowerThanStartDate">
-          <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon> Start date must occur before end time!
+          <cds-icon class="clr-validate-icon" shape="exclamation-circle"></cds-icon> Start date must occur before end time!
         </span>
       </div>
     </div>

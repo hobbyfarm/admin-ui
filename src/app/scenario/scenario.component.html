@@ -1,18 +1,7 @@
 <clr-alert
-  [clrAlertType]="'warning'"
-  [(clrAlertClosed)]="!scenarioTainted"
-  [clrAlertClosable]="false"
->
-  <clr-alert-item>
-    <span class="alert-text">
-      Scenario has been modified. Save your changes.
-    </span>
-  </clr-alert-item>
-</clr-alert>
-<clr-alert
   [clrAlertType]="'danger'"
   [(clrAlertClosed)]="scenarioDangerClosed"
-  [clrAlertClosable]="false"
+  [clrAlertClosable]="true"
 >
   <clr-alert-item>
     <span class="alert-text">
@@ -23,7 +12,7 @@
 <clr-alert
   [clrAlertType]="'success'"
   [(clrAlertClosed)]="scenarioSuccessClosed"
-  [clrAlertClosable]="false"
+  [clrAlertClosable]="true"
 >
   <clr-alert-item>
     <span class="alert-text">
@@ -39,7 +28,7 @@
       (click)="openScenario()"
       *rbac="['scenarios.create']"
     >
-      <clr-icon shape="plus"></clr-icon> New Scenario
+      <cds-icon shape="plus"></cds-icon> New Scenario
     </button>
   </div>
 </div>

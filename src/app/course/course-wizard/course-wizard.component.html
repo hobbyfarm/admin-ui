@@ -12,7 +12,7 @@
   <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="!form.valid"
+    [clrWizardPageNextDisabled]="!form?.valid"
     (clrWizardPageNext)="saveCourseWizard()"
   >
     <ng-template clrPageTitle>Course Details</ng-template>
@@ -67,7 +67,7 @@
         >
           <tr *ngFor="let s of dragScenarios; let i = index">
             <td>
-              <clr-icon class="handle" shape="drag-handle" size="24"></clr-icon>
+              <cds-icon class="handle" shape="drag-handle" size="24"></cds-icon>
             </td>
             <td>
               {{ i + 1 }}
@@ -135,7 +135,7 @@
         >
           <tr *ngFor="let s of dragScenarios; let i = index">
             <td>
-              <clr-icon class="handle" shape="drag-handle" size="24"></clr-icon>
+              <cds-icon class="handle" shape="drag-handle" size="24"></cds-icon>
             </td>
             <td>
               {{ i + 1 }}
@@ -193,14 +193,14 @@
         (click)="newCategory = true"
         *rbac="['courses.update']"
       >
-        <clr-icon shape="plus"></clr-icon> Add Query
+        <cds-icon shape="plus"></cds-icon> Add Query
       </button>
       <button
         class="btn btn-success-outline btn-sm"
         (click)="seeExamples = !seeExamples"
         *rbac="['courses.update']"
       >
-        <clr-icon shape="plus"></clr-icon> Example Queries
+        <cds-icon shape="plus"></cds-icon> Example Queries
       </button>
       <ng-container *ngIf="seeExamples">
         <clr-datagrid class="datagrid-compact">
@@ -322,7 +322,7 @@
                 <span class="del-elem">{{
                   selectedCourse.name
                 }}</span>
-                <clr-icon shape="arrow" dir="right"></clr-icon>
+                <cds-icon shape="arrow" direction="right"></cds-icon>
                <span class="add-elem">{{ editSelectedCourse.name }}</span>
                </td>
             </ng-container>  
@@ -342,7 +342,7 @@
               <span class="del-elem">{{
                 selectedCourse.description
               }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
+              <cds-icon shape="arrow" direction="right"></cds-icon>
              <span class="add-elem">{{ editSelectedCourse.description }}</span>
              </td>
           </ng-container>  
@@ -361,7 +361,7 @@
               <span class="del-elem">{{
                 selectedCourse.keepalive_duration
               }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
+              <cds-icon shape="arrow" direction="right"></cds-icon>
              <span class="add-elem">{{ editSelectedCourse.keepalive_duration }}</span>
              </td>
           </ng-container>  
@@ -379,7 +379,7 @@
               <span class="del-elem">{{
                 selectedCourse.pause_duration
               }}</span>
-              <clr-icon shape="arrow" dir="right"></clr-icon>
+              <cds-icon shape="arrow" direction="right"></cds-icon>
              <span class="add-elem">{{ editSelectedCourse.pause_duration }}</span>
              </td>
           </ng-container>  
@@ -394,14 +394,14 @@
               <span
                 class="label del-elem"
                 *ngIf="!isScenarioInList(s, editSelectedCourse.scenarios)"
-                >{{ s.name }}<clr-icon shape="trash"></clr-icon
+                >{{ s.name }}<cds-icon shape="trash"></cds-icon
               ></span>
             </ng-container>
             <ng-container *ngFor="let s of editSelectedCourse.scenarios">
               <span
                 class="label add-elem"
                 *ngIf="!isScenarioInList(s, selectedCourse.scenarios)"
-                >{{ s.name }} <clr-icon shape="plus"></clr-icon
+                >{{ s.name }} <cds-icon shape="plus"></cds-icon
               ></span>
             </ng-container>
           </td>
@@ -446,10 +446,8 @@
                   <td class="add-elem">{{ q.key }}</td>
                   <td class="add-elem">{{ q.value }}</td> 
                 </ng-container>   
-                <!-- view of edit value -->
-                <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) != q.value && getSelectedCourseVM(i.key, q.key) != 0 ">
-                  <td class=" del-elem after" style="margin-right: 0">
-                    {{ getSelectedCourseVM(i.key, q.key) }}</td>                 
+                <!-- view of edit value (delete VM and create VM with the same VM Name) -->
+                <ng-container *ngIf="isEditedVM(i.key, q.key, q.value)"> 
                   <td class=" add-elem"> {{ q.value }}</td>                 
                 </ng-container>                        
             </tr>  

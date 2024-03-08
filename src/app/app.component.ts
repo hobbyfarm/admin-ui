@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { ClarityIcons } from '@clr/icons';
+import '@cds/core/icon/register.js';
+import { ClarityIcons } from '@cds/core/icon';
 import { Router } from '@angular/router';
 import { AppConfigService } from './app-config.service';
 
@@ -18,9 +19,7 @@ export class AppComponent {
   ) {
     this.configService.getLogo(this.logo)
       .then((obj: string) => {
-        ClarityIcons.add({
-          "logo": obj
-        })
+        ClarityIcons.addIcons(['logo', obj]);
       })
   }
 

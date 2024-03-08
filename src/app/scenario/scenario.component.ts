@@ -3,12 +3,10 @@ import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
 import { ClrDatagridSortOrder, ClrModal } from '@clr/angular';
 import { ServerResponse } from '../data/serverresponse';
-import { VirtualMachine } from '../data/virtualmachine';
-import { RbacService } from '../data/rbac.service';
 import { FilterScenariosComponent } from '../filter-scenarios/filter-scenarios.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ScenarioWizardComponent } from './scenario-wizard/scenario-wizard.component';
-import { StepsScenarioComponent } from './steps-scenario/steps-scenario.component';
+import { RbacService } from '../data/rbac.service';
 
 @Component({
   selector: 'app-scenario',
@@ -21,28 +19,16 @@ export class ScenarioComponent implements OnInit {
 
   public scenarioAdded = false;
 
-  public scenarioTainted: boolean = false;
-
-  public editDangerClosed: boolean = true;
-  public editSuccessClosed: boolean = true;
   public scenarioDangerClosed: boolean = true;
   public scenarioSuccessClosed: boolean = true;
   public deleteScenarioSetOpen: boolean = false;
   public showActionOverflow: boolean = false;
 
-  public editDangerAlert: string = '';
-  public editSuccessAlert: string = '';
   public scenarioDangerAlert: string = '';
   public scenarioSuccessAlert: string = '';
 
   public alertType: string = 'warning';
-  public isAlert: boolean = false;
-  public modified: boolean = false;
   public errorMessage: string = '';
-
-  public newScenario: Scenario = new Scenario();
-
-  public vmProps: string[] = Object.keys(new VirtualMachine());
 
   public selectRbac: boolean = false;
 
@@ -58,7 +44,6 @@ export class ScenarioComponent implements OnInit {
 
   @ViewChild('scenarioFilter', { static: true })
   scenarioFilter: FilterScenariosComponent;
-  @ViewChild('myForm') formData: any;
   @ViewChild('scenariowizard', { static: true })
   scenarioWizard: ScenarioWizardComponent;
   @ViewChild('editselectedscenariowizard', { static: true })
@@ -67,14 +52,14 @@ export class ScenarioComponent implements OnInit {
   editScenario(s: Scenario) {
     if (s != undefined) {
       // this is only a partial scenario, we need to get the full
-      this.scenarioService.get(s.id).subscribe(
-        (s: Scenario) => {
+      this.scenarioService.get(s.id).subscribe({
+        next: (s: Scenario) => {
           this.selectedscenario = s;
         },
-        (e: HttpErrorResponse) => {
+        error: (e: HttpErrorResponse) => {
           this.alertDanger('Error deleting object: ' + e.error.message);
-        }
-      );
+        },
+      });
     }
   }
 
@@ -88,28 +73,13 @@ export class ScenarioComponent implements OnInit {
   }
 
   openDeleteScenario(scenario: Scenario) {
-    this.scenarioService.get(scenario.id).subscribe(
-      (scenario) => (this.selectedscenario = scenario),
-      (e: HttpErrorResponse) =>
-        this.alertDanger('Error deleting object: ' + e.error.message)
-    );
+    this.scenarioService.get(scenario.id).subscribe({
+      next: (scenario) => (this.selectedscenario = scenario),
+      error: (e: HttpErrorResponse) => {
+        this.alertDanger('Error deleting object: ' + e.error.message);
+      },
+    });
     this.deleteScenarioModal.open();
-  }
-
-  private _displayAlert(alert: string, success: boolean, duration?: number) {
-    if (success) {
-      this.scenarioSuccessAlert = alert;
-      this.scenarioSuccessClosed = false;
-      setTimeout(() => {
-        this.scenarioSuccessClosed = true;
-      }, duration || 1000);
-    } else {
-      this.scenarioDangerAlert = alert;
-      this.scenarioDangerClosed = false;
-      setTimeout(() => {
-        this.scenarioDangerClosed = true;
-      }, duration || 1000);
-    }
   }
 
   setScenarioList(scenarios: Scenario[]) {
@@ -120,24 +90,24 @@ export class ScenarioComponent implements OnInit {
   }
 
   refresh(): void {
-    this.scenarioService.list(true).subscribe(
-      (sList: Scenario[]) => (this.filteredScenarios = sList),
-      (e: HttpErrorResponse) => {
+    this.scenarioService.list(true).subscribe({
+      next: (sList: Scenario[]) => (this.filteredScenarios = sList),
+      error: (e: HttpErrorResponse) => {
         this.alertDanger('Error deleting object: ' + e.error.message);
-      }
-    );
+      },
+    });
   }
 
   deleteScenario(scenarioId: string) {
-    this.scenarioService.delete(scenarioId).subscribe(
-      (s: ServerResponse) => {
+    this.scenarioService.delete(scenarioId).subscribe({
+      next: (s: ServerResponse) => {
         this.alertSuccess('Scenario deleted');
         this.refresh();
       },
-      (e: HttpErrorResponse) => {
+      error: (e: HttpErrorResponse) => {
         this.alertDanger('Error deleting object: ' + e.error.message);
-      }
-    );
+      },
+    });
   }
 
   doDeleteScenario() {

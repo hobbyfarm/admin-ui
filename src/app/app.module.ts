@@ -5,8 +5,6 @@ import {
   SecurityContext,
   APP_INITIALIZER,
 } from '@angular/core';
-import '@clr/icons';
-import '@clr/icons/shapes/all-shapes';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClarityModule } from '@clr/angular';
@@ -15,14 +13,15 @@ import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './header/header.component';
 import { EventComponent } from './event/event.component';
 import { HttpClientModule } from '@angular/common/http';
-import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { JwtModule, JWT_OPTIONS, JwtConfig } from '@auth0/angular-jwt';
 import { LoginComponent } from './login/login.component';
 import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NewScheduledEventComponent } from './event/new-scheduled-event/new-scheduled-event.component';
 import { ScenarioService } from './data/scenario.service';
 import {
-  DlDateTimePickerDateModule,
+  DlDateTimeDateModule,
+  DlDateTimeInputModule,
   DlDateTimePickerModule,
 } from 'angular-bootstrap-datetimepicker';
 import { ScenarioComponent } from './scenario/scenario.component';
@@ -95,11 +94,97 @@ import { TypedInputComponent } from './typed-form/typed-input.component';
 import { TypedInputFieldComponent } from './typed-form/typed-input-field.component';
 import { TypedSettingsService } from './data/typedSettings.service';
 import { OTACManagementComponent } from './event/otacmanagement/otacmanagement.component';
+import { TypedMapStringComponent } from './typed-form/typed-map-string.component';
+import { TypedMapNumberComponent } from './typed-form/typed-map-number.component';
+import { TypedMapBooleanComponent } from './typed-form/typed-map-boolean.component';
+import { TypedArrayStringComponent } from './typed-form/typed-array-string.component';
+import { TypedArrayNumberComponent } from './typed-form/typed-array-number.component';
+import { TypedArrayBooleanComponent } from './typed-form/typed-array-boolean.component';
 import { CourseWizardComponent } from './course/course-wizard/course-wizard.component';
 import { CourseDetailsComponent } from './course/course-details/course-details.component';
 import { ScenarioWizardComponent } from './scenario/scenario-wizard/scenario-wizard.component';
 import { ScenarioDetailComponent } from './scenario/scenario-detail/scenario-detail.component';
 import { StepsScenarioComponent } from './scenario/steps-scenario/steps-scenario.component';
+import { DashboardDetailsComponent } from './dashboards/dashboard-details/dashboard-details.component';
+import '@cds/core/icon/register.js';
+import {
+  ClarityIcons,
+  plusIcon,
+  trashIcon,
+  angleIcon,
+  nodeIcon,
+  nodeGroupIcon,
+  infoCircleIcon,
+  boltIcon,
+  dragHandleIcon,
+  checkIcon,
+  filterIcon,
+  exclamationCircleIcon,
+  successStandardIcon,
+  errorStandardIcon,
+  hostIcon,
+  arrowIcon,
+  popOutIcon,
+  boldIcon,
+  italicIcon,
+  blockQuoteIcon,
+  linkIcon,
+  imageIcon,
+  noteIcon,
+  detailsIcon,
+  codeIcon,
+  treeViewIcon,
+  playIcon,
+  importIcon,
+  userIcon,
+  layersIcon,
+  usersIcon,
+  rackServerIcon,
+  childArrowIcon,
+  clockIcon,
+  timesIcon,
+  buildingIcon,
+  numberListIcon,
+} from '@cds/core/icon';
+
+ClarityIcons.addIcons(
+  plusIcon,
+  trashIcon,
+  angleIcon,
+  nodeIcon,
+  nodeGroupIcon,
+  infoCircleIcon,
+  boltIcon,
+  dragHandleIcon,
+  checkIcon,
+  filterIcon,
+  exclamationCircleIcon,
+  successStandardIcon,
+  errorStandardIcon,
+  hostIcon,
+  arrowIcon,
+  popOutIcon,
+  boldIcon,
+  italicIcon,
+  blockQuoteIcon,
+  linkIcon,
+  imageIcon,
+  noteIcon,
+  detailsIcon,
+  codeIcon,
+  treeViewIcon,
+  playIcon,
+  importIcon,
+  userIcon,
+  layersIcon,
+  usersIcon,
+  rackServerIcon,
+  childArrowIcon,
+  clockIcon,
+  timesIcon,
+  buildingIcon,
+  numberListIcon
+);
 
 const appInitializerFn = (appConfig: AppConfigService) => {
   return () => {
@@ -107,13 +192,13 @@ const appInitializerFn = (appConfig: AppConfigService) => {
   };
 };
 
-export function jwtOptionsFactory() {
+export function jwtOptionsFactory(): JwtConfig {
   return {
     tokenGetter: () => {
       return localStorage.getItem('hobbyfarm_admin_token');
     },
-    whitelistedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
-    blacklistedRoutes: [
+    allowedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
+    disallowedRoutes: [
       environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + '/auth/authenticate',
     ],
   };
@@ -181,10 +266,17 @@ export function jwtOptionsFactory() {
     TypedInputFieldComponent,
     SettingsComponent,
     OTACManagementComponent,
+    TypedMapStringComponent,
+    TypedMapNumberComponent,
+    TypedMapBooleanComponent,
+    TypedArrayStringComponent,
+    TypedArrayNumberComponent,
+    TypedArrayBooleanComponent,
     CourseWizardComponent,
     ScenarioWizardComponent,
     ScenarioDetailComponent,
     StepsScenarioComponent,
+    DashboardDetailsComponent,
   ],
   imports: [
     BrowserModule,
@@ -193,7 +285,8 @@ export function jwtOptionsFactory() {
     FormsModule,
     ReactiveFormsModule,
     AngularSplitModule,
-    DlDateTimePickerDateModule,
+    DlDateTimeDateModule,
+    DlDateTimeInputModule,
     DlDateTimePickerModule,
     ClarityModule,
     NgChartsModule,

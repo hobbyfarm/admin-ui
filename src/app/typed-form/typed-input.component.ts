@@ -1,22 +1,26 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TypedInput, TypedInputType } from './TypedInput';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
-  AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+  GenericFormArray,
+  GenericFormControl,
+  GenericKeyValueGroup,
+  GenericKeyValueMapArray,
+} from '../data/forms';
+import { UniqueKeyValidator } from '../validators/uniquekey.validator';
 
 @Component({
   selector: 'app-typed-input',
   templateUrl: './typed-input.component.html',
-  styleUrls: ['./typed-input.component.scss'],
 })
 export class TypedInputComponent {
   @Input() input: TypedInput;
-  @Input() formGroup: FormGroup;
+  @Input() formGroup: FormGroup<{
+    [key: string]:
+      | GenericFormControl
+      | GenericFormArray
+      | GenericKeyValueMapArray;
+  }>;
   @Output() change: EventEmitter<boolean> = new EventEmitter(null);
   readonly TypedInputType = TypedInputType; // Reference to TypedInputTypes enum for template use
   constructor() {}
@@ -25,51 +29,129 @@ export class TypedInputComponent {
     this.change.emit(true);
   }
 
-  getControls(inputId: string): AbstractControl[] {
-    return (this.formGroup.get(inputId) as FormArray).controls;
+  getMapControlsString(inputId: string) {
+    return this.formGroup.controls[inputId] as FormArray<
+      GenericKeyValueGroup<string>
+    >;
   }
 
-  getMapFormControl(ctrl: AbstractControl, controlName: string): FormControl {
-    const formGroup = ctrl as FormGroup;
-    return formGroup.controls[controlName] as FormControl;
+  getMapControlsNumber(inputId: string) {
+    return this.formGroup.controls[inputId] as FormArray<
+      GenericKeyValueGroup<number>
+    >;
   }
 
-  getArrayFormControl(ctrl: AbstractControl): FormControl {
-    return ctrl as FormControl;
+  getMapControlsBoolean(inputId: string) {
+    return this.formGroup.controls[inputId] as FormArray<
+      GenericKeyValueGroup<boolean>
+    >;
   }
 
-  getFormControl(controlName: string): FormControl {
-    return this.formGroup.controls[controlName] as FormControl;
+  getArrayControlsString(inputId: string) {
+    return this.formGroup.controls[inputId] as FormArray<FormControl<string>>;
+  }
+
+  getArrayControlsNumber(inputId: string) {
+    return this.formGroup.controls[inputId] as FormArray<FormControl<number>>;
+  }
+
+  getArrayControlsBoolean(inputId: string) {
+    return this.formGroup.controls[inputId] as FormArray<FormControl<boolean>>;
+  }
+
+  getFormControl(controlName: string) {
+    return this.formGroup.controls[controlName] as GenericFormControl;
   }
 
   getArrayLength(typedInput: TypedInput) {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
+    const control = this.formGroup.get(typedInput.id) as GenericFormArray;
     return control.length;
   }
 
   getMapSize(typedInput: TypedInput) {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
+    const control = this.formGroup.get(
+      typedInput.id
+    ) as GenericKeyValueMapArray;
     return control.length;
   }
 
   addArrayElement(typedInput: TypedInput) {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
-    let c = typedInput.getTypedInputFormControl('');
-    control.push(c);
-    c.updateValueAndValidity();
+    const control = this.formGroup.get(typedInput.id) as GenericFormArray;
+
+    let parsedVal: string | number | boolean | undefined;
+    if (typedInput.validation.default) {
+      parsedVal = typedInput.parseScalarValue(typedInput.validation.default);
+    }
+    if (typedInput.isFormArrayString(control)) {
+      const defaultVal = typeof parsedVal == 'string' ? parsedVal : '';
+      let c: FormControl<string> =
+        typedInput.getTypedInputFormControl(defaultVal);
+      this.addControlToArray(control, c);
+    } else if (typedInput.isFormArrayNumber(control)) {
+      const defaultVal = typeof parsedVal == 'number' ? parsedVal : 0;
+      let c: FormControl<number> =
+        typedInput.getTypedInputFormControl(defaultVal);
+      this.addControlToArray(control, c);
+    } else {
+      // if (typedInput.isFormArrayBoolean(control))
+      const defaultVal = typeof parsedVal == 'boolean' ? parsedVal : false;
+      let c: FormControl<boolean> =
+        typedInput.getTypedInputFormControl(defaultVal);
+      this.addControlToArray(control, c);
+    }
+  }
+
+  addMapElement(typedInput: TypedInput): void {
+    const control = this.formGroup.get(
+      typedInput.id
+    ) as GenericKeyValueMapArray;
+
+    let parsedVal: string | number | boolean | undefined;
+    if (typedInput.validation.default) {
+      parsedVal = typedInput.parseScalarValue(typedInput.validation.default);
+    }
+    if (typedInput.isKeyValueMapArrayString(control)) {
+      const defaultVal = typeof parsedVal == 'string' ? parsedVal : '';
+      let c: FormControl<string> =
+        typedInput.getTypedInputFormControl(defaultVal);
+      this.addControlToMap(control, c);
+    } else if (typedInput.isKeyValueMapArrayNumber(control)) {
+      const defaultVal = typeof parsedVal == 'number' ? parsedVal : 0;
+      let c: FormControl<number> =
+        typedInput.getTypedInputFormControl(defaultVal);
+      this.addControlToMap(control, c);
+    } else {
+      // if (typedInput.isKeyValueMapArrayBoolean(control))
+      const defaultVal = typeof parsedVal == 'boolean' ? parsedVal : false;
+      let c: FormControl<boolean> =
+        typedInput.getTypedInputFormControl(defaultVal);
+      this.addControlToMap(control, c);
+    }
+  }
+
+  private addControlToArray<T extends string | number | boolean>(
+    fa: FormArray<FormControl<T>>,
+    fc: FormControl<T>
+  ) {
+    fa.push(fc);
+    fc.updateValueAndValidity();
     setTimeout(() => {
       // this timeout is needed to trigger the validation of the control to show errors
-      c.markAsTouched();
-      c.updateValueAndValidity();
+      fc.markAsTouched();
+      fc.updateValueAndValidity();
       this.inputChanged();
     });
   }
 
-  addMapElement(typedInput: TypedInput): void {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
-    let vControl = typedInput.getTypedInputFormControl('');
-    let kControl = new FormControl('', [Validators.required, this.uniquekeyvalidator]);
-    control.push(
+  private addControlToMap<T extends string | number | boolean>(
+    fa: FormArray<GenericKeyValueGroup<T>>,
+    vControl: FormControl<T>
+  ) {
+    let kControl = new FormControl('', {
+      validators: [Validators.required, UniqueKeyValidator],
+      nonNullable: true,
+    });
+    fa.push(
       new FormGroup({
         key: kControl,
         value: vControl,
@@ -84,21 +166,5 @@ export class TypedInputComponent {
       kControl.updateValueAndValidity();
       this.inputChanged();
     });
-  }
-
-  removeArrayElement(typedInput: TypedInput, index: number) {
-    const control = this.formGroup.get(typedInput.id) as FormArray;
-    control.removeAt(index);
-    this.inputChanged();
-  }
-
-  private uniquekeyvalidator(control: AbstractControl): ValidationErrors | null {
-    const parent = control.parent as FormGroup;
-    if (!parent) return null;
-    const key = control.value;
-    const siblings = (parent.parent as FormArray).controls as FormGroup[];
-    const keys = siblings.map(sibling => sibling.controls.key.value);
-    const duplicates = keys.filter(k => k === key);
-    return duplicates.length > 1 ? { 'duplicate': true } : null;
   }
 }

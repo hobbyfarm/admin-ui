@@ -18,7 +18,7 @@ import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-
   selector: 'edit-user',
   templateUrl: './edit-user.component.html',
 })
-export class EditUserComponent implements OnChanges {
+export class EditUserComponent implements OnInit, OnChanges {
   @Input()
   public user: User = new User();
 
@@ -37,7 +37,7 @@ export class EditUserComponent implements OnChanges {
   constructor(public userService: UserService) {}
 
   ngOnInit(): void {
-    this.userDetailsForm.valueChanges.subscribe((event) => {
+    this.userDetailsForm.valueChanges.subscribe((_event) => {
       if (!this.userDetailsForm.dirty) {
         this.userDetails.nativeElement.animate(
           [
@@ -55,27 +55,27 @@ export class EditUserComponent implements OnChanges {
     this.reset();
   }
 
-  public userDetailsForm: FormGroup = new FormGroup({
-    email: new FormControl(this.user.email, [
-      Validators.required,
-      Validators.email,
-    ]),
-    password: new FormControl(''),
+  public userDetailsForm: FormGroup<{
+    email: FormControl<string>;
+    password: FormControl<string>;
+  }> = new FormGroup({
+    email: new FormControl<string>(this.user.email, {
+      validators: [Validators.required, Validators.email],
+      nonNullable: true,
+    }),
+    password: new FormControl<string>('', { nonNullable: true }),
   });
 
   public reset(): void {
-    this.userDetailsForm.reset({
-      email: this.user.email,
-      password: '',
-    });
+    this.userDetailsForm.reset();
     this.alertText = '';
     this.alertClosed = true;
   }
 
   saveDetails() {
     this.saving = true;
-    var email = this.userDetailsForm.get('email').value;
-    var password = this.userDetailsForm.get('password').value;
+    var email = this.userDetailsForm.controls.email.value;
+    var password = this.userDetailsForm.controls.password.value;
 
     if (email == null) {
       email = '';
@@ -85,10 +85,8 @@ export class EditUserComponent implements OnChanges {
       password = '';
     }
 
-    this.reset();
-
-    this.userService.saveUser(this.user.id, email, password).subscribe(
-      (s: ServerResponse) => {
+    this.userService.saveUser(this.user.id, email, password).subscribe({
+      next: (_s: ServerResponse) => {
         this.alertText = 'User updated';
         this.alertType = 'success';
         this.alertClosed = false;
@@ -97,7 +95,7 @@ export class EditUserComponent implements OnChanges {
           this.alertClosed = true;
         }, 2000);
       },
-      (s: ServerResponse) => {
+      error: (s: ServerResponse) => {
         this.alertText = 'Error updating user: ' + s.message;
         this.alertType = 'danger';
         this.alertClosed = false;
@@ -105,8 +103,8 @@ export class EditUserComponent implements OnChanges {
         setTimeout(() => {
           this.alertClosed = true;
         }, 2000);
-      }
-    );
+      },
+    });
   }
 
   delete() {
@@ -114,19 +112,19 @@ export class EditUserComponent implements OnChanges {
   }
 
   doDelete() {
-    this.userService.deleteUser(this.user.id).subscribe(
-      (s: ServerResponse) => {
+    this.userService.deleteUser(this.user.id).subscribe({
+      next: (_s: ServerResponse) => {
         this.deleted.next(true);
       },
-      (s: ServerResponse) => {
+      error: (s: ServerResponse) => {
         this.alertText = s.message;
         this.alertType = 'danger';
         this.alertClosed = false;
         setTimeout(() => {
           this.alertClosed = true;
         }, 2000);
-      }
-    );
+      },
+    });
   }
 
   getFormattedDate(timestamp: string) {

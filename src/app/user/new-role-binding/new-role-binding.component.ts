@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ClrModal } from '@clr/angular';
 import { Role } from 'src/app/data/role';
@@ -10,7 +17,7 @@ import { User } from 'src/app/data/user';
 @Component({
   selector: 'new-role-binding',
   templateUrl: './new-role-binding.component.html',
-  styleUrls: ['./new-role-binding.component.scss']
+  styleUrls: ['./new-role-binding.component.scss'],
 })
 export class NewRoleBindingComponent implements OnInit {
   public roles: Role[];
@@ -24,53 +31,51 @@ export class NewRoleBindingComponent implements OnInit {
   @Output()
   public saved: EventEmitter<boolean> = new EventEmitter(false);
 
-  public roleControl = new FormControl( '', [Validators.required])
-  public form: FormGroup = new FormGroup({
-    "role": this.roleControl
-  })
+  public roleControl = new FormControl<string>('', {
+    validators: Validators.required,
+    nonNullable: true,
+  });
+  public form: FormGroup<{
+    role: FormControl<string>;
+  }> = new FormGroup({
+    role: this.roleControl,
+  });
 
   constructor(
     private roleService: RoleService,
     private roleBindingService: RolebindingService
-  ) { }
+  ) {}
 
-  @ViewChild("modal") modal: ClrModal;
+  @ViewChild('modal') modal: ClrModal;
 
   ngOnInit(): void {
     this.rolebinding = new RoleBinding();
-    this.roleControl.valueChanges.subscribe(
-      (rn: string) => {
-        this.selectedRole = this.roles?.find((r: Role) => r.name == rn)
-      }
-    )
+    this.roleControl.valueChanges.subscribe((rn: string) => {
+      this.selectedRole = this.roles?.find((r: Role) => r.name == rn);
+    });
   }
 
   public open(): void {
     this.form.reset();
     this.rolebinding = new RoleBinding();
-    this.roleService.list()
-    .subscribe(
-      (r: Role[]) => this.roles = r
-    )
+    this.roleService.list().subscribe((r: Role[]) => (this.roles = r));
     this.modal.open();
   }
 
   public save(): void {
     this.rolebinding.role = this.roleControl.value;
-    this.rolebinding.name = this.user.id + "-" + this.rolebinding.role;
-    this.rolebinding.subjects = [{
-      kind: "User",
-      name: this.user.id
-    }]
+    this.rolebinding.name = this.user.id + '-' + this.rolebinding.role;
+    this.rolebinding.subjects = [
+      {
+        kind: 'User',
+        name: this.user.id,
+      },
+    ];
 
-    this.roleBindingService.create(this.rolebinding)
-    .subscribe(
-      () => {
-        // successful
-        this.saved.emit(true);
-        this.modal.close();
-      }
-    )
+    this.roleBindingService.create(this.rolebinding).subscribe(() => {
+      // successful
+      this.saved.emit(true);
+      this.modal.close();
+    });
   }
-
 }
