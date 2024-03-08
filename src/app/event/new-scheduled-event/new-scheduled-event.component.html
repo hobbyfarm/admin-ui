@@ -13,7 +13,28 @@
   <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
   <ng-container *ngIf="checkingEnvironments; else eventWizard">
-    <span class="spinner"> Please wait... </span>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Event Details</ng-template>
+      <span class="spinner"> Please wait... </span>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Event Times</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Select Course(s)</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Select Scenario(s)</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Select Environment(s)</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Select Virtual Machines</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Finalize</ng-template>
+    </clr-wizard-page>
   </ng-container>
 
   <ng-template #eventWizard>

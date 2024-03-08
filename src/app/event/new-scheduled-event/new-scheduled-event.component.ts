@@ -157,7 +157,7 @@ export class NewScheduledEventComponent
 
   ngAfterViewInit(): void {
     this.wizardSubscription = this.wizardPages.changes
-      .pipe(filter((wizardPages: QueryList<ClrWizardPage>) => wizardPages.length != 0))
+      .pipe(filter((wizardPages: QueryList<ClrWizardPage>) => wizardPages.length != 0 && !this.checkingEnvironments))
       .subscribe((wizardPages: QueryList<ClrWizardPage>) => {
         setTimeout(() => {
           this.wizard.navService.goTo(wizardPages.last, true);
