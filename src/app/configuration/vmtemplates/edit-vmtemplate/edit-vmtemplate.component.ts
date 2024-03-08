@@ -61,7 +61,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit(): void {
-    this._build();
+    this._build();    
   }
 
   @ViewChild('wizard', { static: true }) wizard: ClrWizard;
@@ -242,4 +242,6 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     }
     this.uneditedTemplate = JSON.parse(JSON.stringify(this.template));
   }
+  
 }
+
