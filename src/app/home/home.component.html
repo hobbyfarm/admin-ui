@@ -1,18 +1,21 @@
 <div class="main-container">
-    <header class="header header-7" app-header></header>
-    <div class="motd-container" *ngIf="motd">
-        <p class="motd">{{motd}}</p>
+  <header class="header header-7" app-header></header>
+  <div class="motd-container" *ngIf="motd">
+    <p class="motd">{{ motd }}</p>
+  </div>
+  <div class="content-container">
+    <clr-vertical-nav>
+      <a
+        clrVerticalNavLink
+        routerLink="./statistics/sessions"
+        routerLinkActive="active"
+        *rbac="['progresses.list', 'scenarios.list']; op: 'AND'"
+      >
+        Session Statistics
+      </a>
+    </clr-vertical-nav>
+    <div class="content-area">
+      <router-outlet></router-outlet>
     </div>
-    <div class="content-container">
-        <nav class="sidenav">
-            <section class="sidenav-content">
-                <a href="javascript://" [routerLink]="['statistics/sessions']" [routerLinkActive]="'active'" class="nav-link" *rbac="['progresses.list', 'scenarios.list']; op 'AND'">
-                    Session Statistics
-                </a>
-            </section>
-        </nav>
-        <div class="content-area">
-            <router-outlet></router-outlet>
-        </div>
-    </div>
+  </div>
 </div>

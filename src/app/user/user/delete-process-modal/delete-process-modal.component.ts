@@ -23,8 +23,6 @@ export interface deletionInformation {
   styleUrls: ['./delete-process-modal.component.scss'],
 })
 export class DeleteProcessModalComponent implements OnInit {
-  public modalOpen: boolean = false;
-
   @Output()
   public done: EventEmitter<boolean> = new EventEmitter(null);
 
@@ -45,8 +43,8 @@ export class DeleteProcessModalComponent implements OnInit {
     this.modal.open();
     this.initialUsers = this.selectedUsers.length;
     this.selectedUsers.forEach((user) => {
-      this.userService.deleteUser(user.id).subscribe(
-        (s: ServerResponse) => {
+      this.userService.deleteUser(user.id).subscribe({
+        next: (s: ServerResponse) => {
           this.deleteInfo.push({
             user: user,
             deleted: true,
@@ -54,15 +52,15 @@ export class DeleteProcessModalComponent implements OnInit {
           });
           this.deletedUsers++;
         },
-        (s: ServerResponse) => {
+        error: (s: ServerResponse) => {
           this.deleteInfo.push({
             user: user,
             deleted: false,
             message: s.message,
           });
           this.deletedUsers++;
-        }
-      );
+        },
+      });
     });
   }
 

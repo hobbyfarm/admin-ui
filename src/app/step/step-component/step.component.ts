@@ -110,13 +110,12 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stepnumber = Number(paramMap.get('step') ?? 0);
 
     this.checkInterval = setInterval(() => {
-      this.ssService.getStatus(sessionId).subscribe(
-        () => {},
-        () => {
+      this.ssService.getStatus(sessionId).subscribe({
+        error: () => {
           this.sessionExpired = true;
           clearInterval(this.checkInterval);
-        }
-      );
+        },
+      });
     }, 60000);
 
     this.ssService
@@ -148,8 +147,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         toArray()
       )
-      .subscribe(
-        (entries) => {
+      .subscribe({
+        next: (entries: (readonly [string, VM])[]) => {
           this.vms = new Map(entries);
 
           const vmInfo: HfMarkdownRenderContext['vmInfo'] = {};
@@ -158,11 +157,11 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           this.mdContext = { vmInfo, session: this.session.id };
         },
-        () => {
+        error: () => {
           this.sessionExpired = true;
           clearInterval(this.checkInterval);
-        }
-      );
+        },
+      });
 
     this.ctr.getCodeStream().subscribe((c: CodeExec) => {
       // watch for tab changes

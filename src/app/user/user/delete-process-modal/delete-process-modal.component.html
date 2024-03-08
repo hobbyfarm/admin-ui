@@ -1,17 +1,14 @@
-<clr-modal #modal [(clrModalOpen)]="modalOpen">
+<clr-modal #modal>
   <h3 class="modal-title">Delete Information</h3>
   <div class="modal-body">
     <ul>
       <li *ngFor="let info of deleteInfo" class="info-li">
         <span *ngIf="info.deleted">
-          <clr-icon
-            shape="success-standard"
-            class="is-solid is-success"
-          ></clr-icon>
+          <cds-icon shape="success-standard" status="success" solid></cds-icon>
           {{ info.user.email }} - {{ info.message }}
         </span>
         <span *ngIf="!info.deleted">
-          <clr-icon shape="error-standard" class="is-solid is-error"></clr-icon>
+          <cds-icon shape="error-standard" status="danger" solid></cds-icon>
           {{ info.user.email }} - {{ info.message }}
         </span>
       </li>

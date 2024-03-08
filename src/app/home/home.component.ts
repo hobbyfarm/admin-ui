@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
     this.typedSettingsService
       .get('admin-ui', 'motd-admin-ui')
       .subscribe((typedInput: TypedInput) => {
-        this.motd = typedInput?.value ?? '';
+        this.motd = typeof typedInput?.value == 'string' ? typedInput?.value : '';
       });
   }
 }

@@ -13,7 +13,28 @@
   <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
   <ng-container *ngIf="checkingEnvironments; else eventWizard">
-    <span class="spinner"> Please wait... </span>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Event Details</ng-template>
+      <span class="spinner"> Please wait... </span>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Event Times</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Select Course(s)</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Select Scenario(s)</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Select Environment(s)</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Select Virtual Machines</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Finalize</ng-template>
+    </clr-wizard-page>
   </ng-container>
 
   <ng-template #eventWizard>
@@ -142,7 +163,7 @@
       <ng-template clrPageTitle>Event Times</ng-template>
       <div class="clr-row">
         <div class="clr-col">
-          Start Time: {{ se.start_time | date : "long" }} <br />
+          Start Time: {{ se.start_time ? (se.start_time | date : 'long') : '' }} <br />
           <clr-signpost>
             <button class="btn btn-link" clrSignpostTrigger>
               Set Start Time
@@ -168,7 +189,7 @@
 
       <div class="clr-row">
         <div class="clr-col">
-          End Time: {{ se.end_time | date : "long" }} <br />
+          End Time: {{ se.end_time ? (se.end_time | date : 'long') : '' }} <br />
           <clr-signpost>
             <button class="btn btn-link" clrSignpostTrigger>
               Set End Time
@@ -223,10 +244,10 @@
                   <option value="m">Month(s)</option>
                 </select>
               </div>
-              <clr-icon
+              <cds-icon
                 class="clr-validate-icon"
                 shape="exclamation-circle"
-              ></clr-icon>
+              ></cds-icon>
             </div>
             <span class="clr-subtext" *ngIf="quicksetRequired"
               >Please specify when your event should end.</span
@@ -250,7 +271,7 @@
       <p>
         <i> All times are in {{ tz }} (browser detected) </i>
       </p>
-      <ng-container *ngIf="se.start_time >= se.end_time">
+      <ng-container *ngIf="se.start_time && se.end_time && se.start_time >= se.end_time">
         <clr-alert
           [clrAlertSizeSmall]="true"
           [clrAlertType]="'danger'"
@@ -391,10 +412,10 @@
       >
         <clr-datagrid [(clrDgSelected)]="selectedEnvironments">
           <clr-dg-column>
-            <clr-icon shape="building"></clr-icon>&nbsp;Environment
+            <cds-icon shape="building"></cds-icon>&nbsp;Environment
           </clr-dg-column>
           <clr-dg-column>
-            <clr-icon shape="host"></clr-icon>&nbsp;Count
+            <cds-icon shape="host"></cds-icon>&nbsp;Count
           </clr-dg-column>
 
           <clr-dg-row
@@ -639,7 +660,7 @@
             <td>{{ getEnvironmentName(i.key) }}</td>
             <td>
               <span class="label" *ngFor="let q of i.value | keyvalue"
-                >{{ getVirtualMachineTemplateName(i.key) }}
+                >{{ getVirtualMachineTemplateName(q.key) }}
                 <span class="badge badge-success">{{ q.value }}</span></span
               >
             </td>
@@ -768,14 +789,14 @@
                 <span
                   class="label del-elem"
                   *ngIf="!isCourseInList(s, se.courses)"
-                  >{{ s }}<clr-icon shape="trash"></clr-icon>
+                  >{{ s }}<cds-icon shape="trash"></cds-icon>
                 </span>
               </ng-container>
               <ng-container *ngFor="let s of se.courses">
                 <span
                   class="label add-elem"
                   *ngIf="!isCourseInList(s, uneditedScheduledEvent.courses)"
-                  >{{ s }}<clr-icon shape="plus"></clr-icon>
+                  >{{ s }}<cds-icon shape="plus"></cds-icon>
                 </span>
               </ng-container>
             </td>
@@ -790,14 +811,14 @@
                 <span
                   class="label del-elem"
                   *ngIf="!isScenarioInList(s, se.scenarios)"
-                  >{{ s }}<clr-icon shape="trash"></clr-icon
+                  >{{ s }}<cds-icon shape="trash"></cds-icon
                 ></span>
               </ng-container>
               <ng-container *ngFor="let s of se.scenarios">
                 <span
                   class="label add-elem"
                   *ngIf="!isScenarioInList(s, uneditedScheduledEvent.scenarios)"
-                  >{{ s }} <clr-icon shape="plus"></clr-icon
+                  >{{ s }} <cds-icon shape="plus"></cds-icon
                 ></span>
               </ng-container>
             </td>
@@ -847,7 +868,7 @@
                 >
                   <span class="badge badge-danger" style="margin-right: 0">
                     {{ getUneditedScheduledEventVMCount(i.key, q.key) }}</span
-                  ><clr-icon shape="arrow" dir="right"></clr-icon>
+                  ><cds-icon shape="arrow" direction="right"></cds-icon>
                   <span class="badge badge-success"> {{ q.value }}</span>
                 </span>
               </span>

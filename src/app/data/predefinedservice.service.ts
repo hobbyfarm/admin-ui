@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
-import { map, switchMap, combineAll, tap } from 'rxjs/operators';
+import { map, switchMap, tap, combineLatestAll } from 'rxjs/operators';
 import { BehaviorSubject, from, of } from 'rxjs';
 import { atou } from '../unicode';
 import { VMTemplateServiceConfiguration } from './vm-template-service-configuration';
@@ -62,7 +62,7 @@ export class PredefinedServiceService {
               )
             return of(parsedVmtsc);
           }),
-          combineAll(),
+          combineLatestAll(),
           tap((vmtsc: VMTemplateServiceConfiguration[]) => {
             this.set(vmtsc);
           }

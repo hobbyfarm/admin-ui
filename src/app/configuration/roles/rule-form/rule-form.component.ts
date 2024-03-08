@@ -1,14 +1,29 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ClrCombobox } from '@clr/angular';
 import { FormControlStatus } from 'src/app/data/formstatus';
-import { ApiGroup, hobbyfarmApiGroup, rbacApiGroup, Resource, resources, Verb, verbs } from 'src/app/data/rbac';
+import {
+  ApiGroup,
+  hobbyfarmApiGroup,
+  rbacApiGroup,
+  Resource,
+  resources,
+  Verb,
+  verbs,
+} from 'src/app/data/rbac';
 import { Rule } from 'src/app/data/role';
 
 @Component({
   selector: 'rule-form',
   templateUrl: './rule-form.component.html',
-  styleUrls: ['./rule-form.component.scss']
+  styleUrls: ['./rule-form.component.scss'],
 })
 export class RuleFormComponent implements OnInit {
   private _rule: Rule;
@@ -26,97 +41,108 @@ export class RuleFormComponent implements OnInit {
 
   @Output() valid: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  private apiGroupControl: FormControl = new FormControl([], [
-    Validators.minLength(1),
-    Validators.required,
-  ]);
-  private resourceControl: FormControl = new FormControl([], [
-    Validators.minLength(1),
-    Validators.required,
-  ]);
-  private verbControl: FormControl = new FormControl([], [
-    Validators.minLength(1),
-    Validators.required,
-  ]);
+  private apiGroupControl: FormControl<ApiGroup[]> = new FormControl<
+    ApiGroup[]
+  >([], {
+    validators: [Validators.minLength(1), Validators.required],
+    nonNullable: true,
+  });
+  private resourceControl: FormControl<Resource[]> = new FormControl<
+    Resource[]
+  >([], {
+    validators: [Validators.minLength(1), Validators.required],
+    nonNullable: true,
+  });
+  private verbControl: FormControl<Verb[]> = new FormControl<Verb[]>([], {
+    validators: [Validators.minLength(1), Validators.required],
+    nonNullable: true,
+  });
 
-  public form = new FormGroup({
-    apiGroups: this.apiGroupControl,
-    resources: this.resourceControl,
-    verbs: this.verbControl
-  })
+  public form: FormGroup<{
+    apiGroups: FormControl<ApiGroup[]>;
+    resources: FormControl<Resource[]>;
+    verbs: FormControl<Verb[]>;
+  }>;
 
   public verbs: Verb[] = verbs;
   public resources: Resource[] = resources;
-  public apiGroups: ApiGroup[] = [
-    hobbyfarmApiGroup,
-    rbacApiGroup
-  ]
+  public apiGroups: ApiGroup[] = [hobbyfarmApiGroup, rbacApiGroup];
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
-    this.resourceControl.valueChanges.subscribe(
-      (resources: Resource[]) => {
-        this.resourceSelected(resources)
-      }
-    )
+    this.form = new FormGroup({
+      apiGroups: this.apiGroupControl,
+      resources: this.resourceControl,
+      verbs: this.verbControl,
+    });
 
-    this.form.valueChanges.subscribe(
-      () => {
-        this._rule.apiGroups = this.apiGroupControl.value;
-        this._rule.resources = this.resourceControl.value;
-        this._rule.verbs = this.verbControl.value;
-      }
-    )
+    this.resourceControl.valueChanges.subscribe((resources: Resource[]) => {
+      this.resourceSelected(resources);
+    });
 
-    this.form.statusChanges.subscribe(
-      (s: FormControlStatus) => {
-        s == FormControlStatus.Valid ? this.valid.emit(true) : this.valid.emit(false)
-      }
-    )
+    this.form.valueChanges.subscribe(() => {
+      this._rule.apiGroups = this.apiGroupControl.value;
+      this._rule.resources = this.resourceControl.value;
+      this._rule.verbs = this.verbControl.value;
+    });
+
+    this.form.statusChanges.subscribe((s: FormControlStatus) => {
+      s == FormControlStatus.Valid
+        ? this.valid.emit(true)
+        : this.valid.emit(false);
+    });
   }
 
-  @ViewChild("apiGroupsCombobox") apiGroupsComobox: ClrCombobox<string>;
+  @ViewChild('apiGroupsCombobox') apiGroupsComobox: ClrCombobox<string>;
 
   public resourceSelected(resources: Resource[]) {
-    if (resources == null || this.apiGroupControl.value == null) {
-      return
+    if (resources.length === 0 || this.apiGroupControl.value.length === 0) {
+      return;
     }
 
     resources.forEach((r: Resource) => {
-      if (r == "roles" || r == "rolebindings") {
-        if ((this.apiGroupControl.value as Array<ApiGroup>).find((ag: ApiGroup) => ag == rbacApiGroup) == undefined) {
-          let groups = (this.apiGroupControl.value as Array<ApiGroup>)
-          groups.push(rbacApiGroup)
+      if (r == 'roles' || r == 'rolebindings') {
+        if (
+          this.apiGroupControl.value.find(
+            (ag: ApiGroup) => ag == rbacApiGroup
+          ) == undefined
+        ) {
+          let groups = this.apiGroupControl.value;
+          groups.push(rbacApiGroup);
           this.apiGroupControl.setValue(groups, {
-            emitEvent: false
-          })
+            emitEvent: false,
+          });
         }
       } else {
-        if ((this.apiGroupControl.value as Array<ApiGroup>).find((ag: ApiGroup) => ag == hobbyfarmApiGroup) == undefined) {
-          let groups = (this.apiGroupControl.value as Array<ApiGroup>)
-          groups.push(hobbyfarmApiGroup)
+        if (
+          this.apiGroupControl.value.find(
+            (ag: ApiGroup) => ag == hobbyfarmApiGroup
+          ) == undefined
+        ) {
+          let groups = this.apiGroupControl.value;
+          groups.push(hobbyfarmApiGroup);
           this.apiGroupControl.setValue(groups, {
-            emitEvent: false
-          })
+            emitEvent: false,
+          });
         }
       }
-    })
+    });
   }
 
   public clearField(field: string): void {
     switch (field) {
       case 'api':
-        this.form.get('apiGroups').markAllAsTouched();
-        this.apiGroupControl.setValue(null);
+        this.apiGroupControl.markAllAsTouched();
+        this.apiGroupControl.setValue([]);
         break;
       case 'resources':
         this.resourceControl.markAsTouched();
-        this.resourceControl.setValue(null);
+        this.resourceControl.setValue([]);
         break;
       case 'verbs':
         this.verbControl.markAsTouched();
-        this.verbControl.setValue(null)
+        this.verbControl.setValue([]);
         break;
     }
   }
@@ -124,15 +150,14 @@ export class RuleFormComponent implements OnInit {
   public addAll(field: string): void {
     switch (field) {
       case 'api':
-        this.apiGroupControl.setValue(this.apiGroups)
+        this.apiGroupControl.setValue(this.apiGroups);
         break;
       case 'resources':
-        this.resourceControl.setValue(["*"])
+        this.resourceControl.setValue(['*']);
         break;
       case 'verbs':
-        this.verbControl.setValue(["*"])
+        this.verbControl.setValue(['*']);
         break;
     }
   }
-
 }

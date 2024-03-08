@@ -6,7 +6,7 @@
     (click)="editorPreset(action)"
   >
     <ng-container *ngIf="action.icon"
-      ><clr-icon [attr.shape]="action.icon"></clr-icon
+      ><cds-icon [attr.shape]="action.icon"></cds-icon
     ></ng-container>
     <ng-container *ngIf="!action.icon"
       ><b>{{ action.name }}</b></ng-container
@@ -14,7 +14,7 @@
   </div>
   <div class="editor-action-button reference">
     <a href="https://hobbyfarm.github.io/docs/appendix/markdown_syntax/" target="_blank" >
-      <clr-icon shape="pop-out"></clr-icon>
+      <cds-icon shape="pop-out"></cds-icon>
       Syntax Reference
     </a>
   </div>

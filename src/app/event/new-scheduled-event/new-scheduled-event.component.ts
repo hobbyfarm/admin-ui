@@ -8,7 +8,8 @@ import {
   OnChanges,
   ViewChildren,
   QueryList,
-  AfterViewChecked,
+  AfterViewInit,
+  OnDestroy,
 } from '@angular/core';
 import {
   ClrWizard,
@@ -23,31 +24,46 @@ import { Course } from 'src/app/data/course';
 import { CourseService } from 'src/app/data/course.service';
 import { EnvironmentService } from 'src/app/data/environment.service';
 import {
-  combineAll,
   concatMap,
   map,
   filter,
   defaultIfEmpty,
-  first,
+  combineLatestAll,
 } from 'rxjs/operators';
 import { Environment } from 'src/app/data/environment';
 import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import {
+  Validators,
+  ValidatorFn,
   FormGroup,
   FormControl,
-  Validators,
+  NonNullableFormBuilder,
   FormArray,
-  ValidatorFn,
-  FormBuilder,
-  AbstractControl,
 } from '@angular/forms';
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 import { RbacService } from 'src/app/data/rbac.service';
-import { of } from 'rxjs';
+import { Subscription, of } from 'rxjs';
+import { QuickSetEndTimeFormGroup } from 'src/app/data/forms';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
+
+// This object type maps VMTemplate names to the number of requested VMs
+// The key specifies the template name
+// The FormControl holds the number of requested VMs
+type VmTemplateMappings = { [key: string]: FormControl<number> };
+
+// This type holds (multiple) VMTemplateMappings within a FormGroup.
+type VmTemplatesFormGroup = FormGroup<VmTemplateMappings>;
+
+// This type maps Environment names to the VMTemplateMappings of the respective environment wrapped in a FormGroup
+// The key specifies the environment name
+// The VMTemplatesFormGroup holds the VMTemplateMappings of the respective environment
+type EnvToVmTemplatesMappings = { [key: string]: VmTemplatesFormGroup };
+
+// This type holds all Environment to VMTemplates mappings
+type VmCountFormGroup = FormGroup<EnvToVmTemplatesMappings>;
 
 @Component({
   selector: 'new-scheduled-event',
@@ -55,13 +71,13 @@ import { VmtemplateService } from 'src/app/data/vmtemplate.service';
   styleUrls: ['./new-scheduled-event.component.scss'],
 })
 export class NewScheduledEventComponent
-  implements OnInit, OnChanges, AfterViewChecked
+  implements OnInit, OnChanges, AfterViewInit, OnDestroy
 {
   @Output()
   public updated: EventEmitter<boolean> = new EventEmitter(false);
 
   @Input()
-  public event: ScheduledEvent;
+  public event?: ScheduledEvent;
 
   public wzOpen: boolean = false;
   public se: ScheduledEvent = new ScheduledEvent();
@@ -110,8 +126,10 @@ export class NewScheduledEventComponent
 
   private onCloseFn: Function;
 
+  private wizardSubscription: Subscription;
+
   constructor(
-    private _fb: FormBuilder,
+    private _fb: NonNullableFormBuilder,
     public ss: ScenarioService,
     public cs: CourseService,
     public ses: ScheduledeventService,
@@ -134,59 +152,77 @@ export class NewScheduledEventComponent
           );
       });
   }
+  ngOnDestroy(): void {
+    this.wizardSubscription.unsubscribe();
+  }
 
-  ngAfterViewChecked(): void {
-    this.wizardPages.changes
-      .pipe(first())
+  ngAfterViewInit(): void {
+    this.wizardSubscription = this.wizardPages.changes
+      .pipe(filter((wizardPages: QueryList<ClrWizardPage>) => wizardPages.length != 0 && !this.checkingEnvironments))
       .subscribe((wizardPages: QueryList<ClrWizardPage>) => {
-        if (this.wizardPages.length != 0) {
-          setTimeout(() => {
-            this.wizard.navService.goTo(this.wizard.pages.last, true);
-            this.wizard.pages.first.makeCurrent();
-          });
-        }
+        setTimeout(() => {
+          this.wizard.navService.goTo(wizardPages.last, true);
+          wizardPages.first.makeCurrent();
+        });
       });
   }
 
-  public eventDetails: FormGroup = new FormGroup({
-    event_name: new FormControl(this.se.event_name, [
-      Validators.required,
-      Validators.minLength(4),
-      this.uniqueEventName(),
-    ]),
-    description: new FormControl(this.se.description, [
-      Validators.required,
-      Validators.minLength(4),
-    ]),
-    access_code: new FormControl(this.se.access_code, [
-      Validators.required,
-      Validators.minLength(5),
-      Validators.pattern(/^[a-z0-9][a-z0-9.-]{3,}[a-z0-9]$/),
-      this.uniqueAccessCode(),
-    ]),
-    restricted_bind: new FormControl(true),
-    on_demand: new FormControl(false),
-    printable: new FormControl(false),
+  public eventDetails: FormGroup<{
+    event_name: FormControl<string>;
+    description: FormControl<string>;
+    access_code: FormControl<string>;
+    restricted_bind: FormControl<boolean>;
+    on_demand: FormControl<boolean>;
+    printable: FormControl<boolean>;
+  }> = this._fb.group({
+    event_name: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+        Validators.minLength(4),
+        this.uniqueEventName(),
+      ],
+      nonNullable: true,
+    }),
+    description: new FormControl<string>('', {
+      validators: [Validators.required, Validators.minLength(4)],
+      nonNullable: true,
+    }),
+    access_code: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.pattern(/^[a-z0-9][a-z0-9.-]{3,}[a-z0-9]$/),
+        this.uniqueAccessCode(),
+      ],
+      nonNullable: true,
+    }),
+    restricted_bind: new FormControl<boolean>(true, { nonNullable: true }),
+    on_demand: new FormControl<boolean>(true, { nonNullable: true }),
+    printable: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
-  public vmCounts: FormGroup = new FormGroup({}, this.validateAdvancedVmPage());
+  public vmCounts: VmCountFormGroup = new FormGroup<EnvToVmTemplatesMappings>(
+    {},
+    this.validateAdvancedVmPage()
+  );
 
-  public simpleModeVmCounts: FormGroup = this._fb.group({
-    envs: this._fb.array([], this.validateNonZeroFormControl()),
-  });
-
-  public categoryFilterForm = new FormGroup({
-    categoryControl: new FormControl([], []),
+  public simpleModeVmCounts: FormGroup<{
+    envs: FormArray<FormControl<number>>;
+  }> = this._fb.group({
+    envs: this._fb.array<FormControl<number>>(
+      [],
+      this.validateNonZeroFormControl()
+    ),
   });
 
   public copyEventDetails() {
-    this.se.event_name = this.eventDetails.get('event_name').value;
-    this.se.description = this.eventDetails.get('description').value;
-    this.se.access_code = this.eventDetails.get('access_code').value;
+    this.se.event_name = this.eventDetails.controls.event_name.value;
+    this.se.description = this.eventDetails.controls.description.value;
+    this.se.access_code = this.eventDetails.controls.access_code.value;
     this.se.disable_restriction =
-      !this.eventDetails.get('restricted_bind').value; // opposite, since restricted_bind: enabled really means disable_restriction: false
-    this.se.on_demand = this.eventDetails.get('on_demand').value;
-    this.se.printable = this.eventDetails.get('printable').value;
+      !this.eventDetails.controls.restricted_bind.value; // opposite, since restricted_bind: enabled really means disable_restriction: false
+    this.se.on_demand = this.eventDetails.controls.on_demand.value;
+    this.se.printable = this.eventDetails.controls.printable.value;
   }
 
   /**
@@ -210,10 +246,9 @@ export class NewScheduledEventComponent
   }
 
   private validateNonZeroFormControl(): ValidatorFn {
-    return (control: AbstractControl) => {
-      const formArray = control as FormArray;
+    return (formArray: FormArray<FormControl<number>>) => {
       const allEnvironmentsZero = !formArray.controls.some(
-        (control: AbstractControl) => {
+        (control: FormControl<number>) => {
           return control.value > 0;
         }
       );
@@ -228,7 +263,7 @@ export class NewScheduledEventComponent
   }
 
   public uniqueAccessCode(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
+    return (control: FormControl<string>): { notUnique: boolean } | null => {
       if (
         !control.value ||
         this.scheduledEvents.filter(
@@ -246,7 +281,7 @@ export class NewScheduledEventComponent
   }
 
   public uniqueEventName(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
+    return (control: FormControl<string>): { notUnique: boolean } | null => {
       if (
         !control.value ||
         this.scheduledEvents.filter(
@@ -303,9 +338,15 @@ export class NewScheduledEventComponent
     this.calculateRequiredVms();
     this.maxUserCount();
     // reset
-    this.vmCounts = new FormGroup({}, this.validateAdvancedVmPage());
+    this.vmCounts = new FormGroup<EnvToVmTemplatesMappings>(
+      {},
+      this.validateAdvancedVmPage()
+    );
     this.simpleModeVmCounts = this._fb.group({
-      envs: this._fb.array([], this.validateNonZeroFormControl()),
+      envs: this._fb.array<FormControl<number>>(
+        [],
+        this.validateNonZeroFormControl()
+      ),
     });
     // Steps: 1. get selected environments.
     // 2. For each environment, if it is supported in that environment, add an input for the vmtype in the scenario
@@ -317,20 +358,19 @@ export class NewScheduledEventComponent
   }
 
   private validateAdvancedVmPage(): ValidatorFn {
-    return (control: AbstractControl) => {
-      const formGroup = control as FormGroup;
-      const environmentFormGroups = Object.values(
-        formGroup.controls
-      ) as FormGroup[];
+    return (vmCountFormGroup: VmCountFormGroup) => {
+      const environmentFormGroups = Object.values(vmCountFormGroup.controls);
       let requiredVmCountSatisfied = true;
       for (let template in this.requiredVmCounts) {
         const requiredVmCount: number = this.requiredVmCounts[template];
         let currentVmCount = 0;
-        environmentFormGroups.forEach((fg: FormGroup) => {
-          if (Object.keys(fg.controls).includes(template)) {
-            currentVmCount += fg.controls[template].value;
+        environmentFormGroups.forEach(
+          (vmTemplatesFormGroup: VmTemplatesFormGroup) => {
+            if (Object.keys(vmTemplatesFormGroup.controls).includes(template)) {
+              currentVmCount += vmTemplatesFormGroup.controls[template].value;
+            }
           }
-        });
+        );
         requiredVmCountSatisfied =
           requiredVmCountSatisfied && currentVmCount >= requiredVmCount;
       }
@@ -345,22 +385,27 @@ export class NewScheduledEventComponent
   }
 
   public setupAdvancedVMPage(ea: EnvironmentAvailability) {
-    var newFormGroup = new FormGroup({});
+    const vmTemplateMappings: VmTemplatesFormGroup =
+      new FormGroup<VmTemplateMappings>({});
     let templates = this.getTemplates(ea.environment);
     for (let template in this.requiredVmCounts) {
       if (!templates.includes(template)) {
         //this environment does not support this template
         continue;
       }
-      var initVal = this.se.required_vms[ea.environment]?.[template] ?? 0; // so we don't blow away old input values when rebuilding this form
-      var newControl = new FormControl(initVal, [
-        Validators.pattern(/-?\d+/),
-        Validators.max(ea.available_count[template]),
-      ]);
-      newFormGroup.addControl(template, newControl);
+      const initVal: number =
+        this.se.required_vms[ea.environment]?.[template] ?? 0; // so we don't blow away old input values when rebuilding this form
+      const templateMapping = new FormControl<number>(initVal, {
+        validators: [
+          Validators.pattern(/-?\d+/),
+          Validators.max(ea.available_count[template]),
+        ],
+        nonNullable: true,
+      });
+      vmTemplateMappings.addControl(template, templateMapping);
     }
 
-    this.vmCounts.addControl(ea.environment, newFormGroup);
+    this.vmCounts.addControl(ea.environment, vmTemplateMappings);
   }
 
   public checkIfSimplePageCanBeDone() {
@@ -390,7 +435,7 @@ export class NewScheduledEventComponent
   public setupSimpleVMPage(ea: EnvironmentAvailability) {
     // go through each required VM (and its count) and verify that a) it exists in the selected environment and b) there is a minimum count that supports a single user
     // (otherwise don't list it)
-    var meetsCriteria = true;
+    let meetsCriteria = true;
     Object.keys(this.requiredVmCounts).forEach(
       (requiredVm: string, index: number) => {
         if (
@@ -407,15 +452,15 @@ export class NewScheduledEventComponent
     );
 
     if (meetsCriteria) {
-      var initVal = 0;
+      let initVal = 0;
       if (this.simpleUserCounts[ea.environment]) {
         initVal = this.simpleUserCounts[ea.environment] || 0; // so we don't blow away old input values when rebuilding this form
       }
-      var newControl = new FormControl(initVal, [
+      const newControl = new FormControl<number>(initVal, [
         Validators.pattern(/-?\d+/),
         Validators.max(this.maxUserCounts[ea.environment]),
       ]);
-      (this.simpleModeVmCounts.get('envs') as FormArray).push(newControl);
+      this.simpleModeVmCounts.controls.envs.push(newControl);
     }
   }
 
@@ -426,7 +471,7 @@ export class NewScheduledEventComponent
 
     if (this.simpleMode) {
       this.selectedEnvironments.forEach((env, i) => {
-        var users = this.simpleModeVmCounts.get(['envs', i])?.value ?? 0;
+        const users = this.simpleModeVmCounts.controls.envs.at(i).value;
         this.simpleUserCounts[env.environment] = users;
         if (users == 0) {
           return;
@@ -444,8 +489,9 @@ export class NewScheduledEventComponent
       this.selectedEnvironments.forEach((ea: EnvironmentAvailability) => {
         // for each template, get the count.
         this.getTemplates(ea.environment).forEach((template: string) => {
-          var val =
-            this.vmCounts.get(ea.environment)?.get(template)?.value ?? 0;
+          const val =
+            this.vmCounts.controls[ea.environment]?.controls[template]?.value ??
+            0;
           if (val != 0) {
             // only map vm counts that are not 0 (instead of using >0 so that -1 is allowable)
             if (!this.se.required_vms[ea.environment]) {
@@ -470,7 +516,7 @@ export class NewScheduledEventComponent
     // it also will be displayed on the page for the users knowledge
     this.selectedEnvironments.forEach((se, i) => {
       // for each environment, get the templates supported by that environment
-      var min = Number.MAX_SAFE_INTEGER;
+      let min = Number.MAX_SAFE_INTEGER;
       Object.keys(se.available_count).forEach((template, j) => {
         if (
           se.available_count[template] / this.requiredVmCounts[template] <
@@ -544,12 +590,12 @@ export class NewScheduledEventComponent
     });
   }
 
-  controls(path: string) {
-    var group;
+  controls(path: string): string[] {
+    let group: VmCountFormGroup | VmTemplatesFormGroup;
     if (path == '') {
-      group = this.vmCounts as FormGroup;
+      group = this.vmCounts;
     } else {
-      group = this.vmCounts.get(path) as FormGroup;
+      group = this.vmCounts.controls[path];
     }
     return Object.keys(group.controls);
   }
@@ -612,13 +658,9 @@ export class NewScheduledEventComponent
   }
 
   public simpleUserTotal() {
-    var total = 0;
-    for (
-      var i = 0;
-      i < (this.simpleModeVmCounts.get('envs') as FormArray).length;
-      i++
-    ) {
-      total += (this.simpleModeVmCounts.get(['envs', i]) as FormControl).value;
+    let total = 0;
+    for (let i = 0; i < this.simpleModeVmCounts.controls.envs.length; i++) {
+      total += this.simpleModeVmCounts.controls.envs.at(i).value;
     }
     return total;
   }
@@ -697,7 +739,7 @@ export class NewScheduledEventComponent
   public checkEnvironments() {
     this.noEnvironmentsAvailable = false;
     this.unavailableVMTs = [];
-    var templates: Map<string, boolean> = new Map();
+    const templates: Map<string, boolean> = new Map();
 
     // add all chosen templates to the list
     this.selectedscenarios.forEach((s: Scenario) => {
@@ -756,7 +798,7 @@ export class NewScheduledEventComponent
         map((ea: EnvironmentAvailability) => {
           return of(ea);
         }),
-        combineAll(),
+        combineLatestAll(),
         defaultIfEmpty([])
       )
       .subscribe((ea: EnvironmentAvailability[]) => {
@@ -839,25 +881,27 @@ export class NewScheduledEventComponent
     });
   }
 
-  public quicksetEndtimeForm: FormGroup = new FormGroup(
+  public quicksetEndtimeForm: QuickSetEndTimeFormGroup = new FormGroup(
     {
-      quickset_endtime: new FormControl(1, [Validators.required]),
-      quickset_unit: new FormControl('w', [Validators.required]),
+      quickset_endtime: new FormControl<number>(1, [Validators.required]),
+      quickset_unit: new FormControl<'h' | 'd' | 'w' | 'm'>('w', [
+        Validators.required,
+      ]),
     },
     { validators: QuicksetValidator }
   );
 
   get quicksetAmount() {
-    return this.quicksetEndtimeForm.get('quickset_endtime');
+    return this.quicksetEndtimeForm.controls.quickset_endtime;
   }
 
   get quicksetUnit() {
-    return this.quicksetEndtimeForm.get('quickset_unit');
+    return this.quicksetEndtimeForm.controls.quickset_unit;
   }
 
   get quicksetRequired() {
-    var qe = this.quicksetEndtimeForm.get('quickset_endtime');
-    var qu = this.quicksetEndtimeForm.get('quickset_unit');
+    const qe = this.quicksetAmount;
+    const qu = this.quicksetUnit;
 
     // validate
     if ((qe.dirty || qe.touched) && qe.invalid && qe.errors.required) {
@@ -875,9 +919,9 @@ export class NewScheduledEventComponent
 
   public quickEndTime() {
     const durationType: 'h' | 'd' | 'w' | 'm' =
-      this.quicksetEndtimeForm.get('quickset_unit').value;
+      this.quicksetEndtimeForm.controls.quickset_unit.value;
     const duration: number =
-      this.quicksetEndtimeForm.get('quickset_endtime').value;
+      this.quicksetEndtimeForm.controls.quickset_endtime.value;
     switch (durationType) {
       case 'h':
         this.se.end_time = new Date(Date.now() + 3600 * 1000 * duration);
@@ -925,11 +969,7 @@ export class NewScheduledEventComponent
     this.simpleMode = true;
     this.validTimes = false;
     this.se = new ScheduledEvent();
-    this.eventDetails.reset({
-      restricted_bind: true,
-      on_demand: true,
-      printable: false,
-    });
+    this.eventDetails.reset();
     this.se.required_vms = {};
     this.selectedEnvironments = [];
     this.selectedscenarios = [];
@@ -937,7 +977,10 @@ export class NewScheduledEventComponent
     this.startDate = this.startTime = this.endDate = this.endTime = '';
     this.wizard.reset();
     this.wizard.open();
-    this.vmCounts = new FormGroup({}, this.validateAdvancedVmPage());
+    this.vmCounts = new FormGroup<EnvToVmTemplatesMappings>(
+      {},
+      this.validateAdvancedVmPage()
+    );
   }
 
   public close() {
@@ -1000,23 +1043,23 @@ export class NewScheduledEventComponent
   public save() {
     this.saving = true;
     if (this.event) {
-      this.ses.update(this.se).subscribe(
-        (reply: string) => {
+      this.ses.update(this.se).subscribe({
+        next: (_reply: string) => {
           this.updated.next(true);
         },
-        (err: any) => {
+        error: (_err: any) => {
           this.updated.next(true);
-        }
-      );
+        },
+      });
     } else {
-      this.ses.create(this.se).subscribe(
-        (reply: string) => {
+      this.ses.create(this.se).subscribe({
+        next: (_reply: string) => {
           this.updated.next(true);
         },
-        (err: any) => {
+        error: (_err: any) => {
           this.updated.next(true);
-        }
-      );
+        },
+      });
     }
     this.close();
   }

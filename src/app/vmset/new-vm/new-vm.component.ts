@@ -23,50 +23,49 @@ export class NewVmComponent implements OnChanges {
 
   @ViewChild('modal') modal: ClrModal;
 
-  constructor(
-    public vmTemplateService: VmtemplateService
-  ) { }
+  constructor(public vmTemplateService: VmtemplateService) {}
 
   ngOnChanges(): void {
-    if(this.listVms) {
-      this.vmTemplateService.list()
-      .subscribe(
-        (v: VMTemplate[]) => this.vmtemplates = v
-      )
+    if (this.listVms) {
+      this.vmTemplateService
+        .list()
+        .subscribe((v: VMTemplate[]) => (this.vmtemplates = v));
     }
   }
 
   public open(): void {
     this.vmform.reset();
-    if(!this.listVms) {
+    if (!this.listVms) {
       this.vmform.disable();
     }
     this.modal.open();
   }
 
-  public vmform: FormGroup = new FormGroup({
-    'vm_name': new FormControl(null, [
+  public vmform: FormGroup<{
+    vm_name: FormControl<string>;
+    vm_template: FormControl<string>;
+  }> = new FormGroup({
+    vm_name: new FormControl<string | null>(null, [
       Validators.required,
       Validators.minLength(4),
       this.validateUniqueVmName()
     ]),
-    'vm_template': new FormControl(null, [
-      Validators.required
-    ])
-  })
+    vm_template: new FormControl<string | null>(null, [Validators.required]),
+  });
 
   addVM() {
-    var vm_name = this.vmform.get('vm_name').value;
-    var vm_template = this.vmform.get('vm_template').value;
+    const vm_name = this.vmform.controls.vm_name.value;
+    const vm_template = this.vmform.controls.vm_template.value;
+
     this.vm.emit([vm_name, vm_template]);
 
     this.modal.close();
   }
 
   private validateUniqueVmName(): ValidatorFn {
-    return (control: FormControl) => {
+    return (control: FormControl<string | null>) => {
       const vmName = control.value;
-      const isNotUnique = this.vms.some((vmSet: {}) => vmSet.hasOwnProperty(vmName))
+      const isNotUnique = vmName && this.vms.some((vmSet: {}) => vmSet.hasOwnProperty(vmName))
       if (isNotUnique) {
         return {
           notUnique: true,

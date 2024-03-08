@@ -32,7 +32,7 @@
             (click)="openNew()"
             *rbac="['scheduledevents.create']"
           >
-            <clr-icon shape="plus"></clr-icon> New Scheduled Event
+            <cds-icon shape="plus"></cds-icon> New New Scheduled Event
           </button>
         </div>
       </div>
@@ -110,13 +110,13 @@
                     se.active && se.provisioned && !se.finished && se.ready
                   "
                 >
-                  <clr-icon shape="clock"></clr-icon> In Progress
+                  <cds-icon shape="clock"></cds-icon> In Progress
                 </ng-container>
                 <ng-container *ngIf="!se.active">
-                  <clr-icon shape="times"></clr-icon> Inactive
+                  <cds-icon shape="times"></cds-icon> Inactive
                 </ng-container>
                 <ng-container *ngIf="se.finished">
-                  <clr-icon shape="check"></clr-icon> Finished
+                  <cds-icon shape="check"></cds-icon> Finished
                 </ng-container>
               </clr-dg-cell>
             </clr-dg-row>

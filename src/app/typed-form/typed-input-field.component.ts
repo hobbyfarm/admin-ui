@@ -4,7 +4,9 @@ import {
   TypedInputType,
   TypedInputRepresentation,
 } from './TypedInput';
-import { FormControl, FormGroup } from '@angular/forms';
+import { GenericFormControl } from '../data/forms';
+
+// TODO: Type reactive forms
 
 @Component({
   selector: 'app-typed-input-field',
@@ -13,7 +15,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class TypedInputFieldComponent {
   @Input() input: TypedInput;
-  @Input() formControlRef: FormControl;
+  @Input() formControlRef: GenericFormControl;
   @Output() change: EventEmitter<boolean> = new EventEmitter(null);
   readonly TypedInputType = TypedInputType; // Reference to TypedInputTypes enum for template use
   readonly TypedInputRepresentation = TypedInputRepresentation; // Reference to TypedInputRepresentation enum for template use

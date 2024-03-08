@@ -1,7 +1,7 @@
 <clr-alert
   [clrAlertType]="alertType"
+  [(clrAlertClosed)]="alertClosed"
   [clrAlertClosable]="false"
-  [(clrAlertClosed)]="!isAlert"
 >
   <clr-alert-item>
     <span class="alert-text">
@@ -11,15 +11,11 @@
 </clr-alert>
 <h3>Courses</h3>
 <div class="clr-row">
-  <div class="clr-col">
-    <button
-      class="btn btn-success"
-      (click)="openNewWizard()"
-      *rbac="['courses.create']"
-    >
-      <clr-icon shape="plus"></clr-icon> New Course
-    </button>
-  </div>
+    <div class="clr-col">
+        <button class="btn btn-success" (click)="openNewWizard()" *rbac="['courses.create']">
+            <cds-icon shape="plus"></cds-icon> New Course
+        </button>
+    </div>
 </div>
 <div class="clr-row">
   <div class="clr-col">
@@ -32,7 +28,7 @@
       <clr-dg-row
         *clrDgItems="let c of courses"
         [clrDgItem]="c"
-        [clrDgSelectable]="!modified"
+        [clrDgSelectable]="false"
       >
         <clr-dg-action-overflow *ngIf="showActionOverflow">
           <button
@@ -55,7 +51,6 @@
         <course-details
           *clrIfExpanded
           [course]="c"
-          [dragScenarios]="dragScenarios"
           ngProjectAs="clr-dg-row-detail"
         ></course-details>
       </clr-dg-row>
@@ -64,7 +59,6 @@
 </div>
 <wizard-course
   #addNewCourse
-  [dragScenarios]="dragScenarios"
   [wizardCourse]="'create'"
   (coursesRefresher)="refresh()"
 ></wizard-course>
@@ -76,12 +70,6 @@
   [listScenarios]="listScenarios"
 ></wizard-course>
 
-<new-course #newCourse (added)="refresh()"></new-course>
-<add-scenario
-  #addScenario
-  [scenarios]="scenarios"
-  (selected)="addSelected($event)"
-></add-scenario>
 <delete-confirmation
   #deleteConfirmation
   (delete)="deleteSelected()"

@@ -41,13 +41,19 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   // The Validator Pattern for the duration only accepts strings that make up a valid duration
   // For example "1d" for 1 day, "24h" for 24 Hours, "60m" for 60 minutes.
-  amountInputForm: FormGroup = new FormGroup({
-    amountInput: new FormControl(1, [Validators.required, Validators.min(1)]),
-    duration: new FormControl('', [Validators.pattern(/^(\d+[dhm]){1}$/)]),
+  amountInputForm: FormGroup<{
+    amountInput: FormControl<number>;
+    duration: FormControl<string>;
+  }> = new FormGroup({
+    amountInput: new FormControl<number>(1, {
+      validators: [Validators.required, Validators.min(1)],
+      nonNullable: true,
+    }),
+    duration: new FormControl<string>('', {
+      validators: [Validators.pattern(/^(\d+[dhm]){1}$/)],
+      nonNullable: true,
+    }),
   });
-
-  amountNewOtacs: number = 1;
-  duration: string = '';
 
   otacs: iOTAC[] = [];
 
@@ -101,14 +107,14 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
     this.seService
       .addOtacs(
         this.currentScheduledEvent.id,
-        this.amountNewOtacs,
-        this.duration
+        this.amountInputForm.controls.amountInput.value,
+        this.amountInputForm.controls.duration.value
       )
       .subscribe((newOtacs: OTAC[]) => {
         this.otacs.push(
           ...newOtacs.map((otac) => this.addUserinformation(otac))
         );
-        this.amountNewOtacs = 1;
+        this.amountInputForm.controls.amountInput.setValue(1);
       });
   }
 
