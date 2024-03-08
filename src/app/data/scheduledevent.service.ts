@@ -4,11 +4,11 @@ import {
   HttpErrorResponse,
   HttpParams,
 } from '@angular/common/http';
-import { ScheduledEvent } from './scheduledevent';
+import { DashboardScheduledEvent, ScheduledEvent } from './scheduledevent';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { from, of, throwError } from 'rxjs';
+import { BehaviorSubject, from, of, throwError } from 'rxjs';
 import { formatDate } from '@angular/common';
 import { atou } from '../unicode';
 import {
@@ -20,6 +20,10 @@ import {
   providedIn: 'root',
 })
 export class ScheduledeventService extends ListableResourceClient<ScheduledEvent> {
+  private cachedDashboardEvents: BehaviorSubject<
+    Map<string, DashboardScheduledEvent>
+  > = new BehaviorSubject(new Map());
+
   constructor(public http: HttpClient, gcf: GargantuaClientFactory) {
     super(gcf.scopedClient('/a/scheduledevent'));
   }
@@ -172,5 +176,15 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
           return of(se);
         })
       );
+  }
+
+  public setDashboardCache(
+    map: Map<string, DashboardScheduledEvent>,
+  ) {
+    this.cachedDashboardEvents.next(map);
+  }
+
+  public getDashboardCache(): BehaviorSubject<Map<string, DashboardScheduledEvent>> {
+    return this.cachedDashboardEvents;
   }
 }

@@ -31,4 +31,4 @@
         </clr-stack-block>
     </clr-stack-block>
 </clr-stack-view>
-<new-vm #newvm (vm)="addVM($event)" [listVms]="allowedAddVm | async"></new-vm>
+<new-vm #newvm (vm)="addVM($event)" [listVms]="allowedAddVm | async" [vms]="vms"></new-vm>

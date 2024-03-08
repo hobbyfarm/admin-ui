@@ -1,7 +1,7 @@
 <clr-alert
   [clrAlertType]="'warning'"
-  [(clrAlertClosed)]="!scenarioTainted"
-  [clrAlertClosable]="false"
+  [(clrAlertClosed)]="scenarioNotTainted"
+  [clrAlertClosable]="true"
 >
   <clr-alert-item>
     <span class="alert-text">
@@ -12,7 +12,7 @@
 <clr-alert
   [clrAlertType]="'danger'"
   [(clrAlertClosed)]="scenarioDangerClosed"
-  [clrAlertClosable]="false"
+  [clrAlertClosable]="true"
 >
   <clr-alert-item>
     <span class="alert-text">
@@ -23,7 +23,7 @@
 <clr-alert
   [clrAlertType]="'success'"
   [(clrAlertClosed)]="scenarioSuccessClosed"
-  [clrAlertClosable]="false"
+  [clrAlertClosable]="true"
 >
   <clr-alert-item>
     <span class="alert-text">
@@ -39,7 +39,7 @@
       (click)="openNewScenario()"
       *rbac="['scenarios.create']"
     >
-      <clr-icon shape="plus"></clr-icon> New Scenario
+      <cds-icon shape="plus"></cds-icon> New Scenario
     </button>
   </div>
 </div>
@@ -125,10 +125,10 @@
                         <option value="m">Minute(s)</option>
                       </select>
                     </div>
-                    <clr-icon
+                    <cds-icon
                       class="clr-validate-icon"
                       shape="exclamation-circle"
-                    ></clr-icon>
+                    ></cds-icon>
                   </div>
                   <span
                     class="clr-subtext"
@@ -267,7 +267,7 @@
               (click)="openNewStep()"
               *rbac="['scenarios.update']"
             >
-              <clr-icon shape="plus"></clr-icon> New Step
+              <cds-icon shape="plus"></cds-icon> New Step
             </button>
             <clr-datagrid>
               <clr-dg-column>Index</clr-dg-column>
@@ -303,7 +303,7 @@
                 <clr-dg-cell>{{ s.title }}</clr-dg-cell>
               </clr-dg-row>
             </clr-datagrid>
-            <ng-container *ngIf="scenarioTainted">
+            <ng-container *ngIf="!scenarioNotTainted">
               <button
                 class="btn btn-success"
                 (click)="savescenario()"
@@ -328,7 +328,7 @@
               (click)="newCategory = true"
               *rbac="['scenarios.update']"
             >
-              <clr-icon shape="plus"></clr-icon> Add Category
+              <cds-icon shape="plus"></cds-icon> Add Category
             </button>
             <ng-container *ngIf="newCategory">
               <p>
@@ -397,7 +397,7 @@
               (click)="newTag = true"
               *rbac="['scenarios.update']"
             >
-              <clr-icon shape="plus"></clr-icon> Add Tag
+              <cds-icon shape="plus"></cds-icon> Add Tag
             </button>
             <ng-container *ngIf="newTag">
               <p>
@@ -679,10 +679,10 @@
                 <option value="m">Minute(s)</option>
               </select>
             </div>
-            <clr-icon
+            <cds-icon
               class="clr-validate-icon"
               shape="exclamation-circle"
-            ></clr-icon>
+            ></cds-icon>
           </div>
           <span
             class="clr-subtext"

@@ -12,6 +12,6 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-danger-outline" (click)="newCourseOpen = false">Cancel</button>
-    <button class="btn btn-success" (click)="save()" [disabled]="!form.valid">Save</button>
+    <button class="btn btn-success" (click)="save()" [disabled]="!form?.valid">Save</button>
   </div>
 </clr-modal>

@@ -8,7 +8,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { ACTIONS } from './markdownActions';
+import { ACTIONS, MDEditorAction } from './markdownActions';
 
 @Component({
   selector: 'md-editor',
@@ -55,7 +55,7 @@ export class MDEditorComponent implements OnChanges, AfterViewInit {
     setTimeout(() => this.resizeEditor(), 0);
   }
 
-  editorPreset(action: any) {
+  editorPreset(action: MDEditorAction) {
     let cursorPosition: number = this.mdEditor.nativeElement.selectionStart;
     let selectionEnd: number = this.mdEditor.nativeElement.selectionEnd;
     let textBefore = this.mdEditor.nativeElement.value.substring(

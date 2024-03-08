@@ -23,17 +23,18 @@ export class VmtemplatesComponent implements OnInit {
   constructor(
     public vmTemplateService: VmtemplateService,
     public rbacService: RbacService
-  ) { }
+  ) {}
 
-  @ViewChild("editTemplateWizard") editWizard: EditVmtemplateComponent;
-  @ViewChild("deleteConfirmation") deleteConfirmation: DeleteConfirmationComponent;
-  @ViewChild("alert") alert: AlertComponent;
+  @ViewChild('editTemplateWizard') editWizard: EditVmtemplateComponent;
+  @ViewChild('deleteConfirmation')
+  deleteConfirmation: DeleteConfirmationComponent;
+  @ViewChild('alert') alert: AlertComponent;
 
   ngOnInit(): void {
     const authorizationRequests = Promise.all([
-      this.rbacService.Grants("virtualmachinetemplates", "get"),
-      this.rbacService.Grants("virtualmachinetemplates", "update"),
-      this.rbacService.Grants("virtualmachinetemplates", "delete")
+      this.rbacService.Grants('virtualmachinetemplates', 'get'),
+      this.rbacService.Grants('virtualmachinetemplates', 'update'),
+      this.rbacService.Grants('virtualmachinetemplates', 'delete'),
     ]);
 
     authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
@@ -46,18 +47,19 @@ export class VmtemplatesComponent implements OnInit {
   }
 
   public refresh() {
-    this.vmTemplateService.list()
-    .subscribe(
-      (vm: VMTemplate[]) => this.templates = vm
-    )
+    this.vmTemplateService
+      .list()
+      .subscribe((vm: VMTemplate[]) => (this.templates = vm));
   }
 
   public openEdit(partialTemplate: VMTemplate) {
     // "t" is only a partial VMTemplate, we need to get the full
-    this.vmTemplateService.get(partialTemplate.id).subscribe((t: VMTemplate) => {
-      this.editTemplate = t;
-      this.editWizard.open();
-    });
+    this.vmTemplateService
+      .get(partialTemplate.id)
+      .subscribe((t: VMTemplate) => {
+        this.editTemplate = t;
+        this.editWizard.open();
+      });
   }
 
   public openNew() {
@@ -69,17 +71,20 @@ export class VmtemplatesComponent implements OnInit {
     this.deleteTemplate = t;
     this.deleteConfirmation.open();
   }
-  
+
   public doDelete() {
-    this.vmTemplateService.delete(this.deleteTemplate.id)
-    .subscribe(
-      (s: ServerResponse) => {
-        this.alert.success("Deleted virtual machine template", false, 1000);
+    this.vmTemplateService.delete(this.deleteTemplate.id).subscribe({
+      next: (s: ServerResponse) => {
+        this.alert.success('Deleted virtual machine template', false, 1000);
         this.refresh();
       },
-      (e: HttpErrorResponse) => {
-        this.alert.danger("Error deleting virtual machine template: " + e.error.message, false, 3000);
-      }
-    )
+      error: (e: HttpErrorResponse) => {
+        this.alert.danger(
+          'Error deleting virtual machine template: ' + e.error.message,
+          false,
+          3000
+        );
+      },
+    });
   }
 }

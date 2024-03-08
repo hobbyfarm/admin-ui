@@ -21,7 +21,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { AddScenarioComponent } from '../add-scenario/add-scenario.component';
 import { cloneDeep } from 'lodash-es';
-import { Environment } from 'src/app/data/environment';
+import { CategoryFormGroup, CourseDetailFormGroup } from 'src/app/data/forms';
 @Component({
   selector: 'wizard-course',
   templateUrl: './course-wizard.component.html',
@@ -31,6 +31,8 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   public course: Course = new Course();
   public selectedCourse: Course = new Course();
   public editSelectedCourse: Course = new Course();
+  public dragScenarios: Scenario[] = [];
+
   @Input()
   public updateRbac: boolean;
 
@@ -39,9 +41,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   @Input()
   public wizardCourse: 'create' | 'edit';
-
-  @Input()
-  public dragScenarios: Scenario[] = [];
 
   @Output()
   textChanged: EventEmitter<string> = new EventEmitter<string>();
@@ -57,9 +56,9 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   @ViewChild('virtualmachine', { static: true }) virtualMachine: VmsetComponent;
   @ViewChild('addScenario', { static: true }) addScenario: AddScenarioComponent;
 
-  public form: FormGroup = new FormGroup({});
-  public newCategoryForm: FormGroup = new FormGroup({
-    category: new FormControl(null, [
+  public form: CourseDetailFormGroup;
+  public newCategoryForm: CategoryFormGroup = new FormGroup({
+    category: new FormControl<string | null>(null, [
       Validators.required,
       Validators.pattern(/^[a-zA-Z0-9,;]+$/),
     ]),
@@ -172,11 +171,11 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     if (this.wizardCourse == 'create') this.setupFormCreate(fg);
     if (this.wizardCourse == 'edit') this.setupFormEdit(fg);
   }
-  setupFormCreate(fg: FormGroup) {
+  setupFormCreate(fg: CourseDetailFormGroup) {
     this.form = fg;
   }
 
-  setupFormEdit(fg: FormGroup) {
+  setupFormEdit(fg: CourseDetailFormGroup) {
     this.form = fg;
     this.form.valueChanges.subscribe((a: any) => {
       if (this.form.dirty) {
@@ -190,14 +189,14 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   setCourseValues(course: Course) {
-    course.name = this.form.get('course_name').value;
-    course.description = this.form.get('course_description').value;
+    course.name = this.form.controls.course_name.value;
+    course.description = this.form.controls.course_description.value;
     course.keepalive_duration =
-      this.form.get('keepalive_amount').value +
-      this.form.get('keepalive_unit').value;
-    course.pause_duration = this.form.get('pause_duration').value + 'h';
-    course.pauseable = this.form.get('pauseable').value;
-    course.keep_vm = this.form.get('keep_vm').value;
+      this.form.controls.keepalive_amount.value +
+      this.form.controls.keepalive_unit.value;
+    course.pause_duration = this.form.controls.pause_duration.value + 'h';
+    course.pauseable = this.form.controls.pauseable.value;
+    course.keep_vm = this.form.controls.keep_vm.value;
     course.virtualmachines = this.editVirtualMachines;
     course.scenarios = cloneDeep(this.dragScenarios);
     course.categories = this.editCategories;
@@ -268,8 +267,8 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   addCategory() {
     let categories = this.newCategoryForm.get('category').value;
-    categories = categories.split(',');
-    categories.forEach((category) => {
+    const categoryArray = categories.split(',');
+    categoryArray.forEach((category) => {
       category = category.replace(/\s/g, ''); //remove all whitespaces
       if (category != '' && !this.editCategories.includes(category)) {
         this.editCategories.push(category);
@@ -368,5 +367,14 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {   
     return list.some(item => item.name === scenario.name);
+  }
+  
+  isEditedVM(index: any, vmname: string, templateName: any): boolean {
+    // This function determines if the currently selected VM is either beeing edited throug the following condition:
+    const isEdited = this.getSelectedCourseVM(index, vmname) != templateName && this.getSelectedCourseVM(index, vmname) != 0
+    // ... or if it was deleted and created again with the same vm name through the following condition:
+    const deletedAndCreatedWithSameName = this.getSelectedCourseVM(index, vmname) === 0 && this.getEditSelectedCourseVM(index, vmname) != templateName
+    // this.getSelectedCourseVM(index, vmname) != templateName && this.getSelectedCourseVM(index, vmname) != 0
+    return isEdited || deletedAndCreatedWithSameName
   }
 }

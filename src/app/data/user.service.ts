@@ -7,17 +7,20 @@ import {
 import { environment } from 'src/environments/environment';
 import { catchError, tap } from 'rxjs/operators';
 import { of, throwError } from 'rxjs';
-import { GargantuaClientFactory, ListableResourceClient } from './gargantua.service';
+import {
+  GargantuaClientFactory,
+  ListableResourceClient,
+} from './gargantua.service';
 import { User } from './user';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService extends ListableResourceClient<User>{
+export class UserService extends ListableResourceClient<User> {
   constructor(public http: HttpClient, gcf: GargantuaClientFactory) {
     super(gcf.scopedClient('/a/user'));
   }
-  
+
   public saveUser(
     id: string,
     email: string = '',
@@ -46,8 +49,8 @@ export class UserService extends ListableResourceClient<User>{
         this.deleteAndNotify(id);
       }),
       catchError((e: HttpErrorResponse) => {
-        return throwError(e.error);
-      }),
+        return throwError(() => e.error);
+      })
     );
   }
 }

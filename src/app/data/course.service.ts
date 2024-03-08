@@ -90,7 +90,7 @@ export class CourseService {
         return response;
       }),
       catchError((e: HttpErrorResponse) => {
-        return throwError(e.error);
+        return throwError(() => e.error);
       })
     );
   }

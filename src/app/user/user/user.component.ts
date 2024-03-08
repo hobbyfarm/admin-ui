@@ -47,14 +47,14 @@ export class UserComponent implements OnInit {
   }
 
   refresh(force?: boolean) {
-    this.userService.list('', force).subscribe(
-      (u: User[]) => {
+    this.userService.list('', force).subscribe({
+      next: (u: User[]) => {
         this.users = u;
       },
-      (s: ServerResponse) => {
+      error: (_s: ServerResponse) => {
         // do something about failure
-      }
-    );
+      },
+    });
   }
 
   setSelectedUser(u: User) {

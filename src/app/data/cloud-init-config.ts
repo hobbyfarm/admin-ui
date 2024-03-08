@@ -50,8 +50,8 @@ export class CloudInitConfig {
         this.contentMap = new Map()
         this.vmServices.forEach((vmService: VMTemplateServiceConfiguration) => {
             vmService.cloudConfigMap.forEach((value, key) => {
-                let valCopy = JSON.parse(JSON.stringify(value))
-                let keyCopy = JSON.parse(JSON.stringify(key))
+                let valCopy = structuredClone(value)
+                let keyCopy = structuredClone(key)
                 this.addContent(keyCopy, valCopy) 
             })  
         })
