@@ -20,7 +20,7 @@ export class ContentComponent implements OnInit {
   ngOnInit(): void {
     this.contentNavigation();
   }
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.contentNavigation();
   }
 
