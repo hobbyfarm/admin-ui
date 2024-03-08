@@ -38,7 +38,6 @@ export class SettingsComponent {
     this.getScopes();
     this.router.events.subscribe((val) => {
       if (val instanceof NavigationEnd) {
-        console.log('router event ended');
         this.testPath();
       }
     });
@@ -59,7 +58,6 @@ export class SettingsComponent {
     }
     this.typedSettingsService.updateCollection(this.updatedSettings).subscribe({
       next: (resp: ServerResponse) => {
-        console.log(resp);
         this.hasChanges = false;
         this.alert.success(
           'Settings successfully saved',

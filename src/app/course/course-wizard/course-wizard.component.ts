@@ -214,7 +214,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   setVM(vms: {}[]) {
-    console.log("vms = " + vms)
     this.editVirtualMachines = vms;
     this.VMSAllow();
     this.setModified();
