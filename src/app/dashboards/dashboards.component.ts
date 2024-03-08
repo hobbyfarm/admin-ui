@@ -48,8 +48,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       .list()
       .subscribe((s: DashboardScheduledEvent[]) => {
         this.scheduledEvents = s;
-        this.activeEvents = s.filter((se) => !se.finished);
-        this.finishedEvents = s.filter((se) => se.finished);
+        this.activeEvents = s.filter((se) => se.active);
+        this.finishedEvents = s.filter((se) => !se.active);
         const map = this.scheduledEvents.reduce<Map<string, DashboardScheduledEvent>>((map, se) => {
           map.set(se.id, se);
           return map;
