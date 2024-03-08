@@ -34,14 +34,16 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private rbacService: RbacService,
     private progressService: ProgressService,
     private vmService: VmService,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.rbacService.Grants("virtualmachines", "list").then((allowed: boolean) => {
-      this.listVMs = allowed;
-    });
-    this.rbacService.Grants("progresses", "list").then((allowed: boolean) => {
+    this.rbacService
+      .Grants('virtualmachines', 'list')
+      .then((allowed: boolean) => {
+        this.listVMs = allowed;
+      });
+    this.rbacService.Grants('progresses', 'list').then((allowed: boolean) => {
       this.listProgress = allowed;
     });
     this.scheduledeventService
@@ -50,7 +52,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         this.scheduledEvents = s;
         this.activeEvents = s.filter((se) => se.active && !se.finished);
         this.finishedEvents = s.filter((se) => se.active && se.finished);
-        const map = this.scheduledEvents.reduce<Map<string, DashboardScheduledEvent>>((map, se) => {
+        const map = this.scheduledEvents.reduce<
+          Map<string, DashboardScheduledEvent>
+        >((map, se) => {
           map.set(se.id, se);
           return map;
         }, new Map());
@@ -62,8 +66,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         this.updateInterval = setInterval(() => {
           this.setActiveSessionsCount();
         }, 30 * 1000);
-        if(this.activeEvents.length > 0) {
-          this.router.navigateByUrl(`/dashboards/event/${this.activeEvents[0].id}`)
+        if (this.activeEvents.length > 0) {
+          this.router.navigateByUrl(
+            `/dashboards/event/${this.activeEvents[0].id}`
+          );
         }
       });
   }
@@ -116,11 +122,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     if (event.activeSessions > 0) {
       tooltipTitle = `${event.activeSessions} active session(s)`;
     }
-    if(event.provisionedVMs && event.provisionedVMs > 0) {
-      tooltipTitle += ` and ${event.provisionedVMs} provisioned vm(s)`
+    if (event.provisionedVMs && event.provisionedVMs > 0) {
+      tooltipTitle += ` and ${event.provisionedVMs} provisioned vm(s)`;
     }
-    if(!tooltipTitle) {
-      return 'No active sessions or provisioned vms!'
+    if (!tooltipTitle) {
+      return 'No active sessions or provisioned vms!';
     }
     return tooltipTitle;
   }
