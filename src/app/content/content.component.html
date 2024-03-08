@@ -1,18 +1,24 @@
 <div class="main-container">
-    <header class="header header-7" app-header></header>
-    <div class="content-container">
-        <nav class="sidenav">
-            <section class="sidenav-content">
-                <a href="javascript://" [routerLink]="['scenarios']" [routerLinkActive]="'active'" class="nav-link" *rbac="['scenarios.list']">
-                    Scenarios
-                </a>
-                <a href="javascript://" [routerLink]="['courses']" [routerLinkActive]="'active'" class="nav-link" *rbac="['courses.list']">
-                    Courses
-                </a>
-            </section>
-        </nav>
-        <div class="content-area">
-            <router-outlet></router-outlet>
-        </div>
+  <header class="header header-7" app-header></header>
+  <div class="content-container">
+    <clr-vertical-nav>
+      <a
+        clrVerticalNavLink
+        routerLink="./scenarios"
+        routerLinkActive="active"
+        *rbac="['scenarios.list']"
+        >Scenarios</a
+      >
+      <a
+        clrVerticalNavLink
+        routerLink="./courses"
+        routerLinkActive="active"
+        *rbac="['courses.list']"
+        >Courses</a
+      >
+    </clr-vertical-nav>
+    <div class="content-area">
+      <router-outlet></router-outlet>
     </div>
+  </div>
 </div>

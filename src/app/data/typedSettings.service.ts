@@ -183,11 +183,13 @@ export class TypedSettingsService {
     let preparedSettings: Partial<PreparedSettings>[] = [];
     inputs.forEach((input: TypedInput) => {
       // Maps will not be converted correctly with JSON.stringify, we have to convert them to an Object.
-      if (input.representation == TypedInputRepresentation.MAP) {
+      if (input.isMap(input.value)) {
         let jsonObject = {};
-        input.value.forEach((value, key) => {
-          jsonObject[key] = value;
-        });
+        for (const key in input.value) {
+          if (input.value.hasOwnProperty(key)) {
+            jsonObject[key] = input.value[key];
+          }
+        }
         input.value = jsonObject;
       }
 

@@ -1,0 +1,160 @@
+/**
+ * @license
+ * Copyright 2013-present Dale Lotts All Rights Reserved.
+ * http://www.dalelotts.com
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://github.com/dalelotts/angular-bootstrap-datetimepicker/blob/master/LICENSE
+ */
+import { SimpleChanges } from '@angular/core';
+import { DlDateTimePickerModel } from './dl-date-time-picker-model';
+import { DlModelProvider } from './dl-model-provider';
+/**
+ * Default implementation for the `hour` view.
+ */
+export declare class DlHourModelProvider implements DlModelProvider {
+    /**
+     * Receives input changes detected by Angular.
+     *
+     * @param changes
+     *  the input changes detected by Angular.
+     */
+    onChanges(_changes: SimpleChanges): void;
+    /**
+     * Returns the `hour` model for the specified moment in `local` time with the
+     * `active` hour set to the beginning of the day.
+     *
+     * The `hour` model represents a day (24 hours) as six rows with four columns
+     * and each cell representing one-hour increments.
+     *
+     * The hour always starts at the beginning of the hour.
+     *
+     * Each cell represents a one-hour increment starting at midnight.
+     *
+     * @param milliseconds
+     *  the moment in time from which the minute model will be created.
+     * @param selectedMilliseconds
+     *  the current value of the date/time picker.
+     * @returns
+     *  the model representing the specified moment in time.
+     */
+    getModel(milliseconds: number, selectedMilliseconds: number): DlDateTimePickerModel;
+    /**
+     * Move the active `hour` one row `down` from the specified moment in time.
+     *
+     * Moving `down` can result in the `active` hour being part of a different day than
+     * the specified `fromMilliseconds`, in this case the day represented by the model
+     * will change to show the correct hour.
+     *
+     * @param fromMilliseconds
+     *  the moment in time from which the next `hour` model `down` will be constructed.
+     * @param selectedMilliseconds
+     *  the current value of the date/time picker.
+     * @returns
+     *  model containing an `active` `hour` one row `down` from the specified moment in time.
+     */
+    goDown(fromMilliseconds: number, selectedMilliseconds: number): DlDateTimePickerModel;
+    /**
+     * Move the active `hour` one row `up` from the specified moment in time.
+     *
+     * Moving `up` can result in the `active` hour being part of a different day than
+     * the specified `fromMilliseconds`, in this case the day represented by the model
+     * will change to show the correct hour.
+     *
+     * @param fromMilliseconds
+     *  the moment in time from which the next `hour` model `up` will be constructed.
+     * @param selectedMilliseconds
+     *  the current value of the date/time picker.
+     * @returns
+     *  model containing an `active` `hour` one row `up` from the specified moment in time.
+     */
+    goUp(fromMilliseconds: number, selectedMilliseconds: number): DlDateTimePickerModel;
+    /**
+     * Move the `active` hour one cell `left` in the current `hour` view.
+     *
+     * Moving `left` can result in the `active` hour being part of a different day than
+     * the specified `fromMilliseconds`, in this case the day represented by the model
+     * will change to show the correct year.
+     *
+     * @param fromMilliseconds
+     *  the moment in time from which the `hour` model to the `left` will be constructed.
+     * @param selectedMilliseconds
+     *  the current value of the date/time picker.
+     * @returns
+     *  model containing an `active` `hour` one cell to the `left` of the specified moment in time.
+     */
+    goLeft(fromMilliseconds: number, selectedMilliseconds: number): DlDateTimePickerModel;
+    /**
+     * Move the `active` hour one cell `right` in the current `hour` view.
+     *
+     * Moving `right` can result in the `active` hour being part of a different day than
+     * the specified `fromMilliseconds`, in this case the day represented by the model
+     * will change to show the correct year.
+     *
+     * @param fromMilliseconds
+     *  the moment in time from which the `hour` model to the `right` will be constructed.
+     * @param selectedMilliseconds
+     *  the current value of the date/time picker.
+     * @returns
+     *  model containing an `active` `hour` one cell to the `right` of the specified moment in time.
+     */
+    goRight(fromMilliseconds: number, selectedMilliseconds: number): DlDateTimePickerModel;
+    /**
+     * Move the active `hour` one day `down` from the specified moment in time.
+     *
+     * Paging `down` will result in the `active` hour being part of a different day than
+     * the specified `fromMilliseconds`. As a result, the day represented by the model
+     * will change to show the correct year.
+     *
+     * @param fromMilliseconds
+     *  the moment in time from which the next `hour` model page `down` will be constructed.
+     * @param selectedMilliseconds
+     *  the current value of the date/time picker.
+     * @returns
+     *  model containing an `active` `hour` one day `down` from the specified moment in time.
+     */
+    pageDown(fromMilliseconds: number, selectedMilliseconds: number): DlDateTimePickerModel;
+    /**
+     * Move the active `hour` one day `up` from the specified moment in time.
+     *
+     * Paging `up` will result in the `active` hour being part of a different day than
+     * the specified `fromMilliseconds`. As a result, the day represented by the model
+     * will change to show the correct year.
+     *
+     * @param fromMilliseconds
+     *  the moment in time from which the next `hour` model page `up` will be constructed.
+     * @param selectedMilliseconds
+     *  the current value of the date/time picker.
+     * @returns
+     *  model containing an `active` `hour` one day `up` from the specified moment in time.
+     */
+    pageUp(fromMilliseconds: number, selectedMilliseconds: number): DlDateTimePickerModel;
+    /**
+     * Move the `active` `hour` to `11:00 pm` of the current day.
+     *
+     * The view or time range will not change unless the `fromMilliseconds` value
+     * is in a different day than the displayed decade.
+     *
+     * @param fromMilliseconds
+     *  the moment in time from which `11:00 pm` will be calculated.
+     * @param selectedMilliseconds
+     *  the current value of the date/time picker.
+     * @returns
+     *  a model with the `11:00 pm` cell in the view as the active `hour`.
+     */
+    goEnd(fromMilliseconds: number, selectedMilliseconds: number): DlDateTimePickerModel;
+    /**
+     * Move the `active` `hour` to `midnight` of the current day.
+     *
+     * The view or time range will not change unless the `fromMilliseconds` value
+     * is in a different day than the displayed decade.
+     *
+     * @param fromMilliseconds
+     *  the moment in time from which `midnight` will be calculated.
+     * @param selectedMilliseconds
+     *  the current value of the date/time picker.
+     * @returns
+     *  a model with the `midnight` cell in the view as the active `hour`.
+     */
+    goHome(fromMilliseconds: number, selectedMilliseconds: number): DlDateTimePickerModel;
+}

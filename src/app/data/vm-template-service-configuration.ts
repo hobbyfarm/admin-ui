@@ -3,7 +3,7 @@ import * as uuid from 'uuid'
 export class VMTemplateServiceConfiguration {
   public id: string;
   public name: string;
-  public hasWebinterface;
+  public hasWebinterface: boolean;
   public port?: number;
   public path?: string;
   public hasOwnTab?: boolean;

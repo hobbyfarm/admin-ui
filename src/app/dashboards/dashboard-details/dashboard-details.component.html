@@ -1,0 +1,50 @@
+<div *ngIf="selectedEvent" class="content-area">
+  <h3 *ngIf="sessionDashboardActive && rbacSuccessSessions">
+    Sessions for {{ selectedEvent?.event_name }}
+  </h3>
+  <h3 *ngIf="vmDashboardActive && rbacSuccessVms">
+    VMs for {{ selectedEvent?.event_name }}
+  </h3>
+  <span class="additional-info">
+    <ng-container *rbac="['accesscodes.get']">
+      AC:
+      <span class="access-code">{{ selectedEvent?.access_code }}</span>
+      &#8226;
+    </ng-container>
+    <ng-container *rbac="['scheduledevents.get']">
+      Until
+      {{ selectedEvent?.end_time | date : "MMM d, y, HH:mm" }}
+    </ng-container>
+    <ng-container *rbac="['scheduledevents.get', 'users.list']">
+      <span>&#8226; Created by {{ selectedEvent?.creatorEmail }} </span>
+    </ng-container>
+  </span>
+  <clr-tabs>
+    <ng-container *ngIf="rbacSuccessSessions">
+      <clr-tab>
+        <button clrTabLink>Sessions</button>
+        <ng-template [(clrIfActive)]="sessionDashboardActive">
+          <clr-tab-content *clrIfActive>
+            <progress-dashboard
+              class="progress-dashboard"
+              [selectedEvent]="selectedEvent"
+            >
+            </progress-dashboard>
+          </clr-tab-content>
+        </ng-template>
+      </clr-tab>
+    </ng-container>
+    <ng-container *ngIf="rbacSuccessVms">
+      <clr-tab>
+        <button clrTabLink>VMs</button>
+        <ng-template [(clrIfActive)]="vmDashboardActive">
+          <clr-tab-content *clrIfActive>
+            <div class="content-area">
+              <vm-dashboard [selectedEvent]="selectedEvent"></vm-dashboard>
+            </div>
+          </clr-tab-content>
+        </ng-template>
+      </clr-tab>
+    </ng-container>
+  </clr-tabs>
+</div>

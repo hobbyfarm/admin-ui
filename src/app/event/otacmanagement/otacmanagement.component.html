@@ -21,7 +21,6 @@
           type="number"
           clrInput
           name="amountNewOtacsInput"
-          [(ngModel)]="amountNewOtacs"
         />
         <clr-control-error>Input must be a positive Number</clr-control-error>
       </clr-input-container>
@@ -35,7 +34,6 @@
           name="duration"
           placeholder="e.g. 1d, 24h, 60m"
           title="Duration"
-          [(ngModel)]="duration"
         />
         <clr-control-error
           >Input must be a valid duration consisting of a number followed by
@@ -81,7 +79,7 @@
           <clr-dg-cell>{{ otac.userEmail }}</clr-dg-cell>
           <clr-dg-cell>{{ otac.redeemed_timestamp }}</clr-dg-cell>
           <clr-dg-cell *ngIf="hasMaxDuration(otac)"
-            ><clr-icon shape="clock"></clr-icon>
+            ><cds-icon shape="clock"></cds-icon>
             {{ otac.max_duration }}</clr-dg-cell
           >
           <clr-dg-cell *ngIf="!hasMaxDuration(otac)"

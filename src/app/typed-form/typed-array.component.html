@@ -1,0 +1,19 @@
+<div
+  *ngFor="let ctrl of array.controls; let i = index"
+  class="array-input-container"
+>
+  <app-typed-input-field
+    [input]="input"
+    [formControlRef]="ctrl"
+    (change)="inputChanged()"
+  >
+  </app-typed-input-field>
+  <button
+    class="btn btn-danger-outline"
+    type="button"
+    (click)="removeArrayElement(i)"
+    [disabled]="input.getMinLength() > i"
+  >
+    <cds-icon shape="trash"></cds-icon> Remove
+  </button>
+</div>
