@@ -237,8 +237,10 @@ export class ScenarioWizardComponent implements OnInit {
     }
   }
   public addNewScenario() {
-    this.newScenario.name = this.newScenarioDetails.controls.scenario_name.value;
-    this.newScenario.description = this.newScenarioDetails.controls.scenario_description.value;
+    this.newScenario.name =
+      this.newScenarioDetails.controls.scenario_name.value;
+    this.newScenario.description =
+      this.newScenarioDetails.controls.scenario_description.value;
     this.newScenario.keepalive_duration =
       this.newScenarioDetails.controls.keepalive_amount.value +
       this.newScenarioDetails.controls.keepalive_unit.value;
@@ -258,16 +260,16 @@ export class ScenarioWizardComponent implements OnInit {
     this.refreshFilteredScenario();
   }
   saveCreatedScenario() {
-    this.scenarioService.create(this.selectedscenario).subscribe(
-      (s: Scenario) => {
+    this.scenarioService.create(this.selectedscenario).subscribe({
+      next: (s: Scenario) => {
         this._displayAlert(s.name, true);
         this.scenarioAdded = true;
       },
-      (e: HttpErrorResponse) => {
+      error: (e: HttpErrorResponse) => {
         const errorMessage: string = e.message;
         this.emitMessageError.emit(errorMessage);
-      }
-    );
+      },
+    });
     this.resetScenarioForm();
   }
   updateScenario() {
@@ -278,7 +280,8 @@ export class ScenarioWizardComponent implements OnInit {
       this.editScenarioForm.controls.pause_duration.value + 'h';
     this.selectedscenario.name =
       this.editScenarioForm.controls.scenario_name.value;
-    this.selectedscenario.description = this.editScenarioForm.controls.scenario_description.value;
+    this.selectedscenario.description =
+      this.editScenarioForm.controls.scenario_description.value;
   }
   saveUpdatedScenario() {
     this.scenarioService

@@ -17,13 +17,13 @@ export class ScenarioDetailComponent implements OnInit {
   ngOnInit(): void {
     let scenarioObservable: Observable<Scenario>;
     scenarioObservable = this.scenarioService.get(this.scenario.id);
-    scenarioObservable.subscribe(
-      (S: Scenario) => {
+    scenarioObservable.subscribe({
+      next: (S: Scenario) => {
         this.scenario = S;
       },
-      (e: HttpErrorResponse) => {
+      error: (e: HttpErrorResponse) => {
         console.log(e);
-      }
-    );
+      },
+    });
   }
 }
