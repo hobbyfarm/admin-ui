@@ -18,6 +18,8 @@ import { KeepaliveValidator } from 'src/app/validators/keepalive.validator';
 import { StepsScenarioComponent } from '../steps-scenario/steps-scenario.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryFormGroup, ScenarioFormGroup } from 'src/app/data/forms';
+import { AlertDetails } from 'src/app/alert/alert';
+import { ClrAlertType } from 'src/app/clr-alert-type';
 
 @Component({
   selector: 'scenario-wizard',
@@ -32,16 +34,9 @@ export class ScenarioWizardComponent implements OnInit {
   draggedScenario: Scenario;
 
   @Output()
-  refreshFilteredScenarios: EventEmitter<string> = new EventEmitter<string>();
-
-  @Output()
-  emitMessageError: EventEmitter<string> = new EventEmitter<string>();
+  onWizardFinished: EventEmitter<AlertDetails> = new EventEmitter<AlertDetails>();
 
   public wizardTitle: string;
-  public editDangerAlert: string = '';
-  public editSuccessAlert: string = '';
-  public scenarioDangerAlert: string = '';
-  public scenarioSuccessAlert: string = '';
 
   public _open: boolean = false;
   public selectRbac: boolean = false;
@@ -257,17 +252,25 @@ export class ScenarioWizardComponent implements OnInit {
   finishScenario() {
     if (this.wizardScenario == 'create') this.saveCreatedScenario();
     if (this.wizardScenario == 'edit') this.saveUpdatedScenario();
-    this.refreshFilteredScenario();
   }
   saveCreatedScenario() {
     this.scenarioService.create(this.selectedscenario).subscribe({
       next: (s: Scenario) => {
-        this._displayAlert(s.name, true);
-        this.scenarioAdded = true;
+        this.onWizardFinished.emit({
+          type: ClrAlertType.Success,
+          message: `Scenario ${s.name} created`,
+          closable: true,
+          duration: 3000,
+        })
       },
       error: (e: HttpErrorResponse) => {
         const errorMessage: string = e.message;
-        this.emitMessageError.emit(errorMessage);
+        this.onWizardFinished.emit({
+          type: ClrAlertType.Danger,
+          message: errorMessage,
+          closable: true,
+          duration: 3000,
+        })
       },
     });
     this.resetScenarioForm();
@@ -288,18 +291,20 @@ export class ScenarioWizardComponent implements OnInit {
       .update(this.selectedscenario)
       .subscribe((s: ServerResponse) => {
         if (s.type == 'updated') {
-          this.scenarioSuccessAlert = 'Scenario updated';
-          this.scenarioSuccessClosed = false;
-          setTimeout(() => {
-            this.scenarioSuccessClosed = true;
-            this.scenarioTainted = false;
-          }, 1000);
+          this.onWizardFinished.emit({
+            type: ClrAlertType.Success,
+            message: `Scenario updated`,
+            closable: true,
+            duration: 3000,
+          })
         } else {
-          this.scenarioDangerAlert = 'Unable to update scenario: ' + s.message;
-          this.scenarioDangerClosed = false;
-          setTimeout(() => {
-            this.scenarioDangerClosed = true;
-          }, 1000);
+          const errorMsg = 'Unable to update scenario: ' + s.message;
+          this.onWizardFinished.emit({
+            type: ClrAlertType.Success,
+            message: errorMsg,
+            closable: true,
+            duration: 3000,
+          })
         }
       });
   }
@@ -353,21 +358,6 @@ export class ScenarioWizardComponent implements OnInit {
       if (element == tag) this.selectedscenario.tags.splice(index, 1);
     });
   }
-  private _displayAlert(alert: string, success: boolean, duration?: number) {
-    if (success) {
-      this.scenarioSuccessAlert = alert;
-      this.scenarioSuccessClosed = false;
-      setTimeout(() => {
-        this.scenarioSuccessClosed = true;
-      }, duration || 1000);
-    } else {
-      this.scenarioDangerAlert = alert;
-      this.scenarioDangerClosed = false;
-      setTimeout(() => {
-        this.scenarioDangerClosed = true;
-      }, duration || 1000);
-    }
-  }
   scenarioHasVM(scenario: Scenario): boolean {
     if (this.selectedscenario.virtualmachines.length != 0) {
       const validVMSet = this.selectedscenario.virtualmachines.filter(
@@ -415,10 +405,6 @@ export class ScenarioWizardComponent implements OnInit {
     this.vmform.reset();
     this.newvmindex = i;
     this.createVMModal.open();
-  }
-
-  refreshFilteredScenario() {
-    this.refreshFilteredScenarios.emit(this.wizardScenario);
   }
 
   editScenarioWizardfunction(scenario: Scenario) {

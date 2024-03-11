@@ -1,25 +1,4 @@
-<clr-alert
-  [clrAlertType]="'danger'"
-  [(clrAlertClosed)]="scenarioDangerClosed"
-  [clrAlertClosable]="true"
->
-  <clr-alert-item>
-    <span class="alert-text">
-      {{ scenarioDangerAlert }}
-    </span>
-  </clr-alert-item>
-</clr-alert>
-<clr-alert
-  [clrAlertType]="'success'"
-  [(clrAlertClosed)]="scenarioSuccessClosed"
-  [clrAlertClosable]="true"
->
-  <clr-alert-item>
-    <span class="alert-text">
-      {{ scenarioSuccessAlert }}
-    </span>
-  </clr-alert-item>
-</clr-alert>
+<alert #alert></alert>
 <h3>Scenarios</h3>
 <div class="clr-row">
   <div class="clr-col">
@@ -76,16 +55,10 @@
 </div>
 
 <scenario-wizard
-  #scenariowizard
-  [wizardScenario]="'create'"
-  (refreshFilteredScenarios)="reloadScenario($event)"
-  (emitMessageError)="alertDanger($event)"
-></scenario-wizard>
-<scenario-wizard
   #editselectedscenariowizard
-  [wizardScenario]="'edit'"
+  [wizardScenario]="wizardMode"
   [draggedScenario]="selectedscenario"
-  (refreshFilteredScenarios)="reloadScenario($event)"
+  (onWizardFinished)="refreshAndDisplayAlert($event)"
 ></scenario-wizard>
 <clr-modal #deletescenariomodal [(clrModalOpen)]="deleteScenarioSetOpen">
   <h3 class="modal-title">Delete Scenario</h3>

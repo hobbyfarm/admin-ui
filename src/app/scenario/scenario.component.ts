@@ -7,6 +7,8 @@ import { FilterScenariosComponent } from '../filter-scenarios/filter-scenarios.c
 import { HttpErrorResponse } from '@angular/common/http';
 import { ScenarioWizardComponent } from './scenario-wizard/scenario-wizard.component';
 import { RbacService } from '../data/rbac.service';
+import { AlertDetails } from '../alert/alert';
+import { AlertComponent } from '../alert/alert.component';
 
 @Component({
   selector: 'app-scenario',
@@ -17,22 +19,14 @@ export class ScenarioComponent implements OnInit {
   public filteredScenarios: Scenario[] = [];
   public selectedscenario: Scenario;
 
-  public scenarioAdded = false;
-
-  public scenarioDangerClosed: boolean = true;
-  public scenarioSuccessClosed: boolean = true;
   public deleteScenarioSetOpen: boolean = false;
   public showActionOverflow: boolean = false;
-
-  public scenarioDangerAlert: string = '';
-  public scenarioSuccessAlert: string = '';
-
-  public alertType: string = 'warning';
-  public errorMessage: string = '';
 
   public selectRbac: boolean = false;
 
   public ascSort = ClrDatagridSortOrder.ASC;
+
+  public wizardMode: 'create' | 'edit' = 'create';
 
   constructor(
     public scenarioService: ScenarioService,
@@ -48,6 +42,7 @@ export class ScenarioComponent implements OnInit {
   scenarioWizard: ScenarioWizardComponent;
   @ViewChild('editselectedscenariowizard', { static: true })
   editSelectedScenarioWizard: ScenarioWizardComponent;
+  @ViewChild('alert') alert: AlertComponent;
 
   editScenario(s: Scenario) {
     if (s != undefined) {
@@ -57,17 +52,19 @@ export class ScenarioComponent implements OnInit {
           this.selectedscenario = s;
         },
         error: (e: HttpErrorResponse) => {
-          this.alertDanger('Error deleting object: ' + e.error.message);
+          this.alert.danger('Error retrieving object: ' + e.error.message, true, 3000);
         },
       });
     }
   }
 
   openScenario() {
+    this.wizardMode = 'create';
     this.scenarioWizard.open();
   }
 
   editSelectedScenario(scenario: Scenario) {
+    this.wizardMode = 'edit';
     this.editSelectedScenarioWizard.editScenarioWizardfunction(scenario);
     this.editSelectedScenarioWizard.open();
   }
@@ -76,7 +73,7 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.get(scenario.id).subscribe({
       next: (scenario) => (this.selectedscenario = scenario),
       error: (e: HttpErrorResponse) => {
-        this.alertDanger('Error deleting object: ' + e.error.message);
+        this.alert.danger('Error deleting object: ' + e.error.message, true, 3000);
       },
     });
     this.deleteScenarioModal.open();
@@ -84,28 +81,25 @@ export class ScenarioComponent implements OnInit {
 
   setScenarioList(scenarios: Scenario[]) {
     this.filteredScenarios = scenarios;
-    if (this.scenarioAdded) {
-      this.scenarioAdded = false;
-    }
   }
 
   refresh(): void {
     this.scenarioService.list(true).subscribe({
       next: (sList: Scenario[]) => (this.filteredScenarios = sList),
       error: (e: HttpErrorResponse) => {
-        this.alertDanger('Error deleting object: ' + e.error.message);
+        this.alert.danger('Error listing objects: ' + e.error.message, true, 3000);
       },
     });
   }
 
   deleteScenario(scenarioId: string) {
     this.scenarioService.delete(scenarioId).subscribe({
-      next: (s: ServerResponse) => {
-        this.alertSuccess('Scenario deleted');
+      next: (_s: ServerResponse) => {
+        this.alert.success('Scenario deleted', true, 3000);
         this.refresh();
       },
       error: (e: HttpErrorResponse) => {
-        this.alertDanger('Error deleting object: ' + e.error.message);
+        this.alert.danger('Error deleting object: ' + e.error.message, true, 3000);
       },
     });
   }
@@ -117,22 +111,9 @@ export class ScenarioComponent implements OnInit {
       this.filteredScenarios[this.filteredScenarios.length - 1];
   }
 
-  alertSuccess(msg: string) {
-    this.alertType = 'success';
-    this.scenarioSuccessAlert = msg;
-    this.scenarioSuccessClosed = false;
-    setTimeout(() => (this.scenarioSuccessClosed = true), 1000);
-  }
-
-  alertDanger(msg: string) {
-    this.alertType = 'danger';
-    this.scenarioDangerAlert = msg;
-    this.scenarioDangerClosed = false;
-    setTimeout(() => (this.scenarioDangerClosed = true), 1000);
-  }
-
-  readErrorMessage(errorMessage: string) {
-    this.errorMessage = errorMessage;
+  refreshAndDisplayAlert(alertDetails: AlertDetails) {
+    this._reloadScenario();
+    this.alert.doAlert(alertDetails.message, alertDetails.type, alertDetails.closable, alertDetails.duration);
   }
 
   ngOnInit() {
@@ -160,17 +141,8 @@ export class ScenarioComponent implements OnInit {
     this.refresh();
   }
 
-  reloadScenario(wizardScenario: string) {
+  private _reloadScenario() {
     this.scenarioFilter.reloadScenarios();
     this.refresh();
-    if (wizardScenario === 'edit')
-      this.alertSuccess('Scenarios successfully updated');
-    if (wizardScenario === 'create') {
-      if (this.errorMessage) this.alertDanger(this.errorMessage);
-      setTimeout(() => {
-        this.errorMessage = '';
-        return;
-      }, 3000);
-    }
   }
 }
