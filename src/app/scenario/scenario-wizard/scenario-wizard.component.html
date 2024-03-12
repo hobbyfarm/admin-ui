@@ -14,7 +14,7 @@
 
   <clr-wizard-page
     [clrWizardPageNextDisabled]="!scenarioDetails.valid"
-    (clrWizardPageNext)="next()"
+    (clrWizardPageNext)="copyScenarioDetails()"
   >
     <ng-template clrPageTitle>Basic Information</ng-template>
     <div class="modal-body">
@@ -63,7 +63,7 @@
             class="clr-control-container clr-col-md-10 clr-col-12"
             [class.clr-error]="
               keepaliveRequired ||
-              newScenarioDetails.errors?.invalidKeepalivePeriod
+              scenarioDetails.errors?.invalidKeepalivePeriod
             "
           >
             <div class="clr-input-wrapper">
@@ -88,7 +88,7 @@
               class="clr-subtext"
               *ngIf="
                 !keepaliveRequired &&
-                !newScenarioDetails.errors?.invalidKeepalivePeriod
+                !scenarioDetails.errors?.invalidKeepalivePeriod
               "
               >Period before VMs are reaped upon user inactivity.</span
             >
@@ -97,7 +97,7 @@
             >
             <span
               class="clr-subtext"
-              *ngIf="newScenarioDetails.errors?.invalidKeepalivePeriod"
+              *ngIf="scenarioDetails.errors?.invalidKeepalivePeriod"
               >Invalid keepalive period. Valid periods: 1m to 48h
               inclusive.</span
             >
@@ -129,7 +129,7 @@
         </clr-input-container>
       </form>
       <a
-        *ngIf="wizardScenario == 'edit'"
+        *ngIf="wizardMode == 'edit'"
         [routerLink]="['/scenario', selectedscenario.id, 'printable']"
         target="_blank"
       >
@@ -139,14 +139,14 @@
   </clr-wizard-page>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="!scenarioHasVM(selectedscenario)"
+    [clrWizardPageNextDisabled]="!selectedScenarioHasVM()"
     *rbac="['scenarios.update']"
   >
     <ng-template clrPageTitle>Virtual Machine</ng-template>
     <div
       class="alert alert-warning"
       role="alert"
-      *ngIf="!scenarioHasVM(selectedscenario)"
+      *ngIf="!selectedScenarioHasVM()"
     >
       <div class="alert-items">
         <div class="alert-item static">

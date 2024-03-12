@@ -26,8 +26,6 @@ export class ScenarioComponent implements OnInit {
 
   public ascSort = ClrDatagridSortOrder.ASC;
 
-  public wizardMode: 'create' | 'edit' = 'create';
-
   constructor(
     public scenarioService: ScenarioService,
     public rbacService: RbacService
@@ -40,8 +38,6 @@ export class ScenarioComponent implements OnInit {
   scenarioFilter: FilterScenariosComponent;
   @ViewChild('scenariowizard', { static: true })
   scenarioWizard: ScenarioWizardComponent;
-  @ViewChild('editselectedscenariowizard', { static: true })
-  editSelectedScenarioWizard: ScenarioWizardComponent;
   @ViewChild('alert') alert: AlertComponent;
 
   editScenario(s: Scenario) {
@@ -58,15 +54,8 @@ export class ScenarioComponent implements OnInit {
     }
   }
 
-  openScenario() {
-    this.wizardMode = 'create';
-    this.scenarioWizard.open();
-  }
-
-  editSelectedScenario(scenario: Scenario) {
-    this.wizardMode = 'edit';
-    this.editSelectedScenarioWizard.editScenarioWizardfunction(scenario);
-    this.editSelectedScenarioWizard.open();
+  openScenarioWizard(wizardMode: 'create' | 'edit', scenario?: Scenario) {
+    this.scenarioWizard.open(wizardMode, scenario);
   }
 
   openDeleteScenario(scenario: Scenario) {

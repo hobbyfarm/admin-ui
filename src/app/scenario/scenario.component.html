@@ -4,7 +4,7 @@
   <div class="clr-col">
     <button
       class="btn btn-success"
-      (click)="openScenario()"
+      (click)="openScenarioWizard('create')"
       *rbac="['scenarios.create']"
     >
       <cds-icon shape="plus"></cds-icon> New Scenario
@@ -29,7 +29,7 @@
         <clr-dg-action-overflow *ngIf="showActionOverflow">
           <button
             class="action-item"
-            (click)="editSelectedScenario(s)"
+            (click)="openScenarioWizard('edit', s)"
             *rbac="['scenarios.get', 'scenarios.update']; op: 'AND'"
           >
             Edit
@@ -55,9 +55,7 @@
 </div>
 
 <scenario-wizard
-  #editselectedscenariowizard
-  [wizardScenario]="wizardMode"
-  [draggedScenario]="selectedscenario"
+  #scenariowizard
   (onWizardFinished)="refreshAndDisplayAlert($event)"
 ></scenario-wizard>
 <clr-modal #deletescenariomodal [(clrModalOpen)]="deleteScenarioSetOpen">
