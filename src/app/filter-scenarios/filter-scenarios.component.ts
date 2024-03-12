@@ -43,6 +43,14 @@ export class FilterScenariosComponent implements OnInit {
     this.categoryFilterForm.reset({ categoryControl: [] });
   }
 
+  reloadScenarios(){
+    this.scenarioService.list(true).subscribe((s: Scenario[]) => {
+      this.scenarios = s;
+      this.clearCategoryFilter();
+      this.emitScenarios(this.scenarios);
+    });
+  }
+
   filterScenarioList() {
     if (this.selectedCategories.length === 0) {
       this.filteredScenarios = this.scenarios;

@@ -102,6 +102,9 @@ import { TypedArrayNumberComponent } from './typed-form/typed-array-number.compo
 import { TypedArrayBooleanComponent } from './typed-form/typed-array-boolean.component';
 import { CourseWizardComponent } from './course/course-wizard/course-wizard.component';
 import { CourseDetailsComponent } from './course/course-details/course-details.component';
+import { ScenarioWizardComponent } from './scenario/scenario-wizard/scenario-wizard.component';
+import { ScenarioDetailComponent } from './scenario/scenario-detail/scenario-detail.component';
+import { StepsScenarioComponent } from './scenario/steps-scenario/steps-scenario.component';
 import { DashboardDetailsComponent } from './dashboards/dashboard-details/dashboard-details.component';
 import '@cds/core/icon/register.js';
 import {
@@ -270,6 +273,9 @@ export function jwtOptionsFactory(): JwtConfig {
     TypedArrayNumberComponent,
     TypedArrayBooleanComponent,
     CourseWizardComponent,
+    ScenarioWizardComponent,
+    ScenarioDetailComponent,
+    StepsScenarioComponent,
     DashboardDetailsComponent,
   ],
   imports: [
