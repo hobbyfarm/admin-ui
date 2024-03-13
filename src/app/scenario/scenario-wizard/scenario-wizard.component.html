@@ -139,7 +139,6 @@
   </clr-wizard-page>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="!selectedScenarioHasVM()"
     *rbac="['scenarios.update']"
   >
     <ng-template clrPageTitle>Virtual Machine</ng-template>
@@ -157,8 +156,7 @@
             ></cds-icon>
           </div>
           <span class="alert-text"
-            >You have to add virtual Machine in order to create a functional
-            scenario</span
+            >This scenario will be a content-only scenario until you configure a VirtualMachine</span
           >
         </div>
       </div>
@@ -357,6 +355,25 @@
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>Confirm the following details before finishing</p>
     <h4>Scenario</h4>
+    <div
+    class="alert alert-warning"
+    role="alert"
+    *ngIf="!selectedScenarioHasVM()"
+  >
+    <div class="alert-items">
+      <div class="alert-item static">
+        <div class="alert-icon-wrapper">
+          <cds-icon
+            class="alert-icon"
+            shape="exclamation-triangle"
+          ></cds-icon>
+        </div>
+        <span class="alert-text"
+          >This scenario will be a content-only scenario until you configure a VirtualMachine</span
+        >
+      </div>
+    </div>
+  </div>
     <table class="table table-compact" *ngIf="selectedscenario">
       <thead>
         <tr>
@@ -381,8 +398,8 @@
           <td>Pause Duration</td>
           <td>{{ selectedscenario.pause_duration }}</td>
         </tr>
-        <tr>
-          <td>Virtual Machine</td>
+        <tr *ngIf="selectedScenarioHasVM()">
+          <td>Virtual Machines</td>
           <td>{{ selectedscenario.virtualmachines.length }}</td>
         </tr>
         <tr>
@@ -398,9 +415,9 @@
           <td>
             <span
               class="label"
-              *ngFor="let categorie of selectedscenario.categories"
+              *ngFor="let category of selectedscenario.categories"
             >
-              {{ categorie }}</span
+              {{ category }}</span
             >
           </td>
         </tr>
