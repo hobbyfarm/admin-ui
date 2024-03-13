@@ -217,6 +217,10 @@ ${token}`;
   }
 
   ngOnChanges() {
+    if(!this.content){
+      return
+    }
+
     const contentWithReplacedTokens = this.replaceSessionToken(
       this.replaceVmInfoTokens(this.content),
     );
