@@ -164,7 +164,8 @@
       <ng-template clrPageTitle>Event Times</ng-template>
       <div class="clr-row">
         <div class="clr-col">
-          Start Time: {{ se.start_time ? (se.start_time | date : 'long') : '' }} <br />
+          Start Time:
+          {{ se.start_time ? (se.start_time | date : "long") : "" }} <br />
           <clr-signpost>
             <button class="btn btn-link" clrSignpostTrigger>
               Set Start Time
@@ -190,7 +191,8 @@
 
       <div class="clr-row">
         <div class="clr-col">
-          End Time: {{ se.end_time ? (se.end_time | date : 'long') : '' }} <br />
+          End Time: {{ se.end_time ? (se.end_time | date : "long") : "" }}
+          <br />
           <clr-signpost>
             <button class="btn btn-link" clrSignpostTrigger>
               Set End Time
@@ -272,7 +274,9 @@
       <p>
         <i> All times are in {{ tz }} (browser detected) </i>
       </p>
-      <ng-container *ngIf="se.start_time && se.end_time && se.start_time >= se.end_time">
+      <ng-container
+        *ngIf="se.start_time && se.end_time && se.start_time >= se.end_time"
+      >
         <clr-alert
           [clrAlertSizeSmall]="true"
           [clrAlertType]="'danger'"

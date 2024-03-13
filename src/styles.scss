@@ -2,95 +2,95 @@
 @import "../node_modules/@clr/ui/src/main.scss";
 
 .row {
-    @extend .clr-row;
+  @extend .clr-row;
 }
 
 .col {
-    @extend .clr-col;
+  @extend .clr-col;
 }
 
 .col-10 {
-    @extend .clr-col-10;
+  @extend .clr-col-10;
 }
 
 /* added because of the edit step stack view improperly rendering at 55vh */
 .modal .stack-view {
-    height: unset !important;
+  height: unset !important;
 }
 
 /* created compact stack view */
 clr-stack-view.compact {
-    .stack-view .stack-block-label {
-        line-height: 1rem;
-    }
+  .stack-view .stack-block-label {
+    line-height: 1rem;
+  }
 }
 
 .clr-accordion-inner-content {
-    padding: 0rem !important;
+  padding: 0rem !important;
 }
 
 /* Dragula Stuff */
 /* in-flight clone */
 .gu-mirror {
-    position: fixed !important;
-    margin: 0 !important;
-    z-index: 9999 !important;
-    opacity: 0.8;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-    filter: alpha(opacity=80);
-    pointer-events: none;
-  }
-  /* high-performance display:none; helper */
-  .gu-hide {
-    left: -9999px !important;
-  }
-  /* added to mirrorContainer (default = body) while dragging */
-  .gu-unselectable {
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
-    user-select: none !important;
-  }
-  /* added to the source element while its mirror is dragged */
-  .gu-transit {
-    opacity: 0.2;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-    filter: alpha(opacity=20);
-  }
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+  pointer-events: none;
+}
+/* high-performance display:none; helper */
+.gu-hide {
+  left: -9999px !important;
+}
+/* added to mirrorContainer (default = body) while dragging */
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+/* added to the source element while its mirror is dragged */
+.gu-transit {
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+}
 
-  .table-input {
-    margin-top: 0 !important;
+.table-input {
+  margin-top: 0 !important;
 }
 
 .btn-table {
-    line-height: unset;
-    height: unset;
-    margin: 0 0 0 0;
+  line-height: unset;
+  height: unset;
+  margin: 0 0 0 0;
 }
 
 // .clr_select_disabled > div.datagrid-row-master > div:first-child {
 //     display: none;
 // }
 
-clr-datagrid.clr_disable_selection div.datagrid-row-master > div:first-child  {
-    display: none;
+clr-datagrid.clr_disable_selection div.datagrid-row-master > div:first-child {
+  display: none;
 }
 
 .modal-body-wrapper {
-    width: 100%;
-    margin-bottom: auto;
+  width: 100%;
+  margin-bottom: auto;
 }
 
 /* added because the modal-body is improperly rendering at 70vh,
 overflows the modal and hence displays an unneeded scrollbar */
 .modal-body {
-    min-height: unset !important;
+  min-height: unset !important;
 }
 
 // let's improve the user experience for hovering on stepnav-links within a wizard
 .clr-wizard.customized .clr-wizard-stepnav-item {
   &:hover .clr-wizard-stepnav-link {
     background-color: $clr-global-selection-color;
-    color: $clr-color-action-800
+    color: $clr-color-action-800;
   }
 }
