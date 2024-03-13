@@ -86,3 +86,11 @@ overflows the modal and hence displays an unneeded scrollbar */
 .modal-body {
     min-height: unset !important;
 }
+
+// let's improve the user experience for hovering on stepnav-links within a wizard
+.clr-wizard.customized .clr-wizard-stepnav-item {
+  &:hover .clr-wizard-stepnav-link {
+    background-color: $clr-global-selection-color;
+    color: $clr-color-action-800
+  }
+}

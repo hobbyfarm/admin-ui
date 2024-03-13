@@ -96,4 +96,9 @@ $clr-global-borderradius: 0rem;
 
 $clr-font: Montserrat, 'Avenir Next', Arial, sans-serif;
 
-$clr-altFont: Barlow, Arial, sans-serif; 
+$clr-altFont: Barlow, Arial, sans-serif;
+
+$clr-global-selection-color: hsl(201, 29%, 88%) !default;
+
+// The text color on hovering a button of clarity class type btn-link
+$clr-color-action-800: hsl(198, 100%, 24%) !default;
