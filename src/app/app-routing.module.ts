@@ -17,93 +17,85 @@ import { StepComponent } from './step/step-component/step.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
 import { RolesComponent } from './configuration/roles/roles/roles.component';
 import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
-import {SettingsComponent} from './configuration/settings/settings.component';
+import { SettingsComponent } from './configuration/settings/settings.component';
 import { DashboardDetailsComponent } from './dashboards/dashboard-details/dashboard-details.component';
 
 const routes: Routes = [
-  {path: '', redirectTo: '/home', pathMatch: 'full'},
-  {path: 'login', component: LoginComponent},
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
   {
     path: 'home',
     component: HomeComponent,
-    canActivate: [
-      AuthGuard
-    ],
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'statistics/sessions',
-        component: SessionStatisticsComponent
-      }
-    ]
+        component: SessionStatisticsComponent,
+      },
+    ],
   },
   {
     path: 'dashboards',
     component: DashboardsComponent,
-    canActivate: [
-      AuthGuard
-    ],
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'event/:id',
-        component: DashboardDetailsComponent
-      }
-    ]
+        component: DashboardDetailsComponent,
+      },
+    ],
   },
   {
     path: 'events',
     component: EventComponent,
-    canActivate: [
-      AuthGuard
-    ]
+    canActivate: [AuthGuard],
   },
   {
     path: 'content',
     component: ContentComponent,
-    canActivate: [
-      AuthGuard
-    ],
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'scenarios',
-        component: ScenarioComponent
+        component: ScenarioComponent,
       },
       {
         path: 'courses',
-        component: CourseComponent
-      }
-    ]
+        component: CourseComponent,
+      },
+    ],
   },
   {
     path: 'users',
     component: UserComponent,
-    canActivate: [
-      AuthGuard
-    ]
+    canActivate: [AuthGuard],
   },
   {
     path: 'configuration',
     component: ConfigurationComponent,
-    canActivate: [
-      AuthGuard
-    ],
+    canActivate: [AuthGuard],
     children: [
       {
+        path: 'settings/:scope',
+        component: SettingsComponent,
+      },
+      {
         path: 'settings',
-        component: SettingsComponent
+        component: SettingsComponent,
       },
       {
         path: 'environments',
-        component: EnvironmentsComponent
+        component: EnvironmentsComponent,
       },
       {
         path: 'vmtemplates',
-        component: VmtemplatesComponent
+        component: VmtemplatesComponent,
       },
       {
         path: 'roles',
-        component: RolesComponent
-      }
-    ]
+        component: RolesComponent,
+      },
+    ],
   },
   {
     path: 'session/:session/steps/:step',
@@ -113,14 +105,12 @@ const routes: Routes = [
   {
     path: 'scenario/:scenario/printable',
     component: PrintableComponent,
-    canActivate: [
-      AuthGuard
-    ]
-  }
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {})],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

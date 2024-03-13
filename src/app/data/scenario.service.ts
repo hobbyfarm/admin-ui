@@ -117,7 +117,7 @@ export class ScenarioService {
       st.content = utoa(st.content);
     });
 
-    var params = new HttpParams({ encoder: new CustomEncoder() })
+    const params = new HttpParams({ encoder: new CustomEncoder() })
       .set('name', utoa(s.name))
       .set('description', utoa(s.description))
       .set('steps', JSON.stringify(steps))
@@ -146,10 +146,19 @@ export class ScenarioService {
   }
 
   public create(s: Scenario) {
-    var params = new HttpParams()
+    s.steps.forEach((st: Step) => {
+      st.title = utoa(st.title);
+      st.content = utoa(st.content);
+    });
+
+    const params = new HttpParams()
       .set('name', utoa(s.name))
       .set('description', utoa(s.description))
+      .set('virtualmachines', JSON.stringify(s.virtualmachines))
+      .set('steps', JSON.stringify(s.steps))
       .set('pause_duration', s.pause_duration)
+      .set('categories', JSON.stringify(s.categories))
+      .set('tags', JSON.stringify(s.tags))
       .set('keepalive_duration', s.keepalive_duration);
 
     return this.http.post(environment.server + '/a/scenario/new', params).pipe(
@@ -177,5 +186,9 @@ export class ScenarioService {
       environment.server + '/a/scenario/' + id + '/printable',
       { responseType: 'text' }
     );
+  }
+
+  public delete(id: string) {
+    return this.http.delete(environment.server + '/a/scenario/' + id);
   }
 }

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { RbacService } from '../data/rbac.service';
 import { Router } from '@angular/router';
+import {
+  PreparedScope,
+  TypedSettingsService,
+} from '../data/typedSettings.service';
 
 @Component({
   selector: 'app-configuration',
@@ -12,7 +16,15 @@ export class ConfigurationComponent implements OnInit {
   public listVMTemplates = false;
   public listRoles = false;
 
-  constructor(private rbacService: RbacService, private router: Router) {}
+  public scopes: PreparedScope[] = [];
+  public scopesLoading: boolean = true;
+  public expandedSettingsGroup = true;
+
+  constructor(
+    private rbacService: RbacService,
+    private router: Router,
+    private typedSettingsService: TypedSettingsService
+  ) {}
 
   ngOnInit() {
     const authorizationRequests = Promise.all([
@@ -31,15 +43,19 @@ export class ConfigurationComponent implements OnInit {
         this.listRoles = permissions[4];
 
         if (this.showSettings) {
-          this.router.navigateByUrl(`/configuration/settings`);
-        } else if (this.listEnvironments) {
-          this.router.navigateByUrl(`/configuration/environments`);
-        } else if (this.listVMTemplates) {
-          this.router.navigateByUrl(`/configuration/vmtemplates`);
-        } else if (this.listRoles) {
-          this.router.navigateByUrl(`/configuration/roles`);
+          this.getScopes();
         }
       }
     );
+  }
+
+  getScopes() {
+    this.scopes = [];
+    this.typedSettingsService.listScopes().subscribe({
+      next: (scopes: PreparedScope[]) => {
+        this.scopes = scopes;
+        this.scopesLoading = false;
+      },
+    });
   }
 }

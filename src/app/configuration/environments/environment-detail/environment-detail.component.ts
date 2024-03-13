@@ -29,7 +29,6 @@ export class EnvironmentDetailComponent implements OnInit {
       .Grants('virtualmachinetemplates', 'list')
       .then((allowVMTemplateList: boolean) => {
         if (!allowVMTemplateList) {
-          console.log("Disallow")
           return;
         }
         vmTemplateService

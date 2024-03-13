@@ -81,7 +81,6 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       .Grants('virtualmachinetemplates', 'list')
       .then((allowVMTemplateList: boolean) => {
         if (!allowVMTemplateList) {
-          console.log('Disallow');
           return;
         }
         vmTemplateService

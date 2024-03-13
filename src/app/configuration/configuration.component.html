@@ -4,13 +4,6 @@
     <clr-vertical-nav>
       <a
         clrVerticalNavLink
-        routerLink="./settings"
-        routerLinkActive="active"
-        *ngIf="showSettings"
-        >Settings</a
-      >
-      <a
-        clrVerticalNavLink
         routerLink="./environments"
         routerLinkActive="active"
         *ngIf="listEnvironments"
@@ -30,6 +23,25 @@
         *ngIf="listRoles"
         >Roles</a
       >
+
+      <clr-vertical-nav-group routerLinkActive="active">
+        <a routerLink="./settings" hidden aria-hidden="true"></a>
+        Settings
+        <clr-vertical-nav-group-children
+          #activeChildren
+          *clrIfExpanded="expandedSettingsGroup"
+        >
+          <a
+            *ngFor="let scope of scopes"
+            clrVerticalNavLink
+            [routerLink]="['./settings/', scope.name]"
+            routerLinkActive="active"
+            [title]="scope.displayName"
+          >
+            {{ scope.displayName }}
+          </a>
+        </clr-vertical-nav-group-children>
+      </clr-vertical-nav-group>
     </clr-vertical-nav>
     <div class="content-area">
       <router-outlet></router-outlet>

@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { TypedInput, FormGroupType } from '../../typed-form/TypedInput';
 import {
   PreparedScope,
@@ -6,6 +6,7 @@ import {
 } from 'src/app/data/typedSettings.service';
 import { AlertComponent } from 'src/app/alert/alert.component';
 import { ServerResponse } from 'src/app/step/ServerResponse';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -27,9 +28,19 @@ export class SettingsComponent {
 
   private alertTime = 2000;
   private alertErrorTime = 10000;
+  public alertClosed: boolean = true;
 
-  constructor(public typedSettingsService: TypedSettingsService) {
+  constructor(
+    public typedSettingsService: TypedSettingsService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
     this.getScopes();
+    this.router.events.subscribe((val) => {
+      if (val instanceof NavigationEnd) {
+        this.testPath();
+      }
+    });
   }
 
   onFormChange(data: TypedInput[]) {
@@ -45,10 +56,8 @@ export class SettingsComponent {
     if (!this.updatedSettings) {
       return;
     }
-    console.log(this.updatedSettings);
     this.typedSettingsService.updateCollection(this.updatedSettings).subscribe({
       next: (resp: ServerResponse) => {
-        console.log(resp);
         this.hasChanges = false;
         this.alert.success(
           'Settings successfully saved',
@@ -82,11 +91,31 @@ export class SettingsComponent {
       next: (scopes: PreparedScope[]) => {
         this.scopes = scopes;
         this.scopesLoading = false;
-        this.setScope(this.scopes[0]);
+        this.testPath();
       },
       error: (err) => {
         this.alert.danger(err.error.message, true, this.alertErrorTime);
       },
     });
+  }
+
+  testPath() {
+    const { paramMap } = this.route.snapshot;
+    const scope = paramMap.get('scope')!;
+    if (this.scopes.length < 1) {
+      return;
+    }
+
+    if (scope != '') {
+      const findScope = this.scopes.filter((a) => {
+        return a.name == scope;
+      });
+
+      if (findScope && findScope[0]) {
+        this.setScope(findScope[0]);
+      }
+    } else {
+      this.setScope(this.scopes[0]);
+    }
   }
 }

@@ -1,10 +1,6 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { RbacService } from '../data/rbac.service';
-import { ScenarioService } from '../data/scenario.service';
-import { CourseService } from '../data/course.service';
-import { Scenario } from '../data/scenario';
-import { Course } from '../data/course';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-content',
@@ -20,7 +16,7 @@ export class ContentComponent implements OnInit {
   ngOnInit(): void {
     this.contentNavigation();
   }
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.contentNavigation();
   }
 

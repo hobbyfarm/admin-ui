@@ -32,7 +32,7 @@ export class AlertComponent {
     this.doAlert(text, ClrAlertType.Warning, closable, timeout)
   }
 
-  private doAlert(text: string, type: ClrAlertType = ClrAlertType.Info, closable: boolean = true, timeout: number = 0) {
+  public doAlert(text: string, type: ClrAlertType = ClrAlertType.Info, closable: boolean = true, timeout: number = 0) {
     this.alert.alertType = type;
     this.text = text;
     this.alert.closable = closable;

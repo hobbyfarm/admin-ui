@@ -86,22 +86,35 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Name</td>
-                    <td *ngIf="template.name == uneditedTemplate.name">{{ template.name }}</td>
-                    <td *ngIf="template.name != uneditedTemplate.name">
-                      <span class="del-elem arrow-after">{{ uneditedTemplate.name }}</span > 
-                      <span class="add-elem">{{ template.name }}</span >     
-                    </td>  
-                </tr>
-                <tr>
-                    <td>Image</td>
-                    <td *ngIf="template.image == uneditedTemplate.image">{{ template.image }}</td>
-                    <td *ngIf="template.image != uneditedTemplate.image">
-                      <span class="del-elem arrow-after">{{ uneditedTemplate.image }}</span > 
-                      <span class="add-elem">{{ template.image }}</span >     
-                    </td>  
-                </tr>
+                <ng-container *ngIf="!!this.editTemplate; else newTemplate">
+                    <tr>
+                        <td>Name</td>                   
+                            <td *ngIf="template.name == uneditedTemplate.name">{{ template.name }}</td>
+                            <td *ngIf="template.name != uneditedTemplate.name">
+                        <span class="del-elem arrow-after">{{ uneditedTemplate.name }}</span > 
+                        <span class="add-elem">{{ template.name }}</span >     
+                        </td> 
+                    </tr>
+                    <tr>
+                        <td>Image</td>
+                        <td *ngIf="template.image == uneditedTemplate.image">{{ template.image }}</td>
+                        <td *ngIf="template.image != uneditedTemplate.image">
+                        <span class="del-elem arrow-after">{{ uneditedTemplate.image }}</span > 
+                        <span class="add-elem">{{ template.image }}</span >     
+                        </td>  
+                    </tr>
+                </ng-container>
+                    <ng-template #newTemplate>
+                        <tr>
+                            <td>Name</td>
+                            <td>{{ template.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Image</td>
+                            <td>{{ template.image }}</td>
+                        </tr>                        
+                    </ng-template> 
+               
             </tbody>
         </table>
 
@@ -147,31 +160,40 @@
                             </table>
                         </td>
                     </ng-container>
-                    <ng-container *ngIf="item.key !== cloudConfigKey && item.key !== vmServiceKey">
-                         <!-- view of unedit value -->
-                        <td *ngIf="uneditedTemplate.config_map.hasOwnProperty(item.key)">{{ item.key }}</td>
-                        <td *ngIf="item.value == uneditedTemplate.config_map[item.key]">{{ item.value }}</td>  
-                         <!-- view of new key  -->
-                        <ng-container *ngIf="!uneditedTemplate.config_map.hasOwnProperty(item.key)">
-                            <td class="add-elem">{{ item.key }}</td>
-                            <td class="add-elem">{{ item.value }}</td> 
-                        </ng-container> 
-                         <!-- view of edit value -->
-                        <td *ngIf="uneditedTemplate.config_map.hasOwnProperty(item.key) && item.value != uneditedTemplate.config_map[item.key]">
-                            <span class="del-elem arrow-after">{{ uneditedTemplate.config_map[item.key] }}</span > 
-                            <span class="add-elem">{{ item.value }}</span > 
-                        </td>
-                        
+                    <ng-container *ngIf="!!this.editTemplate; else newTemplate">
+                        <ng-container *ngIf="item.key !== cloudConfigKey && item.key !== vmServiceKey">
+                            <!-- view of unedit value -->
+                            <td *ngIf="uneditedTemplate.config_map.hasOwnProperty(item.key)">{{ item.key }}</td>
+                            <td *ngIf="item.value == uneditedTemplate.config_map[item.key]">{{ item.value }}</td>  
+                            <!-- view of new key  -->
+                            <ng-container *ngIf="!uneditedTemplate.config_map.hasOwnProperty(item.key)">
+                                <td class="add-elem">{{ item.key }}</td>
+                                <td class="add-elem">{{ item.value }}</td> 
+                            </ng-container> 
+                            <!-- view of edit value -->
+                            <td *ngIf="uneditedTemplate.config_map.hasOwnProperty(item.key) && item.value != uneditedTemplate.config_map[item.key]">
+                                <span class="del-elem arrow-after">{{ uneditedTemplate.config_map[item.key] }}</span > 
+                                <span class="add-elem">{{ item.value }}</span > 
+                            </td>                            
+                        </ng-container>
                     </ng-container>
+                    <ng-template #newTemplate>
+                        <td>{{ item.key }}</td>
+                        <td>{{ item.value }}</td>                        
+                    </ng-template>                         
                 </tr> 
-                <!-- view deleted key -->
-                <tr *ngFor="let item of uneditedTemplate.config_map | keyvalue">
-                    <ng-container *ngIf="item.key !== cloudConfigKey && item.key !== vmServiceKey">
-                    <ng-container *ngIf="!template.config_map.hasOwnProperty(item.key)">
-                    <td class="del-elem">{{ item.key }}</td>       
-                    <td class="del-elem">{{ item.value }}</td >  
-                    </ng-container></ng-container>
-                </tr>
+                <ng-container *ngIf="!!this.editTemplate">
+                    <!-- view deleted key -->
+                    <tr *ngFor="let item of uneditedTemplate.config_map | keyvalue">
+                        <ng-container *ngIf="item.key !== cloudConfigKey && item.key !== vmServiceKey">
+                            <ng-container *ngIf="!template.config_map.hasOwnProperty(item.key)">
+                                <td class="del-elem">{{ item.key }}</td>       
+                                <td class="del-elem">{{ item.value }}</td >  
+                            </ng-container>
+                        </ng-container>
+                    </tr>
+                </ng-container>
+               
             </tbody>
         </table>
     </clr-wizard-page>
