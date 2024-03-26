@@ -49,6 +49,8 @@ import { QuickSetEndTimeFormGroup } from 'src/app/data/forms';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 
+
+
 // This object type maps VMTemplate names to the number of requested VMs
 // The key specifies the template name
 // The FormControl holds the number of requested VMs
@@ -126,6 +128,15 @@ export class NewScheduledEventComponent
   private onCloseFn: Function;
 
   private wizardSubscription: Subscription;
+  public newSharedVM: Record<string, Record<string, number>>;
+
+  public sharedVmForm = new FormGroup({
+    "vm_name": new FormControl<string>(""),
+    "vm_env": new FormControl<string>(""),
+    "vm_template": new FormControl<string>(""),
+  })
+
+ // public vmtc: VmtemplatesComponent;
 
   constructor(
     private _fb: NonNullableFormBuilder,
@@ -654,6 +665,7 @@ export class NewScheduledEventComponent
       this.se = new ScheduledEvent();
       this.se.required_vms = {};
     }
+    console.log(this.se)
   }
 
   public simpleUserTotal() {
@@ -1090,5 +1102,27 @@ export class NewScheduledEventComponent
     return (
       this.uneditedScheduledEvent.required_vms[environment]?.[vmtemplate] ?? 0
     );
+  }
+
+  public addSharedVM() {
+    this.se.shared_vms.push({
+      vmId: "",
+      name: this.sharedVmForm.controls.vm_name.value,
+      environment: this.sharedVmForm.controls.vm_env.value,
+      vmTemplate: this.sharedVmForm.controls.vm_template.value,
+    })
+  }
+
+    public addNewSharedVM(name: string,environment: string, vmtemplate: string ) {
+      this.se.shared_vms.push({
+        vmId: "",
+        environment: environment,
+        name: name,
+        vmTemplate: vmtemplate,
+      })
+  }
+
+  deleteSharedVm(index: number) {
+    this.se.shared_vms.splice(index, 1)
   }
 }
