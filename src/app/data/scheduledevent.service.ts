@@ -98,6 +98,7 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
         formatDate(se.end_time, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC'),
       )
       .set('required_vms', JSON.stringify(se.required_vms))
+      .set('shared_vms', JSON.stringify(se.shared_vms))
       .set('access_code', se.access_code.toLocaleLowerCase()) // this needs to be lower case because of RFC-1123
       .set('disable_restriction', JSON.stringify(se.disable_restriction))
       .set('on_demand', JSON.stringify(se.on_demand))

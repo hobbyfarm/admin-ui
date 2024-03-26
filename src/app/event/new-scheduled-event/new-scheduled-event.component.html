@@ -564,8 +564,8 @@
               }
             </tbody>
           </table>
-        }
-      }
+        </ng-container>
+      </ng-container>
     </clr-wizard-page>
     @if (!isEditMode) {
       <clr-wizard-page
@@ -890,6 +890,57 @@
                       </span>
                     }
                   </td>
+                 </tr>
+        </tbody>
+      </table>
+      <h4>SharedVM Information</h4>
+          <table class="table table-compact">
+            <thead>
+              <tr>
+                <th>N</th>
+                <th>Environment</th>
+                <th>Virtual Machines</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- maybe let's use a clr datagrid here?! -->
+              <!-- https://v16.clarity.design/documentation/datagrid -->
+                @for(sharedVm of se.shared_vms;track  sharedVm;let i = $index) {
+                  <tr >
+                    <td>{{ sharedVm.name }}</td>
+                    <td>{{ sharedVm.environment }}</td>
+                    <td>{{ sharedVm.vmTemplate }}</td>                
+                  </tr>
+                }
+              
+            </tbody>
+          </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 </tr>
               }
             </tbody>
