@@ -143,6 +143,14 @@ ${token}`;
       // Return a placeholder with the unique ID
       return `<div id="${containerId}">Loading mermaid graph...</div>`;
     },
+
+    verifyTask(code: string, target: string, taskName: string) {
+      return `<app-single-task-verification-markdown
+        target="${target}" 
+        message="${code}" 
+        taskName="${taskName}"
+        ></app-single-task-verification-markdown>`;
+    },
   };
 
   private renderHighlightedCode(

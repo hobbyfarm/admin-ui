@@ -20,6 +20,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryFormGroup, ScenarioFormGroup } from 'src/app/data/forms';
 import { AlertDetails } from 'src/app/alert/alert';
 import { ClrAlertType } from 'src/app/clr-alert-type';
+import { VMTasks } from 'src/app/data/vm-tasks';
 
 @Component({
   selector: 'scenario-wizard',
@@ -295,6 +296,7 @@ export class ScenarioWizardComponent implements OnInit {
   }
   addVMSet() {
     this.selectedscenario.virtualmachines.push({});
+    this.updateSelectedScenarioRef()
   }
   addVM() {
     this.selectedScenarioHasVM();
@@ -302,19 +304,23 @@ export class ScenarioWizardComponent implements OnInit {
       this.vmform.controls.vm_name.value
     ] = this.vmform.controls.vm_template.value;
     this.createVMModal.close();
+    this.updateSelectedScenarioRef()
   }
 
   deleteVMSet(i: number) {
     this.deletingVMSetIndex = i;
     this.deleteVMSetModal.open();
+    this.updateSelectedScenarioRef()
   }
 
   public deleteVM(setIndex: number, key: string) {
     delete this.selectedscenario.virtualmachines[setIndex][key];
+    this.updateSelectedScenarioRef()
   }
   doDeleteVMSet() {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
     this.deleteVMSetModal.close();
+    this.updateSelectedScenarioRef()
   }
   public openCreateVM(i: number) {
     this.vmform.reset();
@@ -390,5 +396,13 @@ export class ScenarioWizardComponent implements OnInit {
     this.selectedscenario.steps = [];
     this.selectedscenario.virtualmachines[0] = {};
     this.selectedscenario.categories = [];
+  }
+
+  updateSelectedScenarioRef() {
+    this.selectedscenario = {...this.selectedscenario} // Force an Update on Child Components using the selectedscenario as Input
+  }
+
+  replaceVmTasks(vmTasks: VMTasks[]) {
+    this.selectedscenario.vm_tasks = vmTasks
   }
 }

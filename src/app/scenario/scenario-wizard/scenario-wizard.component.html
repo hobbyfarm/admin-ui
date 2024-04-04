@@ -233,6 +233,11 @@
   </clr-wizard-page>
 
   <clr-wizard-page>
+    <ng-template clrPageTitle>Tasks</ng-template>
+    <app-task *ngIf="!!selectedscenario" [selectedScenario]="selectedscenario" (tasksChanged)="replaceVmTasks($event)"></app-task>
+  </clr-wizard-page>
+
+  <clr-wizard-page>
     <ng-template clrPageTitle>Categories</ng-template>
 
     <ng-container *ngIf="selectedscenario">

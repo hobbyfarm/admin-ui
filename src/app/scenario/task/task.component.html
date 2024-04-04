@@ -1,0 +1,36 @@
+<div class="split-grid">
+  <h4 style="margin-bottom: 0.4rem">Tasks</h4>
+  <button
+    class="btn btn-sm btn-link add-task-btn"
+    (click)="addTask()"
+    *rbac="['scenarios.update']"
+  >
+    New Task
+  </button>
+</div>
+
+<clr-accordion>
+  <ng-container *ngFor="let task of editTasks; let i = index">
+    <clr-accordion-panel (clrAccordionPanelOpenChange)="applyChanges()">
+      <clr-accordion-title style="width: 100%"
+        ><div class="split-grid">
+          <div>{{ task.vmName }}: {{ task.name }}</div>
+          <button
+            class="btn btn-sm btn-link remove-task-btn"
+            (click)="deleteTask(task.id)"
+            *rbac="['scenarios.update']"
+          >
+            Delete Task
+          </button>
+        </div>
+      </clr-accordion-title>
+      <clr-accordion-content *clrIfExpanded>
+        <app-task-form
+          [virtualMachineNames]="vmNames"
+          [editTask]="task"
+          (taskChanged)="updateTask($event)"
+        ></app-task-form>
+      </clr-accordion-content>
+    </clr-accordion-panel>
+  </ng-container>
+</clr-accordion>
