@@ -26,11 +26,52 @@
   </clr-wizard-page>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="
-      !VMAllowNext || editVirtualMachines.length == 0
-    "
     (clrWizardPageNext)="saveCourseWizard()"
+    [clrWizardPageNextDisabled]="
+      courseHasAtLeastOneVMSet() && !courseHasValidVMCConfiguration()
+    "
   >
+    <ng-template clrPageTitle>Virtual Machine</ng-template>
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="!courseHasAtLeastOneVMSet()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >This Course will be a content-only course until you configure a
+            VirtualMachine</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="courseHasAtLeastOneVMSet() && !courseHasValidVMCConfiguration()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >There are invalid VirtualMachineSets. No Empty VMSets
+            allowed.</span
+          >
+        </div>
+      </div>
+    </div>
     <ng-template clrPageTitle>Virtual Machines</ng-template>
     <vmset
       #virtualmachine
@@ -40,7 +81,13 @@
     ></vmset>
   </clr-wizard-page>
 
-  <clr-wizard-page (clrWizardPageNext)="saveCourseWizard()" [clrWizardPageNextDisabled]="dragScenarios.length == 0 && editCategories.length == 0" *ngIf="wizardCourse=='edit'">
+  <clr-wizard-page
+    (clrWizardPageNext)="saveCourseWizard()"
+    [clrWizardPageNextDisabled]="
+      dragScenarios.length == 0 && editCategories.length == 0
+    "
+    *ngIf="wizardCourse == 'edit'"
+  >
     <ng-template clrPageTitle>Scenarios</ng-template>
     <ng-container *ngIf="listScenarios">
       <button
@@ -108,7 +155,10 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page (clrWizardPageNext)="saveCourseWizard()"  *ngIf="wizardCourse=='create'">
+  <clr-wizard-page
+    (clrWizardPageNext)="saveCourseWizard()"
+    *ngIf="wizardCourse == 'create'"
+  >
     <ng-template clrPageTitle>Scenarios</ng-template>
     <ng-container *ngIf="listScenarios">
       <button
@@ -176,7 +226,11 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page [clrWizardPageNextDisabled]="dragScenarios.length == 0 && editCategories.length == 0">
+  <clr-wizard-page
+    [clrWizardPageNextDisabled]="
+      dragScenarios.length == 0 && editCategories.length == 0
+    "
+  >
     <ng-template clrPageTitle>Dynamic Scenario</ng-template>
     <ng-container>
       <p>
@@ -270,7 +324,10 @@
             <clr-control-error *clrIfError="'required'"
               >Query required.</clr-control-error
             >
-            <clr-control-error *clrIfError="'pattern'">Query shouldn't be empty or have non-latin letter</clr-control-error>
+            <clr-control-error *clrIfError="'pattern'"
+              >Query shouldn't be empty or have non-latin
+              letter</clr-control-error
+            >
           </clr-input-container>
           <div class="col-md-2">
             <button
@@ -296,11 +353,30 @@
       </clr-datagrid>
     </ng-container>
   </clr-wizard-page>
-  <clr-wizard-page 
-    (clrWizardPageOnLoad)="updateFinalPageWizard()" >
+  <clr-wizard-page (clrWizardPageOnLoad)="updateFinalPageWizard()">
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>Confirm the following details before finishing</p>
     <h4>Course</h4>
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="!courseHasAtLeastOneVMSet()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >This Course will be a content-only course until you configure a
+            VirtualMachine</span
+          >
+        </div>
+      </div>
+    </div>
     <table class="table table-compact" *ngIf="selectedCourse">
       <thead>
         <tr>
@@ -311,86 +387,112 @@
       <tbody>
         <tr>
           <td>Name</td>
-            <ng-container *ngIf="wizardCourse == 'create'">
-              <td>{{course.name}} </td>
-            </ng-container>
-            <ng-container *ngIf="wizardCourse == 'edit'">            
-              <td *ngIf="selectedCourse.name == editSelectedCourse.name">
-                {{ selectedCourse.name }}
-              </td>
-              <td *ngIf="selectedCourse.name != editSelectedCourse.name">
-                <span class="del-elem">{{
-                  selectedCourse.name
-                }}</span>
-                <cds-icon shape="arrow" direction="right"></cds-icon>
-               <span class="add-elem">{{ editSelectedCourse.name }}</span>
-               </td>
-            </ng-container>  
-          
+          <ng-container *ngIf="wizardCourse == 'create'">
+            <td>{{ course.name }}</td>
+          </ng-container>
+          <ng-container *ngIf="wizardCourse == 'edit'">
+            <td *ngIf="selectedCourse.name == editSelectedCourse.name">
+              {{ selectedCourse.name }}
+            </td>
+            <td *ngIf="selectedCourse.name != editSelectedCourse.name">
+              <span class="del-elem">{{ selectedCourse.name }}</span>
+              <cds-icon shape="arrow" direction="right"></cds-icon>
+              <span class="add-elem">{{ editSelectedCourse.name }}</span>
+            </td>
+          </ng-container>
         </tr>
 
         <tr>
-          <td>Description</td>          
+          <td>Description</td>
           <ng-container *ngIf="wizardCourse == 'create'">
-            <td>{{course.description}} </td>
+            <td>{{ course.description }}</td>
           </ng-container>
-          <ng-container *ngIf="wizardCourse == 'edit'">            
-            <td *ngIf="selectedCourse.description == editSelectedCourse.description">
+          <ng-container *ngIf="wizardCourse == 'edit'">
+            <td
+              *ngIf="
+                selectedCourse.description == editSelectedCourse.description
+              "
+            >
               {{ selectedCourse.description }}
             </td>
-            <td *ngIf="selectedCourse.description != editSelectedCourse.description">
-              <span class="del-elem">{{
-                selectedCourse.description
-              }}</span>
+            <td
+              *ngIf="
+                selectedCourse.description != editSelectedCourse.description
+              "
+            >
+              <span class="del-elem">{{ selectedCourse.description }}</span>
               <cds-icon shape="arrow" direction="right"></cds-icon>
-             <span class="add-elem">{{ editSelectedCourse.description }}</span>
-             </td>
-          </ng-container>  
-         
+              <span class="add-elem">{{ editSelectedCourse.description }}</span>
+            </td>
+          </ng-container>
         </tr>
         <tr>
-          <td>Keepalive Duration</td>          
+          <td>Keepalive Duration</td>
           <ng-container *ngIf="wizardCourse == 'create'">
-            <td>{{course.keepalive_duration}} </td>
+            <td>{{ course.keepalive_duration }}</td>
           </ng-container>
-          <ng-container *ngIf="wizardCourse == 'edit'">            
-            <td *ngIf="selectedCourse.keepalive_duration == editSelectedCourse.keepalive_duration">
+          <ng-container *ngIf="wizardCourse == 'edit'">
+            <td
+              *ngIf="
+                selectedCourse.keepalive_duration ==
+                editSelectedCourse.keepalive_duration
+              "
+            >
               {{ selectedCourse.keepalive_duration }}
             </td>
-            <td *ngIf="selectedCourse.keepalive_duration != editSelectedCourse.keepalive_duration">
+            <td
+              *ngIf="
+                selectedCourse.keepalive_duration !=
+                editSelectedCourse.keepalive_duration
+              "
+            >
               <span class="del-elem">{{
                 selectedCourse.keepalive_duration
               }}</span>
               <cds-icon shape="arrow" direction="right"></cds-icon>
-             <span class="add-elem">{{ editSelectedCourse.keepalive_duration }}</span>
-             </td>
-          </ng-container>  
+              <span class="add-elem">{{
+                editSelectedCourse.keepalive_duration
+              }}</span>
+            </td>
+          </ng-container>
         </tr>
         <tr>
-          <td>Pause Duration</td>          
+          <td>Pause Duration</td>
           <ng-container *ngIf="wizardCourse == 'create'">
-            <td>{{course.pause_duration}} </td>
+            <td>{{ course.pause_duration }}</td>
           </ng-container>
-          <ng-container *ngIf="wizardCourse == 'edit'">            
-            <td *ngIf="selectedCourse.pause_duration == editSelectedCourse.pause_duration">
+          <ng-container *ngIf="wizardCourse == 'edit'">
+            <td
+              *ngIf="
+                selectedCourse.pause_duration ==
+                editSelectedCourse.pause_duration
+              "
+            >
               {{ selectedCourse.pause_duration }}
             </td>
-            <td *ngIf="selectedCourse.pause_duration != editSelectedCourse.pause_duration">
-              <span class="del-elem">{{
-                selectedCourse.pause_duration
-              }}</span>
+            <td
+              *ngIf="
+                selectedCourse.pause_duration !=
+                editSelectedCourse.pause_duration
+              "
+            >
+              <span class="del-elem">{{ selectedCourse.pause_duration }}</span>
               <cds-icon shape="arrow" direction="right"></cds-icon>
-             <span class="add-elem">{{ editSelectedCourse.pause_duration }}</span>
-             </td>
-          </ng-container>  
-        </tr>       
+              <span class="add-elem">{{
+                editSelectedCourse.pause_duration
+              }}</span>
+            </td>
+          </ng-container>
+        </tr>
         <tr>
           <td>Scenario</td>
           <td>
             <ng-container *ngFor="let s of selectedCourse.scenarios">
-              <span class="label" *ngIf="isScenarioInList(s, editSelectedCourse.scenarios)">{{
-                s.name
-              }}</span>
+              <span
+                class="label"
+                *ngIf="isScenarioInList(s, editSelectedCourse.scenarios)"
+                >{{ s.name }}</span
+              >
               <span
                 class="label del-elem"
                 *ngIf="!isScenarioInList(s, editSelectedCourse.scenarios)"
@@ -411,19 +513,22 @@
           <td>
             <ng-container *ngIf="wizardCourse == 'create'">
               <span class="label" *ngFor="let categorie of course.categories"
-              >{{ categorie }}
-            </span>
+                >{{ categorie }}
+              </span>
             </ng-container>
             <ng-container *ngIf="wizardCourse == 'edit'">
-              <span class="label" *ngFor="let categorie of selectedCourse.categories"
-              >{{ categorie }}
-            </span>
+              <span
+                class="label"
+                *ngFor="let categorie of selectedCourse.categories"
+                >{{ categorie }}
+              </span>
             </ng-container>
           </td>
         </tr>
       </tbody>
     </table>
-    <h4>VM Information</h4>
+    <ng-container *ngIf="courseHasAtLeastOneVMSet()">
+      <h4>VM Information</h4>
       <table class="table table-compact">
         <thead>
           <tr>
@@ -432,37 +537,46 @@
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let i of editSelectedCourse.virtualmachines | keyvalue">          
-              <tr *ngFor="let q of showVM(i.value) | keyvalue">
-                <!-- view of unedit value -->
-                <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) != 0">                  
-                  <td>{{ q.key }}</td> 
-                </ng-container>   
-                <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) == q.value">
-                  <td> {{ q.value }}</td>
-                </ng-container>               
-                <!-- view of new key -->
-                <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) === 0">
-                  <td class="add-elem">{{ q.key }}</td>
-                  <td class="add-elem">{{ q.value }}</td> 
-                </ng-container>   
-                <!-- view of edit value (delete VM and create VM with the same VM Name) -->
-                <ng-container *ngIf="isEditedVM(i.key, q.key, q.value)"> 
-                  <td class=" add-elem"> {{ q.value }}</td>                 
-                </ng-container>                        
-            </tr>  
-         </ng-container>
+          <ng-container
+            *ngFor="let i of editSelectedCourse.virtualmachines | keyvalue"
+          >
+            <tr *ngFor="let q of showVM(i.value) | keyvalue">
+              <!-- view of unedit value -->
+              <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) != 0">
+                <td>{{ q.key }}</td>
+              </ng-container>
+              <ng-container
+                *ngIf="getSelectedCourseVM(i.key, q.key) == q.value"
+              >
+                <td>{{ q.value }}</td>
+              </ng-container>
+              <!-- view of new key -->
+              <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) === 0">
+                <td class="add-elem">{{ q.key }}</td>
+                <td class="add-elem">{{ q.value }}</td>
+              </ng-container>
+              <!-- view of edit value (delete VM and create VM with the same VM Name) -->
+              <ng-container *ngIf="isEditedVM(i.key, q.key, q.value)">
+                <td class="add-elem">{{ q.value }}</td>
+              </ng-container>
+            </tr>
+          </ng-container>
           <!-- view deleted key -->
-         <ng-container *ngFor="let i of selectedCourse.virtualmachines | keyvalue">    
-          <tr *ngFor="let q of showVM(i.value) | keyvalue">
-            <ng-container *ngIf="getEditSelectedCourseVM(i.key, q.key) != q.value">
-              <td class="del-elem">{{ q.key }}</td>       
-              <td class="del-elem">{{ q.value }}</td >  
-            </ng-container> 
-          </tr>  
-         </ng-container> 
+          <ng-container
+            *ngFor="let i of selectedCourse.virtualmachines | keyvalue"
+          >
+            <tr *ngFor="let q of showVM(i.value) | keyvalue">
+              <ng-container
+                *ngIf="getEditSelectedCourseVM(i.key, q.key) != q.value"
+              >
+                <td class="del-elem">{{ q.key }}</td>
+                <td class="del-elem">{{ q.value }}</td>
+              </ng-container>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
+    </ng-container>
   </clr-wizard-page>
 </clr-wizard>
 <add-scenario

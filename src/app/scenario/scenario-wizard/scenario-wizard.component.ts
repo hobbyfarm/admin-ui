@@ -282,11 +282,15 @@ export class ScenarioWizardComponent implements OnInit {
     });
   }
 
+  selectedScenarioHasVMSet(): boolean {
+    return this.selectedscenario.virtualmachines.length > 0
+  }
+
   selectedScenarioHasVM(): boolean {
-    if (this.selectedscenario.virtualmachines.length != 0) {
+    if (this.selectedscenario.virtualmachines.length > 0) {
       const validVMSet = this.selectedscenario.virtualmachines.filter(
         (virtualmachine, i) => {
-          if (Object.keys(virtualmachine).length != 0) {
+          if (Object.keys(virtualmachine).length > 0) {
             return true;
           }
           return false;

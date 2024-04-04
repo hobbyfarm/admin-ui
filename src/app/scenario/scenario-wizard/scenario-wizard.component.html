@@ -138,14 +138,12 @@
     </div>
   </clr-wizard-page>
 
-  <clr-wizard-page
-    *rbac="['scenarios.update']"
-  >
+  <clr-wizard-page *rbac="['scenarios.update']" [clrWizardPageNextDisabled]="selectedScenarioHasVMSet() && !selectedScenarioHasVM()">
     <ng-template clrPageTitle>Virtual Machine</ng-template>
     <div
       class="alert alert-warning"
       role="alert"
-      *ngIf="!selectedScenarioHasVM()"
+      *ngIf="!selectedScenarioHasVMSet() && !selectedScenarioHasVM()"
     >
       <div class="alert-items">
         <div class="alert-item static">
@@ -156,7 +154,28 @@
             ></cds-icon>
           </div>
           <span class="alert-text"
-            >This scenario will be a content-only scenario until you configure a VirtualMachine</span
+            >This scenario will be a content-only scenario until you configure a
+            VirtualMachine</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="selectedScenarioHasVMSet() && !selectedScenarioHasVM()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >There are invalid VirtualMachineSets. No Empty VMSets
+            allowed.</span
           >
         </div>
       </div>
@@ -356,24 +375,25 @@
     <p>Confirm the following details before finishing</p>
     <h4>Scenario</h4>
     <div
-    class="alert alert-warning"
-    role="alert"
-    *ngIf="!selectedScenarioHasVM()"
-  >
-    <div class="alert-items">
-      <div class="alert-item static">
-        <div class="alert-icon-wrapper">
-          <cds-icon
-            class="alert-icon"
-            shape="exclamation-triangle"
-          ></cds-icon>
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="!selectedScenarioHasVM()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >This scenario will be a content-only scenario until you configure a
+            VirtualMachine</span
+          >
         </div>
-        <span class="alert-text"
-          >This scenario will be a content-only scenario until you configure a VirtualMachine</span
-        >
       </div>
     </div>
-  </div>
     <table class="table table-compact" *ngIf="selectedscenario">
       <thead>
         <tr>
@@ -502,5 +522,3 @@
     </button>
   </div>
 </clr-modal>
-
-
