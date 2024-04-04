@@ -206,6 +206,10 @@ export class ScenarioWizardComponent implements OnInit {
   }
 
   saveUpdatedScenario() {
+    if(!this.selectedScenarioHasVM()){
+      this.selectedscenario.virtualmachines = [];
+    }
+
     this.scenarioService
       .update(this.selectedscenario)
       .subscribe((s: ServerResponse) => {
@@ -277,11 +281,16 @@ export class ScenarioWizardComponent implements OnInit {
       if (element == tag) this.selectedscenario.tags.splice(index, 1);
     });
   }
+
+  selectedScenarioHasVMSet(): boolean {
+    return this.selectedscenario.virtualmachines.length > 0
+  }
+
   selectedScenarioHasVM(): boolean {
-    if (this.selectedscenario.virtualmachines.length != 0) {
+    if (this.selectedscenario.virtualmachines.length > 0) {
       const validVMSet = this.selectedscenario.virtualmachines.filter(
         (virtualmachine, i) => {
-          if (Object.keys(virtualmachine).length != 0) {
+          if (Object.keys(virtualmachine).length > 0) {
             return true;
           }
           return false;
@@ -293,11 +302,12 @@ export class ScenarioWizardComponent implements OnInit {
     }
     return false;
   }
+
   addVMSet() {
     this.selectedscenario.virtualmachines.push({});
   }
+
   addVM() {
-    this.selectedScenarioHasVM();
     this.selectedscenario.virtualmachines[this.newvmindex][
       this.vmform.controls.vm_name.value
     ] = this.vmform.controls.vm_template.value;
@@ -312,10 +322,12 @@ export class ScenarioWizardComponent implements OnInit {
   public deleteVM(setIndex: number, key: string) {
     delete this.selectedscenario.virtualmachines[setIndex][key];
   }
+
   doDeleteVMSet() {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
     this.deleteVMSetModal.close();
   }
+
   public openCreateVM(i: number) {
     this.vmform.reset();
     this.newvmindex = i;

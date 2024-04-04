@@ -27,11 +27,52 @@
   </clr-wizard-page>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="
-      !VMAllowNext || editVirtualMachines.length == 0
-    "
     (clrWizardPageNext)="saveCourseWizard()"
+    [clrWizardPageNextDisabled]="
+      courseHasAtLeastOneVMSet() && !courseHasValidVMCConfiguration()
+    "
   >
+    <ng-template clrPageTitle>Virtual Machine</ng-template>
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="!courseHasAtLeastOneVMSet()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >This Course will be a content-only course until you configure a
+            VirtualMachine</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="courseHasAtLeastOneVMSet() && !courseHasValidVMCConfiguration()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >There are invalid VirtualMachineSets. No Empty VMSets
+            allowed.</span
+          >
+        </div>
+      </div>
+    </div>
     <ng-template clrPageTitle>Virtual Machines</ng-template>
     <vmset
       #virtualmachine
@@ -317,6 +358,26 @@
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>Confirm the following details before finishing</p>
     <h4>Course</h4>
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="!courseHasAtLeastOneVMSet()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >This Course will be a content-only course until you configure a
+            VirtualMachine</span
+          >
+        </div>
+      </div>
+    </div>
     <table class="table table-compact" *ngIf="selectedCourse">
       <thead>
         <tr>
@@ -467,52 +528,56 @@
         </tr>
       </tbody>
     </table>
-    <h4>VM Information</h4>
-    <table class="table table-compact">
-      <thead>
-        <tr>
-          <th>VM Name</th>
-          <th>VM Template</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container
-          *ngFor="let i of editSelectedCourse.virtualmachines | keyvalue"
-        >
-          <tr *ngFor="let q of showVM(i.value) | keyvalue">
-            <!-- view of unedit value -->
-            <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) != 0">
-              <td>{{ q.key }}</td>
-            </ng-container>
-            <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) == q.value">
-              <td>{{ q.value }}</td>
-            </ng-container>
-            <!-- view of new key -->
-            <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) === 0">
-              <td class="add-elem">{{ q.key }}</td>
-              <td class="add-elem">{{ q.value }}</td>
-            </ng-container>
-            <!-- view of edit value (delete VM and create VM with the same VM Name) -->
-            <ng-container *ngIf="isEditedVM(i.key, q.key, q.value)">
-              <td class="add-elem">{{ q.value }}</td>
-            </ng-container>
+    <ng-container *ngIf="courseHasAtLeastOneVMSet()">
+      <h4>VM Information</h4>
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>VM Name</th>
+            <th>VM Template</th>
           </tr>
-        </ng-container>
-        <!-- view deleted key -->
-        <ng-container
-          *ngFor="let i of selectedCourse.virtualmachines | keyvalue"
-        >
-          <tr *ngFor="let q of showVM(i.value) | keyvalue">
-            <ng-container
-              *ngIf="getEditSelectedCourseVM(i.key, q.key) != q.value"
-            >
-              <td class="del-elem">{{ q.key }}</td>
-              <td class="del-elem">{{ q.value }}</td>
-            </ng-container>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <ng-container
+            *ngFor="let i of editSelectedCourse.virtualmachines | keyvalue"
+          >
+            <tr *ngFor="let q of showVM(i.value) | keyvalue">
+              <!-- view of unedit value -->
+              <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) != 0">
+                <td>{{ q.key }}</td>
+              </ng-container>
+              <ng-container
+                *ngIf="getSelectedCourseVM(i.key, q.key) == q.value"
+              >
+                <td>{{ q.value }}</td>
+              </ng-container>
+              <!-- view of new key -->
+              <ng-container *ngIf="getSelectedCourseVM(i.key, q.key) === 0">
+                <td class="add-elem">{{ q.key }}</td>
+                <td class="add-elem">{{ q.value }}</td>
+              </ng-container>
+              <!-- view of edit value (delete VM and create VM with the same VM Name) -->
+              <ng-container *ngIf="isEditedVM(i.key, q.key, q.value)">
+                <td class="add-elem">{{ q.value }}</td>
+              </ng-container>
+            </tr>
+          </ng-container>
+          <!-- view deleted key -->
+          <ng-container
+            *ngFor="let i of selectedCourse.virtualmachines | keyvalue"
+          >
+            <tr *ngFor="let q of showVM(i.value) | keyvalue">
+              <ng-container
+                *ngIf="getEditSelectedCourseVM(i.key, q.key) != q.value"
+              >
+                <td class="del-elem">{{ q.key }}</td>
+                <td class="del-elem">{{ q.value }}</td>
+              </ng-container>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </ng-container>
   </clr-wizard-page>
 </clr-wizard>
 <add-scenario
