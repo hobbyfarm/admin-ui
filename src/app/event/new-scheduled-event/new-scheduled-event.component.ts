@@ -96,6 +96,7 @@ export class NewScheduledEventComponent
   public availableEnvironments: EnvironmentAvailability[] = [];
   public checkingEnvironments: boolean = true;
   public noEnvironmentsAvailable: boolean = false;
+  public noVirtualMachinesNeeded: boolean = false;
   public unavailableVMTs: string[] = [];
   public environments: Environment[] = [];
   public keyedEnvironments: Map<string, Environment> = new Map();
@@ -756,6 +757,17 @@ export class NewScheduledEventComponent
       });
     });
 
+    //If there are no templates needed, we do not need virtual machines and have content only scenarios / courses
+    this.noVirtualMachinesNeeded = templates.size == 0;
+
+    if (this.noVirtualMachinesNeeded) {
+      this.noEnvironmentsAvailable = true;
+      this.unavailableVMTs = [];
+      this.availableEnvironments = [];
+      this.checkingEnvironments = false;
+      return;
+    }
+
     this.es
       .list()
       .pipe(
@@ -995,15 +1007,22 @@ export class NewScheduledEventComponent
       return true;
     }
 
-    //no environment selected
-    if (this.selectedEnvironments.length == 0) {
+    //no environment selected but VMs are required
+    if (
+      this.selectedEnvironments.length == 0 &&
+      !this.noVirtualMachinesNeeded
+    ) {
       return true;
     }
 
     //vm count is valid
     if (
-      (!this.simpleMode && !this.vmCounts.valid) ||
-      (this.simpleMode && !this.simpleModeVmCounts.valid)
+      (!this.simpleMode &&
+        !this.vmCounts.valid &&
+        !this.noVirtualMachinesNeeded) ||
+      (this.simpleMode &&
+        !this.simpleModeVmCounts.valid &&
+        !this.noVirtualMachinesNeeded)
     ) {
       return true;
     }
