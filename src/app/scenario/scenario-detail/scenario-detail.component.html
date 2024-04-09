@@ -37,7 +37,9 @@
         >
       </clr-stack-block>
     </clr-stack-block>
-    <clr-stack-block *ngIf="scenario.categories.length > 0 || scenario.tags.length >0">
+    <clr-stack-block
+      *ngIf="scenario.categories.length > 0 || scenario.tags.length > 0"
+    >
       <clr-stack-label>Categories & Tags</clr-stack-label>
       <clr-stack-block *ngIf="scenario.categories.length > 0">
         <clr-stack-label>Categories</clr-stack-label>
@@ -48,12 +50,19 @@
         >
       </clr-stack-block>
       <clr-stack-block *ngIf="scenario.tags.length > 0">
-        <clr-stack-label >Tags</clr-stack-label>
-        <clr-stack-content 
+        <clr-stack-label>Tags</clr-stack-label>
+        <clr-stack-content
           ><span class="label" *ngFor="let tag of scenario.tags">
             {{ tag }}</span
           ></clr-stack-content
         >
+      </clr-stack-block>
+    </clr-stack-block>
+
+    <clr-stack-block *ngIf="scenario.vm_tasks.length > 0">
+      <clr-stack-label>Tasks</clr-stack-label>
+      <clr-stack-block id="single-column-block">
+        <clr-stack-label ><app-task [selectedScenario]="scenario" [readonly]="true"></app-task></clr-stack-label>
       </clr-stack-block>
     </clr-stack-block>
   </clr-stack-view>

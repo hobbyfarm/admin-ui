@@ -1,0 +1,102 @@
+<div class="container">
+  <div class="clr-row">
+    <!-- <div class="clr-col-6"></div> -->
+    <div class="clr-col-5">
+      <h6><b>Node</b></h6>
+    </div>
+    <div class="clr-col-6">
+      <p>{{ editTask.vmName }}</p>
+    </div>
+  </div>
+
+  <div class="clr-row">
+    <!-- <div class="clr-col-6"></div> -->
+    <div class="clr-col-5">
+      <h6><b>Name</b></h6>
+    </div>
+    <div class="clr-col-6">
+      <p>{{ editTask.name }}</p>
+    </div>
+  </div>
+
+  <div class="clr-row">
+    <!-- <div class="clr-col-6"></div> -->
+    <div class="clr-col-5">
+      <h6><b>Description</b></h6>
+    </div>
+    <div class="clr-col-6">
+      <p>{{ editTask.description }}</p>
+    </div>
+  </div>
+
+  <div class="clr-row">
+    <!-- <div class="clr-col-6"></div> -->
+    <div class="clr-col-5">
+      <h6><b>Command</b></h6>
+    </div>
+    <div class="clr-col-6">
+      <p></p>
+      <app-code-with-syntax-highlighting
+        [language]="supportedLanguages.BASH"
+        [readonly]="true"
+        [height]="'2rem'"
+        [width]="'90%'"
+        [outline]="'none'"
+        [textValue]="editTask.command"
+      ></app-code-with-syntax-highlighting>
+    </div>
+  </div>
+
+  <div class="clr-row">
+    <!-- <div class="clr-col-6"></div> -->
+    <div class="clr-col-5">
+      <h6><b>Return Type</b></h6>
+    </div>
+    <div class="clr-col-6">
+      <p>{{ translateReturnType(editTask.return_type) }}</p>
+    </div>
+  </div>
+  <div
+    class="clr-row"
+    *ngIf="isOfReturnType(['Return Text', 'Return Code and Text'])"
+  >
+    <!-- <div class="clr-col-6"></div> -->
+    <div class="clr-col-5">
+      <h6><b>Expected Output</b></h6>
+    </div>
+    <div class="clr-col-6">
+      <p>{{ editTask.expected_output_value }}</p>
+    </div>
+  </div>
+
+  <div class="clr-row" *ngIf="isOfReturnType(['Match Regex'])">
+    <!-- <div class="clr-col-6"></div> -->
+    <div class="clr-col-5">
+      <h6><b>Regex to match</b></h6>
+    </div>
+    <div class="clr-col-6">
+      <p></p>
+      <app-code-with-syntax-highlighting
+        [language]="supportedLanguages.REGEX"
+        [readonly]="true"
+        [height]="'2rem'"
+        [width]="'90%'"
+        [outline]="'none'"
+        [textValue]="editTask.expected_output_value"
+      ></app-code-with-syntax-highlighting>
+    </div>
+  </div>
+
+  <div
+    class="clr-row"
+    *ngIf="isOfReturnType(['Return Code', 'Return Code and Text'])"
+  >
+    <!-- <div class="clr-col-6"></div> -->
+    <div class="clr-col-5">
+      <h6><b>Return Code</b></h6>
+    </div>
+    <div class="clr-col-6">
+      <p>{{ editTask.expected_return_code }}</p>
+    </div>
+  </div>
+</div>

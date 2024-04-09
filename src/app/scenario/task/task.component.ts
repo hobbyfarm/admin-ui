@@ -30,6 +30,8 @@ export class TaskComponent {
     });
   }
 
+  @Input() readonly = false
+
   editTasks: EditTask[] = [];
 
   changedTasks: EditTask[] = [];
