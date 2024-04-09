@@ -396,6 +396,7 @@ export class ScenarioWizardComponent implements OnInit {
     this.selectedscenario.steps = [];
     this.selectedscenario.virtualmachines[0] = {};
     this.selectedscenario.categories = [];
+    this.selectedscenario.vm_tasks = [];
   }
 
   updateSelectedScenarioRef() {
