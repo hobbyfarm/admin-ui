@@ -18,8 +18,6 @@ export class TaskFormComponent implements OnInit {
 
   @Input() editTask: EditTask;
 
-  @Input() readonly = false;
-
   @Output() taskChanged = new EventEmitter<EditTask>();
 
   supportedLanguages = supportedLanguages;
@@ -40,12 +38,10 @@ export class TaskFormComponent implements OnInit {
       taskCommand: new FormControl(this.editTask.command, [
         Validators.required,
       ]),
-      taskExpectedOutput: new FormControl(this.editTask.expected_output_value, [
-        Validators.required,
-      ]),
+      taskExpectedOutput: new FormControl(this.editTask.expected_output_value, []),
       taskExpectedReurncode: new FormControl(
         this.editTask.expected_return_code,
-        [Validators.required]
+        []
       ),
       taskReturnType: new FormControl(ReturnType[this.editTask.return_type], [
         Validators.required,
@@ -77,7 +73,6 @@ export class TaskFormComponent implements OnInit {
       }
       this.previousReturnType = newValue;
     });
-    if (this.readonly) this.taskForm.disable()
   }
 
   private buildEditTaskFromFormData(): EditTask {
