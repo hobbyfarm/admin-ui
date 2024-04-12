@@ -6,12 +6,17 @@
   (clrWizardOnCancel)="doCancel()"
   class="customized"
 >
+<clr-alert *ngFor="let error of validationErrors" [clrAlertType]="'alert-danger'" [clrAlertClosable]="false">
+    <clr-alert-item>
+        {{ error.message }}
+    </clr-alert-item>
+</clr-alert>
   <clr-wizard-title>{{ wizardTitle }} </clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
   <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
   <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-  <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'" [clrWizardButtonDisabled]="disableFinalizeButton">Finish</clr-wizard-button>
 
   <clr-wizard-page
     [clrWizardPageNextDisabled]="!scenarioDetails.valid"
@@ -250,7 +255,7 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page #taskPage>
     <ng-template clrPageTitle>Tasks</ng-template>
     <app-task *ngIf="!!selectedscenario" [selectedScenario]="selectedscenario" (tasksChanged)="replaceVmTasks($event)"></app-task>
   </clr-wizard-page>
@@ -376,7 +381,7 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page #finalizePage>
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>Confirm the following details before finishing</p>
     <h4>Scenario</h4>
@@ -434,6 +439,16 @@
             <span class="label" *ngFor="let step of selectedscenario.steps">
               {{ step.title }}</span
             >
+          </td>
+        </tr>
+        <tr>
+          <td>Tasks</td>
+          <td>
+            <ng-container *ngFor="let vm_task of selectedscenario.vm_tasks">
+            <span class="label" *ngFor="let task of vm_task.tasks">
+              {{ vm_task.vm_name }}: {{ task.name }}</span
+            >
+          </ng-container>
           </td>
         </tr>
         <tr>

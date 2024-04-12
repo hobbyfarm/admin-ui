@@ -1,12 +1,14 @@
 <div class="split-grid">
+  <ng-container *ngIf="!readonly">
   <h4 style="margin-bottom: 0.4rem">Tasks</h4>
-  <button
-    class="btn btn-sm btn-link add-task-btn"
-    (click)="addTask()"
-    *rbac="['scenarios.update']"
-  >
-    New Task
-  </button>
+    <button
+      class="btn btn-sm btn-link add-task-btn"
+      (click)="addTask()"
+      *rbac="['scenarios.update']"
+    >
+      New Task
+    </button>
+  </ng-container>
 </div>
 
 <clr-accordion>
@@ -15,21 +17,28 @@
       <clr-accordion-title style="width: 100%"
         ><div class="split-grid">
           <div>{{ task.vmName }}: {{ task.name }}</div>
-          <button
-            class="btn btn-sm btn-link remove-task-btn"
-            (click)="deleteTask(task.id)"
-            *rbac="['scenarios.update']"
-          >
-            Delete Task
-          </button>
+          <ng-container *ngIf="!readonly">
+            <button
+              class="btn btn-sm btn-link remove-task-btn"
+              (click)="deleteTask(task.id)"
+              *rbac="['scenarios.update']"
+            >
+              Delete Task
+            </button>
+          </ng-container>
         </div>
       </clr-accordion-title>
       <clr-accordion-content *clrIfExpanded>
         <app-task-form
+          *ngIf="!readonly"
           [virtualMachineNames]="vmNames"
           [editTask]="task"
           (taskChanged)="updateTask($event)"
         ></app-task-form>
+        <app-readonly-task
+          *ngIf="readonly"
+          [editTask]="task"
+        ></app-readonly-task>
       </clr-accordion-content>
     </clr-accordion-panel>
   </ng-container>

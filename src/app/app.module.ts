@@ -151,6 +151,7 @@ import {
   numberListIcon,
   syncIcon,
 } from '@cds/core/icon';
+import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -285,6 +286,7 @@ export function jwtOptionsFactory(): JwtConfig {
     DashboardDetailsComponent,
     TaskComponent,
     TaskFormComponent,
+    ReadonlyTaskComponent,
     SingleTaskVerificationMarkdownComponent,
   ],
   imports: [

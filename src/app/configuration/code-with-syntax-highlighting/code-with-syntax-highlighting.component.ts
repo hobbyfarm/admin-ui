@@ -53,6 +53,9 @@ export class CodeWithSyntaxHighlightingComponent
   resizeable: boolean = false;
 
   @Input()
+  readonly: boolean = false;
+
+  @Input()
   outline: string = 'solid 1px';
 
   @Input()
