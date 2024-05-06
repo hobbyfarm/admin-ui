@@ -1,11 +1,14 @@
 <div class="main-container" *rbac="['progresses.list']">
-  <h3>Session Statistics For Active Events</h3>
-  <form [formGroup]="chartDetails" [class.clr-error]="chartDetails.errors?.endDateLowerThanStartDate">
+  <h3>Session Statistics</h3>
+  <form
+    [formGroup]="chartDetails"
+    [class.clr-error]="chartDetails.errors?.endDateLowerThanStartDate"
+  >
     <div class="clr-row">
       <div class="clr-col-lg-4 clr-col-md-4 clr-col-12">
         <clr-select-container>
           <label>Observation Period</label>
-          <select clrSelect formControlName="observationPeriod" >
+          <select clrSelect formControlName="observationPeriod">
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
@@ -15,21 +18,38 @@
       <div class="clr-col-lg-4 clr-col-md-4 clr-col-12">
         <clr-combobox-container>
           <label>Scenarios</label>
-          <clr-combobox formControlName="scenarios" name="scenarios" clrMulti="true">
+          <clr-combobox
+            formControlName="scenarios"
+            name="scenarios"
+            clrMulti="true"
+          >
             <ng-container *clrOptionSelected="let scenarioSelected">
-                {{ scenarioSelected }}
+              {{ scenarioSelected }}
             </ng-container>
             <clr-options>
-                <clr-option *clrOptionItems="let scenario of scenariosWithSession" [clrValue]="scenario">
-                    <cds-icon shape="node-group"></cds-icon> {{ scenario }}
-                </clr-option>
+              <clr-option
+                *clrOptionItems="let scenario of scenariosWithSession"
+                [clrValue]="scenario"
+              >
+                <cds-icon shape="node-group"></cds-icon> {{ scenario }}
+              </clr-option>
             </clr-options>
           </clr-combobox>
           <clr-control-error>Scenarios are required.</clr-control-error>
           <clr-control-helper>
             <div class="scenario-actions">
-              <a class="scenario-action" href="javascript://" (click)="clearScenarios()">Clear Scenarios</a>
-              <a class="scenario-action" href="javascript://" (click)="addAllScenarios()">Add All Scenarios</a>
+              <a
+                class="scenario-action"
+                href="javascript://"
+                (click)="clearScenarios()"
+                >Clear Scenarios</a
+              >
+              <a
+                class="scenario-action"
+                href="javascript://"
+                (click)="addAllScenarios()"
+                >Add All Scenarios</a
+              >
             </div>
           </clr-control-helper>
         </clr-combobox-container>
@@ -55,9 +75,20 @@
           </clr-control-error>
         </clr-input-container>
         <clr-signpost class="signpost">
-          <button class="btn btn-sm btn-link" clrSignpostTrigger>Change Start Date</button>
-          <clr-signpost-content [clrPosition]="'right-middle'" *clrIfOpen #startDateSignpost>
-            <dl-date-time-picker (change)="setStartDate($event)" [startView]="startView" maxView="year" [minView]="minView">
+          <button class="btn btn-sm btn-link" clrSignpostTrigger>
+            Change Start Date
+          </button>
+          <clr-signpost-content
+            [clrPosition]="'right-middle'"
+            *clrIfOpen
+            #startDateSignpost
+          >
+            <dl-date-time-picker
+              (change)="setStartDate($event)"
+              [startView]="startView"
+              maxView="year"
+              [minView]="minView"
+            >
             </dl-date-time-picker>
           </clr-signpost-content>
         </clr-signpost>
@@ -78,40 +109,64 @@
           </clr-control-error>
         </clr-input-container>
         <clr-signpost class="signpost">
-          <button class="btn btn-link" clrSignpostTrigger>Change End Date</button>
-          <clr-signpost-content [clrPosition]="'right-middle'" *clrIfOpen #endDateSignpost>
-            <dl-date-time-picker (change)="setEndDate($event)" [startView]="startView" maxView="year" [minView]="minView">
+          <button class="btn btn-link" clrSignpostTrigger>
+            Change End Date
+          </button>
+          <clr-signpost-content
+            [clrPosition]="'right-middle'"
+            *clrIfOpen
+            #endDateSignpost
+          >
+            <dl-date-time-picker
+              (change)="setEndDate($event)"
+              [startView]="startView"
+              maxView="year"
+              [minView]="minView"
+            >
             </dl-date-time-picker>
           </clr-signpost-content>
         </clr-signpost>
-        <span class="clr-subtext" *ngIf="chartDetails.errors?.endDateLowerThanStartDate">
-          <cds-icon class="clr-validate-icon" shape="exclamation-circle"></cds-icon> Start date must occur before end time!
+        <span
+          class="clr-subtext"
+          *ngIf="chartDetails.errors?.endDateLowerThanStartDate"
+        >
+          <cds-icon
+            class="clr-validate-icon"
+            shape="exclamation-circle"
+          ></cds-icon>
+          Start date must occur before end time!
         </span>
       </div>
     </div>
   </form>
   <div class="clr-row">
     <div class="clr-col-lg-8 clr-col-md-8 clr-col-12">
-      <h4>Started Sessions (Detailed)</h4>
+      <h4>Started Sessions (Chart)</h4>
       <div style="display: block">
-        <canvas baseChart
+        <canvas
+          baseChart
           [data]="barChartData"
           [options]="barChartOptions"
           [plugins]="barChartPlugins"
           [type]="barChartType"
           (chartHover)="chartHovered($event)"
-          (chartClick)="chartClicked($event)">
+          (chartClick)="chartClicked($event)"
+        >
         </canvas>
       </div>
     </div>
     <div class="clr-col-lg-4 clr-col-md-4 clr-col-12">
-      <h4>Started Sessions (Overview)</h4>
+      <h4>Started Sessions (List)</h4>
       <clr-datagrid>
         <clr-dg-column [clrDgField]="'key'">Scenario</clr-dg-column>
-        <clr-dg-column [clrDgSortBy]="'value'" [clrDgSortOrder]="descSort">Total Sessions</clr-dg-column>
-        <clr-dg-row *clrDgItems="let item of totalSessionsPerScenario | keyvalue">
-          <clr-dg-cell>{{item.key}}</clr-dg-cell>
-          <clr-dg-cell>{{item.value}}</clr-dg-cell>
+        <clr-dg-column [clrDgSortBy]="'value'" [clrDgSortOrder]="descSort"
+          >Total Sessions</clr-dg-column
+        >
+        <clr-dg-row
+          *clrDgItems="let item of totalSessionsPerScenario | keyvalue"
+        >
+          <clr-dg-cell>{{ item.key }}</clr-dg-cell>
+          <clr-dg-cell>{{ item.value }}</clr-dg-cell>
         </clr-dg-row>
       </clr-datagrid>
     </div>
