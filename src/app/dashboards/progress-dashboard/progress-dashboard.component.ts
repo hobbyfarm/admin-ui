@@ -139,9 +139,9 @@ export class ProgressDashboardComponent implements OnInit {
 
       this.currentProgress = progressList.map((element) => ({
         ...element,
-        username: userMap.get(element.user) ?? 'none',
-        scenario_name: scenarioMap.get(element.scenario) ?? 'none',
-        course_name: courseMap.get(element.course) ?? '',
+        username: userMap.get(element.user) ?? element.user,
+        scenario_name: scenarioMap.get(element.scenario) ?? element.scenario,
+        course_name: courseMap.get(element.course) ?? element.course,
       }));
       this.users = users.filter(
         (user) =>
