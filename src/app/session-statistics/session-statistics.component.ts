@@ -1,4 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
@@ -14,6 +21,7 @@ import {
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { ClrDatagridSortOrder, ClrSignpostContent } from '@clr/angular';
 import '../date.extension';
+import { ScheduledEvent } from '../data/scheduledevent';
 
 type ChartDetailsFormGroup = FormGroup<{
   observationPeriod: FormControl<'daily' | 'weekly' | 'monthly'>;
@@ -30,7 +38,12 @@ const ONE_DAY = 1000 * 60 * 60 * 24;
   templateUrl: './session-statistics.component.html',
   styleUrls: ['./session-statistics.component.scss'],
 })
-export class SessionStatisticsComponent implements OnInit {
+export class SessionStatisticsComponent implements OnInit, OnChanges {
+  @Input()
+  public scheduledEvent: ScheduledEvent;
+
+  public currentScheduledEvent: ScheduledEvent;
+
   public startView: 'minute' | 'day' | 'month' | 'year' = 'day';
   public minView: 'minute' | 'day' | 'month' | 'year' = 'day';
   public options: Intl.DateTimeFormatOptions = {
@@ -104,7 +117,20 @@ export class SessionStatisticsComponent implements OnInit {
     private _fb: NonNullableFormBuilder
   ) {}
 
+  ngOnChanges(): void {
+    if (
+      this.scheduledEvent != this.currentScheduledEvent &&
+      this.currentScheduledEvent
+    ) {
+      this.currentScheduledEvent = this.scheduledEvent;
+      this.setDatesToScheduledEvent(this.scheduledEvent);
+      this.updateData(this.chartDetails.controls.observationPeriod.value);
+    }
+  }
+
   ngOnInit(): void {
+    this.currentScheduledEvent = this.scheduledEvent;
+
     const currentDate = new Date();
     // Set default start date to beginning of the day
     this.startDate = new Date(
@@ -130,7 +156,7 @@ export class SessionStatisticsComponent implements OnInit {
           Validators.required
         ),
         scenarios: this._fb.control<string[]>(
-          [],
+          ['*'],
           [Validators.required, Validators.minLength(1)]
         ),
         startDate: this._fb.control<string>(
@@ -146,6 +172,10 @@ export class SessionStatisticsComponent implements OnInit {
         validators: [this.validateForm()],
       }
     );
+
+    if (this.scheduledEvent) {
+      this.setDatesToScheduledEvent(this.scheduledEvent);
+    }
 
     this.updateLabels('daily');
     this.updateData('daily');
@@ -218,20 +248,68 @@ export class SessionStatisticsComponent implements OnInit {
     };
   }
 
+  private setDatesToScheduledEvent(se: ScheduledEvent) {
+    const currentDate = new Date();
+
+    // Set default start date to beginning of the scheduledEvent
+    this.startDate = se.start_time;
+
+    // Set default end date to sheduled event end date OR the current date if it is before the SE end date
+    if (se.end_time < currentDate) {
+      this.endDate = se.end_time;
+    } else {
+      this.endDate = currentDate;
+    }
+
+    if (this.chartDetails) {
+      this.chartDetails.controls.startDate.setValue(
+        this.startDate.toDateString()
+      );
+      this.chartDetails.controls.endDate.setValue(this.endDate.toDateString());
+    }
+  }
+
   private updateData(observationPeriod: 'daily' | 'weekly' | 'monthly') {
+    if (this.scheduledEvent) {
+      this.updateDataByScheduledEvent(observationPeriod);
+    } else {
+      this.updateDataByRange(observationPeriod);
+    }
+  }
+
+  private updateDataByRange(observationPeriod: 'daily' | 'weekly' | 'monthly') {
     this.progressService
       .listByRange(this.startDate, this.endDate)
-      .subscribe((progress: Progress[]) => {
-        this.setupScenariosWithSessions(progress);
-        this.prepareBarchartDatasets();
-        if (observationPeriod == 'weekly') {
-          this.updateBarchartData(progress, this.getWeekDataIndex);
-        } else {
-          this.updateBarchartData(progress, this.getDayOrMonthDataIndex);
-        }
-        this.updateTotalSessions(progress);
-        this.chart?.update();
+      .subscribe((progresses: Progress[]) => {
+        this.processData(progresses, observationPeriod);
       });
+  }
+
+  private updateDataByScheduledEvent(
+    observationPeriod: 'daily' | 'weekly' | 'monthly'
+  ) {
+    this.progressService
+      .listByScheduledEvent(this.scheduledEvent.id, true)
+      .subscribe((progresses: Progress[]) => {
+        // TODO: Filter by range
+        progresses.forEach((p) => {});
+        this.processData(progresses, observationPeriod);
+      });
+  }
+
+  private processData(
+    progresses: Progress[],
+    observationPeriod: 'daily' | 'weekly' | 'monthly'
+  ) {
+    this.setupScenariosWithSessions(progresses);
+    this.prepareBarchartDatasets();
+    if (observationPeriod == 'weekly') {
+      this.updateBarchartData(progresses, this.getWeekDataIndex);
+    } else {
+      this.updateBarchartData(progresses, this.getDayOrMonthDataIndex);
+    }
+    this.updateTotalSessions(progresses);
+    this.chart?.update();
   }
 
   private updateLabels(observationPeriod: 'daily' | 'weekly' | 'monthly') {
