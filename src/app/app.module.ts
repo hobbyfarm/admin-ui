@@ -145,6 +145,7 @@ import {
   timesIcon,
   buildingIcon,
   numberListIcon,
+  downloadIcon,
 } from '@cds/core/icon';
 
 ClarityIcons.addIcons(
@@ -183,7 +184,8 @@ ClarityIcons.addIcons(
   clockIcon,
   timesIcon,
   buildingIcon,
-  numberListIcon
+  numberListIcon,
+  downloadIcon
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {

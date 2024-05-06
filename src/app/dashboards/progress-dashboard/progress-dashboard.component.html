@@ -1,83 +1,125 @@
 <div class="content-area">
-    <div class="clr-row clr-align-items-center clr-justify-content-between">
-        <div class="card clr-col-9">
-            <div class="clr-row clr-align-items-center">
-                <div class="clr-col">
-                    <clr-toggle-container id="includeFinishedToggle">
-                        <clr-toggle-wrapper>
-                            <input type="checkbox" clrToggle name="includeFinished" [disabled]="selectedEvent?.finished"
-                                [(ngModel)]="includeFinished" (change)="refresh()">
-                            <label>Include finished</label>
-                        </clr-toggle-wrapper>
-                        <clr-control-helper>Whether finished sessions should be included.
-                        </clr-control-helper>
-                    </clr-toggle-container>
-                </div>
-                <div class="clr-col ">
-                    <input id="userFilter" clrInput placeholder="filter users" name="userFilter"
-                        [(ngModel)]="userFilter" (ngModelChange)="filter()"
-                        [disabled]="filteredProgress.length == 0 && userFilter.length == 0" />
-                    <span class="clr-subtext">Filter by users email</span>
-                </div>
-                <div class="clr-col">
-                    <clr-dropdown>
-                        <button class="dropdown-toggle btn btn-link" clrDropdownTrigger
-                            [disabled]="scenarioList.size < 2">
-                            <span *ngIf="this.scenarioFilterList.size == 0">Filter
-                                scenario(s)</span>
-                            <span *ngIf="this.scenarioFilterList.size == 1">1 Scenario
-                                selected</span>
-                            <span *ngIf="this.scenarioFilterList.size > 1">{{this.scenarioFilterList.size}}
-                                Scenarios selected</span>
-                                <cds-icon shape="angle" direction="down"></cds-icon>
-                        </button>
-
-                        <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>
-                            <clr-row *ngFor="let sc of scenarioList" clrDropdownItem (click)="filterScenario(sc)"
-                                [ngClass]="{'selected' : this.scenarioFilterList.has(sc)}">
-                                {{sc}}
-                                <span class="filter-selected">
-                                    <cds-icon *ngIf="this.scenarioFilterList.has(sc)" shape="check">
-                                    </cds-icon>
-                                </span>
-                            </clr-row>
-                        </clr-dropdown-menu>
-                    </clr-dropdown>
-                </div>
-                <div class="clr-col">
-                    <p>Showing {{filteredProgress.length}} of {{currentProgress.length}} Sessions
-                    </p>
-                    <button class="btn btn-icon btn-warning" (click)="removeFilter()">
-                        <cds-icon shape="trash"></cds-icon> Clear Filter
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="clr-col buttonCol">
-            <button class="btn btn-link userlistIcon" [disabled]="users?.length < 1" (click)="openUserList()">
-                <cds-icon shape="users" size="48" solid></cds-icon>{{users?.length}}
-            </button>
+  <div class="clr-row clr-align-items-center clr-justify-content-between">
+    <div class="card clr-col-9">
+      <div class="clr-row clr-align-items-center">
+        <div class="clr-col">
+          <clr-toggle-container id="includeFinishedToggle">
+            <clr-toggle-wrapper>
+              <input
+                type="checkbox"
+                clrToggle
+                name="includeFinished"
+                [disabled]="selectedEvent?.finished"
+                [(ngModel)]="includeFinished"
+                (change)="refresh()"
+              />
+              <label>Include finished</label>
+            </clr-toggle-wrapper>
+            <clr-control-helper
+              >Whether finished sessions should be included.
+            </clr-control-helper>
+          </clr-toggle-container>
         </div>
         <div class="clr-col">
-            <interval-timer (intervalElapsed)="refresh()"></interval-timer>
+          <input
+            id="userFilter"
+            clrInput
+            placeholder="username@example.com"
+            name="userFilter"
+            [(ngModel)]="userFilter"
+            (ngModelChange)="filter()"
+            [disabled]="filteredProgress.length == 0 && userFilter.length == 0"
+          />
+          <span class="clr-subtext">Filter by username</span>
+          <clr-dropdown>
+            <button
+              class="dropdown-toggle btn btn-link"
+              clrDropdownTrigger
+              [disabled]="scenarioList.size < 2"
+            >
+              <span *ngIf="this.scenarioFilterList.size == 0"
+                >Filter scenario(s)</span
+              >
+              <span *ngIf="this.scenarioFilterList.size == 1"
+                >1 Scenario selected</span
+              >
+              <span *ngIf="this.scenarioFilterList.size > 1"
+                >{{ this.scenarioFilterList.size }} Scenarios selected</span
+              >
+              <cds-icon shape="angle" direction="down"></cds-icon>
+            </button>
+
+            <clr-dropdown-menu clrPosition="bottom-right" *clrIfOpen>
+              <clr-row
+                *ngFor="let sc of scenarioList"
+                clrDropdownItem
+                (click)="filterScenario(sc)"
+                [ngClass]="{ selected: this.scenarioFilterList.has(sc) }"
+              >
+                {{ sc }}
+                <span class="filter-selected">
+                  <cds-icon
+                    *ngIf="this.scenarioFilterList.has(sc)"
+                    shape="check"
+                  >
+                  </cds-icon>
+                </span>
+              </clr-row>
+            </clr-dropdown-menu>
+          </clr-dropdown>
         </div>
-    </div>
-    <div class="clr-row">
-        <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
-            <div class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3" *ngFor="let p of filteredProgress">
-                <progress-card [progress]="p" [pause]="pause" (nameClickedEvent)="filterName($event)"></progress-card>
-            </div>
-        </ng-container>
-    </div>
-    <ng-template #no_sessions>
-        <div class="clr-col-12">
-            <p>
-                No sessions found.
-            </p>
+        <div class="clr-col">
+          <p>
+            Showing {{ filteredProgress.length }} of
+            {{ currentProgress.length }} Sessions
+          </p>
+          <button class="btn btn-icon btn-warning" (click)="removeFilter()">
+            <cds-icon shape="trash"></cds-icon> Clear Filter
+          </button>
+          <button class="btn btn-icon btn-icon" (click)="exportCSV()">
+            <cds-icon shape="download"></cds-icon> Export CSV
+          </button>
         </div>
-    </ng-template>
+      </div>
+    </div>
+    <div class="clr-col buttonCol">
+      <button
+        class="btn btn-link userlistIcon"
+        [disabled]="users?.length < 1"
+        (click)="openUserList()"
+      >
+        <cds-icon shape="users" size="48" solid></cds-icon>{{ users?.length }}
+      </button>
+    </div>
+    <div class="clr-col">
+      <interval-timer (intervalElapsed)="refresh()"></interval-timer>
+    </div>
+  </div>
+  <div class="clr-row">
+    <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
+      <div
+        class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3"
+        *ngFor="let p of filteredProgress"
+      >
+        <progress-card
+          [progress]="p"
+          [pause]="pause"
+          (nameClickedEvent)="filterName($event)"
+        ></progress-card>
+      </div>
+    </ng-container>
+  </div>
+  <ng-template #no_sessions>
+    <div class="clr-col-12">
+      <p>No sessions found.</p>
+    </div>
+  </ng-template>
 </div>
 
-
-<event-user-list #userList [users]="users" [progress]="currentProgress" (userSelected)="filterName($event.email)">
+<event-user-list
+  #userList
+  [users]="users"
+  [progress]="currentProgress"
+  (userSelected)="filterName($event.email)"
+>
 </event-user-list>

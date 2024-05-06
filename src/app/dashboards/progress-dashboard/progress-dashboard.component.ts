@@ -1,12 +1,6 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  Input,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { ProgressService } from 'src/app/data/progress.service';
-import { Progress, ProgressCount } from 'src/app/data/progress';
+import { Progress } from 'src/app/data/progress';
 import { UserService } from '../../data/user.service';
 import { ScheduledEvent } from '../../data/scheduledevent';
 import { ScheduledeventService } from '../../data/scheduledevent.service';
@@ -155,5 +149,46 @@ export class ProgressDashboardComponent implements OnInit {
 
       this.filter();
     });
+  }
+
+  exportCSV() {
+    let progressCSV = '';
+    this.filteredProgress.forEach((progress) => {
+      progressCSV = progressCSV.concat(
+        progress.id +
+          ', ' +
+          progress.user +
+          ', ' +
+          progress.username +
+          ', ' +
+          progress.scenario +
+          ', ' +
+          progress.scenario_name +
+          ', ' +
+          progress.course +
+          ', ' +
+          progress.course_name +
+          ', ' +
+          progress.total_step +
+          ', ' +
+          progress.max_step +
+          ', ' +
+          progress.started +
+          ', ' +
+          progress.last_update +
+          '\n'
+      );
+    });
+    const filename = this.selectedEvent.event_name + '_sessions.csv';
+    var element = document.createElement('a');
+    element.setAttribute(
+      'href',
+      'data:text/plain;charset=utf-8,' + encodeURIComponent(progressCSV)
+    );
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   }
 }
