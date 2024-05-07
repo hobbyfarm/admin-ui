@@ -106,6 +106,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     },
   ];
   public scenariosWithSession: string[] = [];
+  public scenariosWithSessionMap: Map<string, string> = new Map(); // Maps the id to the name
   public totalSessionsPerScenario: Map<string, number> = new Map();
   public descSort = ClrDatagridSortOrder.DESC;
 
@@ -121,7 +122,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     ) {
       this.currentScheduledEvent = this.scheduledEvent;
       this.progressesCache = null; // Reset cache so data from the changed SE can be retreived
-      this.scenariosWithSession = [];
+      this.scenariosWithSessionMap = new Map();
       this.totalSessionsPerScenario = new Map();
       this.chartDetails.controls.scenarios.setValue(['*']);
       this.setDatesToScheduledEvent(
@@ -439,22 +440,23 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   private setupScenariosWithSessions(progressData: Progress[]) {
     this.scenariosWithSession = [];
     progressData.forEach((prog: Progress) => {
-      if (!this.scenariosWithSession.includes(prog.scenario_name)) {
-        this.scenariosWithSession.push(prog.scenario_name);
-      }
+      this.scenariosWithSessionMap.set(prog.scenario, prog.scenario_name);
     });
   }
 
   private allScenariosSelected(): boolean {
     const selectedScenarios = this.chartDetails.controls.scenarios.value;
-    return !selectedScenarios || selectedScenarios.length === 1 && selectedScenarios[0] === '*';
+    return (
+      !selectedScenarios ||
+      (selectedScenarios.length === 1 && selectedScenarios[0] === '*')
+    );
   }
 
   private prepareBarchartDatasets() {
     this.barChartData.datasets.length = 0;
     const selectedScenarios = this.chartDetails.controls.scenarios.value;
     if (this.allScenariosSelected()) {
-      this.scenariosWithSession.forEach((sWithSession: string) => {
+      this.scenariosWithSessionMap.forEach((sWithSession: string) => {
         this.barChartData.datasets.push({
           data: Array.from<number>({
             length: this.barChartData.labels.length,
@@ -506,16 +508,18 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       return;
     }
     let evaluatedProgressData: Progress[] = progressData;
-    let selectedScenarios: string[] = this.scenariosWithSession;
+    let selectedScenarios: string[] = Array.from(
+      this.scenariosWithSessionMap.keys()
+    );
     if (!this.allScenariosSelected()) {
       selectedScenarios = this.chartDetails.controls.scenarios.value;
       evaluatedProgressData = progressData.filter((progress: Progress) =>
-        selectedScenarios.includes(progress.scenario_name)
+        selectedScenarios.includes(progress.scenario)
       );
     }
     evaluatedProgressData.forEach((prog: Progress) => {
       const index = getIndex(prog);
-      (this.barChartData.datasets[selectedScenarios.indexOf(prog.scenario_name)]
+      (this.barChartData.datasets[selectedScenarios.indexOf(prog.scenario)]
         .data[index] as number) += 1;
     });
   }
@@ -524,8 +528,8 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     this.totalSessionsPerScenario.clear();
     this.totalSessionsPerScenario = progressData.reduce(
       (totalSessions, progress) => {
-        const partialSum = totalSessions.get(progress.scenario_name) ?? 0;
-        totalSessions.set(progress.scenario_name, partialSum + 1);
+        const partialSum = totalSessions.get(progress.scenario) ?? 0;
+        totalSessions.set(progress.scenario, partialSum + 1);
         return totalSessions;
       },
       new Map<string, number>()
@@ -582,5 +586,9 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       );
       this.barChartData.labels.push(labelDateString);
     }
+  }
+
+  public getScenarioName(scenarioId: string) {
+    return this.scenariosWithSessionMap.get(scenarioId) ?? scenarioId;
   }
 }

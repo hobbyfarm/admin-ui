@@ -29,7 +29,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
   public progresses: Progress[];
 
   @Input()
-  public scenariosWithSession: string[];
+  public scenariosWithSessionMap: Map<string, string>; //Maps the scenario id to the name
 
   public selectedScenario: string;
 
@@ -109,14 +109,16 @@ export class SessionTimeStatisticsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const firstScenario =
+      this.scenariosWithSessionMap?.keys().next().value ?? '';
     this.chartDetails = this._fb.group({
-      scenario: this._fb.control<string>(this.scenariosWithSession[0] ?? '', [
+      scenario: this._fb.control<string>(firstScenario, [
         Validators.required,
         Validators.minLength(1),
       ]),
     });
 
-    this.selectedScenario = this.scenariosWithSession[0] ?? '';
+    this.selectedScenario = firstScenario;
     this.updateData();
 
     this.chartDetails.controls.scenario.valueChanges.subscribe(
@@ -137,16 +139,16 @@ export class SessionTimeStatisticsComponent implements OnInit {
   }
 
   private updateData() {
-    let evaluatedProgressData: Progress[] = <Progress[]>(
-      deepCopy(this.progresses)
-    );
-    evaluatedProgressData = evaluatedProgressData.filter(
-      (progress: Progress) => this.selectedScenario == progress.scenario_name
+    console.log(this.progresses);
+    const evaluatedProgressData = this.progresses.filter(
+      (progress: Progress) => this.selectedScenario == progress.scenario
     );
 
     // TODO calculate data
     let stepTime = [];
     let stepProgressCount = [];
+
+    console.log(evaluatedProgressData);
 
     evaluatedProgressData.forEach((p) => {
       // Increase the count of progresses that have been to this step
@@ -193,6 +195,10 @@ export class SessionTimeStatisticsComponent implements OnInit {
       this.avgDuration.push(avgStepDurationInSeconds);
       this.totalDuration += avgStepDurationInSeconds;
     }
+
+    console.log(this.stepCounts);
+    console.log(this.stepDurations);
+    console.log(this.avgDuration);
 
     this.processData();
   }

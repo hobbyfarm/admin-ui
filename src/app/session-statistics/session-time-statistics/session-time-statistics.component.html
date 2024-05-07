@@ -7,8 +7,11 @@
       <clr-select-container>
         <label>Scenario</label>
         <select clrSelect formControlName="scenario">
-          <option *ngFor="let scenario of scenariosWithSession">
-            {{ scenario }}
+          <option
+            *ngFor="let scenario of scenariosWithSessionMap | keyvalue"
+            [value]="scenario.key"
+          >
+            {{ scenario.value }}
           </option>
         </select>
       </clr-select-container>
