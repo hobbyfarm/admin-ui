@@ -139,7 +139,6 @@ export class SessionTimeStatisticsComponent implements OnInit {
   }
 
   private updateData() {
-    console.log(this.progresses);
     const evaluatedProgressData = this.progresses.filter(
       (progress: Progress) => this.selectedScenario == progress.scenario
     );
