@@ -23,8 +23,8 @@
             name="scenarios"
             clrMulti="true"
           >
-            <ng-container *clrOptionSelected="let scenarioSelected">
-              {{ scenarioSelected }}
+            <ng-container *clrOptionSelected="let scenario of scenarioSelected">
+              {{ getScenarioName(scenario) }}
             </ng-container>
             <clr-options>
               <clr-option

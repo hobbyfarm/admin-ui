@@ -105,7 +105,6 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       },
     },
   ];
-  public scenariosWithSession: string[] = [];
   public scenariosWithSessionMap: Map<string, string> = new Map(); // Maps the id to the name
   public totalSessionsPerScenario: Map<string, number> = new Map();
   public descSort = ClrDatagridSortOrder.DESC;
@@ -438,7 +437,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   }
 
   private setupScenariosWithSessions(progressData: Progress[]) {
-    this.scenariosWithSession = [];
+    this.scenariosWithSessionMap = new Map();
     progressData.forEach((prog: Progress) => {
       this.scenariosWithSessionMap.set(prog.scenario, prog.scenario_name);
     });
@@ -461,7 +460,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
           data: Array.from<number>({
             length: this.barChartData.labels.length,
           }).fill(0),
-          label: sWithSession,
+          label: this.getScenarioName(sWithSession),
           stack: 'a',
         });
       });
@@ -471,7 +470,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
           data: Array.from<number>({
             length: this.barChartData.labels.length,
           }).fill(0),
-          label: sWithSession,
+          label: this.getScenarioName(sWithSession),
           stack: 'a',
         });
       });
