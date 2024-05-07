@@ -525,6 +525,11 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
 
   private updateTotalSessions(progressData: Progress[]) {
     this.totalSessionsPerScenario.clear();
+    progressData = progressData.filter(
+      (progress: Progress) =>
+        progress.started >= this.startDate &&
+        progress.last_update < this.endDate
+    );
     this.totalSessionsPerScenario = progressData.reduce(
       (totalSessions, progress) => {
         const partialSum = totalSessions.get(progress.scenario) ?? 0;
