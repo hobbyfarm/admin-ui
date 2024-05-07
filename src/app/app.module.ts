@@ -83,6 +83,7 @@ import { EnvironmentDetailComponent } from './configuration/environments/environ
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
 import { NgChartsModule } from 'ng2-charts';
 import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
+import { SessionTimeStatisticsComponent } from './session-statistics/session-time-statistics/session-time-statistics.component';
 import { VMTemplateServiceFormComponent } from './configuration/vmtemplates/edit-vmtemplate/vmtemplate-service-form/vmtemplate-service-form.component';
 import { FilterScenariosComponent } from './filter-scenarios/filter-scenarios.component';
 import { MDEditorComponent } from './scenario/md-editor/md-editor.component';
@@ -150,6 +151,7 @@ import {
   buildingIcon,
   numberListIcon,
   syncIcon,
+  downloadIcon,
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
 
@@ -190,7 +192,8 @@ ClarityIcons.addIcons(
   timesIcon,
   buildingIcon,
   numberListIcon,
-  syncIcon
+  syncIcon,
+  downloadIcon
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {
@@ -216,6 +219,7 @@ export function jwtOptionsFactory(): JwtConfig {
     AppComponent,
     HomeComponent,
     SessionStatisticsComponent,
+    SessionTimeStatisticsComponent,
     HeaderComponent,
     EventComponent,
     LoginComponent,

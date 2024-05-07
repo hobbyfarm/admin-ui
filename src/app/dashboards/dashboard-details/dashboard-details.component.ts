@@ -1,8 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DashboardScheduledEvent } from '../../data/scheduledevent';
-import {
-  ScheduledeventService,
-} from '../../data/scheduledevent.service';
+import { ScheduledeventService } from '../../data/scheduledevent.service';
 import { RbacService } from '../../data/rbac.service';
 import { Resource, Verb } from '../../data/rbac';
 import { ActivatedRoute, Params } from '@angular/router';
@@ -16,6 +14,8 @@ import { Subscription, switchMap, tap } from 'rxjs';
 export class DashboardDetailsComponent implements OnInit, OnDestroy {
   public sessionDashboardActive: boolean = true;
   public vmDashboardActive: boolean = false;
+  public statisticsDashboardActive: boolean = false;
+
   public selectedEvent: DashboardScheduledEvent;
   public loggedInAdminEmail: string;
 
@@ -35,17 +35,19 @@ export class DashboardDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.eventSubscription = this.route.params.pipe(
-      tap((params: Params) => {
-        this.eventId = params['id'] ?? '';
-      }),
-      switchMap(() => this.scheduledeventService.getDashboardCache()),
-    ).subscribe((cache: Map<string, DashboardScheduledEvent>) => {
-      const currentEvent = cache.get(this.eventId);
-      if (currentEvent) {
-        this.selectedEvent = currentEvent;
-      }
-    });
+    this.eventSubscription = this.route.params
+      .pipe(
+        tap((params: Params) => {
+          this.eventId = params['id'] ?? '';
+        }),
+        switchMap(() => this.scheduledeventService.getDashboardCache())
+      )
+      .subscribe((cache: Map<string, DashboardScheduledEvent>) => {
+        const currentEvent = cache.get(this.eventId);
+        if (currentEvent) {
+          this.selectedEvent = currentEvent;
+        }
+      });
     // Do I need to check that?
     // verify rbac permissions before we display this page
     this.setRbacCheck(

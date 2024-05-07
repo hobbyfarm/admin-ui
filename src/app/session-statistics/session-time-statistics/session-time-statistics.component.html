@@ -1,0 +1,57 @@
+<div class="clr-row">
+  <div class="clr-col-lg-4 clr-col-md-4 clr-col-12">
+    <form
+      [formGroup]="chartDetails"
+      [class.clr-error]="chartDetails.errors?.endDateLowerThanStartDate"
+    >
+      <clr-select-container>
+        <label>Scenario</label>
+        <select clrSelect formControlName="scenario">
+          <option
+            *ngFor="let scenario of scenariosWithSessionMap | keyvalue"
+            [value]="scenario.key"
+          >
+            {{ scenario.value }}
+          </option>
+        </select>
+      </clr-select-container>
+    </form>
+  </div>
+</div>
+<div class="clr-row">
+  <div class="clr-col-lg-8 clr-col-md-8 clr-col-12">
+    <div style="display: block">
+      <canvas
+        baseChart
+        [data]="barChartData"
+        [options]="barChartOptions"
+        [plugins]="barChartPlugins"
+        [type]="barChartType"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"
+      >
+      </canvas>
+    </div>
+  </div>
+  <div class="clr-col-lg-4 clr-col-md-4 clr-col-12">
+    <clr-datagrid>
+      <clr-dg-column [clrDgField]="'key'">Step</clr-dg-column>
+      <clr-dg-column>Average Duration</clr-dg-column>
+      <clr-dg-column>Sessions</clr-dg-column>
+      <clr-dg-row *clrDgItems="let duration of avgDuration; index as i">
+        <clr-dg-cell>Step {{ i + 1 }}</clr-dg-cell>
+        <clr-dg-cell>{{ formatDuration(duration) }}</clr-dg-cell>
+        <clr-dg-cell>{{ getNumberOfSessionsForStep(i) }}</clr-dg-cell>
+      </clr-dg-row>
+      <clr-dg-row>
+        <clr-dg-cell><b>Total</b></clr-dg-cell>
+        <clr-dg-cell
+          ><b>{{ formatDuration(totalDuration) }}</b></clr-dg-cell
+        >
+        <clr-dg-cell
+          ><b>{{ getNumberOfSessionsForStep(0) }}</b></clr-dg-cell
+        >
+      </clr-dg-row>
+    </clr-datagrid>
+  </div>
+</div>
