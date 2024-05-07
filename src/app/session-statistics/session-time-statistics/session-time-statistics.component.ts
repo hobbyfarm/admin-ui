@@ -148,8 +148,6 @@ export class SessionTimeStatisticsComponent implements OnInit {
     let stepTime = [];
     let stepProgressCount = [];
 
-    console.log(evaluatedProgressData);
-
     evaluatedProgressData.forEach((p) => {
       // Increase the count of progresses that have been to this step
       for (let i = 0; i < p.max_step; i++) {
@@ -196,10 +194,6 @@ export class SessionTimeStatisticsComponent implements OnInit {
       this.totalDuration += avgStepDurationInSeconds;
     }
 
-    console.log(this.stepCounts);
-    console.log(this.stepDurations);
-    console.log(this.avgDuration);
-
     this.processData();
   }
 
@@ -236,7 +230,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
       data: Array.from<number>({
         length: this.barChartData.labels.length,
       }).fill(0),
-      label: this.selectedScenario,
+      label: this.scenariosWithSessionMap.get(this.selectedScenario),
       stack: 'a',
     });
   }
