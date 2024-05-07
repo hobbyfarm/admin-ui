@@ -218,7 +218,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   }
 
   public clearScenarios(): void {
-    this.chartDetails.controls.scenarios.reset();
+    this.chartDetails.controls.scenarios.setValue(['*']);
   }
 
   private validateStartDate(): ValidatorFn {
@@ -447,7 +447,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
 
   private allScenariosSelected(): boolean {
     const selectedScenarios = this.chartDetails.controls.scenarios.value;
-    return selectedScenarios.length === 1 && selectedScenarios[0] === '*';
+    return !selectedScenarios || selectedScenarios.length === 1 && selectedScenarios[0] === '*';
   }
 
   private prepareBarchartDatasets() {
