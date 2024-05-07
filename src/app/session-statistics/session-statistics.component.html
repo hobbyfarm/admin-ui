@@ -171,4 +171,14 @@
       </clr-datagrid>
     </div>
   </div>
+  <h3>Scenario Statistics</h3>
+  <div class="clr-row" *ngIf="progressesCache">
+    <div class="clr-col-12">
+      <app-session-time-statistics
+        [progresses]="progressesCache"
+        [scenariosWithSession]="scenariosWithSession"
+      >
+      </app-session-time-statistics>
+    </div>
+  </div>
 </div>
