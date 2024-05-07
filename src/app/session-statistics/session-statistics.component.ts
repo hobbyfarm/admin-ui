@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
@@ -39,10 +32,14 @@ const ONE_DAY = 1000 * 60 * 60 * 24;
   styleUrls: ['./session-statistics.component.scss'],
 })
 export class SessionStatisticsComponent implements OnInit, OnChanges {
+  // If no scheduledEvent is given, we display statistics about all progresses for a given time range
+  // If a scheduledEvent is given, we display statistics about all progresses from this scheduledEvent
   @Input()
   public scheduledEvent: ScheduledEvent;
 
   public currentScheduledEvent: ScheduledEvent;
+
+  public progressesCache: Progress[];
 
   public startView: 'minute' | 'day' | 'month' | 'year' = 'day';
   public minView: 'minute' | 'day' | 'month' | 'year' = 'day';
@@ -108,7 +105,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       },
     },
   ];
-  public scenariosWithSession: string[] = [];
+  public scenariosWithSessionMap: Map<string, string> = new Map(); // Maps the id to the name
   public totalSessionsPerScenario: Map<string, number> = new Map();
   public descSort = ClrDatagridSortOrder.DESC;
 
@@ -123,7 +120,14 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       this.currentScheduledEvent
     ) {
       this.currentScheduledEvent = this.scheduledEvent;
-      this.setDatesToScheduledEvent(this.scheduledEvent);
+      this.progressesCache = null; // Reset cache so data from the changed SE can be retreived
+      this.scenariosWithSessionMap = new Map();
+      this.totalSessionsPerScenario = new Map();
+      this.chartDetails.controls.scenarios.setValue(['*']);
+      this.setDatesToScheduledEvent(
+        this.scheduledEvent,
+        this.chartDetails.controls.observationPeriod.value
+      );
       this.updateData(this.chartDetails.controls.observationPeriod.value);
     }
   }
@@ -174,7 +178,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     );
 
     if (this.scheduledEvent) {
-      this.setDatesToScheduledEvent(this.scheduledEvent);
+      this.setDatesToScheduledEvent(this.scheduledEvent, 'daily');
     }
 
     this.updateLabels('daily');
@@ -214,7 +218,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   }
 
   public clearScenarios(): void {
-    this.chartDetails.controls.scenarios.reset();
+    this.chartDetails.controls.scenarios.setValue(['*']);
   }
 
   private validateStartDate(): ValidatorFn {
@@ -248,7 +252,10 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     };
   }
 
-  private setDatesToScheduledEvent(se: ScheduledEvent) {
+  private setDatesToScheduledEvent(
+    se: ScheduledEvent,
+    observationPeriod: 'daily' | 'weekly' | 'monthly'
+  ) {
     const currentDate = new Date();
 
     // Set default start date to beginning of the scheduledEvent
@@ -261,12 +268,13 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       this.endDate = currentDate;
     }
 
-    if (this.chartDetails) {
-      this.chartDetails.controls.startDate.setValue(
-        this.startDate.toDateString()
-      );
-      this.chartDetails.controls.endDate.setValue(this.endDate.toDateString());
-    }
+    this.chartDetails.controls.endDate.setValue(
+      this.endDate.toLocaleDateString('en-US', this.options)
+    );
+    this.chartDetails.controls.startDate.setValue(
+      this.startDate.toLocaleDateString('en-US', this.options)
+    );
+    this.updateLabels(observationPeriod);
   }
 
   private updateData(observationPeriod: 'daily' | 'weekly' | 'monthly') {
@@ -281,6 +289,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     this.progressService
       .listByRange(this.startDate, this.endDate)
       .subscribe((progresses: Progress[]) => {
+        this.progressesCache = progresses;
         this.processData(progresses, observationPeriod);
       });
   }
@@ -288,13 +297,16 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   private updateDataByScheduledEvent(
     observationPeriod: 'daily' | 'weekly' | 'monthly'
   ) {
-    this.progressService
-      .listByScheduledEvent(this.scheduledEvent.id, true)
-      .subscribe((progresses: Progress[]) => {
-        // TODO: Filter by range
-        progresses.forEach((p) => {});
-        this.processData(progresses, observationPeriod);
-      });
+    if (this.progressesCache) {
+      this.processData(this.progressesCache, observationPeriod);
+    } else {
+      this.progressService
+        .listByScheduledEvent(this.scheduledEvent.id, true)
+        .subscribe((progresses: Progress[]) => {
+          this.progressesCache = progresses;
+          this.processData(this.progressesCache, observationPeriod);
+        });
+    }
   }
 
   private processData(
@@ -362,8 +374,8 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     }
   }
 
-  public setStartDate(d: DlDateTimePickerChange<Date>) {
-    this.startDate = d.value;
+  private updateStartDate(d: Date) {
+    this.startDate = d;
     this.chartDetails.controls.startDate.setValue(
       this.startDate.toLocaleDateString('en-US', this.options)
     );
@@ -371,16 +383,22 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       this.chartDetails.controls.observationPeriod.value;
     this.updateLabels(observationPeriod);
     this.updateData(observationPeriod);
-    this.startDateSignpost.close();
   }
 
-  public setEndDate(d: DlDateTimePickerChange<Date>) {
+  public setStartDate(d: DlDateTimePickerChange<Date>) {
+    this.updateStartDate(d.value);
+    if (this.startDateSignpost) {
+      this.startDateSignpost.close();
+    }
+  }
+
+  private updateEndDate(d: Date) {
     const observationPeriod: 'daily' | 'weekly' | 'monthly' =
       this.chartDetails.controls.observationPeriod.value;
     if (observationPeriod != 'monthly') {
-      this.endDate = d.value;
+      this.endDate = d;
     } else {
-      this.endDate = new Date(d.value.getFullYear(), d.value.getMonth() + 1, 0);
+      this.endDate = new Date(d.getFullYear(), d.getMonth() + 1, 0);
     }
     this.endDate.setHours(23, 59, 59, 999);
     this.updateLabels(observationPeriod);
@@ -388,7 +406,13 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     this.chartDetails.controls.endDate.setValue(
       this.endDate.toLocaleDateString('en-US', this.options)
     );
-    this.endDateSignpost.close();
+  }
+
+  public setEndDate(d: DlDateTimePickerChange<Date>) {
+    this.updateEndDate(d.value);
+    if (this.endDateSignpost) {
+      this.endDateSignpost.close();
+    }
   }
 
   // events
@@ -413,29 +437,30 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   }
 
   private setupScenariosWithSessions(progressData: Progress[]) {
-    this.scenariosWithSession = [];
+    this.scenariosWithSessionMap = new Map();
     progressData.forEach((prog: Progress) => {
-      if (!this.scenariosWithSession.includes(prog.scenario_name)) {
-        this.scenariosWithSession.push(prog.scenario_name);
-      }
+      this.scenariosWithSessionMap.set(prog.scenario, prog.scenario_name);
     });
   }
 
   private allScenariosSelected(): boolean {
     const selectedScenarios = this.chartDetails.controls.scenarios.value;
-    return selectedScenarios.length === 1 && selectedScenarios[0] === '*';
+    return (
+      !selectedScenarios ||
+      (selectedScenarios.length === 1 && selectedScenarios[0] === '*')
+    );
   }
 
   private prepareBarchartDatasets() {
     this.barChartData.datasets.length = 0;
     const selectedScenarios = this.chartDetails.controls.scenarios.value;
     if (this.allScenariosSelected()) {
-      this.scenariosWithSession.forEach((sWithSession: string) => {
+      this.scenariosWithSessionMap.forEach((sWithSession: string) => {
         this.barChartData.datasets.push({
           data: Array.from<number>({
             length: this.barChartData.labels.length,
           }).fill(0),
-          label: sWithSession,
+          label: this.getScenarioName(sWithSession),
           stack: 'a',
         });
       });
@@ -445,7 +470,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
           data: Array.from<number>({
             length: this.barChartData.labels.length,
           }).fill(0),
-          label: sWithSession,
+          label: this.getScenarioName(sWithSession),
           stack: 'a',
         });
       });
@@ -482,16 +507,18 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       return;
     }
     let evaluatedProgressData: Progress[] = progressData;
-    let selectedScenarios: string[] = this.scenariosWithSession;
+    let selectedScenarios: string[] = Array.from(
+      this.scenariosWithSessionMap.keys()
+    );
     if (!this.allScenariosSelected()) {
       selectedScenarios = this.chartDetails.controls.scenarios.value;
       evaluatedProgressData = progressData.filter((progress: Progress) =>
-        selectedScenarios.includes(progress.scenario_name)
+        selectedScenarios.includes(progress.scenario)
       );
     }
     evaluatedProgressData.forEach((prog: Progress) => {
       const index = getIndex(prog);
-      (this.barChartData.datasets[selectedScenarios.indexOf(prog.scenario_name)]
+      (this.barChartData.datasets[selectedScenarios.indexOf(prog.scenario)]
         .data[index] as number) += 1;
     });
   }
@@ -500,8 +527,8 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     this.totalSessionsPerScenario.clear();
     this.totalSessionsPerScenario = progressData.reduce(
       (totalSessions, progress) => {
-        const partialSum = totalSessions.get(progress.scenario_name) ?? 0;
-        totalSessions.set(progress.scenario_name, partialSum + 1);
+        const partialSum = totalSessions.get(progress.scenario) ?? 0;
+        totalSessions.set(progress.scenario, partialSum + 1);
         return totalSessions;
       },
       new Map<string, number>()
@@ -558,5 +585,9 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       );
       this.barChartData.labels.push(labelDateString);
     }
+  }
+
+  public getScenarioName(scenarioId: string) {
+    return this.scenariosWithSessionMap.get(scenarioId) ?? scenarioId;
   }
 }

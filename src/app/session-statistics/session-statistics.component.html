@@ -23,15 +23,17 @@
             name="scenarios"
             clrMulti="true"
           >
-            <ng-container *clrOptionSelected="let scenarioSelected">
-              {{ scenarioSelected }}
+            <ng-container *clrOptionSelected="let scenario of scenarioSelected">
+              {{ getScenarioName(scenario) }}
             </ng-container>
             <clr-options>
               <clr-option
-                *clrOptionItems="let scenario of scenariosWithSession"
-                [clrValue]="scenario"
+                *clrOptionItems="
+                  let scenario of scenariosWithSessionMap | keyvalue
+                "
+                [clrValue]="scenario.key"
               >
-                <cds-icon shape="node-group"></cds-icon> {{ scenario }}
+                <cds-icon shape="node-group"></cds-icon> {{ scenario.value }}
               </clr-option>
             </clr-options>
           </clr-combobox>
@@ -165,10 +167,20 @@
         <clr-dg-row
           *clrDgItems="let item of totalSessionsPerScenario | keyvalue"
         >
-          <clr-dg-cell>{{ item.key }}</clr-dg-cell>
+          <clr-dg-cell>{{ getScenarioName(item.key) }}</clr-dg-cell>
           <clr-dg-cell>{{ item.value }}</clr-dg-cell>
         </clr-dg-row>
       </clr-datagrid>
+    </div>
+  </div>
+  <h3>Scenario Statistics</h3>
+  <div class="clr-row" *ngIf="progressesCache">
+    <div class="clr-col-12">
+      <app-session-time-statistics
+        [progresses]="progressesCache"
+        [scenariosWithSessionMap]="scenariosWithSessionMap"
+      >
+      </app-session-time-statistics>
     </div>
   </div>
 </div>
