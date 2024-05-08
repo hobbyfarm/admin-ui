@@ -11,7 +11,6 @@ import {
   NonNullableFormBuilder,
   Validators,
 } from '@angular/forms';
-import { deepCopy } from 'src/app/deepcopy';
 
 type ChartDetailsFormGroup = FormGroup<{
   scenario: FormControl<string>;
@@ -34,9 +33,12 @@ export class SessionTimeStatisticsComponent implements OnInit {
   public selectedScenario: string;
 
   public stepDurations: number[];
+  public stepDurationsArray: number[][];
   public stepCounts: number[];
-  public avgDuration: number[];
+  public avgDuration: number[] = [];
+  public medianDurationPerStep: number[] = [];
   public totalDuration: number;
+  public totalMedianDuration: number;
 
   public chartDetails: ChartDetailsFormGroup;
   public barChartData: ChartData<'bar'> = {
@@ -139,60 +141,98 @@ export class SessionTimeStatisticsComponent implements OnInit {
   }
 
   private updateData() {
+    // Filter progresses based on the selected scenario
     const evaluatedProgressData = this.progresses.filter(
-      (progress: Progress) => this.selectedScenario == progress.scenario
+      (progress) => this.selectedScenario === progress.scenario
     );
 
-    // TODO calculate data
+    // Initialize step time and counts
     let stepTime = [];
+    let stepTimes = [];
     let stepProgressCount = [];
 
-    evaluatedProgressData.forEach((p) => {
-      // Increase the count of progresses that have been to this step
-      for (let i = 0; i < p.max_step; i++) {
-        if (stepProgressCount[i]) {
-          stepProgressCount[i]++;
-        } else {
-          stepProgressCount[i] = 1;
-        }
+    evaluatedProgressData.forEach((progress) => {
+      // Update step progress counts
+      for (let i = 0; i < progress.max_step; i++) {
+        stepProgressCount[i] = (stepProgressCount[i] || 0) + 1;
       }
 
-      for (let i = 1; i < p.steps.length; i++) {
-        const step = p.steps[i].step;
-        let step_end_time;
-        if (i + 1 == p.steps.length) {
-          // This is the last step entry, we take the last update time to calculate the duration
-          step_end_time = p.last_update;
-        } else {
-          // Normal case is to take the next step entry
-          step_end_time = p.steps[i + 1].timestamp;
-        }
+      // Initialize temporary array to keep track of step times for this progress
+      let stepTimeForThisProgress = [];
 
-        let duration =
-          new Date(step_end_time).getTime() -
-          new Date(p.steps[i].timestamp).getTime();
+      // Iterate through each step in the progress
+      for (let i = 1; i < progress.steps.length; i++) {
+        const step = progress.steps[i].step;
+        const stepStartTime = new Date(progress.steps[i].timestamp).getTime();
+        const stepEndTime =
+          i + 1 === progress.steps.length
+            ? new Date(progress.last_update).getTime()
+            : new Date(progress.steps[i + 1].timestamp).getTime();
 
-        if (stepTime[step - 1]) {
-          stepTime[step - 1] += duration;
-        } else {
-          stepTime[step - 1] = duration;
-        }
+        const duration = stepEndTime - stepStartTime;
+
+        // Update total step time and current progress's step time
+        stepTime[step - 1] = (stepTime[step - 1] || 0) + duration;
+        stepTimeForThisProgress[step - 1] =
+          (stepTimeForThisProgress[step - 1] || 0) + duration;
       }
+
+      // Update step times for detailed duration tracking
+      stepTimeForThisProgress.forEach((time, index) => {
+        if (time !== undefined) {
+          if (stepTimes[index]) {
+            stepTimes[index].push(time);
+          } else {
+            stepTimes[index] = [time];
+          }
+        }
+      });
     });
 
+    // Sort all step times to prepare for median or other statistical analysis
+    stepTimes = stepTimes.map((times) =>
+      times ? times.sort((a, b) => a - b) : []
+    );
+
+    // Assign processed data to the object's properties
     this.stepCounts = stepProgressCount;
     this.stepDurations = stepTime;
-    this.avgDuration = [];
-    this.totalDuration = 0;
+    this.stepDurationsArray = stepTimes;
 
-    for (let i = 0; i < this.stepDurations.length; i++) {
-      const avgStepDurationInSeconds = Math.round(
-        this.stepDurations[i] / this.stepCounts[i] / 1000
-      );
-      this.avgDuration.push(avgStepDurationInSeconds);
-      this.totalDuration += avgStepDurationInSeconds;
-    }
+    // Calculate average durations and total duration
+    this.avgDuration = this.stepDurations.map((duration, i) =>
+      Math.round(duration / this.stepCounts[i] / 1000)
+    );
+    this.totalDuration = this.avgDuration.reduce(
+      (acc, duration) => acc + duration,
+      0
+    );
 
+    // Calculate the median duration for each step and sum them
+    let totalMedianDuration = 0;
+    let medianDurationPerStep = stepTimes.map((times) => {
+      if (times.length === 0) return 0;
+      const mid = Math.floor(times.length / 2);
+      return times[mid];
+    });
+
+    // Summing the median durations for the total
+    totalMedianDuration = medianDurationPerStep.reduce(
+      (acc, median) => acc + median,
+      0
+    );
+
+    // Convert to seconds
+    this.totalMedianDuration = totalMedianDuration / 1000; // Convert to seconds
+
+    // Store median durations per step in seconds for any further needs
+    this.medianDurationPerStep = medianDurationPerStep.map(
+      (median) => median / 1000
+    );
+
+    console.log(this.stepDurationsArray);
+
+    // Final processing step
     this.processData();
   }
 
@@ -229,8 +269,15 @@ export class SessionTimeStatisticsComponent implements OnInit {
       data: Array.from<number>({
         length: this.barChartData.labels.length,
       }).fill(0),
-      label: this.scenariosWithSessionMap.get(this.selectedScenario),
+      label: 'Average',
       stack: 'a',
+    });
+    this.barChartData.datasets.push({
+      data: Array.from<number>({
+        length: this.barChartData.labels.length,
+      }).fill(0),
+      label: 'Median',
+      stack: 'b',
     });
   }
 
@@ -241,6 +288,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
     }
 
     this.barChartData.datasets[0].data = this.avgDuration;
+    this.barChartData.datasets[1].data = this.medianDurationPerStep;
 
     this.updateLabels();
   }
@@ -260,5 +308,9 @@ export class SessionTimeStatisticsComponent implements OnInit {
 
   public getNumberOfSessionsForStep(stepIndex: number) {
     return this.stepCounts[stepIndex] ?? '-';
+  }
+
+  public getFormattedMedianOfStep(stepIndex: number) {
+    return this.formatDuration(this.medianDurationPerStep[stepIndex]);
   }
 }
