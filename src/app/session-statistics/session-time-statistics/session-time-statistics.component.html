@@ -37,16 +37,21 @@
     <clr-datagrid>
       <clr-dg-column [clrDgField]="'key'">Step</clr-dg-column>
       <clr-dg-column>Average Duration</clr-dg-column>
+      <clr-dg-column>Median Duration</clr-dg-column>
       <clr-dg-column>Sessions</clr-dg-column>
       <clr-dg-row *clrDgItems="let duration of avgDuration; index as i">
         <clr-dg-cell>Step {{ i + 1 }}</clr-dg-cell>
         <clr-dg-cell>{{ formatDuration(duration) }}</clr-dg-cell>
+        <clr-dg-cell>{{ getFormattedMedianOfStep(i) }}</clr-dg-cell>
         <clr-dg-cell>{{ getNumberOfSessionsForStep(i) }}</clr-dg-cell>
       </clr-dg-row>
       <clr-dg-row>
         <clr-dg-cell><b>Total</b></clr-dg-cell>
         <clr-dg-cell
           ><b>{{ formatDuration(totalDuration) }}</b></clr-dg-cell
+        >
+        <clr-dg-cell
+          ><b>{{ formatDuration(totalMedianDuration) }}</b></clr-dg-cell
         >
         <clr-dg-cell
           ><b>{{ getNumberOfSessionsForStep(0) }}</b></clr-dg-cell
