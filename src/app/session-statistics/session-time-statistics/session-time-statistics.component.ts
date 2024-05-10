@@ -230,8 +230,6 @@ export class SessionTimeStatisticsComponent implements OnInit {
       (median) => median / 1000
     );
 
-    console.log(this.stepDurationsArray);
-
     // Final processing step
     this.processData();
   }
