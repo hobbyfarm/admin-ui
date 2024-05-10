@@ -12,11 +12,15 @@
         (click)="setStepOpen(set)"
       >
         <clr-accordion-title>
-          <ng-container *ngIf="!set.dynamic"
+          <ng-container *ngIf="!set.dynamic && !isSharedVmDashboard"
             ><b>VMSet:</b> {{ set.base_name }} &nbsp; <b>Available:</b>
             {{ set.available }}/{{ set.count }}&nbsp;</ng-container
-          ><ng-container *ngIf="set.dynamic"
+          ><ng-container *ngIf="set.dynamic && !isSharedVmDashboard"
             ><b>Dynamic:</b> {{ set.base_name }} &nbsp; <b>Count: </b
+            >{{ set.count }} &nbsp;</ng-container
+          >
+          <ng-container *ngIf="isSharedVmDashboard"
+            ><b>SharedVm:</b> {{ set.base_name }} &nbsp; <b>Count: </b
             >{{ set.count }} &nbsp;</ng-container
           >
 

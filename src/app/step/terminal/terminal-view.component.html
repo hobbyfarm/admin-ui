@@ -1,0 +1,20 @@
+<!-- <div class="test">
+    <app-terminal
+    [vmname]="vmname"
+    [vmid]="vmid"
+    [endpoint]="endpoint"   
+    ></app-terminal>
+</div> -->
+
+<div class="terminal-test">        
+            <table class="table compact">
+                <tr>
+                    <td><b>vmname:</b> {{ vmname }}</td>
+                    <td><b>endpoint:</b> {{ endpoint }}</td>
+                    <td><b>vmid:</b> {{ vmid }}</td>
+                </tr>
+            </table>
+            <app-terminal [vmname]="vmname" [vmid]="vmid" [endpoint]="endpoint"></app-terminal>
+    
+</div>
+
