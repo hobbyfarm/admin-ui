@@ -154,6 +154,7 @@ import {
   downloadIcon,
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
+import { TerminalViewComponent } from './step/terminal/terminal-view.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -256,6 +257,7 @@ export function jwtOptionsFactory(): JwtConfig {
     StepComponent,
     HfMarkdownComponent,
     TerminalComponent,
+    TerminalViewComponent,
     CtrComponent,
     RbacDirective,
     ClarityDisableSelectionDirective,

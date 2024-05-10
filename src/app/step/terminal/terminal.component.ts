@@ -7,6 +7,7 @@ import {
   ViewEncapsulation,
   AfterViewInit,
   OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
@@ -17,13 +18,14 @@ import { CodeExec } from '../CodeExec';
 import { ShellService } from '../../data/shell.service';
 import { environment } from 'src/environments/environment';
 import { HostListener } from '@angular/core';
-import { interval, Subscription, timer } from 'rxjs';
+import { interval, Subscription, tap, timer } from 'rxjs';
 import { themes } from '../terminal-themes/themes';
 import { SettingsService } from '../../data/settings.service';
 import { CanvasAddon } from 'xterm-addon-canvas';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 const WS_CODE_NORMAL_CLOSURE = 1000;
-
+//TODO
 @Component({
   selector: 'app-terminal',
   templateUrl: './terminal.component.html',
@@ -57,6 +59,7 @@ export class TerminalComponent implements OnChanges, AfterViewInit, OnDestroy {
     private ctrService: CtrService,
     private shellService: ShellService,
     private settingsService: SettingsService,
+    private route: ActivatedRoute,
   ) {}
 
   @HostListener('window:resize')
