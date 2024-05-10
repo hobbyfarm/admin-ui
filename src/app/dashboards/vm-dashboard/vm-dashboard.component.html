@@ -16,12 +16,16 @@
           (click)="setStepOpen(set)"
         >
           <clr-accordion-title>
-            @if (!set.dynamic) {
+            @if (!set.dynamic && !isSharedVmDashboard) {
               <b>VMSet:</b> {{ set.base_name }} &nbsp; <b>Available:</b>
               {{ set.available }}/{{ set.count }}&nbsp;
-            } @else {
+            } @else if (set.dynamic && !isSharedVmDashboard){
               <b>Dynamic:</b> {{ set.base_name }} &nbsp; <b>Count: </b
               >{{ set.count }} &nbsp;
+            } @else if (isSharedVmDashboard) {
+              <b>SharedVm:</b> {{ set.base_name }} &nbsp; <b>Count: </b
+            >{{ set.count }} &nbsp;
+          >
             }
             <b>Environment:</b> {{ set.environment }}
           </clr-accordion-title>

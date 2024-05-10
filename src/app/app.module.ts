@@ -172,6 +172,7 @@ import { TooltipComponent } from './tooltip/tooltip.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AuthnService } from './data/authn.service';
 import { SessionProgressService } from './progress/session-progress.service';
+import { TerminalViewComponent } from './step/terminal/terminal-view.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -282,6 +283,7 @@ export function jwtOptionsFactory(): JwtConfig {
     StepComponent,
     HfMarkdownComponent,
     TerminalComponent,
+    TerminalViewComponent,
     CtrComponent,
     RbacDirective,
     ClarityDisableSelectionDirective,

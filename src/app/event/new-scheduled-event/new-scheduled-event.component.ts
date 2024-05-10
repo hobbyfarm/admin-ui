@@ -1185,21 +1185,25 @@ export class NewScheduledEventComponent
   }
 
   public addSharedVM() {
+    if(this.se.shared_vms==null) {this.se.shared_vms=[]}
     this.se.shared_vms.push({
       vmId: "",
       name: this.sharedVmForm.controls.vm_name.value,
       environment: this.sharedVmForm.controls.vm_env.value,
       vmTemplate: this.sharedVmForm.controls.vm_template.value,
     })
+    console.log("shared_vms")
   }
 
     public addNewSharedVM(name: string,environment: string, vmtemplate: string ) {
+      if(this.se.shared_vms==null) {this.se.shared_vms=[]}
       this.se.shared_vms.push({
         vmId: "",
         environment: environment,
         name: name,
         vmTemplate: vmtemplate,
       })
+      console.log("newshared_vms")
   }
 
   deleteSharedVm(index: number) {

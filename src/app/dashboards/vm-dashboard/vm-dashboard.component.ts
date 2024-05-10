@@ -24,6 +24,8 @@ interface dashboardVmSet extends VmSet {
 export class VmDashboardComponent implements OnInit {
   @Input()
   selectedEvent: ScheduledEventBase;
+  @Input()
+  isSharedVmDashboard: boolean;
 
   constructor(
     public vmService: VmService,
@@ -55,53 +57,99 @@ export class VmDashboardComponent implements OnInit {
   }
 
   getVmList() {
-    combineLatest([
-      this.vmService.listByScheduledEvent(this.selectedEvent.id),
-      this.vmSetService.getVMSetByScheduledEvent(this.selectedEvent.id),
-      this.userService.list(),
-    ]).subscribe(([vmList, vmSet, users]) => {
-      const userMap = new Map(users.map((u) => [u.id, u.email]));
-      this.vms = vmList.map((vm) => ({
-        ...vm,
-        user: userMap.get(vm.user) ?? '-',
-      }));
+    if(this.isSharedVmDashboard) {
+      combineLatest([ 
+        this.vmService.listByScheduledEvent(this.selectedEvent.id),  
+        this.vmSetService.getVMSetByScheduledEvent(this.selectedEvent.id),       
+      ]).subscribe(([vmList, vmSet]) => {
+        this.vms = vmList.filter(vm => vm.user=='')//vm.hostname.includes("shared") && vm.user==''
+        .map((vm) => ({
+          ...vm,         
+        }));
+        this.vmSets = vmSet.map((set) => ({
+          ...set,
+          setVMs: this.vms.filter((vm) => vm.hostname.includes("shared")),
+          stepOpen: this.openPanels.has(set.base_name),
+          dynamic: false,
+          available: this.vms.filter(
+            (vm) => vm.vm_set_id === set.id && vm.status == 'running'
+          ).length,
+        }));
+        // dynamic machines have no associated vmSet
+        if (this.vms.filter((vm) => vm.vm_set_id == '' && vm.hostname.includes("shared")).length > 0) {
+          this.loadVmsFromScheduledEvent(false);
+        }
+    //    this.loadVmsFromScheduledEvent(false);
+        this.cd.detectChanges();
+      })
+    } else {
+      combineLatest([
+        this.vmService.listByScheduledEvent(this.selectedEvent.id),
+        this.vmSetService.getVMSetByScheduledEvent(this.selectedEvent.id),
+        this.userService.list(),
+      ]).subscribe(([vmList, vmSet, users]) => {
+        const userMap = new Map(users.map((u) => [u.id, u.email]));
+        this.vms = vmList.filter(vm => vm.user!='')
+        .map((vm) => ({
+          ...vm,
+          user: userMap.get(vm.user) ?? '-',
+        }));
+  
+        this.vmSets = vmSet.map((set) => ({
+          ...set,
+          setVMs: this.vms.filter((vm) => vm.vm_set_id === set.id),
+          stepOpen: this.openPanels.has(set.base_name),
+          dynamic: false,
+          available: this.vms.filter(
+            (vm) => vm.vm_set_id === set.id && vm.status == 'running'
+          ).length,
+        }));
+        // dynamic machines have no associated vmSet
+        if (this.vms.filter((vm) => vm.vm_set_id == '').length > 0) {
+          this.loadVmsFromScheduledEvent(true);
+        }
+        this.cd.detectChanges(); //The async Code above updates values after Angulars usual change-detection so we call this Method to prevent Errors
+      });
+    }
+  }
 
-      this.vmSets = vmSet.map((set) => ({
-        ...set,
-        setVMs: this.vms.filter((vm) => vm.vm_set_id === set.id),
-        stepOpen: this.openPanels.has(set.base_name),
-        dynamic: false,
-        available: this.vms.filter(
-          (vm) => vm.vm_set_id === set.id && vm.status == 'running'
-        ).length,
-      }));
-      // dynamic machines have no associated vmSet
-      if (this.vms.filter((vm) => vm.vm_set_id == '').length > 0) {
-        let groupedVms: Map<string, VirtualMachine[]> = this.groupByEnvironment(
-          this.vms.filter((vm) => vm.vm_set_id == '')
-        );
-        groupedVms.forEach((element, environment) => {
-          let vmSet: dashboardVmSet = {
-            ...new VmSet(),
-            base_name: environment,
-            stepOpen: this.openPanels.has(environment),
-            dynamic: true,
-          };
-          vmSet.setVMs = element;
-          vmSet.count = element.length;
-          vmSet.available = element.filter(
-            (vm) => vm.status == 'running'
-          ).length;
-          vmSet.environment = environment;
-          this.vmSets.push(vmSet);
-        });
-      }
-      this.cd.detectChanges(); //The async Code above updates values after Angulars usual change-detection so we call this Method to prevent Errors
-    });
+  // Used to load either dynamic or shared virtualMachines for an event
+  private loadVmsFromScheduledEvent(dynamic: boolean) {
+    // dynamic machines have no associated vmSet
+    if (this.vms.filter((vm) => vm.vm_set_id == '').length > 0) {
+      let groupedVms: Map<string, VirtualMachine[]> = this.groupByEnvironment(
+        this.vms.filter((vm) => vm.vm_set_id == '')
+      );
+      groupedVms.forEach((element, environment) => {
+        let vmSet: dashboardVmSet = {
+          ...new VmSet(),
+          base_name: environment,
+          stepOpen: this.openPanels.has(environment),
+          dynamic: true,
+        };
+        vmSet.setVMs = element;
+        vmSet.count = element.length;
+        vmSet.available = element.filter(
+          (vm) => vm.status == 'running'
+        ).length;
+        vmSet.environment = environment;
+        this.vmSets.push(vmSet);
+      });
+    }
   }
 
   openUsersTerminal(vm: VirtualMachine) {
-    if (!vm.user) return;
+    if(this.isSharedVmDashboard) {
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree([
+          '/terminal',
+          vm.id,
+          vm.ws_endpoint          
+        ])
+      );
+      window.open(url, '_blank');    
+      return;
+    }
     let userId: string | undefined; //get the Users ID who has the VM allocated to him
     this.userService.list().subscribe((users) => {
       userId = users.filter((user) => user.email === vm.user)[0]?.id;
