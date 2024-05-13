@@ -1,4 +1,5 @@
 import { Step } from './step';
+import { VMTasks } from './vm-tasks';
 
 export class Scenario {
     id: string;
@@ -12,4 +13,5 @@ export class Scenario {
     keepalive_duration: string;
     pause_duration: string;
     pauseable: boolean;
+    vm_tasks: VMTasks[]
 }

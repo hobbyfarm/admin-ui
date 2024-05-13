@@ -249,6 +249,7 @@
           </clr-accordion>
         </ng-container>
         <app-code-with-syntax-highlighting
+          [resizeable]="true"
           [textValue]="newVMServiceFormGroup.value['cloudConfigString']"
           (textChanged)="
             newVMServiceFormGroup.controls.cloudConfigString.setValue($event)

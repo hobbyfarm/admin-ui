@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ClrModal, ClrWizard } from '@clr/angular';
+import { ClrModal, ClrWizard, ClrWizardPage } from '@clr/angular';
 import { RbacService } from 'src/app/data/rbac.service';
 import { Scenario } from 'src/app/data/scenario';
 import { ScenarioService } from 'src/app/data/scenario.service';
@@ -20,7 +20,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryFormGroup, ScenarioFormGroup } from 'src/app/data/forms';
 import { AlertDetails } from 'src/app/alert/alert';
 import { ClrAlertType } from 'src/app/clr-alert-type';
+import { VMTasks } from 'src/app/data/vm-tasks';
 
+interface ValidationError {
+  message: string
+}
 @Component({
   selector: 'scenario-wizard',
   templateUrl: './scenario-wizard.component.html',
@@ -52,6 +56,9 @@ export class ScenarioWizardComponent implements OnInit {
 
   public selectedscenario: Scenario;
 
+  public disableFinalizeButton: boolean = false;
+  public validationErrors: ValidationError[] = [];
+
   get keepaliveRequired() {
     const ka = this.scenarioDetails.controls.keepalive_amount;
     const ku = this.scenarioDetails.controls.keepalive_unit;
@@ -70,6 +77,8 @@ export class ScenarioWizardComponent implements OnInit {
   @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
   @ViewChild('stepsscenario', { static: true })
   stepScenario: StepsScenarioComponent;
+  @ViewChild('taskPage') taskWizardPage: ClrWizardPage;
+  @ViewChild('finalizePage') finalizeWizardPage: ClrWizardPage;
 
   constructor(
     public scenarioService: ScenarioService,
@@ -146,6 +155,59 @@ export class ScenarioWizardComponent implements OnInit {
           });
         }
       });
+
+    this.wizard.currentPageChanged.subscribe(() => {
+      this.validationErrors = []
+        if (this.selectedscenario.vm_tasks.length > 0) {
+          this.validateTaskDefinitions()
+        }
+      this.disableFinalizeButton = !(this.validationErrors.length == 0)
+    });
+  }
+
+  validateTaskDefinitions() {
+    this.taskWizardPage.hasError = false
+    this.validateVMsExist();
+    this.validateNoDuplicateNames();
+    this.validateAllFieldsHaveValues()
+  }
+
+  
+  private validateVMsExist() {
+    const vmNames = this.selectedscenario.virtualmachines.map(vm => Object.keys(vm)).reduce((acc, val) => acc.concat(val), []);
+    const taskVmNames = this.selectedscenario.vm_tasks.map(vmTask => vmTask.vm_name);
+    taskVmNames.forEach((name) => {
+      if (!vmNames.includes(name)) {
+        this.taskWizardPage.hasError = true;
+        this.validationErrors.push({ message: "One or more Tasks reference a Virtual Machnine Name, that does not exist" });
+      }
+    });
+  }
+  
+  private validateNoDuplicateNames() {
+    this.selectedscenario.vm_tasks.forEach(vmTask => {
+      let tmpArr = [];
+      vmTask.tasks.forEach(task => {
+        const taskName = task.name;
+        if (tmpArr.indexOf(taskName) < 0) {
+          tmpArr.push(taskName);
+        } else {
+          this.taskWizardPage.hasError = true;
+          this.validationErrors.push({ message: "Task " + vmTask.vm_name + ": " + taskName + " is a Duplicate" });
+        }
+      });
+    });
+  }
+
+  private validateAllFieldsHaveValues() {
+    this.selectedscenario.vm_tasks.forEach(vmTask => {
+      vmTask.tasks.forEach((task) => {
+        if (task.name.length == 0 || task.command.length == 0 || task.description.length == 0 || task.return_type.length == 0) {
+          this.taskWizardPage.hasError = true;
+          this.validationErrors.push({ message: "Task " + vmTask.vm_name + ": " + task.name + " is missing required information" });
+        }
+      })      
+    })
   }
 
   open(wizardMode: 'create' | 'edit', scenario?: Scenario) {
@@ -305,6 +367,7 @@ export class ScenarioWizardComponent implements OnInit {
 
   addVMSet() {
     this.selectedscenario.virtualmachines.push({});
+    this.updateSelectedScenarioRef();
   }
 
   addVM() {
@@ -312,20 +375,24 @@ export class ScenarioWizardComponent implements OnInit {
       this.vmform.controls.vm_name.value
     ] = this.vmform.controls.vm_template.value;
     this.createVMModal.close();
+    this.updateSelectedScenarioRef();
   }
 
   deleteVMSet(i: number) {
     this.deletingVMSetIndex = i;
     this.deleteVMSetModal.open();
+    this.updateSelectedScenarioRef();
   }
 
   public deleteVM(setIndex: number, key: string) {
     delete this.selectedscenario.virtualmachines[setIndex][key];
+    this.updateSelectedScenarioRef();
   }
 
   doDeleteVMSet() {
     this.selectedscenario.virtualmachines.splice(this.deletingVMSetIndex, 1);
     this.deleteVMSetModal.close();
+    this.updateSelectedScenarioRef();
   }
 
   public openCreateVM(i: number) {
@@ -402,5 +469,14 @@ export class ScenarioWizardComponent implements OnInit {
     this.selectedscenario.steps = [];
     this.selectedscenario.virtualmachines[0] = {};
     this.selectedscenario.categories = [];
+    this.selectedscenario.vm_tasks = [];
+  }
+
+  updateSelectedScenarioRef() {
+    this.selectedscenario = { ...this.selectedscenario }; // Force an Update on Child Components using the selectedscenario as Input
+  }
+
+  replaceVmTasks(vmTasks: VMTasks[]) {
+    this.selectedscenario.vm_tasks = vmTasks;
   }
 }

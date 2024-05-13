@@ -125,7 +125,8 @@ export class ScenarioService {
       .set('tags', JSON.stringify(s.tags))
       .set('virtualmachines', JSON.stringify(s.virtualmachines))
       .set('pause_duration', s.pause_duration)
-      .set('keepalive_duration', s.keepalive_duration);
+      .set('keepalive_duration', s.keepalive_duration)
+      .set('vm_tasks', JSON.stringify(s.vm_tasks));
 
     return this.http
       .put(environment.server + '/a/scenario/' + s.id, params)
@@ -159,7 +160,8 @@ export class ScenarioService {
       .set('pause_duration', s.pause_duration)
       .set('categories', JSON.stringify(s.categories))
       .set('tags', JSON.stringify(s.tags))
-      .set('keepalive_duration', s.keepalive_duration);
+      .set('keepalive_duration', s.keepalive_duration)
+      .set('vm_tasks', JSON.stringify(s.vm_tasks));
 
     return this.http.post(environment.server + '/a/scenario/new', params).pipe(
       catchError((e: HttpErrorResponse) => {
