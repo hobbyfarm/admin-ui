@@ -60,17 +60,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         }, new Map());
         this.scheduledeventService.setDashboardCache(map);
         this.rbacService.Grants('users', 'list').then((rbacUsers) => {
-          rbacUsers && this.sortEventLists();
+          if (rbacUsers) {
+            // sort by creator if allowed
+            this.sortEventLists();
+          }
+          //Always navigate to first event
+          this.navigateToFirstScheduledEvent();
         });
         this.setActiveSessionsCount();
         this.updateInterval = setInterval(() => {
           this.setActiveSessionsCount();
         }, 30 * 1000);
-        if (this.activeEvents.length > 0) {
-          this.router.navigateByUrl(
-            `/dashboards/event/${this.activeEvents[0].id}`
-          );
-        }
       });
   }
 
@@ -88,6 +88,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.sortByLoggedInAdminUser(this.activeEvents);
     this.sortByLoggedInAdminUser(this.finishedEvents);
   }
+
+  navigateToFirstScheduledEvent() {
+    if (this.activeEvents.length > 0) {
+      if (this.router.url === '/dashboards') {
+        this.router.navigateByUrl(
+          `/dashboards/event/${this.activeEvents[0].id}`
+        );
+      }
+    }
+  }
+
   sortByLoggedInAdminUser(eventArray: DashboardScheduledEvent[]) {
     const isCreatedByMe = (e: DashboardScheduledEvent) =>
       Number(e.creatorEmail === this.loggedInAdminEmail);
