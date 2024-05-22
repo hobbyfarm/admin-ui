@@ -1,40 +1,85 @@
 <div class="card">
-    <div class="progress">
-        <progress class="{{getProgressColorClass()}}" [value]="getProgress() || 0" max="100"></progress>
+  <div class="progress">
+    <progress
+      class="{{ getProgressColorClass() }}"
+      [value]="getProgress() || 0"
+      max="100"
+    ></progress>
+  </div>
+
+  <div class="card-header" (click)="progressFilterName()">
+    {{ getUsername() }}
+  </div>
+  <div class="card-block">
+    <div class="card-text">
+      <div>
+        <cds-icon shape="play" solid></cds-icon> {{ progress.scenario_name }}
+      </div>
+      <div *ngIf="progress.course">
+        <cds-icon shape="layers" solid></cds-icon> {{ progress.course_name }}
+      </div>
+      <div *ngIf="progress.current_step > 0">
+        <cds-icon shape="number-list"></cds-icon> {{ progress.current_step }} /
+        {{ progress.total_step }}
+      </div>
+      <div *ngIf="progress.current_step == 0">
+        <cds-icon shape="number-list"></cds-icon> Not started yet
+      </div>
+      <div *ngIf="!progress.finished" title="Since {{ progress.started }}">
+        <cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}
+      </div>
+      <div
+        *ngIf="progress.finished"
+        title="{{ progress.started }}-{{ progress.last_update }}"
+      >
+        <cds-icon shape="clock"></cds-icon>
+        {{ timeSince(progress.started, progress.last_update) }}
+      </div>
     </div>
-    
-    <div class="card-header" (click)="progressFilterName()">
-        {{ progress.username }}
-    </div>
-    <div class="card-block">
-        <div class="card-text">
-            <div><cds-icon shape="play" solid></cds-icon> {{progress.scenario_name}}</div>
-            <div *ngIf="progress.course"><cds-icon shape="layers" solid></cds-icon> {{progress.course_name}}</div>
-            <div *ngIf="progress.current_step > 0"><cds-icon shape="number-list"></cds-icon> {{ progress.current_step }} / {{ progress.total_step }}</div>
-            <div *ngIf="progress.current_step == 0"><cds-icon shape="number-list"></cds-icon> Not started yet</div>
-            <div *ngIf="!progress.finished" title="Since {{progress.started}}"><cds-icon shape="clock"></cds-icon> {{  timeSince(progress.started) }}</div>
-            <div *ngIf="progress.finished" title="{{progress.started}}-{{progress.last_update}}"><cds-icon shape="clock"></cds-icon> {{  timeSince(progress.started, progress.last_update) }}</div>
+  </div>
+
+  <div class="card-footer">
+    <clr-dropdown>
+      <button class="dropdown-toggle btn btn-primary" clrDropdownTrigger>
+        Actions
+        <cds-icon shape="angle" direction="down"></cds-icon>
+      </button>
+      <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
+        <div class="dropdown-item" (click)="openInfo()" clrDropdownItem>
+          Info
         </div>
-    </div>
-
-    
-
-
-    <div class="card-footer">
-
-        <clr-dropdown>
-            <button class="dropdown-toggle btn btn-primary" clrDropdownTrigger>
-                Actions
-                <cds-icon shape="angle" direction="down"></cds-icon>
-            </button>
-            <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
-                <div class="dropdown-item " (click)="openInfo()" clrDropdownItem>Info</div>                
-                <div class="dropdown-item"  (click)="openTerminalWindow()" [clrDisabled]="progress.finished" clrDropdownItem *rbac="['sessions.get', 'courses.get','progresses.list', 'scenarios.get', 'virtualmachineclaims.get']">Join Session</div>
-                <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
-                <div class="dropdown-item " (click)="terminateSession()" [clrDisabled]="progress.finished" clrDropdownItem *rbac="['sessions.update']">Terminate Session</div>
-            </clr-dropdown-menu>
-        </clr-dropdown>
-    </div>
+        <div
+          class="dropdown-item"
+          (click)="openTerminalWindow()"
+          [clrDisabled]="progress.finished"
+          clrDropdownItem
+          *rbac="[
+            'sessions.get',
+            'courses.get',
+            'progresses.list',
+            'scenarios.get',
+            'virtualmachineclaims.get'
+          ]"
+        >
+          Join Session
+        </div>
+        <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
+        <div
+          class="dropdown-item"
+          (click)="terminateSession()"
+          [clrDisabled]="progress.finished"
+          clrDropdownItem
+          *rbac="['sessions.update']"
+        >
+          Terminate Session
+        </div>
+      </clr-dropdown-menu>
+    </clr-dropdown>
+  </div>
 </div>
 
-<progress-info #progressInfo [progress]="progress" [pause]="pause"></progress-info>
+<progress-info
+  #progressInfo
+  [progress]="progress"
+  [pause]="pause"
+></progress-info>

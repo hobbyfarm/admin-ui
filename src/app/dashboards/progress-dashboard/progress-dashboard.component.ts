@@ -26,6 +26,7 @@ export class ProgressDashboardComponent implements OnInit {
   public callInterval: any;
   public circleVisible: boolean = true;
   public users: User[];
+  public hideUsernames: boolean = false;
 
   public pauseCall: boolean = false; // Stop refreshing if we are looking at a progress
   public pause = (pause: boolean) => {

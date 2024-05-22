@@ -19,6 +19,20 @@
               >Whether finished sessions should be included.
             </clr-control-helper>
           </clr-toggle-container>
+          <clr-toggle-container id="hideUsernamesToggle">
+            <clr-toggle-wrapper>
+              <input
+                type="checkbox"
+                clrToggle
+                name="hideUsernames"
+                [(ngModel)]="hideUsernames"
+              />
+              <label>Hide Usernames</label>
+            </clr-toggle-wrapper>
+            <clr-control-helper
+              >Keep names hidden in screensharings
+            </clr-control-helper>
+          </clr-toggle-container>
         </div>
         <div class="clr-col">
           <input
@@ -104,6 +118,7 @@
         <progress-card
           [progress]="p"
           [pause]="pause"
+          [hideUsername]="hideUsernames"
           (nameClickedEvent)="filterName($event)"
         ></progress-card>
       </div>

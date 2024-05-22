@@ -23,6 +23,9 @@ export class ProgressComponent {
   public progress: Progress;
 
   @Input()
+  public hideUsername: boolean;
+
+  @Input()
   public pause: Function;
 
   @Output() nameClickedEvent = new EventEmitter<string>();
@@ -93,5 +96,9 @@ export class ProgressComponent {
       return 'status-success';
     }
     return 'status-running';
+  }
+
+  public getUsername() {
+    return this.hideUsername ? this.progress.user : this.progress.username;
   }
 }
