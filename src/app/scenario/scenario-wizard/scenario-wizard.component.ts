@@ -158,7 +158,7 @@ export class ScenarioWizardComponent implements OnInit {
 
     this.wizard.currentPageChanged.subscribe(() => {
       this.validationErrors = []
-        if (this.selectedscenario.vm_tasks.length > 0) {
+        if (this.selectedscenario.vm_tasks?.length > 0) {
           this.validateTaskDefinitions()
         }
       this.disableFinalizeButton = !(this.validationErrors.length == 0)
