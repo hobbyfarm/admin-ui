@@ -10,7 +10,7 @@ import { map, catchError, tap } from 'rxjs/operators';
 import { Course, CourseApi } from './course';
 import { Scenario } from './scenario';
 import { ScenarioService } from './scenario.service';
-import { atou } from '../unicode';
+import { atou, utoa } from '../unicode';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { RbacService } from './rbac.service';
 
@@ -107,8 +107,8 @@ export class CourseService {
       scenarioArray.push(s.id);
     });
     var params = new HttpParams()
-      .set('name', btoa(c.name))
-      .set('description', btoa(c.description))
+      .set('name', utoa(c.name))
+      .set('description', utoa(c.description))
       .set('keepalive_duration', c.keepalive_duration)
       .set('pause_duration', c.pause_duration)
       .set('pauseable', JSON.stringify(c.pauseable))
@@ -124,8 +124,8 @@ export class CourseService {
       scenarioArray.push(s.id);
     });
     var params = new HttpParams()
-      .set('name', btoa(c.name))
-      .set('description', btoa(c.description))
+      .set('name', utoa(c.name))
+      .set('description', utoa(c.description))
       .set('keepalive_duration', c.keepalive_duration)
       .set('pause_duration', c.pause_duration)
       .set('pauseable', JSON.stringify(c.pauseable))
