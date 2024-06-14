@@ -56,13 +56,8 @@ export class EditUserComponent implements OnInit, OnChanges {
   }
 
   public userDetailsForm: FormGroup<{
-    email: FormControl<string>;
     password: FormControl<string>;
   }> = new FormGroup({
-    email: new FormControl<string>(this.user.email, {
-      validators: [Validators.required, Validators.email],
-      nonNullable: true,
-    }),
     password: new FormControl<string>('', { nonNullable: true }),
   });
 
@@ -74,37 +69,34 @@ export class EditUserComponent implements OnInit, OnChanges {
 
   saveDetails() {
     this.saving = true;
-    var email = this.userDetailsForm.controls.email.value;
     var password = this.userDetailsForm.controls.password.value;
-
-    if (email == null) {
-      email = '';
-    }
 
     if (password == null) {
       password = '';
     }
 
-    this.userService.saveUser(this.user.id, email, password).subscribe({
-      next: (_s: ServerResponse) => {
-        this.alertText = 'User updated';
-        this.alertType = 'success';
-        this.alertClosed = false;
-        this.saving = false;
-        setTimeout(() => {
-          this.alertClosed = true;
-        }, 2000);
-      },
-      error: (s: ServerResponse) => {
-        this.alertText = 'Error updating user: ' + s.message;
-        this.alertType = 'danger';
-        this.alertClosed = false;
-        this.saving = false;
-        setTimeout(() => {
-          this.alertClosed = true;
-        }, 2000);
-      },
-    });
+    this.userService
+      .saveUser(this.user.id, this.user.email, password)
+      .subscribe({
+        next: (_s: ServerResponse) => {
+          this.alertText = 'User updated';
+          this.alertType = 'success';
+          this.alertClosed = false;
+          this.saving = false;
+          setTimeout(() => {
+            this.alertClosed = true;
+          }, 2000);
+        },
+        error: (s: ServerResponse) => {
+          this.alertText = 'Error updating user: ' + s.message;
+          this.alertType = 'danger';
+          this.alertClosed = false;
+          this.saving = false;
+          setTimeout(() => {
+            this.alertClosed = true;
+          }, 2000);
+        },
+      });
   }
 
   delete() {
