@@ -18,13 +18,7 @@
       </clr-input-container>
       <clr-input-container>
         <label for="email">Email</label>
-        <input clrInput name="email" formControlName="email" required />
-        <clr-control-error *clrIfError="'required'"
-          >Email is required</clr-control-error
-        >
-        <clr-control-error *clrIfError="'email'"
-          >Input must be an email</clr-control-error
-        >
+        <input clrInput name="email" value="{{ this.user.email }}" disabled />
       </clr-input-container>
       <clr-input-container *rbac="['users.update']">
         <label for="password">Password</label>
