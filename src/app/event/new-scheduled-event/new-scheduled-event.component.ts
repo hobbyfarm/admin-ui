@@ -1191,8 +1191,7 @@ export class NewScheduledEventComponent
       name: this.sharedVmForm.controls.vm_name.value,
       environment: this.sharedVmForm.controls.vm_env.value,
       vmTemplate: this.sharedVmForm.controls.vm_template.value,
-    })
-    console.log("shared_vms")
+    })    
   }
 
     public addNewSharedVM(name: string,environment: string, vmtemplate: string ) {
@@ -1202,8 +1201,7 @@ export class NewScheduledEventComponent
         environment: environment,
         name: name,
         vmTemplate: vmtemplate,
-      })
-      console.log("newshared_vms")
+      })    
   }
 
   deleteSharedVm(index: number) {

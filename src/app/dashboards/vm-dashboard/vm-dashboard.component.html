@@ -1,7 +1,9 @@
 <div>
   <div class="clr-row">
-    <div class="clr-col-12">
-      <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
+    <div class="clr-col-12">     
+      <ng-container *ngIf="!isSharedVmDashboard">
+        <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
+      </ng-container>
     </div>
   </div>
   @if (vmSets.length < 1) {
