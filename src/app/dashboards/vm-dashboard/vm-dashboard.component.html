@@ -1,7 +1,9 @@
 <div>
   <div class="clr-row">
-    <div class="clr-col-12">
-      <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
+    <div class="clr-col-12">     
+      <ng-container *ngIf="!isSharedVmDashboard">
+        <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
+      </ng-container>
     </div>
   </div>
   <div *ngIf="vmSets.length < 1">No active VMs</div>
@@ -13,14 +15,14 @@
       >
         <clr-accordion-title>
           <ng-container *ngIf="!set.dynamic && !isSharedVmDashboard"
-            ><b>VMSet:</b> {{ set.base_name }} &nbsp; <b>Available:</b>
+            ><b>VMSet:</b> &nbsp; <b>Available:</b>
             {{ set.available }}/{{ set.count }}&nbsp;</ng-container
           ><ng-container *ngIf="set.dynamic && !isSharedVmDashboard"
-            ><b>Dynamic:</b> {{ set.base_name }} &nbsp; <b>Count: </b
+            ><b>Dynamic:</b> &nbsp; <b>Count: </b
             >{{ set.count }} &nbsp;</ng-container
           >
           <ng-container *ngIf="isSharedVmDashboard"
-            ><b>SharedVm:</b> {{ set.base_name }} &nbsp; <b>Count: </b
+            ><b>SharedVm:</b> <b>Count: </b
             >{{ set.count }} &nbsp;</ng-container
           >
 
@@ -54,7 +56,7 @@
                 <clr-dg-column [clrDgField]="'hostname'"
                   >Hostname</clr-dg-column
                 >
-
+               
                 <clr-dg-row *clrDgItems="let vm of set.setVMs">
                   <clr-dg-cell
                     class="dashboardCell"

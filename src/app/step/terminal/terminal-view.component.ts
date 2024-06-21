@@ -8,24 +8,22 @@ import { tap } from "rxjs";
     templateUrl: './terminal-view.component.html',
     styleUrls: ['terminal-view.component.scss'],
 })
-export class TerminalViewComponent { //implements OnInit {
-     public vmid = ''//'shared-se-se-lid2eoudic-132593ea'; //dynamic-l5jw4t5ksn-50c998fb
-     public endpoint = ''//'shell-i5-hb.sva.dev';
-     public vmname = ''//'Test';
+export class TerminalViewComponent { 
+     public vmid = ''
+     public endpoint = ''
+     public vmname = ''
   
     constructor(public route: ActivatedRoute) {}
 
 
-    ngOnInit() {
-    //    if(!this.vmid && !this.endpoint) {
+    ngOnInit() {   
         this.route.params.pipe(
             tap((params: Params) => {
             console.log("tapping params...")
-            this.vmname = 'Testing';
+            this.vmname = params['vmName'];
             this.vmid = params['vmId'];
             this.endpoint = params['wsEndpoint'];
-            console.log("params: ", this.vmid, " ", this.endpoint)
-            })).subscribe();
-    //    }
+            console.log("params: ", this.vmid, " ", this.endpoint," ", this.vmname," ", params)
+            })).subscribe();   
     }
 }

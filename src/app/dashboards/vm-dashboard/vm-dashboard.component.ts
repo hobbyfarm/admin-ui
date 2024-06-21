@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { Progress } from 'src/app/data/progress';
 import { ProgressService } from 'src/app/data/progress.service';
 import { ScheduledEvent } from 'src/app/data/scheduledevent';
 import { UserService } from 'src/app/data/user.service';
-import { VirtualMachine } from 'src/app/data/virtualmachine';
+import { VirtualMachine, VirtualMachineTypeShared } from 'src/app/data/virtualmachine';
 import { VmService } from 'src/app/data/vm.service';
 import { VmSet } from 'src/app/data/vmset';
 import { VmSetService } from 'src/app/data/vmset.service';
@@ -21,7 +21,7 @@ interface dashboardVmSet extends VmSet {
   templateUrl: './vm-dashboard.component.html',
   styleUrls: ['./vm-dashboard.component.scss'],
 })
-export class VmDashboardComponent implements OnInit {
+export class VmDashboardComponent implements OnChanges {
   @Input()
   selectedEvent: ScheduledEvent;
   @Input()
@@ -42,10 +42,6 @@ export class VmDashboardComponent implements OnInit {
   public selectedVM: VirtualMachine = new VirtualMachine();
   public openPanels: Set<String> = new Set();
 
-  ngOnInit(): void {
-    this.getVmList();
-  }
-
   ngOnChanges() {
     this.getVmList();
   }
@@ -57,30 +53,21 @@ export class VmDashboardComponent implements OnInit {
   }
 
   getVmList() {
+    
     if(this.isSharedVmDashboard) {
       combineLatest([ 
         this.vmService.listByScheduledEvent(this.selectedEvent.id),  
         this.vmSetService.getVMSetByScheduledEvent(this.selectedEvent.id),       
-      ]).subscribe(([vmList, vmSet]) => {
-        this.vms = vmList.filter(vm => vm.user=='')//vm.hostname.includes("shared") && vm.user==''
+      ]).subscribe(([vmList, vmSet]) => {      
+        this.vms = vmList.filter(vm => vm.vm_type == VirtualMachineTypeShared)// vm.vm_type!="Shared" && vm.user==''
         .map((vm) => ({
           ...vm,         
         }));
-        this.vmSets = vmSet.map((set) => ({
-          ...set,
-          setVMs: this.vms.filter((vm) => vm.hostname.includes("shared")),
-          stepOpen: this.openPanels.has(set.base_name),
-          dynamic: false,
-          available: this.vms.filter(
-            (vm) => vm.vm_set_id === set.id && vm.status == 'running'
-          ).length,
-        }));
-        // dynamic machines have no associated vmSet
-        if (this.vms.filter((vm) => vm.vm_set_id == '' && vm.hostname.includes("shared")).length > 0) {
+        // machines have no associated vmSet
+        if (this.vms.filter((vm) => vm.vm_type == VirtualMachineTypeShared).length > 0) {
           this.loadVmsFromScheduledEvent(false);
         }
-    //    this.loadVmsFromScheduledEvent(false);
-        this.cd.detectChanges();
+      this.cd.detectChanges();
       })
     } else {
       combineLatest([
@@ -89,7 +76,7 @@ export class VmDashboardComponent implements OnInit {
         this.userService.list(),
       ]).subscribe(([vmList, vmSet, users]) => {
         const userMap = new Map(users.map((u) => [u.id, u.email]));
-        this.vms = vmList.filter(vm => vm.user!='')
+        this.vms = vmList.filter(vm => vm.vm_type != VirtualMachineTypeShared )
         .map((vm) => ({
           ...vm,
           user: userMap.get(vm.user) ?? '-',
@@ -117,9 +104,11 @@ export class VmDashboardComponent implements OnInit {
   private loadVmsFromScheduledEvent(dynamic: boolean) {
     // dynamic machines have no associated vmSet
     if (this.vms.filter((vm) => vm.vm_set_id == '').length > 0) {
+      // -> is always true for shared vms...
       let groupedVms: Map<string, VirtualMachine[]> = this.groupByEnvironment(
         this.vms.filter((vm) => vm.vm_set_id == '')
       );
+      // (shared) vms grouped by environment
       groupedVms.forEach((element, environment) => {
         let vmSet: dashboardVmSet = {
           ...new VmSet(),
@@ -151,15 +140,6 @@ export class VmDashboardComponent implements OnInit {
     //  this.router.navigateByUrl(`/terminal/${vm.id}/${vm.ws_endpoint}`);
       return;
     }
-    // if (!vm.user) {
-    //   const url = this.router.serializeUrl(
-    //     this.router.createUrlTree([
-    //       '/terminal',         
-    //     ])
-    //   );
-    //   window.open(url, '_blank', "width=200,height=100");
-    //   console.log("window is opened")
-    // }// return;
     var userId: string; //get the Users ID who has the VM allocated to him
     this.userService.list().subscribe((users) => {
       userId = users.filter((user) => user.email === vm.user)[0]?.id;
