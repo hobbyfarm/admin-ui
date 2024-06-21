@@ -4,13 +4,19 @@
   clrWizardSize="xl"
   (clrWizardOnFinish)="finishScenario()"
   (clrWizardOnCancel)="doCancel()"
+  class="customized"
 >
+<clr-alert *ngFor="let error of validationErrors" [clrAlertType]="'alert-danger'" [clrAlertClosable]="false">
+    <clr-alert-item>
+        {{ error.message }}
+    </clr-alert-item>
+</clr-alert>
   <clr-wizard-title>{{ wizardTitle }} </clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
   <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
   <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-  <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'" [clrWizardButtonDisabled]="disableFinalizeButton">Finish</clr-wizard-button>
 
   <clr-wizard-page
     [clrWizardPageNextDisabled]="!scenarioDetails.valid"
@@ -138,15 +144,12 @@
     </div>
   </clr-wizard-page>
 
-  <clr-wizard-page
-    [clrWizardPageNextDisabled]="!selectedScenarioHasVM()"
-    *rbac="['scenarios.update']"
-  >
+  <clr-wizard-page *rbac="['scenarios.update']" [clrWizardPageNextDisabled]="selectedScenarioHasVMSet() && !selectedScenarioHasVM()">
     <ng-template clrPageTitle>Virtual Machine</ng-template>
     <div
       class="alert alert-warning"
       role="alert"
-      *ngIf="!selectedScenarioHasVM()"
+      *ngIf="!selectedScenarioHasVMSet() && !selectedScenarioHasVM()"
     >
       <div class="alert-items">
         <div class="alert-item static">
@@ -157,8 +160,28 @@
             ></cds-icon>
           </div>
           <span class="alert-text"
-            >You have to add virtual Machine in order to create a functional
-            scenario</span
+            >This scenario will be a content-only scenario until you configure a
+            VirtualMachine</span
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="selectedScenarioHasVMSet() && !selectedScenarioHasVM()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >There are invalid VirtualMachineSets. No Empty VMSets
+            allowed.</span
           >
         </div>
       </div>
@@ -230,6 +253,11 @@
     <ng-container *ngIf="selectedscenario">
       <steps-scenario [scenario]="selectedscenario"></steps-scenario>
     </ng-container>
+  </clr-wizard-page>
+
+  <clr-wizard-page #taskPage>
+    <ng-template clrPageTitle>Tasks</ng-template>
+    <app-task *ngIf="!!selectedscenario" [selectedScenario]="selectedscenario" (tasksChanged)="replaceVmTasks($event)"></app-task>
   </clr-wizard-page>
 
   <clr-wizard-page>
@@ -353,10 +381,30 @@
     </ng-container>
   </clr-wizard-page>
 
-  <clr-wizard-page>
+  <clr-wizard-page #finalizePage>
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>Confirm the following details before finishing</p>
     <h4>Scenario</h4>
+    <div
+      class="alert alert-warning"
+      role="alert"
+      *ngIf="!selectedScenarioHasVM()"
+    >
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <cds-icon
+              class="alert-icon"
+              shape="exclamation-triangle"
+            ></cds-icon>
+          </div>
+          <span class="alert-text"
+            >This scenario will be a content-only scenario until you configure a
+            VirtualMachine</span
+          >
+        </div>
+      </div>
+    </div>
     <table class="table table-compact" *ngIf="selectedscenario">
       <thead>
         <tr>
@@ -381,8 +429,8 @@
           <td>Pause Duration</td>
           <td>{{ selectedscenario.pause_duration }}</td>
         </tr>
-        <tr>
-          <td>Virtual Machine</td>
+        <tr *ngIf="selectedScenarioHasVM()">
+          <td>Virtual Machines</td>
           <td>{{ selectedscenario.virtualmachines.length }}</td>
         </tr>
         <tr>
@@ -394,13 +442,23 @@
           </td>
         </tr>
         <tr>
+          <td>Tasks</td>
+          <td>
+            <ng-container *ngFor="let vm_task of selectedscenario.vm_tasks">
+            <span class="label" *ngFor="let task of vm_task.tasks">
+              {{ vm_task.vm_name }}: {{ task.name }}</span
+            >
+          </ng-container>
+          </td>
+        </tr>
+        <tr>
           <td>Categories</td>
           <td>
             <span
               class="label"
-              *ngFor="let categorie of selectedscenario.categories"
+              *ngFor="let category of selectedscenario.categories"
             >
-              {{ categorie }}</span
+              {{ category }}</span
             >
           </td>
         </tr>
@@ -485,5 +543,3 @@
     </button>
   </div>
 </clr-modal>
-
-

@@ -110,4 +110,11 @@ export const ACTIONS: MDEditorAction[] = [
     actionEmpty: '',
     icon: 'host',
   },
+  {
+    name: 'Task',
+    actionBefore: '```verifyTask:<nodeName>:<taskName>',
+    actionAfter: '\n```',
+    actionEmpty: '',
+    icon: 'check',
+  },
 ];

@@ -69,7 +69,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   public isFormValid: boolean = false;
   public newCategory: boolean = false;
   public courseDetailsActive: boolean = false;
-  public VMAllowNext: boolean = false;
   public seeExamples: boolean = false;
   public newCourseOpen: boolean = false;
   public modified: boolean = false;
@@ -149,19 +148,33 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     this.wizard.reset();
     this.wizard.open();
   }
-  VMSAllow() {
-    if(this.editVirtualMachines.length!=0){
-    if (Object.keys(this.editVirtualMachines[0]).length !== 0)
-      this.VMAllowNext = true;
-    if (Object.keys(this.editVirtualMachines[0]).length == 0)
-      this.VMAllowNext = false;
-    }
+
+  courseHasAtLeastOneVMSet(): boolean {
+    return this.editVirtualMachines.length > 0;
   }
+
+  courseHasValidVMCConfiguration(): boolean {
+    console.log(this.editVirtualMachines);
+    if (this.editVirtualMachines.length > 0) {
+      const validVMSets = this.editVirtualMachines.filter(
+        (virtualmachine, i) => {
+          if (Object.keys(virtualmachine).length > 0) {
+            return true;
+          }
+          return false;
+        }
+      );
+      if (validVMSets.length == this.editVirtualMachines.length) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   openEditCourse(course: Course) {
     this.wizard.reset();
     this.selectedCourse = course;
     this.editCourse(course);
-    this.VMSAllow();
     this.wizard.open();
     this.wizard.navService.goTo(this.wizard.pages.last, true);
     this.wizard.pages.first.makeCurrent();
@@ -202,20 +215,19 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     course.categories = this.editCategories;
   }
   newCourseWizard() {
-    this.setCourseValues(this.course)   
+    this.setCourseValues(this.course);
   }
   updateCourseWizard() {
-    this.setCourseValues(this.selectedCourse)   
+    this.setCourseValues(this.selectedCourse);
   }
-  updateFinalPageWizard() {    
-    if (this.wizardCourse == 'edit'){
-      this.setCourseValues(this.editSelectedCourse)    
-  }
+  updateFinalPageWizard() {
+    if (this.wizardCourse == 'edit') {
+      this.setCourseValues(this.editSelectedCourse);
+    }
   }
 
   setVM(vms: {}[]) {
     this.editVirtualMachines = vms;
-    this.VMSAllow();
     this.setModified();
   }
   setModified() {
@@ -304,9 +316,8 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   whenFinish() {
-
     if (this.wizardCourse == 'create') this.createCourse();
-    if (this.wizardCourse == 'edit') { 
+    if (this.wizardCourse == 'edit') {
       this.updateCourseWizard();
       this.updateCourse();
     }
@@ -348,32 +359,45 @@ export class CourseWizardComponent implements OnChanges, OnInit {
         this.isAlert = true;
       }
     );
-  } 
-
-  getSelectedCourseVM(index: any, vmname: any) {     
-    const selectedCourseVMs = this.showVM( this.selectedCourse.virtualmachines[index])   
-    return selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname) : 0;   
   }
 
-  getEditSelectedCourseVM(index: any, vmname: any) {   
-    const editSelectedCourseVMs = this.showVM( this.editSelectedCourse.virtualmachines[index]) 
-    return editSelectedCourseVMs.has(vmname) ? editSelectedCourseVMs.get(vmname) : 0;   
+  getSelectedCourseVM(index: any, vmname: any) {
+    const selectedCourseVMs = this.showVM(
+      this.selectedCourse.virtualmachines[index]
+    );
+    return selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname) : 0;
   }
 
-  showVM(vms: any) {  
-    return new Map(Object.entries(JSON.parse(JSON.stringify(vms) )))
+  getEditSelectedCourseVM(index: any, vmname: any) {
+    const editSelectedCourseVMs = this.showVM(
+      this.editSelectedCourse.virtualmachines[index]
+    );
+    return editSelectedCourseVMs.has(vmname)
+      ? editSelectedCourseVMs.get(vmname)
+      : 0;
   }
 
-  isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {   
-    return list.some(item => item.name === scenario.name);
+  showVM(vms: any) {
+    if(!vms){
+      return new Map();
+    }
+    return new Map(Object.entries(JSON.parse(JSON.stringify(vms))));
   }
-  
+
+  isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {
+    return list.some((item) => item.name === scenario.name);
+  }
+
   isEditedVM(index: any, vmname: string, templateName: any): boolean {
     // This function determines if the currently selected VM is either beeing edited throug the following condition:
-    const isEdited = this.getSelectedCourseVM(index, vmname) != templateName && this.getSelectedCourseVM(index, vmname) != 0
+    const isEdited =
+      this.getSelectedCourseVM(index, vmname) != templateName &&
+      this.getSelectedCourseVM(index, vmname) != 0;
     // ... or if it was deleted and created again with the same vm name through the following condition:
-    const deletedAndCreatedWithSameName = this.getSelectedCourseVM(index, vmname) === 0 && this.getEditSelectedCourseVM(index, vmname) != templateName
+    const deletedAndCreatedWithSameName =
+      this.getSelectedCourseVM(index, vmname) === 0 &&
+      this.getEditSelectedCourseVM(index, vmname) != templateName;
     // this.getSelectedCourseVM(index, vmname) != templateName && this.getSelectedCourseVM(index, vmname) != 0
-    return isEdited || deletedAndCreatedWithSameName
+    return isEdited || deletedAndCreatedWithSameName;
   }
 }

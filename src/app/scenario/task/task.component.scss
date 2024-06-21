@@ -1,0 +1,29 @@
+#codeInput ::ng-deep .clr-input-wrapper {
+    max-height: fit-content;
+}
+
+clr-input-container .clr-input {
+        width: 90%;
+}
+
+clr-textarea-container .clr-textarea { 
+        width: 90%;
+}
+
+.split-grid {
+  width: 100%;
+  display: inline-grid;
+  grid-template-columns: 50% auto;
+}
+
+.add-task-btn {
+        align-self: end;
+        justify-self: end;
+        padding: 0;
+}
+
+.remove-task-btn {
+        justify-self: end;
+        padding: 0;
+        margin: 0;
+}

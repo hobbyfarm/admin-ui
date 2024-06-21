@@ -83,6 +83,7 @@ import { EnvironmentDetailComponent } from './configuration/environments/environ
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
 import { NgChartsModule } from 'ng2-charts';
 import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
+import { SessionTimeStatisticsComponent } from './session-statistics/session-time-statistics/session-time-statistics.component';
 import { VMTemplateServiceFormComponent } from './configuration/vmtemplates/edit-vmtemplate/vmtemplate-service-form/vmtemplate-service-form.component';
 import { FilterScenariosComponent } from './filter-scenarios/filter-scenarios.component';
 import { MDEditorComponent } from './scenario/md-editor/md-editor.component';
@@ -106,6 +107,10 @@ import { ScenarioWizardComponent } from './scenario/scenario-wizard/scenario-wiz
 import { ScenarioDetailComponent } from './scenario/scenario-detail/scenario-detail.component';
 import { StepsScenarioComponent } from './scenario/steps-scenario/steps-scenario.component';
 import { DashboardDetailsComponent } from './dashboards/dashboard-details/dashboard-details.component';
+import { TaskComponent } from './scenario/task/task.component';
+import { TaskFormComponent } from './scenario/task-form/task-form.component';
+import { SingleTaskVerificationMarkdownComponent } from './step/single-task-verification-markdown/single-task-verification-markdown.component';
+
 import '@cds/core/icon/register.js';
 import {
   ClarityIcons,
@@ -145,8 +150,12 @@ import {
   timesIcon,
   buildingIcon,
   numberListIcon,
+  syncIcon,
+  downloadIcon,
 } from '@cds/core/icon';
+
 import { TerminalViewComponent } from './step/terminal/terminal-view.component';
+import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -184,7 +193,9 @@ ClarityIcons.addIcons(
   clockIcon,
   timesIcon,
   buildingIcon,
-  numberListIcon
+  numberListIcon,
+  syncIcon,
+  downloadIcon
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {
@@ -210,6 +221,7 @@ export function jwtOptionsFactory(): JwtConfig {
     AppComponent,
     HomeComponent,
     SessionStatisticsComponent,
+    SessionTimeStatisticsComponent,
     HeaderComponent,
     EventComponent,
     LoginComponent,
@@ -279,6 +291,10 @@ export function jwtOptionsFactory(): JwtConfig {
     ScenarioDetailComponent,
     StepsScenarioComponent,
     DashboardDetailsComponent,
+    TaskComponent,
+    TaskFormComponent,
+    ReadonlyTaskComponent,
+    SingleTaskVerificationMarkdownComponent,
   ],
   imports: [
     BrowserModule,
@@ -304,7 +320,10 @@ export function jwtOptionsFactory(): JwtConfig {
         sanitize: false,
         convertHTMLEntities: false,
       },
-      globalParsers: [{ component: CtrComponent }],
+      globalParsers: [
+        { component: CtrComponent },
+        { component: SingleTaskVerificationMarkdownComponent },
+      ],
     }),
     BrowserAnimationsModule,
     DragulaModule.forRoot(),
