@@ -14,6 +14,8 @@ import { Subscription, switchMap, tap } from 'rxjs';
 export class DashboardDetailsComponent implements OnInit, OnDestroy {
   public sessionDashboardActive: boolean = true;
   public vmDashboardActive: boolean = false;
+  
+  public sharedVmDashboardActive: boolean = false;
   public statisticsDashboardActive: boolean = false;
 
   public selectedEvent: DashboardScheduledEvent;
