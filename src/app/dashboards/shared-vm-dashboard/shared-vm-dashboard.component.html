@@ -1,9 +1,4 @@
 <div>
-  <div class="clr-row">
-    <div class="clr-col-12">     
-        <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
-    </div>
-  </div>
   <div *ngIf="vmSets.length < 1">No active VMs</div>
   <clr-accordion [clrAccordionMultiPanel]="true">
     <div *ngFor="let set of vmSets">
@@ -12,15 +7,8 @@
         (click)="setStepOpen(set)"
       >
         <clr-accordion-title>
-          <ng-container *ngIf="!set.dynamic"
-            ><b>VMSet</b> &nbsp; <b>Available:</b>
-            {{ set.available }}/{{ set.count }}&nbsp;</ng-container
-          ><ng-container *ngIf="set.dynamic"
-            ><b>Dynamic</b> &nbsp; <b>Count: </b
-            >{{ set.count }} &nbsp;</ng-container
-          >
-
-          <b>Environment:</b> {{ set.environment }}
+          <b>Environment:</b> {{ set.environment }} &nbsp;
+          <b>Count: </b>{{ set.count }}
         </clr-accordion-title>
         <clr-accordion-content *clrIfExpanded>
           <div class="clr-row">
@@ -50,7 +38,7 @@
                 <clr-dg-column [clrDgField]="'hostname'"
                   >Hostname</clr-dg-column
                 >
-               
+
                 <clr-dg-row *clrDgItems="let vm of set.setVMs">
                   <clr-dg-cell
                     class="dashboardCell"
@@ -64,7 +52,7 @@
                     ><button
                       [disabled]="!vm.allocated"
                       class="btn btn-sm btn-primary dashboardCell joinButton"
-                      (click)="openUsersTerminal(vm)"
+                      (click)="openTerminal(vm)"
                     >
                       >_
                     </button></clr-dg-cell

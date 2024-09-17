@@ -18,7 +18,7 @@ export class VirtualMachine {
     vm_type: string = "";
 }
 
-type VirtualMachineType = 'User' | 'Shared';
+type VirtualMachineType = 'USER' | 'SHARED';
 
-export const VirtualMachineTypeUser: VirtualMachineType = 'User';
-export const VirtualMachineTypeShared: VirtualMachineType = 'Shared';
+export const VirtualMachineTypeUser: VirtualMachineType = 'USER';
+export const VirtualMachineTypeShared: VirtualMachineType = 'SHARED';
