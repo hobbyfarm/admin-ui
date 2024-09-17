@@ -55,6 +55,7 @@ import { ProgressDashboardComponent } from './dashboards/progress-dashboard/prog
 import { DashboardsComponent } from './dashboards/dashboards.component';
 import { VmDashboardComponent } from './dashboards/vm-dashboard/vm-dashboard.component';
 import { UsersDashboardComponent } from './dashboards/users-dashboard/users-dashboard.component';
+import { SharedVmDashboardComponent } from './dashboards/shared-vm-dashboard/shared-vm-dashboard.component';
 import { StepComponent } from './step/step-component/step.component';
 import { CtrService } from './data/ctr.service';
 import { SessionService } from './data/session.service';
@@ -280,6 +281,7 @@ export function jwtOptionsFactory(): JwtConfig {
     DashboardsComponent,
     VmDashboardComponent,
     UsersDashboardComponent,
+    SharedVmDashboardComponent,
     StepComponent,
     HfMarkdownComponent,
     TerminalComponent,

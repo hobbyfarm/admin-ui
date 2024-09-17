@@ -1,9 +1,7 @@
 <div>
   <div class="clr-row">
     <div class="clr-col-12">     
-      <ng-container *ngIf="!isSharedVmDashboard">
         <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
-      </ng-container>
     </div>
   </div>
   @if (vmSets.length < 1) {
@@ -18,16 +16,12 @@
           (click)="setStepOpen(set)"
         >
           <clr-accordion-title>
-            @if (!set.dynamic && !isSharedVmDashboard) {
+            @if (!set.dynamic) {
               <b>VMSet:</b> {{ set.base_name }} &nbsp; <b>Available:</b>
               {{ set.available }}/{{ set.count }}&nbsp;
-            } @else if (set.dynamic && !isSharedVmDashboard){
+            } @else {
               <b>Dynamic:</b> {{ set.base_name }} &nbsp; <b>Count: </b
               >{{ set.count }} &nbsp;
-            } @else if (isSharedVmDashboard) {
-              <b>SharedVm:</b> {{ set.base_name }} &nbsp; <b>Count: </b
-            >{{ set.count }} &nbsp;
-          >
             }
             <b>Environment:</b> {{ set.environment }}
           </clr-accordion-title>

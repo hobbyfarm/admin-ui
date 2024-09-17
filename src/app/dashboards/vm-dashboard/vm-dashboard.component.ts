@@ -24,8 +24,6 @@ interface dashboardVmSet extends VmSet {
 export class VmDashboardComponent implements OnChanges {
   @Input()
   selectedEvent: ScheduledEventBase;
-  @Input()
-  isSharedVmDashboard: boolean;
 
   constructor(
     public vmService: VmService,
@@ -52,24 +50,8 @@ export class VmDashboardComponent implements OnChanges {
       : this.openPanels.add(set.base_name);
   }
 
-  getVmList() {
-    
-    if(this.isSharedVmDashboard) {
-      combineLatest([ 
-        this.vmService.listByScheduledEvent(this.selectedEvent.id),  
-        this.vmSetService.getVMSetByScheduledEvent(this.selectedEvent.id),       
-      ]).subscribe(([vmList, vmSet]) => {      
-        this.vms = vmList.filter(vm => vm.vm_type == VirtualMachineTypeShared)// vm.vm_type!="Shared" && vm.user==''
-        .map((vm) => ({
-          ...vm,         
-        }));
-        // machines have no associated vmSet
-        if (this.vms.filter((vm) => vm.vm_type == VirtualMachineTypeShared).length > 0) {
-          this.loadVmsFromScheduledEvent(false);
-        }
-      this.cd.detectChanges();
-      })
-    } else {
+  getVmList() {  
+
       combineLatest([
         this.vmService.listByScheduledEvent(this.selectedEvent.id),
         this.vmSetService.getVMSetByScheduledEvent(this.selectedEvent.id),
@@ -96,8 +78,7 @@ export class VmDashboardComponent implements OnChanges {
           this.loadVmsFromScheduledEvent(true);
         }
         this.cd.detectChanges(); //The async Code above updates values after Angulars usual change-detection so we call this Method to prevent Errors
-      });
-    }
+      });   
   }
 
   // Used to load either dynamic or shared virtualMachines for an event
@@ -114,7 +95,7 @@ export class VmDashboardComponent implements OnChanges {
           ...new VmSet(),
           base_name: environment,
           stepOpen: this.openPanels.has(environment),
-          dynamic: true,
+          dynamic: dynamic,
         };
         vmSet.setVMs = element;
         vmSet.count = element.length;
@@ -128,17 +109,6 @@ export class VmDashboardComponent implements OnChanges {
   }
 
   openUsersTerminal(vm: VirtualMachine) {
-    if(this.isSharedVmDashboard) {
-      const url = this.router.serializeUrl(
-        this.router.createUrlTree([
-          '/terminal',
-          vm.id,
-          vm.ws_endpoint          
-        ])
-      );
-      window.open(url, '_blank');    
-      return;
-    }
     let userId: string | undefined; //get the Users ID who has the VM allocated to him
     this.userService.list().subscribe((users) => {
       userId = users.filter((user) => user.email === vm.user)[0]?.id;
