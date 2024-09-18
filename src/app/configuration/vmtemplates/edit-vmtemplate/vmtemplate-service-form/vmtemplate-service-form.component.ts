@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { PredefinedServiceService } from 'src/app/data/predefinedservice.service';
+import { Protocol } from 'src/app/data/protocol';
 import {
   getCloudConfigString,
   VMTemplateServiceConfiguration,
@@ -24,11 +25,13 @@ export class VMTemplateServiceFormComponent implements OnInit {
     name: FormControl<string>;
     port: FormControl<number>;
     path: FormControl<string>;
+    protocol: FormControl<Protocol>;
     hasOwnTab: FormControl<boolean>;
     noPathRewriting: FormControl<boolean>;
     proxyHostHeaderRewriting: FormControl<boolean>;
     proxyOriginHeaderRewriting: FormControl<boolean>;
     disallowIFrame: FormControl<boolean>;
+    disableAuthorizationHeader: FormControl<boolean>;
     cloudConfigString: FormControl<string>;
     hasWebinterface: FormControl<boolean>;
   }>;
@@ -88,6 +91,9 @@ export class VMTemplateServiceFormComponent implements OnInit {
       path: this.fb.control<string>(
         edit ? this.editVMService.path ?? this.DEFAULT_PATH : this.DEFAULT_PATH
       ),
+      protocol: this.fb.control<Protocol>(
+        edit ? this.editVMService.protocol ?? 'http' : 'http'
+      ),
       hasOwnTab: this.fb.control<boolean>(
         edit ? this.editVMService.hasOwnTab : false
       ),
@@ -102,6 +108,9 @@ export class VMTemplateServiceFormComponent implements OnInit {
       ),
       disallowIFrame: this.fb.control<boolean>(
         edit ? this.editVMService.disallowIFrame : true
+      ),
+      disableAuthorizationHeader: this.fb.control<boolean>(
+        edit ? this.editVMService.disableAuthorizationHeader : true
       ),
       cloudConfigString: this.fb.control<string>(
         edit ? getCloudConfigString(this.editVMService) : ''
@@ -131,6 +140,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
       this.newVMServiceFormGroup.controls.hasWebinterface.value;
     newVMService.port = this.newVMServiceFormGroup.controls.port.value;
     newVMService.path = this.newVMServiceFormGroup.controls.path.value;
+    newVMService.protocol = this.newVMServiceFormGroup.controls.protocol.value;
     newVMService.hasOwnTab =
       this.newVMServiceFormGroup.controls.hasOwnTab.value;
     newVMService.noRewriteRootPath =
@@ -139,6 +149,8 @@ export class VMTemplateServiceFormComponent implements OnInit {
       this.newVMServiceFormGroup.controls.proxyHostHeaderRewriting.value;
     newVMService.rewriteOriginHeader =
       this.newVMServiceFormGroup.controls.proxyOriginHeaderRewriting.value;
+    newVMService.disableAuthorizationHeader =
+      this.newVMServiceFormGroup.controls.disableAuthorizationHeader.value;
     newVMService.disallowIFrame =
       this.newVMServiceFormGroup.controls.disallowIFrame.value;
     newVMService.cloudConfigString =
