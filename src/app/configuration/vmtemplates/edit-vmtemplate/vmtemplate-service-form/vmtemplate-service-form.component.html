@@ -146,6 +146,13 @@
               formControlName="path"
             />
           </clr-input-container>
+          <clr-select-container>
+            <label>Protocol</label>
+            <select title="protocol" clrSelect formControlName="protocol">
+              <option value="http">http</option>
+              <option value="https">https</option>
+            </select>
+          </clr-select-container>
           <clr-accordion class="advanced-settings">
             <clr-accordion-panel>
               <clr-accordion-title>Advanced Proxy Options</clr-accordion-title>
@@ -239,6 +246,29 @@
                         <cds-icon shape="info-circle" size="24"></cds-icon>
                         <span class="tooltip-content"
                           >Force opening inside a new tab</span
+                        >
+                      </a>
+                    </label>
+                  </clr-checkbox-wrapper>
+                  <clr-checkbox-wrapper>
+                    <input
+                      type="checkbox"
+                      clrCheckbox
+                      value="disableAuthorizationHeader"
+                      name="disableAuthorizationHeader"
+                      formControlName="disableAuthorizationHeader"
+                    />
+                    <label
+                      >Disable Authorization Header
+                      <a
+                        role="tooltip"
+                        aria-haspopup="true"
+                        class="tooltip tooltip-md tooltip-top-right"
+                      >
+                        <cds-icon shape="info-circle" size="24"></cds-icon>
+                        <span class="tooltip-content"
+                          >Disable the authorization header for proxied
+                          requests</span
                         >
                       </a>
                     </label>
