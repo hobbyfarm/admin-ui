@@ -81,18 +81,13 @@ export class CourseFormComponent implements OnInit, OnChanges {
           pause_duration: pauseDuration,
         });
       }
+      this.courseDetails.patchValue({
+        pauseable: this.course.pauseable,
+      });
 
-      if (this.course.pauseable) {
-        this.courseDetails.patchValue({
-          pauseable: this.course.pauseable,
-        });
-      }
-
-      if (this.course.keep_vm) {
-        this.courseDetails.patchValue({
-          keep_vm: this.course.keep_vm,
-        });
-      }
+      this.courseDetails.patchValue({
+        keep_vm: this.course.keep_vm,
+      });
 
       if (this.course.keepalive_duration) {
         this.courseDetails.patchValue({
