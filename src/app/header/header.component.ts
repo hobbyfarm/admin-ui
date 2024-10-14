@@ -30,6 +30,7 @@ export class HeaderComponent implements OnInit {
   public settingsForm: FormGroup;
   public hide_usernames_status: boolean;
   public themes = themes;
+  public isButtonDisabled: boolean = false;
 
   private config = this.configService.getConfig();
   public title = this.config.title || 'HobbyFarm Administration';
@@ -54,7 +55,6 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("onInit Header")
     const authorizationRequests = Promise.all([
       this.rbacService.Grants('environments', 'list'),
       this.rbacService.Grants('virtualmachinetemplates', 'list'),
@@ -83,7 +83,6 @@ export class HeaderComponent implements OnInit {
       this.doLogout();
     }
     this.settingsForm = this.settingsService.getForm()
-    console.log("onInit Header End")
   }
 
   @ViewChild('settingsmodal', { static: true }) settingsModal: ClrModal;
@@ -104,7 +103,6 @@ export class HeaderComponent implements OnInit {
   }
 
   public openSettings() {
-    console.log("openSettings")
     this.settingsForm.reset();
     this.fetchingSettings = true;
     this.settingsService.settings$
@@ -118,22 +116,27 @@ export class HeaderComponent implements OnInit {
             terminal_theme,
             hide_usernames_status
           });
+
           this.fetchingSettings = false;
         },
       );
     this.settingsModal.open();
     this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value
-    console.log(this.hide_usernames_status)
   }
 
   public doSaveSettings() {
+    this.isButtonDisabled = true;
     this.settingsService.update(this.settingsForm.value).subscribe({
       next: (_s: ServerResponse) => {
         this.settingsModalOpened = false;
+        this.isButtonDisabled = false;
+
       },
       error: (_s: ServerResponse) => {
         setTimeout(() => (this.settingsModalOpened = false), 2000);
+        console.log("Errorrrr")
       },
     });
+
   }
 }

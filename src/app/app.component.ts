@@ -17,7 +17,6 @@ export class AppComponent {
     public router: Router,
     public configService: AppConfigService
   ) {
-    console.log("AppComponent Constructor")
     this.configService.getLogo(this.logo)
       .then((obj: string) => {
         ClarityIcons.addIcons(['logo', obj]);

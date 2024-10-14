@@ -39,7 +39,6 @@ export class SettingsService {
   })
 
   fetch() {
-    console.log("fetch......")
     return this.garg.get('/settings').pipe(
       map(extractResponseContent),
       map((s: Readonly<Settings | null>) =>
@@ -51,13 +50,8 @@ export class SettingsService {
             } as Settings),
       ),
       tap((s: Settings) => {
-        console.log("fetch... ")
-        console.log(s)
         s.hide_usernames_status = JSON.parse(String(s.hide_usernames_status ?? false));
-        console.log("das ist dann undefined:??")
-        console.log(this.settingsForm)
         this.settingsForm.patchValue(s);
-        console.log("nope nicht hier")
         this.subject.next(s);
       }),
       catchError((error) => {
@@ -68,9 +62,6 @@ export class SettingsService {
   }
 
   set(newSettings: Readonly<Settings>) {
-    console.log("set.....")
-    console.log(newSettings)
-    
     const params = new HttpParams({ fromObject: newSettings });
     return this.garg.post('/settings', params).pipe(
       catchError((e: HttpErrorResponse) => {
@@ -84,13 +75,9 @@ export class SettingsService {
   }
 
   update(update: Partial<Readonly<Settings>>) {
-    console.log("update....")
-    console.log(update)
     return this.settings$.pipe(
       take(1),
       switchMap((currentSettings) => {
-        console.log("update....pipe")
-        console.log({ ...currentSettings, ...update })
         return this.set({ ...currentSettings, ...update });
       })
     );

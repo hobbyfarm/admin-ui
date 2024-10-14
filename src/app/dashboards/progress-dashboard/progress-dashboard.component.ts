@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnDestroy, OnChanges } from '@angular/core';
 import { ProgressService } from 'src/app/data/progress.service';
 import { Progress } from 'src/app/data/progress';
 import { UserService } from '../../data/user.service';
@@ -8,10 +8,9 @@ import { ScenarioService } from '../../data/scenario.service';
 import { CourseService } from '../../data/course.service';
 import { EventUserListComponent } from './event-user-list/event-user-list.component';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { combineLatest, first } from 'rxjs';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { User } from '../../data/user';
-import { SettingsService } from 'src/app/data/settings.service';
-import { ServerResponse } from 'src/app/data/serverresponse';
+import { Settings, SettingsService } from 'src/app/data/settings.service';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -19,7 +18,7 @@ import { FormGroup } from '@angular/forms';
   templateUrl: './progress-dashboard.component.html',
   styleUrls: ['./progress-dashboard.component.scss'],
 })
-export class ProgressDashboardComponent implements OnInit {
+export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges {
   @Input()
   selectedEvent: ScheduledEvent;
 
@@ -31,6 +30,7 @@ export class ProgressDashboardComponent implements OnInit {
   public users: User[];
   public settingsForm: FormGroup;
   public hide_usernames_status: boolean = false;
+  private settings_service$ = new Subject<Readonly<Settings>>();
 
   public pauseCall: boolean = false; // Stop refreshing if we are looking at a progress
   public pause = (pause: boolean) => {
@@ -57,10 +57,9 @@ export class ProgressDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log("onInit ProgressDashboard")
     this.settingsForm = this.settingsService.getForm()
     this.settingsService.settings$
-      .pipe(first())
+      .pipe(takeUntil(this.settings_service$))
       .subscribe(
         ({
           terminal_theme = 'default',
@@ -71,18 +70,19 @@ export class ProgressDashboardComponent implements OnInit {
             terminal_theme,
             hide_usernames_status
           });
-          console.log(this.settingsForm)
           this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value
           console.log(this.hide_usernames_status)
         },
       );
     this.refresh();
-
   }
 
   ngOnChanges() {
     this.refresh();
-    console.log("refreshed..........")
+  }
+
+  ngOnDestroy() {
+    this.settings_service$.unsubscribe();
   }
 
   filter() {

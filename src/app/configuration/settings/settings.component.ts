@@ -20,7 +20,7 @@ export class SettingsComponent {
   public valid: boolean = true;
   public scopes: PreparedScope[] = [];
   public selectedScope: PreparedScope;
-  public loading: boolean = true; //ToDo laden klappt nicht
+  public loading: boolean = true; 
   public scopesLoading: boolean = true;
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
 
