@@ -8,8 +8,11 @@ import { ScenarioService } from '../../data/scenario.service';
 import { CourseService } from '../../data/course.service';
 import { EventUserListComponent } from './event-user-list/event-user-list.component';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { combineLatest } from 'rxjs';
+import { combineLatest, first } from 'rxjs';
 import { User } from '../../data/user';
+import { SettingsService } from 'src/app/data/settings.service';
+import { ServerResponse } from 'src/app/data/serverresponse';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'progress-dashboard',
@@ -26,7 +29,8 @@ export class ProgressDashboardComponent implements OnInit {
   public callInterval: any;
   public circleVisible: boolean = true;
   public users: User[];
-  public hideUsernames: boolean = false;
+  public settingsForm: FormGroup;
+  public hide_usernames_status: boolean = false;
 
   public pauseCall: boolean = false; // Stop refreshing if we are looking at a progress
   public pause = (pause: boolean) => {
@@ -48,15 +52,37 @@ export class ProgressDashboardComponent implements OnInit {
     public courseService: CourseService,
     public progressService: ProgressService,
     public scheduledeventService: ScheduledeventService,
-    public helper: JwtHelperService
+    public helper: JwtHelperService,
+    public settingsService: SettingsService
   ) {}
 
   ngOnInit() {
+    console.log("onInit ProgressDashboard")
+    this.settingsForm = this.settingsService.getForm()
+    this.settingsService.settings$
+      .pipe(first())
+      .subscribe(
+        ({
+          terminal_theme = 'default',
+          hide_usernames_status = false,
+        }) => {
+          console.log("da kommt was vom observable")
+          this.settingsForm.patchValue({
+            terminal_theme,
+            hide_usernames_status
+          });
+          console.log(this.settingsForm)
+          this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value
+          console.log(this.hide_usernames_status)
+        },
+      );
     this.refresh();
+
   }
 
   ngOnChanges() {
     this.refresh();
+    console.log("refreshed..........")
   }
 
   filter() {
@@ -150,6 +176,19 @@ export class ProgressDashboardComponent implements OnInit {
 
       this.filter();
     });
+  }
+
+  saveSettings(newHideUsernamesStatus: boolean) {
+    if (this.settingsForm.value) {
+      this.settingsService.update({hide_usernames_status: newHideUsernamesStatus}).subscribe({
+        next: () => {
+          console.log('Saved Settings.');
+        },
+        error: (err) => {
+          console.error('Error while saving settings:', err);
+        }
+      })
+    }
   }
 
   exportCSV() {

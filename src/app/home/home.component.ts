@@ -16,7 +16,9 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private rbacService: RbacService,
     private typedSettingsService: TypedSettingsService
-  ) {}
+  ) {
+    console.log("HomeComponent Constructor")
+  }
 
   ngOnInit(): void {
     // navigate to session statistics per default
@@ -37,5 +39,6 @@ export class HomeComponent implements OnInit {
       .subscribe((typedInput: TypedInput) => {
         this.motd = typeof typedInput?.value == 'string' ? typedInput?.value : '';
       });
+    console.log("ngInit HomeComponent End")
   }
 }

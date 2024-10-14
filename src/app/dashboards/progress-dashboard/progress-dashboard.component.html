@@ -25,7 +25,8 @@
                 type="checkbox"
                 clrToggle
                 name="hideUsernames"
-                [(ngModel)]="hideUsernames"
+                [(ngModel)]="hide_usernames_status"
+                (ngModelChange)="saveSettings($event)"
               />
               <label>Hide Usernames</label>
             </clr-toggle-wrapper>
@@ -118,7 +119,7 @@
         <progress-card
           [progress]="p"
           [pause]="pause"
-          [hideUsername]="hideUsernames"
+          [hideUsername]="hide_usernames_status"
           (nameClickedEvent)="filterName($event)"
         ></progress-card>
       </div>
