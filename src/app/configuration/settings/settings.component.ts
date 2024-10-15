@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { TypedInput, FormGroupType } from '../../typed-form/TypedInput';
 import {
   PreparedScope,

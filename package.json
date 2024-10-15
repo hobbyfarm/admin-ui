@@ -13,7 +13,6 @@
     "lint": "ng lint"
   },
   "private": true,
-  "type": "module",
   "dependencies": {
     "@angular/animations": "^16.2.6",
     "@angular/cdk": "^16.2.6",

@@ -65,13 +65,11 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
           terminal_theme = 'default',
           hide_usernames_status = false,
         }) => {
-          console.log("da kommt was vom observable")
           this.settingsForm.patchValue({
             terminal_theme,
             hide_usernames_status
           });
           this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value
-          console.log(this.hide_usernames_status)
         },
       );
     this.refresh();

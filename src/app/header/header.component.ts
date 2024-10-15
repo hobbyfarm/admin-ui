@@ -8,10 +8,9 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { AppConfigService } from '../app-config.service';
 import { RbacService } from '../data/rbac.service';
 import { Title } from '@angular/platform-browser';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { themes } from '../step/terminal-themes/themes';
 import { first } from 'rxjs/operators';
-import { ServerResponse } from '../step/ServerResponse';
 import { SettingsService } from '../data/settings.service';
 
 @Component({
@@ -127,16 +126,14 @@ export class HeaderComponent implements OnInit {
   public doSaveSettings() {
     this.isButtonDisabled = true;
     this.settingsService.update(this.settingsForm.value).subscribe({
-      next: (_s: ServerResponse) => {
+      next: () => {
         this.settingsModalOpened = false;
         this.isButtonDisabled = false;
 
       },
-      error: (_s: ServerResponse) => {
+      error: () => {
         setTimeout(() => (this.settingsModalOpened = false), 2000);
-        console.log("Errorrrr")
       },
     });
-
   }
 }
