@@ -62,11 +62,9 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
       .pipe(takeUntil(this.settings_service$))
       .subscribe(
         ({
-          terminal_theme = 'default',
           hide_usernames_status = false,
         }) => {
           this.settingsForm.patchValue({
-            terminal_theme,
             hide_usernames_status
           });
           this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value

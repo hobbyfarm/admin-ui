@@ -28,7 +28,6 @@ export class HeaderComponent implements OnInit {
   public fetchingSettings = false;
   public settingsForm: FormGroup;
   public hide_usernames_status: boolean;
-  public themes = themes;
   public isButtonDisabled: boolean = false;
 
   private config = this.configService.getConfig();
