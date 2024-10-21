@@ -22,10 +22,53 @@
         </button>
         <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
             <a (click)="about()" clrDropdownItem>About</a>
+            <a (click)="openSettings()" clrDropdownItem>Settings</a>
             <a (click)="logout()" clrDropdownItem>Logout</a>
         </clr-dropdown-menu>
     </clr-dropdown>
 </div>
+
+<clr-modal #settingsmodal [(clrModalOpen)]="settingsModalOpened">
+    <h3 class="modal-title">Settings</h3>
+    <div class="modal-body">
+      <ng-container *ngIf="fetchingSettings">
+        <span class="spinner spinner-inline"> Loading... </span>
+        <span> Loading... </span>
+      </ng-container>
+      <ng-container *ngIf="!fetchingSettings">
+        <form clrForm [formGroup]="settingsForm">
+          <clr-tabs>
+            <clr-tab>
+              <button clrTabLink>General</button>
+              <clr-tab-content>
+                <clr-toggle-container>
+                  <label class="clr-col-md-4">Hide Usernames</label>
+                  <clr-toggle-wrapper>
+                    <input
+                      class="clr-col-md-8"
+                      type="checkbox"
+                      clrToggle
+                      name="hide_usernames_status"
+                      formControlName="hide_usernames_status"
+                    />
+                    <label>Hide Usernames</label>
+                  </clr-toggle-wrapper>
+                  <clr-control-helper
+                    >Keep names hidden in screensharings
+                  </clr-control-helper>
+                </clr-toggle-container>
+              </clr-tab-content>
+              <clr-tab-content> </clr-tab-content>
+            </clr-tab>
+          </clr-tabs>
+        </form>
+      </ng-container>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" (click)="settingsModalOpened = false">Close</button>
+      <button class="btn btn-success" (click)="doSaveSettings()" [disabled]="isButtonDisabled">Save</button>
+    </div>
+  </clr-modal>
 
 <clr-modal #logoutmodal [(clrModalOpen)]="logoutModalOpened">
     <h3 class="modal-title">Confirm Logout</h3>

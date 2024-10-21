@@ -14,9 +14,11 @@ import {
   extractResponseContent,
   GargantuaClientFactory,
 } from '../data/gargantua.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 export interface Settings {
   terminal_theme: (typeof themes)[number]['id'];
+  hide_usernames_status: boolean;
 }
 
 /**
@@ -31,11 +33,30 @@ export class SettingsService {
   private subject = new Subject<Readonly<Settings>>();
   readonly settings$ = concat(this.fetch(), this.subject).pipe(shareReplay(1));
 
+  public settingsForm: FormGroup = new FormGroup({
+    terminal_theme: new FormControl<typeof themes[number]['id'] | null> (null, [Validators.required,]),
+    hide_usernames_status: new FormControl<boolean>(false),
+  })
+
   fetch() {
     return this.garg.get('/settings').pipe(
       map(extractResponseContent),
-      tap((s: Readonly<Settings>) => {
+      map((s: Readonly<Settings | null>) =>
+        s
+          ? s
+          : ({
+              terminal_theme: themes[0].id,
+              hide_usernames_status: false
+            } as Settings),
+      ),
+      tap((s: Settings) => {
+        s.hide_usernames_status = JSON.parse(String(s.hide_usernames_status ?? false));
+        this.settingsForm.patchValue(s);
         this.subject.next(s);
+      }),
+      catchError((error) => {
+        console.error('Error on fetching settings:', error);
+        return throwError(() => error);
       })
     );
   }
@@ -46,7 +67,10 @@ export class SettingsService {
       catchError((e: HttpErrorResponse) => {
         return throwError(() => e.error);
       }),
-      tap(() => this.subject.next(newSettings))
+      tap(() => {
+        this.settingsForm.patchValue(newSettings);  
+        this.subject.next(newSettings);
+      })
     );
   }
 
@@ -57,5 +81,9 @@ export class SettingsService {
         return this.set({ ...currentSettings, ...update });
       })
     );
+  }
+
+  getForm() {
+    return this.settingsForm;
   }
 }

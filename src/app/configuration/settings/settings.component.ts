@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { TypedInput, FormGroupType } from '../../typed-form/TypedInput';
 import {
   PreparedScope,
@@ -20,7 +20,7 @@ export class SettingsComponent {
   public valid: boolean = true;
   public scopes: PreparedScope[] = [];
   public selectedScope: PreparedScope;
-  public loading: boolean = true;
+  public loading: boolean = true; 
   public scopesLoading: boolean = true;
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
 

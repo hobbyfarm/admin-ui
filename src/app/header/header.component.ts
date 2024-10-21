@@ -8,6 +8,10 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { AppConfigService } from '../app-config.service';
 import { RbacService } from '../data/rbac.service';
 import { Title } from '@angular/platform-browser';
+import { FormGroup } from '@angular/forms';
+import { themes } from '../step/terminal-themes/themes';
+import { first } from 'rxjs/operators';
+import { SettingsService } from '../data/settings.service';
 
 @Component({
   selector: '[app-header]',
@@ -15,10 +19,16 @@ import { Title } from '@angular/platform-browser';
 })
 export class HeaderComponent implements OnInit {
   public logoutModalOpened: boolean = false;
+  public settingsModalOpened: boolean = false;
   public aboutModalOpened: boolean = false;
   public version = environment.version;
   public email: string = '';
   public configurationRbac: boolean = false;
+
+  public fetchingSettings = false;
+  public settingsForm: FormGroup;
+  public hide_usernames_status: boolean;
+  public isButtonDisabled: boolean = false;
 
   private config = this.configService.getConfig();
   public title = this.config.title || 'HobbyFarm Administration';
@@ -29,6 +39,7 @@ export class HeaderComponent implements OnInit {
     public helper: JwtHelperService,
     public configService: AppConfigService,
     private rbacService: RbacService,
+    private settingsService: SettingsService,
     private titleService: Title
   ) {
     this.configService.getLogo(this.logo).then((obj: string) => {
@@ -69,11 +80,13 @@ export class HeaderComponent implements OnInit {
       // hence we automatically logout the user
       this.doLogout();
     }
+    this.settingsForm = this.settingsService.getForm()
   }
 
+  @ViewChild('settingsmodal', { static: true }) settingsModal: ClrModal;
   @ViewChild('logoutmodal', { static: true }) logoutModal: ClrModal;
   @ViewChild('aboutmodal', { static: true }) aboutModal: ClrModal;
-
+  
   public logout() {
     this.logoutModal.open();
   }
@@ -85,5 +98,41 @@ export class HeaderComponent implements OnInit {
   public doLogout() {
     localStorage.removeItem('hobbyfarm_admin_token');
     this.router.navigateByUrl('/login');
+  }
+
+  public openSettings() {
+    this.settingsForm.reset();
+    this.fetchingSettings = true;
+    this.settingsService.settings$
+      .pipe(first())
+      .subscribe(
+        ({
+          terminal_theme = 'default',
+          hide_usernames_status = false,
+        }) => {
+          this.settingsForm.setValue({
+            terminal_theme,
+            hide_usernames_status
+          });
+
+          this.fetchingSettings = false;
+        },
+      );
+    this.settingsModal.open();
+    this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value
+  }
+
+  public doSaveSettings() {
+    this.isButtonDisabled = true;
+    this.settingsService.update(this.settingsForm.value).subscribe({
+      next: () => {
+        this.settingsModalOpened = false;
+        this.isButtonDisabled = false;
+
+      },
+      error: () => {
+        setTimeout(() => (this.settingsModalOpened = false), 2000);
+      },
+    });
   }
 }
