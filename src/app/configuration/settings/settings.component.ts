@@ -28,7 +28,6 @@ export class SettingsComponent {
 
   private alertTime = 2000;
   private alertErrorTime = 10000;
-  public alertClosed: boolean = true;
 
   constructor(
     public typedSettingsService: TypedSettingsService,
@@ -61,7 +60,7 @@ export class SettingsComponent {
         this.hasChanges = false;
         this.alert.success(
           'Settings successfully saved',
-          false,
+          true,
           this.alertTime
         );
       },
