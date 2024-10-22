@@ -1,7 +1,7 @@
 <clr-modal #newcoursemodal [(clrModalOpen)]="newCourseOpen">
   <h3 class="modal-title">Create New Course</h3>
   <div class="modal-body">
-    <clr-alert [clrAlertType]="alertType" [clrAlertClosable]="false" [(clrAlertClosed)]="!isAlert">
+    <clr-alert [clrAlertType]="alertType" [clrAlertClosable]="false" [clrAlertClosed]="!isAlert" (clrAlertClosedChange)="isAlert = $event">
       <clr-alert-item>
         <span class="alert-text">
           {{ alertText }}
