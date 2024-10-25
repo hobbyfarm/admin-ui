@@ -158,6 +158,7 @@ import { HiddenMdComponent } from './step/hidden-md-component/hidden-md.componen
 import { GlossaryMdComponent } from './step/glossary-md-component/glossary-md.component';
 import { MermaidMdComponent } from './step/mermaid-md-component/mermaid-md.component';
 import { NoteMdComponent } from './step/note-md-component/note-md.component';
+import { ThemeService } from './data/theme.service';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -348,6 +349,7 @@ export function jwtOptionsFactory(): JwtConfig {
     AppConfigService,
     ProgressService,
     PredefinedServiceService,
+    ThemeService,
     TypedSettingsService,
     {
       provide: APP_INITIALIZER,

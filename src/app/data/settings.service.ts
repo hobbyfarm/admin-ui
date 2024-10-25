@@ -15,10 +15,12 @@ import {
   GargantuaClientFactory,
 } from '../data/gargantua.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { SettingFormGroup } from './forms';
 
 export interface Settings {
   terminal_theme: (typeof themes)[number]['id'];
   hide_usernames_status: boolean;
+  theme: 'dark' | 'light' | 'system';
 }
 
 /**
@@ -33,10 +35,14 @@ export class SettingsService {
   private subject = new Subject<Readonly<Settings>>();
   readonly settings$ = concat(this.fetch(), this.subject).pipe(shareReplay(1));
 
-  public settingsForm: FormGroup = new FormGroup({
-    terminal_theme: new FormControl<typeof themes[number]['id'] | null> (null, [Validators.required,]),
+  public settingsForm: SettingFormGroup = new FormGroup({
+    terminal_theme: new FormControl<(typeof themes)[number]['id'] | null>(
+      null,
+      [Validators.required]
+    ),
     hide_usernames_status: new FormControl<boolean>(false),
-  })
+    theme: new FormControl<'dark' | 'light' | 'system'>('system'),
+  });
 
   fetch() {
     return this.garg.get('/settings').pipe(
@@ -46,11 +52,14 @@ export class SettingsService {
           ? s
           : ({
               terminal_theme: themes[0].id,
-              hide_usernames_status: false
-            } as Settings),
+              hide_usernames_status: false,
+              theme: 'system',
+            } as Settings)
       ),
       tap((s: Settings) => {
-        s.hide_usernames_status = JSON.parse(String(s.hide_usernames_status ?? false));
+        s.hide_usernames_status = JSON.parse(
+          String(s.hide_usernames_status ?? false)
+        );
         this.settingsForm.patchValue(s);
         this.subject.next(s);
       }),
@@ -68,7 +77,7 @@ export class SettingsService {
         return throwError(() => e.error);
       }),
       tap(() => {
-        this.settingsForm.patchValue(newSettings);  
+        this.settingsForm.patchValue(newSettings);
         this.subject.next(newSettings);
       })
     );
@@ -83,7 +92,7 @@ export class SettingsService {
     );
   }
 
-  getForm() {
+  getForm(): SettingFormGroup {
     return this.settingsForm;
   }
 }

@@ -1,9 +1,10 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
-export type GenericKeyValueGroup<T extends string | number | boolean> = FormGroup<{
-  key: FormControl<string>;
-  value: FormControl<T>;
-}>;
+export type GenericKeyValueGroup<T extends string | number | boolean> =
+  FormGroup<{
+    key: FormControl<string>;
+    value: FormControl<T>;
+  }>;
 
 export type CourseDetailFormGroup = FormGroup<{
   course_name: FormControl<string | null>;
@@ -46,3 +47,16 @@ export type GenericKeyValueMapArray =
   | FormArray<GenericKeyValueGroup<string>>
   | FormArray<GenericKeyValueGroup<number>>
   | FormArray<GenericKeyValueGroup<boolean>>;
+
+export type SettingFormGroup = FormGroup<{
+  terminal_theme: FormControl<
+    | 'default'
+    | 'Solarized_Light'
+    | 'Solarized_Dark'
+    | 'Solarized_Dark_Higher_Contrast'
+    | 'GitHub'
+    | 'Dichromatic'
+  >;
+  hide_usernames_status: FormControl<boolean>;
+  theme: FormControl<'dark' | 'light' | 'system'>;
+}>;

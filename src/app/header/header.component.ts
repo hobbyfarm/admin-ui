@@ -8,10 +8,10 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { AppConfigService } from '../app-config.service';
 import { RbacService } from '../data/rbac.service';
 import { Title } from '@angular/platform-browser';
-import { FormGroup } from '@angular/forms';
 import { themes } from '../step/terminal-themes/themes';
 import { first } from 'rxjs/operators';
 import { SettingsService } from '../data/settings.service';
+import { SettingFormGroup } from '../data/forms';
 
 @Component({
   selector: '[app-header]',
@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
   public configurationRbac: boolean = false;
 
   public fetchingSettings = false;
-  public settingsForm: FormGroup;
+  public settingsForm: SettingFormGroup;
   public hide_usernames_status: boolean;
   public isButtonDisabled: boolean = false;
 
@@ -109,10 +109,12 @@ export class HeaderComponent implements OnInit {
         ({
           terminal_theme = 'default',
           hide_usernames_status = false,
+          theme = 'system',
         }) => {
           this.settingsForm.setValue({
             terminal_theme,
-            hide_usernames_status
+            hide_usernames_status,
+            theme
           });
 
           this.fetchingSettings = false;
