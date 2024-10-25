@@ -54,8 +54,6 @@ import {
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 
-
-
 // This object type maps VMTemplate names to the number of requested VMs
 // The key specifies the template name
 // The FormControl holds the number of requested VMs
@@ -137,12 +135,39 @@ export class NewScheduledEventComponent
   public newSharedVM: Record<string, Record<string, number>>;
 
   public sharedVmForm = new FormGroup({
-    "vm_name": new FormControl<string>(""),
-    "vm_env": new FormControl<string>(""),
-    "vm_template": new FormControl<string>(""),
-  })
+    vm_name: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+        Validators.minLength(4),
+        this.noWhitespace(),
+        this.uniqueSharedVMName(),
+      ],
+      nonNullable: true,
+    }),
+    vm_env: new FormControl<string>(''),
+    vm_template: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+        this.templateMatchesEnv(),
+      ]
+    }),
+  });
 
- // public vmtc: VmtemplatesComponent;
+  templateMatchesEnv(): ValidatorFn {
+    
+    return (control: FormControl<string>): { matchEnv: boolean } | null => {
+      if (
+        !control.value ||
+        !this.sharedVmForm.controls.vm_env ||
+        !(this.getTemplates(this.sharedVmForm.controls.vm_env.value).includes(control.value))        
+      ) {        
+        return {
+          matchEnv: true,
+        };
+      }
+      return null;
+    };
+  }
 
   constructor(
     private _fb: NonNullableFormBuilder,
@@ -186,6 +211,14 @@ export class NewScheduledEventComponent
           wizardPages.first.makeCurrent();
         });
       });
+
+      this.sharedVmForm.controls.vm_env.valueChanges.subscribe((env) => {
+        this.sharedVmForm.controls.vm_template.setValue(this.getTemplates(env)[0] ?? "")
+      })
+
+      this.sharedVmForm.valueChanges.subscribe(() => {
+        this.sharedVmForm.controls.vm_template.updateValueAndValidity()
+      })
   }
 
   public eventDetails: FormGroup<{
@@ -335,6 +368,35 @@ export class NewScheduledEventComponent
     }
     return null;
   }
+
+  public uniqueSharedVMName(): ValidatorFn {
+    return (control: FormControl<string>): { notUnique: boolean } | null => {
+      if (
+        !control.value ||
+        this.scheduledEvents.filter((el) =>
+          el.shared_vms.map((vm) => vm.name).includes(control.value)
+        ).length > 0
+      ) {
+        return {
+          notUnique: true,
+        };
+      }
+      return null;
+    };
+  }
+
+  public noWhitespace(): ValidatorFn {
+    return (control: FormControl<string>): { whitespace: boolean } | null => {
+      if (control.value.includes(' ')) {
+        return {
+          whitespace: true,
+        };
+      }
+      return null;
+    };
+  }
+
+  
 
   @ViewChild('wizard', { static: true }) wizard: ClrWizard;
   @ViewChildren(ClrWizardPage) wizardPages: QueryList<ClrWizardPage>;
@@ -710,7 +772,6 @@ export class NewScheduledEventComponent
       this.se = new ScheduledEventBase();
       this.se.required_vms = {};
     }
-    console.log(this.se)
   }
 
   public simpleUserTotal() {
@@ -1184,27 +1245,28 @@ export class NewScheduledEventComponent
     );
   }
 
-  public addSharedVM() {
-    if(this.se.shared_vms==null) {this.se.shared_vms=[]}
-    this.se.shared_vms.push({
-      vmId: "",
-      name: this.sharedVmForm.controls.vm_name.value,
-      environment: this.sharedVmForm.controls.vm_env.value,
-      vmTemplate: this.sharedVmForm.controls.vm_template.value,
-    })    
+  getTemplatesForEnv() {    
+    const templates = this.getTemplates(this.sharedVmForm.controls.vm_env.value)
+    let availableTemplates = new Map()
+    this.virtualMachineTemplateList.forEach((k, v) => {
+      if (templates.includes(k)) availableTemplates.set(k, v)
+    })
+    return availableTemplates;
   }
 
-    public addNewSharedVM(name: string,environment: string, vmtemplate: string ) {
-      if(this.se.shared_vms==null) {this.se.shared_vms=[]}
-      this.se.shared_vms.push({
-        vmId: "",
-        environment: environment,
-        name: name,
-        vmTemplate: vmtemplate,
-      })    
+  public addSharedVM() {
+    if (this.se.shared_vms == null) {
+      this.se.shared_vms = [];
+    }
+    this.se.shared_vms.push({
+      vm_id: '',
+      name: this.sharedVmForm.controls.vm_name.value,
+      environment: this.sharedVmForm.controls.vm_env.value,
+      vm_template: this.sharedVmForm.controls.vm_template.value,
+    });
   }
 
   deleteSharedVm(index: number) {
-    this.se.shared_vms.splice(index, 1)
+    this.se.shared_vms.splice(index, 1);
   }
 }

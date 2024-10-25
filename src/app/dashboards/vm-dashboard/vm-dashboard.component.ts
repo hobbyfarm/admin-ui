@@ -6,7 +6,7 @@ import { ProgressService } from 'src/app/data/progress.service';
 import { ScheduledEventBase } from 'src/app/data/scheduledevent';
 import { UserService } from 'src/app/data/user.service';
 import { VirtualMachine, VirtualMachineTypeShared } from 'src/app/data/virtualmachine';
-import { VmService } from 'src/app/data/vm.service';
+import { AdminVmService } from 'src/app/data/admin-vm.service';
 import { VmSet } from 'src/app/data/vmset';
 import { VmSetService } from 'src/app/data/vmset.service';
 
@@ -26,7 +26,7 @@ export class VmDashboardComponent implements OnChanges {
   selectedEvent: ScheduledEventBase;
 
   constructor(
-    public vmService: VmService,
+    public vmService: AdminVmService,
     public vmSetService: VmSetService,
     public userService: UserService,
     public progressService: ProgressService,

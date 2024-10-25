@@ -174,6 +174,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AuthnService } from './data/authn.service';
 import { SessionProgressService } from './progress/session-progress.service';
 import { TerminalViewComponent } from './step/terminal/terminal-view.component';
+import { WebinterfaceWindowComponent } from './step/terminal/webinterface-window/webinterface-window.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -223,6 +224,19 @@ const appInitializerFn = (appConfig: AppConfigService) => {
     return appConfig.loadAppConfig();
   };
 };
+
+
+//TODO: Check if this still works after resolving all merge conflicts considering Angular 17 upgrade!
+export const jwtAllowedDomains = [
+  environment.server.replace(/(^\w+:|^)\/\//, ''),
+];
+
+export function addJwtAllowedDomain(domain: string) {
+  const newDomain = domain.replace(/(^\w+:|^)\/\//, '');
+  if (!jwtAllowedDomains.includes(newDomain)) {
+    jwtAllowedDomains.push(newDomain);
+  }
+}
 
 export function jwtOptionsFactory(): JwtConfig {
   const allowedDomainsRegex = environment.server.match(/.*\:\/\/?([^\/]+)/);
@@ -322,6 +336,7 @@ export function jwtOptionsFactory(): JwtConfig {
     TaskFormComponent,
     ReadonlyTaskComponent,
     SingleTaskVerificationMarkdownComponent,
+    WebinterfaceWindowComponent,
     GlossaryMdComponent,
     HiddenMdComponent,
     MermaidMdComponent,

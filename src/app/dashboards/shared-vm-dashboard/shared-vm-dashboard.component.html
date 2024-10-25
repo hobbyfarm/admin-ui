@@ -7,8 +7,8 @@
         (click)="setStepOpen(set)"
       >
         <clr-accordion-title>
-          <b>Environment:</b> {{ set.environment }} &nbsp;
-          <b>Count: </b>{{ set.count }}
+          <b>Environment:</b> {{ set.environment }} &nbsp; <b>Count: </b
+          >{{ set.count }}
         </clr-accordion-title>
         <clr-accordion-content *clrIfExpanded>
           <div class="clr-row">
@@ -22,18 +22,15 @@
                     'scenarios.get',
                     'virtualmachineclaims.get'
                   ]"
-                  >Join Session</clr-dg-column
+                  >Access Terminal</clr-dg-column
                 >
                 <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
+                <clr-dg-column [clrDgField]="'public_ip'">Name</clr-dg-column>
                 <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
                 <clr-dg-column [clrDgField]="'vm_template_id'"
                   >VM-Template</clr-dg-column
                 >
-                <clr-dg-column [clrDgField]="'user'">User</clr-dg-column>
-                <clr-dg-column [clrDgField]="'allocated'"
-                  >Allocated</clr-dg-column
-                >
-                <clr-dg-column [clrDgField]="'tainted'">Tainted</clr-dg-column>
+
                 <clr-dg-column [clrDgField]="'id'">VM Id</clr-dg-column>
                 <clr-dg-column [clrDgField]="'hostname'"
                   >Hostname</clr-dg-column
@@ -59,28 +56,27 @@
                   >
                   <clr-dg-cell class="dashboardCell">
                     <span
-                      *ngIf="vm.status === 'running'"
+                      *ngIf="vm.status === 'running' && !vm.tainted"
                       class="badge badge-success"
                       >{{ vm.status }}</span
                     >
                     <span
-                      *ngIf="vm.status !== 'running'"
+                      *ngIf="vm.status !== 'running' && !vm.tainted"
                       class="badge badge-warning"
                       >{{ vm.status }}</span
                     >
+                    <span
+                      *ngIf="!!vm.tainted"
+                      class="badge badge-warning"
+                      >tainted</span
+                    >
                   </clr-dg-cell>
+                  <clr-dg-cell class="dashboardCell">{{ vm.name }}</clr-dg-cell>
                   <clr-dg-cell class="dashboardCell">{{
                     vm.public_ip
                   }}</clr-dg-cell>
                   <clr-dg-cell class="dashboardCell">{{
                     vm.vm_template_id
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{ vm.user }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.allocated
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.tainted
                   }}</clr-dg-cell>
                   <clr-dg-cell class="dashboardCell">{{ vm.id }}</clr-dg-cell>
                   <clr-dg-cell class="dashboardCell">{{

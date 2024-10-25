@@ -1,6 +1,6 @@
 export interface SharedVirtualMachine {
-    vmId: string;
+    vm_id: string;
     name: string;
     environment: string;
-    vmTemplate: string;
+    vm_template: string;
 }

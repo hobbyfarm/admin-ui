@@ -5,4 +5,5 @@ export class Session {
   keep_course_vm: boolean;
   user: string;
   vm_claim: string[];
+  access_code: string;
 }

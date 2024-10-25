@@ -22,7 +22,7 @@ export class ScheduledEventBase {
   on_demand: boolean;
   printable: boolean;
   activeSessions: number;
-  shared_vms: SharedVirtualMachine[];
+  shared_vms: SharedVirtualMachine[] = [];
 }
 
 // start_time or end_time must be defined for scheduled events returned by our backend

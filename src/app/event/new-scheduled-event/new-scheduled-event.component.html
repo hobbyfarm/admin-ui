@@ -34,6 +34,9 @@
       <ng-template clrPageTitle>Select Virtual Machines</ng-template>
     </clr-wizard-page>
     <clr-wizard-page>
+      <ng-template clrPageTitle>Select Shared Virtual Machines</ng-template>
+    </clr-wizard-page>
+    <clr-wizard-page>
       <ng-template clrPageTitle>Finalize</ng-template>
     </clr-wizard-page>
   } @else {
@@ -565,6 +568,93 @@
             </tbody>
           </table>
         </ng-container>
+      </ng-container>
+    </clr-wizard-page>
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Select Shared Virtual Machines</ng-template>   
+      <ng-container >
+        <form clrForm [formGroup]="sharedVmForm">
+          <table class="table table-compact">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Environment</th>
+                <th>Virtual Machine Template</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>
+                <clr-input-container>             
+                <input clrInput type="text" formControlName="vm_name" required>
+                <clr-control-error *clrIfError="'required'">VM name is required</clr-control-error>
+                <clr-control-error *clrIfError="'minlength'">VM name must be longer than 4 characters
+                </clr-control-error>
+                <clr-control-error *clrIfError="'notUnique'">VM name must be unique
+                </clr-control-error>
+                <clr-control-error *clrIfError="'whitespace'">VM name must not contain whitespace
+                </clr-control-error>
+                </clr-input-container>
+              </td>
+              <td>
+                <clr-select-container>          
+                <select clrSelect formControlName="vm_env">
+                  @for (env of environments; track $index) {
+                    <option value="{{env.name}}">{{ env.display_name }}</option>
+                  }
+                 
+                </select>
+                </clr-select-container>
+              </td>
+              <td>
+                <clr-select-container>          
+                <select clrSelect formControlName="vm_template">
+                  @for (v of getTemplatesForEnv() | keyvalue; track v.key) {
+                    <option [value]="v.key">{{ v.value }}</option>
+                  }
+                
+                </select>
+                <clr-control-error *clrIfError="'matchEnv'">VM Template not available in Environment
+                </clr-control-error>
+                </clr-select-container>
+              </td>
+             
+           </tr>              
+      </tbody>
+        </table> 
+        <button
+            class="btn btn-success btn-sm"
+            (click)="addSharedVM()"
+            [disabled]="!sharedVmForm.valid"
+            style="float: right;"
+          >
+            <cds-icon shape="plus"></cds-icon> Add
+          </button>   
+        </form>
+  
+        <h4>SharedVM Information</h4>
+            <table class="table table-compact">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Environment</th>
+                  <th>Virtual Machine Template</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- maybe let's use a clr datagrid here?! -->
+                <!-- https://v16.clarity.design/documentation/datagrid -->
+  
+                <tr *ngFor="let sharedVm of se.shared_vms; let i = index">
+                  <td>{{ sharedVm.name }}</td>
+                  <td>{{ sharedVm.environment }}</td>
+                  <td>{{ sharedVm.vm_template }}</td>
+                  <td><button class="btn btn-danger btn-sm" (click)="deleteSharedVm(i)">Delete</button></td>
+                </tr>
+              </tbody>
+            </table>
       </ng-container>
     </clr-wizard-page>
     @if (!isEditMode) {

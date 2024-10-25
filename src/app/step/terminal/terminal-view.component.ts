@@ -1,29 +1,24 @@
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Params } from "@angular/router";
-import { tap } from "rxjs";
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
-  
 @Component({
-    selector: 'app-terminal-view',
-    templateUrl: './terminal-view.component.html',
-    styleUrls: ['terminal-view.component.scss'],
+  selector: 'app-terminal-view',
+  templateUrl: './terminal-view.component.html',
+  styleUrls: ['terminal-view.component.scss'],
 })
-export class TerminalViewComponent { 
-     public vmid = ''
-     public endpoint = ''
-     public vmname = ''
-  
-    constructor(public route: ActivatedRoute) {}
+export class TerminalViewComponent {
+  public vmid = '';
+  public vmname = '';
 
 
-    ngOnInit() {   
-        this.route.params.pipe(
-            tap((params: Params) => {
-            console.log("tapping params...")
-            this.vmname = params['vmName'];
-            this.vmid = params['vmId'];
-            this.endpoint = params['wsEndpoint'];
-            console.log("params: ", this.vmid, " ", this.endpoint," ", this.vmname," ", params)
-            })).subscribe();   
-    }
+  constructor(
+    public route: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+    //get the query params from the route
+    const queryParams = this.route.snapshot.queryParams;
+    this.vmname = queryParams['vmName'];
+    this.vmid = queryParams['vmId'];
+  }
 }

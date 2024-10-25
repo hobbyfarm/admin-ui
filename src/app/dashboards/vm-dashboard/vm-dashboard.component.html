@@ -74,9 +74,11 @@
                       </button></clr-dg-cell
                     >
                     <clr-dg-cell class="dashboardCell">
-                      @if (vm.status === "running") {
+                      @if (!!vm.tainted) {
+                        <span class="badge badge-warning">tainted</span>
+                      } @else if (vm.status === "running") {
                         <span class="badge badge-success">{{ vm.status }}</span>
-                      } @else {
+                      } @else if (vm.status !== 'running'){
                         <span class="badge badge-warning">{{ vm.status }}</span>
                       }
                     </clr-dg-cell>
