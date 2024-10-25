@@ -153,6 +153,7 @@ import {
   numberListIcon,
   syncIcon,
   downloadIcon,
+  refreshIcon
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
 import { TerminalViewComponent } from './step/terminal/terminal-view.component';
@@ -196,7 +197,8 @@ ClarityIcons.addIcons(
   buildingIcon,
   numberListIcon,
   syncIcon,
-  downloadIcon
+  downloadIcon,
+  refreshIcon
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {
