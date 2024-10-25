@@ -5,11 +5,15 @@ import {
   VirtualMachine,
   VirtualMachineTypeShared,
 } from 'src/app/data/virtualmachine';
-import { VmService } from 'src/app/data/vm.service';
+import { AdminVmService } from 'src/app/data/admin-vm.service';
 import { VmSet } from 'src/app/data/vmset';
 
+interface DashboardVm extends VirtualMachine {
+  name?: string;
+}
+
 interface dashboardVmSet extends VmSet {
-  setVMs?: VirtualMachine[];
+  setVMs?: DashboardVm[];
   stepOpen?: boolean;
   dynamic: boolean;
 }
@@ -24,7 +28,7 @@ export class SharedVmDashboardComponent implements OnChanges {
   selectedEvent: ScheduledEvent;
 
   constructor(
-    public vmService: VmService,
+    public vmService: AdminVmService,
     private router: Router,
     private cd: ChangeDetectorRef
   ) {}
@@ -50,13 +54,11 @@ export class SharedVmDashboardComponent implements OnChanges {
       .listByScheduledEvent(this.selectedEvent.id)
       .subscribe((vmList) => {
         this.vms = vmList
-          .filter((vm) => vm.vm_type == VirtualMachineTypeShared) // vm.vm_type!="Shared" && vm.user==''
+          .filter((vm) => vm.vm_type == VirtualMachineTypeShared)
           .map((vm) => ({
             ...vm,
           }));
-        if (
-          this.vms.length > 0
-        ) {
+        if (this.vms.length > 0) {
           this.loadVmsFromScheduledEvent();
         }
         this.cd.detectChanges();
@@ -72,6 +74,7 @@ export class SharedVmDashboardComponent implements OnChanges {
       );
       // (shared) vms grouped by environment
       groupedVms.forEach((element, environment) => {
+        element.forEach((vm) => this.setVmName(vm));
         let vmSet: dashboardVmSet = {
           ...new VmSet(),
           base_name: environment,
@@ -87,12 +90,35 @@ export class SharedVmDashboardComponent implements OnChanges {
     }
   }
 
-  openTerminal(vm: VirtualMachine) {
-    const url = this.router.serializeUrl(
-      this.router.createUrlTree(['/terminal', vm.id, vm.ws_endpoint])
+  setVmName(vm: DashboardVm) {
+    vm.name =
+      this.selectedEvent.shared_vms.find((sVM) => sVM.vm_id == vm.id)?.name ??
+      '';
+  }
+
+  openTerminal(vm: DashboardVm) {
+    //build url with params, then use router to navigate to it
+    if (!vm.name) this.setVmName(vm)
+    const queryParams = {
+      vmName: vm.name,
+      vmId: vm.id,
+      wsEndpoint: vm.ws_endpoint,
+    };
+
+    const url = this.router.createUrlTree(
+      ['/terminal', vm.id, vm.ws_endpoint],
+      { queryParams }
     );
-    window.open(url, '_blank');
+    const serializedUrl = this.router.serializeUrl(url);
+
+    window.open(serializedUrl, '_blank');
     return;
+
+    // const url = this.router.serializeUrl(
+    //   this.router.createUrlTree(['/terminal', vm.id, vm.ws_endpoint])
+    // );
+    // window.open(url, '_blank');
+    // return;
   }
 
   groupByEnvironment(vms: VirtualMachine[]) {

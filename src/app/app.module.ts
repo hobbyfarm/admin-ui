@@ -156,6 +156,7 @@ import {
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
 import { TerminalViewComponent } from './step/terminal/terminal-view.component';
+import { WebinterfaceWindowComponent } from './step/terminal/webinterface-window/webinterface-window.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -204,12 +205,23 @@ const appInitializerFn = (appConfig: AppConfigService) => {
   };
 };
 
+export const jwtAllowedDomains = [
+  environment.server.replace(/(^\w+:|^)\/\//, ''),
+];
+
+export function addJwtAllowedDomain(domain: string) {
+  const newDomain = domain.replace(/(^\w+:|^)\/\//, '');
+  if (!jwtAllowedDomains.includes(newDomain)) {
+    jwtAllowedDomains.push(newDomain);
+  }
+}
+
 export function jwtOptionsFactory(): JwtConfig {
   return {
     tokenGetter: () => {
       return localStorage.getItem('hobbyfarm_admin_token');
     },
-    allowedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
+    allowedDomains: jwtAllowedDomains,
     disallowedRoutes: [
       environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + '/auth/authenticate',
     ],
@@ -296,6 +308,7 @@ export function jwtOptionsFactory(): JwtConfig {
     TaskFormComponent,
     ReadonlyTaskComponent,
     SingleTaskVerificationMarkdownComponent,
+    WebinterfaceWindowComponent,
   ],
   imports: [
     BrowserModule,

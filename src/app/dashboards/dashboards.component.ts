@@ -6,7 +6,7 @@ import { UserService } from '../data/user.service';
 import { RbacService } from '../data/rbac.service';
 import { ProgressCount } from '../data/progress';
 import { ProgressService } from '../data/progress.service';
-import { VmService } from '../data/vm.service';
+import { AdminVmService } from '../data/admin-vm.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -33,7 +33,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private rbacService: RbacService,
     private progressService: ProgressService,
-    private vmService: VmService,
+    private vmService: AdminVmService,
     private router: Router
   ) {}
 

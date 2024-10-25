@@ -21,7 +21,7 @@ export class ScheduledEvent {
   on_demand: boolean;
   printable: boolean;
   activeSessions: number;
-  shared_vms: SharedVirtualMachine[];
+  shared_vms: SharedVirtualMachine[] = [];
 }
 
 export interface DashboardScheduledEvent extends ScheduledEvent {
