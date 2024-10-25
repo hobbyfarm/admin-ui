@@ -1,0 +1,6 @@
+<ng-container *ngIf="svgContent | async as content; else loading">
+  <div [innerHTML]="content.svg"></div>
+</ng-container>
+<ng-template #loading>
+  <div>Loading mermaid graph...</div>
+</ng-template>

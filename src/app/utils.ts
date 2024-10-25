@@ -54,3 +54,11 @@ export function durationFormatter(duration: number) {
   }
   return result || '0s';
 }
+
+// Replacement for lodash's escape
+export const escape = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+export function uniqueString(n: number) {
+  return `${(Math.random().toString(36) + '0000').slice(2, n + 2)}`;
+}

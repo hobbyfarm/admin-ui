@@ -1,0 +1,6 @@
+<div class="glossary">
+  {{ term }}
+  <ng-container *ngIf="parsedContent | async as content">
+    <span class="glossary-content" [innerHTML]="content"></span>
+  </ng-container>
+</div>

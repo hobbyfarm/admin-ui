@@ -20,7 +20,7 @@ import { VMClaim } from '../../data/vmclaim';
 import { VMClaimVM } from '../../data/vmclaimvm';
 import { VirtualMachine as VM } from '../../data/virtualmachine';
 import { CtrService } from '../../data/ctr.service';
-import { CodeExec } from '../CodeExec';
+import { CodeExec } from '../../data/CodeExec';
 import { SessionService } from '../../data/session.service';
 import { ScenarioService } from '../../data/scenario.service';
 import { StepService } from '../../data/step.service';

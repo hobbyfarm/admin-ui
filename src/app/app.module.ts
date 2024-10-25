@@ -65,7 +65,7 @@ import { VMClaimService } from './data/vmclaim.service';
 import { HfMarkdownComponent } from './step/hf-markdown.component';
 import { AngularSplitModule } from 'angular-split';
 import { DynamicHooksModule } from 'ngx-dynamic-hooks';
-import { CtrComponent } from './step/ctr.component';
+import { CtrComponent } from './step/ctr-component/ctr.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
 import { ProgressService } from './data/progress.service';
 import { PredefinedServiceService } from './data/predefinedservice.service';
@@ -154,6 +154,10 @@ import {
   downloadIcon,
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
+import { HiddenMdComponent } from './step/hidden-md-component/hidden-md.component';
+import { GlossaryMdComponent } from './step/glossary-md-component/glossary-md.component';
+import { MermaidMdComponent } from './step/mermaid-md-component/mermaid-md.component';
+import { NoteMdComponent } from './step/note-md-component/note-md.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -292,6 +296,10 @@ export function jwtOptionsFactory(): JwtConfig {
     TaskFormComponent,
     ReadonlyTaskComponent,
     SingleTaskVerificationMarkdownComponent,
+    GlossaryMdComponent,
+    HiddenMdComponent,
+    MermaidMdComponent,
+    NoteMdComponent,
   ],
   imports: [
     BrowserModule,

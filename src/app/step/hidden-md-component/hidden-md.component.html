@@ -1,0 +1,9 @@
+<details>
+  <summary>{{ summary }}</summary>
+  <ng-container *ngIf="parsedContent | async as content; else loading">
+    <div [innerHTML]="content"></div>
+  </ng-container>
+  <ng-template #loading>
+    <div>Loading...</div>
+  </ng-template>
+</details>

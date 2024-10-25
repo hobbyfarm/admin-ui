@@ -5,8 +5,8 @@ import {
   TypedSettingsService,
 } from 'src/app/data/typedSettings.service';
 import { AlertComponent } from 'src/app/alert/alert.component';
-import { ServerResponse } from 'src/app/step/ServerResponse';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ServerResponse } from 'src/app/data/serverresponse';
 
 @Component({
   selector: 'app-settings',
