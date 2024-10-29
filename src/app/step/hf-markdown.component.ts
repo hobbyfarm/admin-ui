@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { MarkdownService } from 'ngx-markdown';
 import { CtrService } from '../data/ctr.service';
 import { VirtualMachine as VM } from '../data/virtualmachine';
@@ -36,7 +36,7 @@ export interface HfMarkdownRenderContext {
   `,
   styleUrls: ['./hf-markdown.component.scss'],
 })
-export class HfMarkdownComponent implements OnChanges {
+export class HfMarkdownComponent implements OnChanges, OnInit {
   @Input() content: string;
   @Input() context: HfMarkdownRenderContext = { vmInfo: {}, session: '' };
 
@@ -45,7 +45,9 @@ export class HfMarkdownComponent implements OnChanges {
   constructor(
     public markdownService: MarkdownService,
     private ctrService: CtrService
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     mermaid.initialize({
       startOnLoad: false,
     });
@@ -82,26 +84,18 @@ export class HfMarkdownComponent implements OnChanges {
     },
 
     hidden(code: string, summary: string) {
-      const parsedContent = Promise.resolve(this.markdownService.parse(code));
-      return `<app-hidden-md [summary]="${summary}" [parsedContent]="${parsedContent}"></app-hidden-md>`;
+      return `<app-hidden-md [summary]="'${summary}'" [code]="'${code}'"></app-hidden-md>`;
     },
 
     glossary(code: string, term: string) {
-      const parsedContent = Promise.resolve(this.markdownService.parse(code));
-      return `<app-glossary-md [term]="${term}" [parsedContent]="${parsedContent}"></app-glossary-md>`;
+      return `<app-glossary-md [term]="'${term}'" [code]="'${code}'"></app-glossary-md>`;
     },
 
     note(code: string, type: string, message: string) {
-      const parsedContent = Promise.resolve(this.markdownService.parse(code));
-      return `<app-note-md [type]="${type}" [message]="${message}" [parsedContent]="${parsedContent}"></app-note-md>`;
+      return `<app-note-md [noteType]="'${type}'" [message]="'${message}'" [code]="'${code}'"></app-note-md>`;
     },
 
-    file(
-      code: string,
-      language: string,
-      filepath: string,
-      target: string
-    ) {
+    file(code: string, language: string, filepath: string, target: string) {
       const parts = filepath.split('/');
       const filename = parts[parts.length - 1];
       const n = 5; //Length of randomized token
@@ -120,7 +114,7 @@ ${token}`;
     },
 
     mermaid(code: string) {
-      return `<app-mermaid-md [code]="${code}"></app-mermaid-md>`;
+      return `<app-mermaid-md [code]="'${escape(code)}'"></app-mermaid-md>`;
     },
 
     verifyTask(code: string, target: string, taskName: string) {
@@ -145,7 +139,6 @@ ${token}`;
     if (Prism.languages[language]) {
       code = Prism.highlight(code, Prism.languages[language], language);
     }
-
     return `<pre>${fileNameTag}<code class=${classAttr}>${code}</code></pre>`;
   }
 
@@ -168,7 +161,13 @@ ${token}`;
 
         // This case occurs inside nested blocks
       } else if (codePart) {
-        content += this.markdownService.renderer.code(codePart, "", false);
+        const [infoString, ...codeParts] = codePart.split("\n");
+        const processedCodePart = codeParts.join("\n");
+        if(infoString.trim().length > 0) {
+          content += this.markdownService.renderer.code(processedCodePart, infoString, false);
+        } else {
+          content += this.markdownService.renderer.code(processedCodePart, undefined, false);
+        }
       } else {
         content += '~~~~~~';
       }

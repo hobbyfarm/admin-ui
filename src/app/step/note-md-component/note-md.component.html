@@ -1,8 +1,8 @@
-<div class="note {{ type }}">
+<div class="note {{ noteType }}">
   <ng-container class="note-title">
-    {{ message ?? type.toUpperCase() }}:
+    {{ message ?? noteType?.toUpperCase() }}:
   </ng-container>
-  <ng-container *ngIf="parsedContent | async as content">
+  @if(parsedContent | async; as content) {
     <div class="note-content" [innerHTML]="content"></div>
-  </ng-container>
+  }
 </div>

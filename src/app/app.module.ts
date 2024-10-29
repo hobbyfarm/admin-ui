@@ -159,6 +159,7 @@ import { GlossaryMdComponent } from './step/glossary-md-component/glossary-md.co
 import { MermaidMdComponent } from './step/mermaid-md-component/mermaid-md.component';
 import { NoteMdComponent } from './step/note-md-component/note-md.component';
 import { ThemeService } from './data/theme.service';
+import { SafeSvgPipe } from './pipes/safe-svg.pipe';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -301,6 +302,7 @@ export function jwtOptionsFactory(): JwtConfig {
     HiddenMdComponent,
     MermaidMdComponent,
     NoteMdComponent,
+    SafeSvgPipe,
   ],
   imports: [
     BrowserModule,
@@ -328,6 +330,10 @@ export function jwtOptionsFactory(): JwtConfig {
       },
       globalParsers: [
         { component: CtrComponent },
+        { component: GlossaryMdComponent },
+        { component: MermaidMdComponent },
+        { component: HiddenMdComponent },
+        { component: NoteMdComponent },
         { component: SingleTaskVerificationMarkdownComponent },
       ],
     }),

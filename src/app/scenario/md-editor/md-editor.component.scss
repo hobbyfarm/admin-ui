@@ -1,5 +1,6 @@
 .split-container {
   display: flex;
+  width: 100%;
 }
 
 .editor-actions {
@@ -60,4 +61,8 @@
   &:focus {
     outline: 0px none transparent;
   }
+}
+
+as-split-area.split-area-2 {
+  overflow: hidden;
 }

@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnChanges } from "@angular/core";
 import mermaid, { RenderResult } from 'mermaid';
-import { uniqueString } from "src/app/utils";
+import { uniqueString, unescape } from "src/app/utils";
 
 
 @Component({
@@ -8,16 +8,16 @@ import { uniqueString } from "src/app/utils";
     templateUrl: './mermaid-md.component.html',
     styleUrls: ['./mermaid-md.component.scss'],
   })
-  export class MermaidMdComponent implements OnInit {
+  export class MermaidMdComponent implements OnChanges {
     @Input() code: string;
     public svgContent: Promise<RenderResult>
 
-    ngOnInit(): void {
+    ngOnChanges(): void {
       mermaid.initialize({
         startOnLoad: false,
       });
       const n = 5;
       const uniqueSvgId = `svg-mermaid-${uniqueString(n)}`
-      this.svgContent = mermaid.render(uniqueSvgId, this.code);
+      this.svgContent = mermaid.render(uniqueSvgId, unescape(this.code));
     }
   }
