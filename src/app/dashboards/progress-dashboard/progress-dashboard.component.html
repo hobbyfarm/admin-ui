@@ -110,23 +110,35 @@
     </div>
   </div>
   <div class="clr-row">
-    @if (currentProgress.length > 0) {
-      @for (p of filteredProgress; track p) {
-        <div class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3">
-          <progress-card
-            [progress]="p"
-            [pause]="pause"
-            [hideUsername]="hide_usernames_status"
-            (nameClickedEvent)="filterName($event)"
-          ></progress-card>
-        </div>
-      }
-    } @else {
-      <div class="clr-col-12">
-        <p>No sessions found.</p>
+    <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
+      <div
+        class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3"
+        *ngFor="let p of filteredProgress"
+      >
+        <progress-card
+          [progress]="p"
+          [pause]="pause"
+          [hideUsername]="hide_usernames_status"
+          (nameClickedEvent)="filterName($event)"
+        ></progress-card>
       </div>
-    }
+    </ng-container>
   </div>
+  <div class="clr-row">
+    <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
+      <progress-list *ngFor="let p of filteredProgress" 
+        [progress]="p"
+        [pause]="pause"
+        [hideUsername]="hide_usernames_status"
+        (nameClickedEvent)="filterName($event)"
+      ></progress-list>
+    </ng-container>
+  </div>
+  <ng-template #no_sessions>
+    <div class="clr-col-12">
+      <p>No sessions found.</p>
+    </div>
+  </ng-template>
 </div>
 
 <event-user-list
