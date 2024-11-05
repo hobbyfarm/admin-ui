@@ -7,19 +7,19 @@ import {
   ViewChild,
 } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Progress } from '../data/progress';
-import { ServerResponse } from '../data/serverresponse';
-import { ProgressInfoComponent } from './progress-info/progress-info.component';
-import { timeSince } from '../utils';
+import { Progress } from '../../data/progress';
+import { ServerResponse } from '../../data/serverresponse';
+import { ProgressInfoComponent } from '../progress-info/progress-info.component';
+import { timeSince } from '../../utils';
 import { Router } from '@angular/router';
 import { GargantuaClientFactory } from '../data/gargantua.service';
 
 @Component({
   selector: 'progress-card',
-  templateUrl: './progress.component.html',
-  styleUrls: ['./progress.component.scss'],
+  templateUrl: './progress-card.component.html',
+  styleUrls: ['./progress-card.component.scss'],
 })
-export class ProgressComponent {
+export class ProgressCardComponent {
   @Input()
   public progress: Progress;
 

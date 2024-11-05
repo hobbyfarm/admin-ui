@@ -46,7 +46,7 @@ import { AlertComponent } from './alert/alert.component';
 import { VmtemplatesComponent } from './configuration/vmtemplates/vmtemplates.component';
 import { EditVmtemplateComponent } from './configuration/vmtemplates/edit-vmtemplate/edit-vmtemplate.component';
 import { AppConfigService } from './app-config.service';
-import { ProgressComponent } from './progress/progress.component';
+import { ProgressCardComponent } from './progress/progress-card/progress-card.component';
 import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
 import { EventUserListComponent } from './dashboards/progress-dashboard/event-user-list/event-user-list.component';
 import { IntervalTimer } from './IntervalTimer/interval-timer.component';
@@ -268,7 +268,7 @@ export function jwtOptionsFactory(): JwtConfig {
     VmtemplatesComponent,
     EditVmtemplateComponent,
     ProgressInfoComponent,
-    ProgressComponent,
+    ProgressCardComponent,
     EventUserListComponent,
     IntervalTimer,
     ProgressDashboardComponent,
