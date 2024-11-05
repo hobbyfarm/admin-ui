@@ -125,6 +125,16 @@
       </div>
     </ng-container>
   </div>
+  <div class="clr-row">
+    <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
+      <progress-list *ngFor="let p of filteredProgress" 
+        [progress]="p"
+        [pause]="pause"
+        [hideUsername]="hide_usernames_status"
+        (nameClickedEvent)="filterName($event)"
+      ></progress-list>
+    </ng-container>
+  </div>
   <ng-template #no_sessions>
     <div class="clr-col-12">
       <p>No sessions found.</p>
