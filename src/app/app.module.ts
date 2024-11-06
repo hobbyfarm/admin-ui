@@ -160,6 +160,9 @@ import { MermaidMdComponent } from './step/mermaid-md-component/mermaid-md.compo
 import { NoteMdComponent } from './step/note-md-component/note-md.component';
 import { ThemeService } from './data/theme.service';
 import { SafeSvgPipe } from './pipes/safe-svg.pipe';
+import { TooltipDirective } from './directives/tooltip.directive';
+import { TooltipComponent } from './tooltip/tooltip.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -303,6 +306,8 @@ export function jwtOptionsFactory(): JwtConfig {
     MermaidMdComponent,
     NoteMdComponent,
     SafeSvgPipe,
+    TooltipDirective,
+    TooltipComponent,
   ],
   imports: [
     BrowserModule,
@@ -342,6 +347,7 @@ export function jwtOptionsFactory(): JwtConfig {
     MarkdownModule.forRoot({
       sanitize: SecurityContext.NONE,
     }),
+    ScrollingModule,
   ],
   providers: [
     ScenarioService,

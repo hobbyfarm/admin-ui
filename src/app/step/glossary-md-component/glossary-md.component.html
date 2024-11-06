@@ -1,6 +1,3 @@
-<div class="glossary">
+<div class="glossary" [appTooltip]="parsedContent | async">
   {{ term }}
-  @if(parsedContent | async; as content) {
-    <span class="glossary-content" [innerHTML]="content"></span>
-  }
 </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from "@angular/core";
+import { Component, HostListener, Input, OnChanges } from "@angular/core";
 import { MarkdownService } from "ngx-markdown";
 
 
