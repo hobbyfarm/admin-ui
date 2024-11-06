@@ -141,6 +141,8 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
       otacCSV = otacCSV.concat(
         otac.name +
           ', ' +
+          otac.user +
+          ', ' +
           this.getUsername(otac.user) +
           ', ' +
           otac.redeemed_timestamp +
