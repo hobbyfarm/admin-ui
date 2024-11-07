@@ -1,38 +1,15 @@
+<div class="flex-header" *ngIf="index===0">
+    <div class="flex-cell">Username</div>
+    <div class="flex-cell">Scenario</div>
+    <div class="flex-cell">Course</div>
+    <div class="flex-cell-small">Progress</div>
+    <div class="flex-cell">Time</div>
+</div>
 
-<table class="table">
-    <thead>
-      <tr>
-        <th class="left">Wizard</th>
-        <th>Allegiance</th>
-        <th>Triwizard Champion?</th>
-        <th>Can Cast Fireball</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="left">Harry</td>
-        <td>Gryffindor</td>
-        <td>Yes</td>
-        <td>No</td>
-      </tr>
-      <tr>
-        <td class="left">Gandalf</td>
-        <td>Hobbits</td>
-        <td>Maybe?</td>
-        <td>I don&apos;t think so...</td>
-      </tr>
-      <tr>
-        <td class="left">Obi-Wan Kenobi</td>
-        <td>Republic/Rebellion</td>
-        <td>No</td>
-        <td>No</td>
-      </tr>
-      <tr>
-        <td class="left">Merlin</td>
-        <td>King Arthur</td>
-        <td>Probably invented the tournament</td>
-        <td>Solid maybe</td>
-      </tr>
-    </tbody>
-  </table>
-  
+<div class="flex-row">
+    <div class="flex-cell">{{ getUsername() }} </div>
+    <div class="flex-cell"><cds-icon shape="play" solid></cds-icon> {{ progress.scenario_name }}</div>
+    <div class="flex-cell"><cds-icon shape="layers" solid></cds-icon> {{ progress.course_name }}</div>
+    <div class="flex-cell-small"><cds-icon shape="number-list"></cds-icon> {{ progress.current_step }} / {{ progress.total_step }}</div>
+    <div class="flex-cell"><cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}</div>
+</div>

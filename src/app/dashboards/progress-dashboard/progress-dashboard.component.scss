@@ -120,3 +120,11 @@ svg circle {
       stroke: red;
     }
   }
+
+  .flex-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; 
+    margin-top: 20px;
+  }
+  
