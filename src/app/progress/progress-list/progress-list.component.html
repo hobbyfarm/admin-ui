@@ -1,4 +1,7 @@
-<div class="flex-header" *ngIf="index===0">
+
+  
+  <div class="flex-header" *ngIf="index===0">
+    <div class="flex-cell">Status</div>
     <div class="flex-cell">Username</div>
     <div class="flex-cell">Scenario</div>
     <div class="flex-cell">Course</div>
@@ -7,6 +10,13 @@
 </div>
 
 <div class="flex-row">
+    <div class="flex-cell-color progress">
+        <progress
+          class="{{ getProgressColorClass() }}"
+          [value]="getProgress() || 0"
+          max="100"
+        ></progress>
+    </div>
     <div class="flex-cell">{{ getUsername() }} </div>
     <div class="flex-cell"><cds-icon shape="play" solid></cds-icon> {{ progress.scenario_name }}</div>
     <div class="flex-cell"><cds-icon shape="layers" solid></cds-icon> {{ progress.course_name }}</div>
