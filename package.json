@@ -1,6 +1,9 @@
 {
   "name": "hobbyfarm-admin",
   "version": "0.0.13",
+  "lint-staged": {
+    "*.{html,ts,scss}": ["prettier --write"]
+  },
   "scripts": {
     "ng": "ng",
     "setup:local": "node setup-local.js",
@@ -10,7 +13,8 @@
     "build": "ng build",
     "build:prod": "ng build --configuration production --aot",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "prettify": "lint-staged"
   },
   "private": true,
   "dependencies": {
@@ -78,6 +82,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
     "typescript": "^5.4.5"
   }
