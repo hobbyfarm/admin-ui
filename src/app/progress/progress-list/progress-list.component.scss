@@ -14,9 +14,7 @@
     background-color:  var(--clr-color-success-100,green);
 }
 
-
 .progress {
-    border-radius: 100%;
     margin-top: 4px;
 }
 
@@ -41,7 +39,7 @@
 }
 
 .flex-cell-color {
-    flex: 0.1; 
+    width: 12px; 
 }
 
 .flex-header {
