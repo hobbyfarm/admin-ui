@@ -7,9 +7,11 @@
   <clr-select-container>
     <label>Node</label>
     <select clrSelect name="taskNode" formControlName="taskNode">
-      <option *ngFor="let name of virtualMachineNames" [value]="name">
-        {{ name }}
-      </option>
+      @for (name of virtualMachineNames; track name) {
+        <option [value]="name">
+          {{ name }}
+        </option>
+      }
     </select>
   </clr-select-container>
   <clr-input-container>
@@ -48,9 +50,11 @@
       formControlName="taskReturnType"
       required
     >
-      <option *ngFor="let returnType of returnTypes" value="{{ returnType }}">
-        {{ returnType }}
-      </option>
+      @for (returnType of returnTypes; track returnType) {
+        <option value="{{ returnType }}">
+          {{ returnType }}
+        </option>
+      }
     </select>
     <clr-control-helper
       >Depending on the Return Type, the verification either checks for the
@@ -62,52 +66,51 @@
     >
   </clr-select-container>
 
-  <clr-textarea-container
-    *ngIf="isOfReturnType(['Return Text', 'Return Code and Text'])"
-  >
-    <label>Expected Output</label>
-    <textarea
-      clrTextarea
-      type="text"
-      formControlName="taskExpectedOutput"
-      required
-    ></textarea>
-    <clr-control-error *clrIfError="'required'"
-      >Expected Output is required</clr-control-error
-    >
-  </clr-textarea-container>
+  @if (isOfReturnType(["Return Text", "Return Code and Text"])) {
+    <clr-textarea-container>
+      <label>Expected Output</label>
+      <textarea
+        clrTextarea
+        type="text"
+        formControlName="taskExpectedOutput"
+        required
+      ></textarea>
+      <clr-control-error *clrIfError="'required'"
+        >Expected Output is required</clr-control-error
+      >
+    </clr-textarea-container>
+  }
 
-  <clr-control-container
-    class="codeInput"
-    *ngIf="isOfReturnType(['Match Regex'])"
-  >
-    <label>Regex to match</label>
-    <app-code-with-syntax-highlighting
-      [language]="supportedLanguages.REGEX"
-      [height]="'2rem'"
-      [width]="'90%'"
-      [outline]="'none'"
-      [textValue]="taskForm.controls.taskExpectedOutput.value"
-      (textChanged)="regexOutput($event)"
-    ></app-code-with-syntax-highlighting>
-    <clr-control-error *clrIfError="'required'"
-      >Expected Output is required</clr-control-error
-    >
-  </clr-control-container>
+  @if (isOfReturnType(["Match Regex"])) {
+    <clr-control-container class="codeInput">
+      <label>Regex to match</label>
+      <app-code-with-syntax-highlighting
+        [language]="supportedLanguages.REGEX"
+        [height]="'2rem'"
+        [width]="'90%'"
+        [outline]="'none'"
+        [textValue]="taskForm.controls.taskExpectedOutput.value"
+        (textChanged)="regexOutput($event)"
+      ></app-code-with-syntax-highlighting>
+      <clr-control-error *clrIfError="'required'"
+        >Expected Output is required</clr-control-error
+      >
+    </clr-control-container>
+  }
 
-  <clr-input-container
-    *ngIf="isOfReturnType(['Return Code', 'Return Code and Text'])"
-  >
-    <label>Expected Returncode</label>
-    <input
-      clrInput
-      type="number"
-      formControlName="taskExpectedReurncode"
-      required
-    />
-    <clr-control-error *clrIfError="'required'"
-      >Expected Returncode is required</clr-control-error
-    >
-  </clr-input-container>
+  @if (isOfReturnType(["Return Code", "Return Code and Text"])) {
+    <clr-input-container>
+      <label>Expected Returncode</label>
+      <input
+        clrInput
+        type="number"
+        formControlName="taskExpectedReurncode"
+        required
+      />
+      <clr-control-error *clrIfError="'required'"
+        >Expected Returncode is required</clr-control-error
+      >
+    </clr-input-container>
+  }
   <p></p>
 </form>

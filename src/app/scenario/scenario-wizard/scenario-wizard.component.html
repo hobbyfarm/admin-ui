@@ -6,17 +6,23 @@
   (clrWizardOnCancel)="doCancel()"
   class="customized"
 >
-<clr-alert *ngFor="let error of validationErrors" [clrAlertType]="'alert-danger'" [clrAlertClosable]="false">
-    <clr-alert-item>
+  @for (error of validationErrors; track error) {
+    <clr-alert [clrAlertType]="'alert-danger'" [clrAlertClosable]="false">
+      <clr-alert-item>
         {{ error.message }}
-    </clr-alert-item>
-</clr-alert>
+      </clr-alert-item>
+    </clr-alert>
+  }
   <clr-wizard-title>{{ wizardTitle }} </clr-wizard-title>
 
   <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
   <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
   <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-  <clr-wizard-button [type]="'finish'" [clrWizardButtonDisabled]="disableFinalizeButton">Finish</clr-wizard-button>
+  <clr-wizard-button
+    [type]="'finish'"
+    [clrWizardButtonDisabled]="disableFinalizeButton"
+    >Finish</clr-wizard-button
+  >
 
   <clr-wizard-page
     [clrWizardPageNextDisabled]="!scenarioDetails.valid"
@@ -90,23 +96,23 @@
                 shape="exclamation-circle"
               ></clr-icon>
             </div>
-            <span
-              class="clr-subtext"
-              *ngIf="
-                !keepaliveRequired &&
-                !scenarioDetails.errors?.invalidKeepalivePeriod
-              "
-              >Period before VMs are reaped upon user inactivity.</span
-            >
-            <span class="clr-subtext" *ngIf="keepaliveRequired"
-              >Keepalive duration is required.</span
-            >
-            <span
-              class="clr-subtext"
-              *ngIf="scenarioDetails.errors?.invalidKeepalivePeriod"
-              >Invalid keepalive period. Valid periods: 1m to 48h
-              inclusive.</span
-            >
+            @if (
+              !keepaliveRequired &&
+              !scenarioDetails.errors?.invalidKeepalivePeriod
+            ) {
+              <span class="clr-subtext"
+                >Period before VMs are reaped upon user inactivity.</span
+              >
+            }
+            @if (keepaliveRequired) {
+              <span class="clr-subtext">Keepalive duration is required.</span>
+            }
+            @if (scenarioDetails.errors?.invalidKeepalivePeriod) {
+              <span class="clr-subtext"
+                >Invalid keepalive period. Valid periods: 1m to 48h
+                inclusive.</span
+              >
+            }
           </div>
         </div>
         <clr-input-container>
@@ -134,60 +140,62 @@
           >
         </clr-input-container>
       </form>
-      <a
-        *ngIf="wizardMode == 'edit'"
-        [routerLink]="['/scenario', selectedscenario.id, 'printable']"
-        target="_blank"
-      >
-        <button class="btn btn-info-outline">Print</button>
-      </a>
+      @if (wizardMode == "edit") {
+        <a
+          [routerLink]="['/scenario', selectedscenario.id, 'printable']"
+          target="_blank"
+        >
+          <button class="btn btn-info-outline">Print</button>
+        </a>
+      }
     </div>
   </clr-wizard-page>
 
-  <clr-wizard-page *rbac="['scenarios.update']" [clrWizardPageNextDisabled]="selectedScenarioHasVMSet() && !selectedScenarioHasVM()">
+  <clr-wizard-page
+    *rbac="['scenarios.update']"
+    [clrWizardPageNextDisabled]="
+      selectedScenarioHasVMSet() && !selectedScenarioHasVM()
+    "
+  >
     <ng-template clrPageTitle>Virtual Machine</ng-template>
-    <div
-      class="alert alert-warning"
-      role="alert"
-      *ngIf="!selectedScenarioHasVMSet() && !selectedScenarioHasVM()"
-    >
-      <div class="alert-items">
-        <div class="alert-item static">
-          <div class="alert-icon-wrapper">
-            <cds-icon
-              class="alert-icon"
-              shape="exclamation-triangle"
-            ></cds-icon>
+    @if (!selectedScenarioHasVMSet() && !selectedScenarioHasVM()) {
+      <div class="alert alert-warning" role="alert">
+        <div class="alert-items">
+          <div class="alert-item static">
+            <div class="alert-icon-wrapper">
+              <cds-icon
+                class="alert-icon"
+                shape="exclamation-triangle"
+              ></cds-icon>
+            </div>
+            <span class="alert-text"
+              >This scenario will be a content-only scenario until you configure
+              a VirtualMachine</span
+            >
           </div>
-          <span class="alert-text"
-            >This scenario will be a content-only scenario until you configure a
-            VirtualMachine</span
-          >
         </div>
       </div>
-    </div>
-    <div
-      class="alert alert-warning"
-      role="alert"
-      *ngIf="selectedScenarioHasVMSet() && !selectedScenarioHasVM()"
-    >
-      <div class="alert-items">
-        <div class="alert-item static">
-          <div class="alert-icon-wrapper">
-            <cds-icon
-              class="alert-icon"
-              shape="exclamation-triangle"
-            ></cds-icon>
+    }
+    @if (selectedScenarioHasVMSet() && !selectedScenarioHasVM()) {
+      <div class="alert alert-warning" role="alert">
+        <div class="alert-items">
+          <div class="alert-item static">
+            <div class="alert-icon-wrapper">
+              <cds-icon
+                class="alert-icon"
+                shape="exclamation-triangle"
+              ></cds-icon>
+            </div>
+            <span class="alert-text"
+              >There are invalid VirtualMachineSets. No Empty VMSets
+              allowed.</span
+            >
           </div>
-          <span class="alert-text"
-            >There are invalid VirtualMachineSets. No Empty VMSets
-            allowed.</span
-          >
         </div>
       </div>
-    </div>
+    }
     <div>
-      <ng-container *ngIf="selectedscenario">
+      @if (selectedscenario) {
         <clr-stack-view>
           <clr-stack-header>
             Virtual Machines
@@ -199,49 +207,54 @@
               Add VM Set
             </button>
           </clr-stack-header>
-          <clr-stack-block
-            *ngFor="
-              let vmset of selectedscenario.virtualmachines;
-              let i = index
-            "
-          >
-            <clr-stack-label>Virtual Machine Set {{ i + 1 }} </clr-stack-label>
-            <clr-stack-content>
-              <button
-                class="btn btn-sm btn-link btn-link-stack"
-                (click)="deleteVMSet(i)"
-                *rbac="['scenarios.update']"
-              >
-                Delete VM Set
-              </button>
-            </clr-stack-content>
-            <clr-stack-block *ngFor="let item of vmset | keyvalue">
-              <clr-stack-label>{{ item.key }}</clr-stack-label>
-              <clr-stack-content
-                >{{ item.value }}
-                <button
-                  class="btn btn-sm btn-link btn-link-stack"
-                  (click)="deleteVM(i, item.key)"
-                  *rbac="['scenarios.update']"
-                >
-                  Delete VM
-                </button></clr-stack-content
-              >
-            </clr-stack-block>
+          @for (
+            vmset of selectedscenario.virtualmachines;
+            track vmset;
+            let i = $index
+          ) {
             <clr-stack-block>
               <clr-stack-label
-                ><button
+                >Virtual Machine Set {{ i + 1 }}
+              </clr-stack-label>
+              <clr-stack-content>
+                <button
                   class="btn btn-sm btn-link btn-link-stack"
-                  (click)="openCreateVM(i)"
+                  (click)="deleteVMSet(i)"
                   *rbac="['scenarios.update']"
                 >
-                  New VM
+                  Delete VM Set
                 </button>
-              </clr-stack-label>
+              </clr-stack-content>
+              @for (item of vmset | keyvalue; track item) {
+                <clr-stack-block>
+                  <clr-stack-label>{{ item.key }}</clr-stack-label>
+                  <clr-stack-content
+                    >{{ item.value }}
+                    <button
+                      class="btn btn-sm btn-link btn-link-stack"
+                      (click)="deleteVM(i, item.key)"
+                      *rbac="['scenarios.update']"
+                    >
+                      Delete VM
+                    </button></clr-stack-content
+                  >
+                </clr-stack-block>
+              }
+              <clr-stack-block>
+                <clr-stack-label
+                  ><button
+                    class="btn btn-sm btn-link btn-link-stack"
+                    (click)="openCreateVM(i)"
+                    *rbac="['scenarios.update']"
+                  >
+                    New VM
+                  </button>
+                </clr-stack-label>
+              </clr-stack-block>
             </clr-stack-block>
-          </clr-stack-block>
+          }
         </clr-stack-view>
-      </ng-container>
+      }
     </div>
   </clr-wizard-page>
 
@@ -250,20 +263,25 @@
     *rbac="['scenarios.update']"
   >
     <ng-template clrPageTitle>Steps</ng-template>
-    <ng-container *ngIf="selectedscenario">
+    @if (selectedscenario) {
       <steps-scenario [scenario]="selectedscenario"></steps-scenario>
-    </ng-container>
+    }
   </clr-wizard-page>
 
   <clr-wizard-page #taskPage>
     <ng-template clrPageTitle>Tasks</ng-template>
-    <app-task *ngIf="!!selectedscenario" [selectedScenario]="selectedscenario" (tasksChanged)="replaceVmTasks($event)"></app-task>
+    @if (!!selectedscenario) {
+      <app-task
+        [selectedScenario]="selectedscenario"
+        (tasksChanged)="replaceVmTasks($event)"
+      ></app-task>
+    }
   </clr-wizard-page>
 
   <clr-wizard-page>
     <ng-template clrPageTitle>Categories</ng-template>
 
-    <ng-container *ngIf="selectedscenario">
+    @if (selectedscenario) {
       <button
         class="btn btn-success-outline btn-sm"
         (click)="newCategory = true"
@@ -272,7 +290,7 @@
       >
         <clr-icon shape="plus"></clr-icon> Add Category
       </button>
-      <ng-container *ngIf="newCategory">
+      @if (newCategory) {
         <p>
           You can provide multiple categories by passing them as a
           Comma-separated List
@@ -304,7 +322,7 @@
             </button>
           </div>
         </form>
-      </ng-container>
+      }
       <clr-datagrid class="datagrid-compact">
         <clr-dg-column>Category</clr-dg-column>
         <clr-dg-row
@@ -319,12 +337,12 @@
           <clr-dg-cell>{{ a }}</clr-dg-cell>
         </clr-dg-row>
       </clr-datagrid>
-    </ng-container>
+    }
   </clr-wizard-page>
 
   <clr-wizard-page>
     <ng-template clrPageTitle>Tags</ng-template>
-    <ng-container *ngIf="selectedscenario">
+    @if (selectedscenario) {
       <button
         class="btn btn-success-outline btn-sm"
         (click)="newTag = true"
@@ -333,7 +351,7 @@
       >
         <clr-icon shape="plus"></clr-icon> Add Tag
       </button>
-      <ng-container *ngIf="newTag">
+      @if (newTag) {
         <p>
           You can provide multiple tags by passing them as a Comma-separated
           List
@@ -365,7 +383,7 @@
             </button>
           </div>
         </form>
-      </ng-container>
+      }
       <clr-datagrid class="datagrid-compact">
         <clr-dg-column>Tag</clr-dg-column>
         <clr-dg-row
@@ -378,100 +396,103 @@
           <clr-dg-cell>{{ a }}</clr-dg-cell>
         </clr-dg-row>
       </clr-datagrid>
-    </ng-container>
+    }
   </clr-wizard-page>
 
   <clr-wizard-page #finalizePage>
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>Confirm the following details before finishing</p>
     <h4>Scenario</h4>
-    <div
-      class="alert alert-warning"
-      role="alert"
-      *ngIf="!selectedScenarioHasVM()"
-    >
-      <div class="alert-items">
-        <div class="alert-item static">
-          <div class="alert-icon-wrapper">
-            <cds-icon
-              class="alert-icon"
-              shape="exclamation-triangle"
-            ></cds-icon>
+    @if (!selectedScenarioHasVM()) {
+      <div class="alert alert-warning" role="alert">
+        <div class="alert-items">
+          <div class="alert-item static">
+            <div class="alert-icon-wrapper">
+              <cds-icon
+                class="alert-icon"
+                shape="exclamation-triangle"
+              ></cds-icon>
+            </div>
+            <span class="alert-text"
+              >This scenario will be a content-only scenario until you configure
+              a VirtualMachine</span
+            >
           </div>
-          <span class="alert-text"
-            >This scenario will be a content-only scenario until you configure a
-            VirtualMachine</span
-          >
         </div>
       </div>
-    </div>
-    <table class="table table-compact" *ngIf="selectedscenario">
-      <thead>
-        <tr>
-          <th>Option</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Name</td>
-          <td>{{ selectedscenario.name }}</td>
-        </tr>
-        <tr>
-          <td>Description</td>
-          <td>{{ selectedscenario.description }}</td>
-        </tr>
-        <tr>
-          <td>Keepalive Duration</td>
-          <td>{{ selectedscenario.keepalive_duration }}</td>
-        </tr>
-        <tr>
-          <td>Pause Duration</td>
-          <td>{{ selectedscenario.pause_duration }}</td>
-        </tr>
-        <tr *ngIf="selectedScenarioHasVM()">
-          <td>Virtual Machines</td>
-          <td>{{ selectedscenario.virtualmachines.length }}</td>
-        </tr>
-        <tr>
-          <td>Steps</td>
-          <td>
-            <span class="label" *ngFor="let step of selectedscenario.steps">
-              {{ step.title }}</span
-            >
-          </td>
-        </tr>
-        <tr>
-          <td>Tasks</td>
-          <td>
-            <ng-container *ngFor="let vm_task of selectedscenario.vm_tasks">
-            <span class="label" *ngFor="let task of vm_task.tasks">
-              {{ vm_task.vm_name }}: {{ task.name }}</span
-            >
-          </ng-container>
-          </td>
-        </tr>
-        <tr>
-          <td>Categories</td>
-          <td>
-            <span
-              class="label"
-              *ngFor="let category of selectedscenario.categories"
-            >
-              {{ category }}</span
-            >
-          </td>
-        </tr>
-        <tr>
-          <td>Tags</td>
-          <td>
-            <span class="label" *ngFor="let tag of selectedscenario.tags">
-              {{ tag }}
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    }
+    @if (selectedscenario) {
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>Option</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Name</td>
+            <td>{{ selectedscenario.name }}</td>
+          </tr>
+          <tr>
+            <td>Description</td>
+            <td>{{ selectedscenario.description }}</td>
+          </tr>
+          <tr>
+            <td>Keepalive Duration</td>
+            <td>{{ selectedscenario.keepalive_duration }}</td>
+          </tr>
+          <tr>
+            <td>Pause Duration</td>
+            <td>{{ selectedscenario.pause_duration }}</td>
+          </tr>
+          @if (selectedScenarioHasVM()) {
+            <tr>
+              <td>Virtual Machines</td>
+              <td>{{ selectedscenario.virtualmachines.length }}</td>
+            </tr>
+          }
+          <tr>
+            <td>Steps</td>
+            <td>
+              @for (step of selectedscenario.steps; track step) {
+                <span class="label"> {{ step.title }}</span>
+              }
+            </td>
+          </tr>
+          <tr>
+            <td>Tasks</td>
+            <td>
+              @for (vm_task of selectedscenario.vm_tasks; track vm_task) {
+                @for (task of vm_task.tasks; track task) {
+                  <span class="label">
+                    {{ vm_task.vm_name }}: {{ task.name }}</span
+                  >
+                }
+              }
+            </td>
+          </tr>
+          <tr>
+            <td>Categories</td>
+            <td>
+              @for (category of selectedscenario.categories; track category) {
+                <span class="label"> {{ category }}</span>
+              }
+            </td>
+          </tr>
+          <tr>
+            <td>Tags</td>
+            <td>
+              @for (tag of selectedscenario.tags; track tag) {
+                <span class="label">
+                  {{ tag }}
+                </span>
+              }
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    }
   </clr-wizard-page>
 </clr-wizard>
 
@@ -492,9 +513,11 @@
       <clr-select-container>
         <label>VM Template</label>
         <select clrSelect name="vm_template" formControlName="vm_template">
-          <option *ngFor="let v of vmtemplates" [value]="v.id">
-            {{ v.name }}
-          </option>
+          @for (v of vmtemplates; track v) {
+            <option [value]="v.id">
+              {{ v.name }}
+            </option>
+          }
         </select>
       </clr-select-container>
     </form>

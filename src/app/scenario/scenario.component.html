@@ -26,22 +26,24 @@
         >Name</clr-dg-column
       >
       <clr-dg-row *clrDgItems="let s of filteredScenarios" [clrDgItem]="s">
-        <clr-dg-action-overflow *ngIf="showActionOverflow">
-          <button
-            class="action-item"
-            (click)="openScenarioWizard('edit', s)"
-            *rbac="['scenarios.get', 'scenarios.update']; op: 'AND'"
-          >
-            Edit
-          </button>
-          <button
-            class="action-item"
-            (click)="openDeleteScenario(s)"
-            *rbac="['scenarios.delete']"
-          >
-            Delete
-          </button>
-        </clr-dg-action-overflow>
+        @if (showActionOverflow) {
+          <clr-dg-action-overflow>
+            <button
+              class="action-item"
+              (click)="openScenarioWizard('edit', s)"
+              *rbac="['scenarios.get', 'scenarios.update']; op: 'AND'"
+            >
+              Edit
+            </button>
+            <button
+              class="action-item"
+              (click)="openDeleteScenario(s)"
+              *rbac="['scenarios.delete']"
+            >
+              Delete
+            </button>
+          </clr-dg-action-overflow>
+        }
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
         <clr-dg-cell>{{ s.name }}</clr-dg-cell>
         <scenario-detail

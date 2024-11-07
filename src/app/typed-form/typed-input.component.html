@@ -1,56 +1,53 @@
 <!--Scalar-->
-<ng-container *ngIf="input.isScalarType()">
+@if (input.isScalarType()) {
   <app-typed-input-field
     [input]="input"
     [formControlRef]="getFormControl(input.id)"
     (change)="inputChanged()"
   >
   </app-typed-input-field>
-</ng-container>
+}
 
 <!--Map-->
-<ng-container *ngIf="input.isMapType()">
+@if (input.isMapType()) {
   <div>
     <b
       ><label>{{ input.name }}</label></b
     >
-    <ng-container [ngSwitch]="input.type">
-      <ng-container *ngSwitchCase="TypedInputType.STRING">
+    @switch (input.type) {
+      @case (TypedInputType.STRING) {
         <app-typed-map-string
           [map]="getMapControlsString(input.id)"
           [input]="input"
           (inputChange)="inputChanged()"
         >
         </app-typed-map-string>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="TypedInputType.INTEGER">
+      }
+      @case (TypedInputType.INTEGER) {
         <app-typed-map-number
           [map]="getMapControlsNumber(input.id)"
           [input]="input"
           (inputChange)="inputChanged()"
         >
         </app-typed-map-number>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="TypedInputType.FLOAT">
+      }
+      @case (TypedInputType.FLOAT) {
         <app-typed-map-number
           [map]="getMapControlsNumber(input.id)"
           [input]="input"
           (inputChange)="inputChanged()"
         >
         </app-typed-map-number>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="TypedInputType.BOOLEAN">
+      }
+      @case (TypedInputType.BOOLEAN) {
         <app-typed-map-boolean
           [map]="getMapControlsBoolean(input.id)"
           [input]="input"
           (inputChange)="inputChanged()"
         >
         </app-typed-map-boolean>
-      </ng-container>
-    </ng-container>
+      }
+    }
     <button
       class="btn btn-outline"
       type="button"
@@ -60,95 +57,103 @@
       Add Element
     </button>
   </div>
-  <div *ngIf="getMapSize(input) > input.getMaxLength()">
-    <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
-      <clr-alert-item>
-        <span class="alert-text">
-          {{ input.name }} takes {{ input.getMaxLength() }} key/value pairs at
-          maximum.
-        </span>
-      </clr-alert-item>
-    </clr-alert>
-  </div>
-  <div *ngIf="input.isRequired() && getMapSize(input) == 0">
-    <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
-      <clr-alert-item>
-        <span class="alert-text">
-          {{ input.name }} requires at least one value.
-        </span>
-      </clr-alert-item>
-    </clr-alert>
-  </div>
-</ng-container>
+  @if (getMapSize(input) > input.getMaxLength()) {
+    <div>
+      <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            {{ input.name }} takes {{ input.getMaxLength() }} key/value pairs at
+            maximum.
+          </span>
+        </clr-alert-item>
+      </clr-alert>
+    </div>
+  }
+  @if (input.isRequired() && getMapSize(input) == 0) {
+    <div>
+      <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+        <clr-alert-item>
+          <span class="alert-text">
+            {{ input.name }} requires at least one value.
+          </span>
+        </clr-alert-item>
+      </clr-alert>
+    </div>
+  }
+}
 
 <!--Array-->
-<ng-container *ngIf="input.isArrayType()" [formGroup]="formGroup">
-  <div>
-    <b
-      ><label>{{ input.name }}</label></b
-    >
-    <ng-container [ngSwitch]="input.type">
-      <ng-container *ngSwitchCase="TypedInputType.STRING">
-        <app-typed-array-string
-          [array]="getArrayControlsString(input.id)"
-          [input]="input"
-          (inputChange)="inputChanged()"
-        >
-        </app-typed-array-string>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="TypedInputType.INTEGER">
-        <app-typed-array-number
-          [array]="getArrayControlsNumber(input.id)"
-          [input]="input"
-          (inputChange)="inputChanged()"
-        >
-        </app-typed-array-number>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="TypedInputType.FLOAT">
-        <app-typed-array-number
-          [array]="getArrayControlsNumber(input.id)"
-          [input]="input"
-          (inputChange)="inputChanged()"
-        >
-        </app-typed-array-number>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="TypedInputType.BOOLEAN">
-        <app-typed-array-boolean
-          [array]="getArrayControlsBoolean(input.id)"
-          [input]="input"
-          (inputChange)="inputChanged()"
-        >
-        </app-typed-array-boolean>
-      </ng-container>
-    </ng-container>
-    <button
-      class="btn btn-outline"
-      type="button"
-      (click)="addArrayElement(input)"
-      [disabled]="getArrayLength(input) >= input.getMaxLength()"
-    >
-      Add Element
-    </button>
-  </div>
-  <div *ngIf="getArrayLength(input) > input.getMaxLength()">
-    <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
-      <clr-alert-item>
-        <span class="alert-text">
-          {{ input.name }} takes {{ input.getMaxLength() }} values at maximum.
-        </span>
-      </clr-alert-item>
-    </clr-alert>
-  </div>
-  <div *ngIf="input.isRequired() && getArrayLength(input) == 0">
-    <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
-      <clr-alert-item>
-        <span class="alert-text">
-          {{ input.name }} requires at least one value.
-        </span>
-      </clr-alert-item>
-    </clr-alert>
-  </div>
-</ng-container>
+@if (input.isArrayType()) {
+  <ng-container [formGroup]="formGroup">
+    <div>
+      <b
+        ><label>{{ input.name }}</label></b
+      >
+      @switch (input.type) {
+        @case (TypedInputType.STRING) {
+          <app-typed-array-string
+            [array]="getArrayControlsString(input.id)"
+            [input]="input"
+            (inputChange)="inputChanged()"
+          >
+          </app-typed-array-string>
+        }
+        @case (TypedInputType.INTEGER) {
+          <app-typed-array-number
+            [array]="getArrayControlsNumber(input.id)"
+            [input]="input"
+            (inputChange)="inputChanged()"
+          >
+          </app-typed-array-number>
+        }
+        @case (TypedInputType.FLOAT) {
+          <app-typed-array-number
+            [array]="getArrayControlsNumber(input.id)"
+            [input]="input"
+            (inputChange)="inputChanged()"
+          >
+          </app-typed-array-number>
+        }
+        @case (TypedInputType.BOOLEAN) {
+          <app-typed-array-boolean
+            [array]="getArrayControlsBoolean(input.id)"
+            [input]="input"
+            (inputChange)="inputChanged()"
+          >
+          </app-typed-array-boolean>
+        }
+      }
+      <button
+        class="btn btn-outline"
+        type="button"
+        (click)="addArrayElement(input)"
+        [disabled]="getArrayLength(input) >= input.getMaxLength()"
+      >
+        Add Element
+      </button>
+    </div>
+    @if (getArrayLength(input) > input.getMaxLength()) {
+      <div>
+        <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+          <clr-alert-item>
+            <span class="alert-text">
+              {{ input.name }} takes {{ input.getMaxLength() }} values at
+              maximum.
+            </span>
+          </clr-alert-item>
+        </clr-alert>
+      </div>
+    }
+    @if (input.isRequired() && getArrayLength(input) == 0) {
+      <div>
+        <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
+          <clr-alert-item>
+            <span class="alert-text">
+              {{ input.name }} requires at least one value.
+            </span>
+          </clr-alert-item>
+        </clr-alert>
+      </div>
+    }
+  </ng-container>
+}

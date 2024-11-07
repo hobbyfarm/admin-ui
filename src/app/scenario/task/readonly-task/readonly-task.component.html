@@ -51,44 +51,44 @@
       <p>{{ translateReturnType(editTask.return_type) }}</p>
     </div>
   </div>
-  <div
-    class="clr-row"
-    *ngIf="isOfReturnType(['Return Text', 'Return Code and Text'])"
-  >
-    <div class="clr-col-5">
-      <h6><b>Expected Output</b></h6>
+  @if (isOfReturnType(["Return Text", "Return Code and Text"])) {
+    <div class="clr-row">
+      <div class="clr-col-5">
+        <h6><b>Expected Output</b></h6>
+      </div>
+      <div class="clr-col-6">
+        <p>{{ editTask.expected_output_value }}</p>
+      </div>
     </div>
-    <div class="clr-col-6">
-      <p>{{ editTask.expected_output_value }}</p>
-    </div>
-  </div>
+  }
 
-  <div class="clr-row" *ngIf="isOfReturnType(['Match Regex'])">
-    <div class="clr-col-5">
-      <h6><b>Regex to match</b></h6>
+  @if (isOfReturnType(["Match Regex"])) {
+    <div class="clr-row">
+      <div class="clr-col-5">
+        <h6><b>Regex to match</b></h6>
+      </div>
+      <div class="clr-col-6">
+        <p></p>
+        <app-code-with-syntax-highlighting
+          [language]="supportedLanguages.REGEX"
+          [readonly]="true"
+          [height]="'2rem'"
+          [width]="'90%'"
+          [outline]="'none'"
+          [textValue]="editTask.expected_output_value"
+        ></app-code-with-syntax-highlighting>
+      </div>
     </div>
-    <div class="clr-col-6">
-      <p></p>
-      <app-code-with-syntax-highlighting
-        [language]="supportedLanguages.REGEX"
-        [readonly]="true"
-        [height]="'2rem'"
-        [width]="'90%'"
-        [outline]="'none'"
-        [textValue]="editTask.expected_output_value"
-      ></app-code-with-syntax-highlighting>
-    </div>
-  </div>
+  }
 
-  <div
-    class="clr-row"
-    *ngIf="isOfReturnType(['Return Code', 'Return Code and Text'])"
-  >
-    <div class="clr-col-5">
-      <h6><b>Return Code</b></h6>
+  @if (isOfReturnType(["Return Code", "Return Code and Text"])) {
+    <div class="clr-row">
+      <div class="clr-col-5">
+        <h6><b>Return Code</b></h6>
+      </div>
+      <div class="clr-col-6">
+        <p>{{ editTask.expected_return_code }}</p>
+      </div>
     </div>
-    <div class="clr-col-6">
-      <p>{{ editTask.expected_return_code }}</p>
-    </div>
-  </div>
+  }
 </div>

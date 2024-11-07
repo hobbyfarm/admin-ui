@@ -27,7 +27,9 @@
     </clr-datagrid>
     <br />
     Scenarios to add:
-    <span *ngFor="let s of selectedScenarios">{{ s.id }}, </span>
+    @for (s of selectedScenarios; track s) {
+      <span>{{ s.id }}, </span>
+    }
   </div>
   <div class="modal-footer">
     <button class="btn btn-danger-outline" (click)="addOpen = false">

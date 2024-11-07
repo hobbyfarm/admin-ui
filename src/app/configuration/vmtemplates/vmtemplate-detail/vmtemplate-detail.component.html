@@ -1,94 +1,107 @@
 <div [clrLoading]="loading">
-    <clr-stack-view *ngIf="currentVmTemplate; else noContent">
+  @if (currentVmTemplate) {
+    <clr-stack-view>
+      <clr-stack-block>
+        <clr-stack-label>Basic Information</clr-stack-label>
         <clr-stack-block>
-            <clr-stack-label>Basic Information</clr-stack-label>
-            <clr-stack-block>
-                <clr-stack-label class="stackbox-header">Option</clr-stack-label>
-                <clr-stack-content class="stackbox-header">Value</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block>
-                <clr-stack-label>Name</clr-stack-label>
-                <clr-stack-content>{{ currentVmTemplate.name }}</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block>
-                <clr-stack-label>Image</clr-stack-label>
-                <clr-stack-content>{{ currentVmTemplate.image }}</clr-stack-content>
-            </clr-stack-block>
+          <clr-stack-label class="stackbox-header">Option</clr-stack-label>
+          <clr-stack-content class="stackbox-header">Value</clr-stack-content>
         </clr-stack-block>
-        <clr-stack-block *ngIf="currentVmTemplate.config_map && !isEmpty(currentVmTemplate.config_map)">
-            <clr-stack-label>Config Map</clr-stack-label>
-            <clr-stack-block>
-                <clr-stack-label class="stackbox-header">Key</clr-stack-label>
-                <clr-stack-content class="stackbox-header">Value</clr-stack-content>
-            </clr-stack-block>
-            <clr-stack-block *ngFor="let item of configMap | keyvalue">
-                <clr-stack-label>{{ item.key }}</clr-stack-label>
-                <clr-stack-content>{{ item.value }}</clr-stack-content>
-            </clr-stack-block>
+        <clr-stack-block>
+          <clr-stack-label>Name</clr-stack-label>
+          <clr-stack-content>{{ currentVmTemplate.name }}</clr-stack-content>
         </clr-stack-block>
-
-        <!-- Webinterfaces -->
-        <ng-container *ngIf="!(webinterfaces.length > 0); else services">
+        <clr-stack-block>
+          <clr-stack-label>Image</clr-stack-label>
+          <clr-stack-content>{{ currentVmTemplate.image }}</clr-stack-content>
+        </clr-stack-block>
+      </clr-stack-block>
+      @if (
+        currentVmTemplate.config_map && !isEmpty(currentVmTemplate.config_map)
+      ) {
+        <clr-stack-block>
+          <clr-stack-label>Config Map</clr-stack-label>
+          <clr-stack-block>
+            <clr-stack-label class="stackbox-header">Key</clr-stack-label>
+            <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+          </clr-stack-block>
+          @for (item of configMap | keyvalue; track item) {
             <clr-stack-block>
-                <clr-stack-label>Services</clr-stack-label>
-                <clr-stack-content>None</clr-stack-content>
+              <clr-stack-label>{{ item.key }}</clr-stack-label>
+              <clr-stack-content>{{ item.value }}</clr-stack-content>
             </clr-stack-block>
-        </ng-container>
-        <ng-template #services>
-            <clr-accordion style="margin-bottom: 0;">
-                <clr-accordion-panel>
-                    <clr-accordion-title>Services</clr-accordion-title>
-                    <clr-accordion-content *clrIfExpanded>
-                        <div style="margin: 1rem">
-                            <table class="table table-compact">
-                                <th>Name</th>
-                                <th>Port</th>
-                                <th>Tab</th>
-                                <tbody>
-                                    <tr *ngFor="let webinterface of webinterfaces">
-                                        <td>{{ webinterface.name }}</td>
-                                        <td>
-                                            {{ webinterface.hasWebinterface ? webinterface.port : "-" }}
-                                        </td>
-                                        <td>{{ webinterface.hasOwnTab ? webinterface.hasOwnTab : "-" }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </clr-accordion-content>
-                </clr-accordion-panel>
-            </clr-accordion>
-        </ng-template>
-
-        <!-- Cloud-Init -->
-        <ng-container *ngIf="cloudConfigData == 'No Cloud Config defined'; else cloudConfig">
-            <clr-stack-block>
-                <clr-stack-label>Cloud-Init</clr-stack-label>
-                <clr-stack-content >None</clr-stack-content>
-            </clr-stack-block>
-        </ng-container>
-        <ng-template #cloudConfig>
-            <clr-accordion style="margin-bottom: 0;">
-                <clr-accordion-panel>
-                    <clr-accordion-title>Cloud-Init</clr-accordion-title>
-                    <clr-accordion-content *clrIfExpanded>
-                        <div style="margin: 1rem">
-                            <markdown [data]="cloudConfigData | language: 'yaml'"></markdown>
-                        </div>
-                    </clr-accordion-content>
-                </clr-accordion-panel>
-            </clr-accordion>
-        </ng-template>
-
-
+          }
+        </clr-stack-block>
+      }
+      <!-- Webinterfaces -->
+      @if (!(webinterfaces.length > 0)) {
+        <clr-stack-block>
+          <clr-stack-label>Services</clr-stack-label>
+          <clr-stack-content>None</clr-stack-content>
+        </clr-stack-block>
+      } @else {
+        <clr-accordion style="margin-bottom: 0">
+          <clr-accordion-panel>
+            <clr-accordion-title>Services</clr-accordion-title>
+            <clr-accordion-content *clrIfExpanded>
+              <div style="margin: 1rem">
+                <table class="table table-compact">
+                  <th>Name</th>
+                  <th>Port</th>
+                  <th>Tab</th>
+                  <tbody>
+                    @for (webinterface of webinterfaces; track webinterface) {
+                      <tr>
+                        <td>{{ webinterface.name }}</td>
+                        <td>
+                          {{
+                            webinterface.hasWebinterface
+                              ? webinterface.port
+                              : "-"
+                          }}
+                        </td>
+                        <td>
+                          {{
+                            webinterface.hasOwnTab
+                              ? webinterface.hasOwnTab
+                              : "-"
+                          }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </clr-accordion-content>
+          </clr-accordion-panel>
+        </clr-accordion>
+      }
+      <!-- Cloud-Init -->
+      @if (cloudConfigData == "No Cloud Config defined") {
+        <clr-stack-block>
+          <clr-stack-label>Cloud-Init</clr-stack-label>
+          <clr-stack-content>None</clr-stack-content>
+        </clr-stack-block>
+      } @else {
+        <clr-accordion style="margin-bottom: 0">
+          <clr-accordion-panel>
+            <clr-accordion-title>Cloud-Init</clr-accordion-title>
+            <clr-accordion-content *clrIfExpanded>
+              <div style="margin: 1rem">
+                <markdown
+                  [data]="cloudConfigData | language: 'yaml'"
+                ></markdown>
+              </div>
+            </clr-accordion-content>
+          </clr-accordion-panel>
+        </clr-accordion>
+      }
     </clr-stack-view>
-    <ng-template #noContent>
-        <clr-alert [clrAlertType]="'warning'" [clrAlertClosable]="false">
-            <clr-alert-item>
-                <span class="alert-text">
-                    No content available!
-                </span>
-            </clr-alert-item>
-        </clr-alert>
-    </ng-template>
+  } @else {
+    <clr-alert [clrAlertType]="'warning'" [clrAlertClosable]="false">
+      <clr-alert-item>
+        <span class="alert-text"> No content available! </span>
+      </clr-alert-item>
+    </clr-alert>
+  }
 </div>

@@ -3,9 +3,11 @@
   [clrModalSize]="'xl'"
   [clrModalClosable]="false"
 >
-  <h3 class="modal-title" *ngIf="open">
-    OTACs for {{ currentScheduledEvent.event_name }}
-  </h3>
+  @if (open) {
+    <h3 class="modal-title">
+      OTACs for {{ currentScheduledEvent.event_name }}
+    </h3>
+  }
   <div class="modal-body">
     <form
       clrForm
@@ -63,28 +65,28 @@
 
         <clr-dg-row *clrDgItems="let otac of otacs">
           <clr-dg-cell>
-            <span class="badge badge-success" *ngIf="otac.status == 'free'"
-              >free</span
-            >
-            <span class="badge badge-info" *ngIf="otac.status == 'taken'"
-              >taken</span
-            >
-            <span
-              class="badge badge-danger"
-              *ngIf="otac.status == 'out-of-time'"
-              >out-of-time</span
-            >
+            @if (otac.status == "free") {
+              <span class="badge badge-success">free</span>
+            }
+            @if (otac.status == "taken") {
+              <span class="badge badge-info">taken</span>
+            }
+            @if (otac.status == "out-of-time") {
+              <span class="badge badge-danger">out-of-time</span>
+            }
           </clr-dg-cell>
           <clr-dg-cell>{{ otac.name }}</clr-dg-cell>
           <clr-dg-cell>{{ otac.userEmail }}</clr-dg-cell>
           <clr-dg-cell>{{ otac.redeemed_timestamp }}</clr-dg-cell>
-          <clr-dg-cell *ngIf="hasMaxDuration(otac)"
-            ><cds-icon shape="clock"></cds-icon>
-            {{ otac.max_duration }}</clr-dg-cell
-          >
-          <clr-dg-cell *ngIf="!hasMaxDuration(otac)"
-            >Until Event ends</clr-dg-cell
-          >
+          @if (hasMaxDuration(otac)) {
+            <clr-dg-cell
+              ><cds-icon shape="clock"></cds-icon>
+              {{ otac.max_duration }}</clr-dg-cell
+            >
+          }
+          @if (!hasMaxDuration(otac)) {
+            <clr-dg-cell>Until Event ends</clr-dg-cell>
+          }
           <clr-dg-cell *rbac="['scheduledevents.update']">
             <button
               type="button"

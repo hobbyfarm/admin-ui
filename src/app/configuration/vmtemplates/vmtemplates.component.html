@@ -25,25 +25,30 @@
       <clr-dg-column [clrDgField]="'id'">Object Id</clr-dg-column>
 
       <clr-dg-row *clrDgItems="let t of templates; let i = index">
-        <clr-dg-action-overflow *ngIf="showActionOverflow">
-          <button
-            class="action-item"
-            (click)="openEdit(t)"
-            *rbac="
-              ['virtualmachinetemplates.get', 'virtualmachinetemplates.update'];
-              op: 'AND'
-            "
-          >
-            Edit
-          </button>
-          <button
-            class="action-item"
-            (click)="openDelete(t)"
-            *rbac="['virtualmachinetemplates.delete']"
-          >
-            Delete
-          </button>
-        </clr-dg-action-overflow>
+        @if (showActionOverflow) {
+          <clr-dg-action-overflow>
+            <button
+              class="action-item"
+              (click)="openEdit(t)"
+              *rbac="
+                [
+                  'virtualmachinetemplates.get',
+                  'virtualmachinetemplates.update',
+                ];
+                op: 'AND'
+              "
+            >
+              Edit
+            </button>
+            <button
+              class="action-item"
+              (click)="openDelete(t)"
+              *rbac="['virtualmachinetemplates.delete']"
+            >
+              Delete
+            </button>
+          </clr-dg-action-overflow>
+        }
         <clr-dg-cell>{{ t.name }}</clr-dg-cell>
         <clr-dg-cell>{{ t.image }}</clr-dg-cell>
         <clr-dg-cell>{{ t.id }}</clr-dg-cell>

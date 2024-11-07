@@ -1,117 +1,172 @@
 <div class="branding">
-    <a class="logo-and-title">
-        <cds-icon shape="logo"></cds-icon>
-        <span class="title">{{ title }}</span>
-    </a>
+  <a class="logo-and-title">
+    <cds-icon shape="logo"></cds-icon>
+    <span class="title">{{ title }}</span>
+  </a>
 </div>
 
 <div class="header-nav">
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/home']" [routerLinkActive]="'active'">Home</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/dashboards']" [routerLinkActive]="'active'" *rbac="['scheduledevents.list']">Dashboards</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/events']" [routerLinkActive]="'active'" *rbac="['scheduledevents.list']">Scheduled Events</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/content']" [routerLinkActive]="'active'" *rbac="['scenarios.list', 'courses.list']; op 'OR'">Content Management</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/users']" [routerLinkActive]="'active'" *rbac="['users.list']">Users</a>
-    <a href="javascript://" class="nav-link nav-text" [routerLink]="['/configuration']" [routerLinkActive]="'active'" *ngIf="configurationRbac">Configuration</a>
+  <a
+    href="javascript://"
+    class="nav-link nav-text"
+    [routerLink]="['/home']"
+    [routerLinkActive]="'active'"
+    >Home</a
+  >
+  <a
+    href="javascript://"
+    class="nav-link nav-text"
+    [routerLink]="['/dashboards']"
+    [routerLinkActive]="'active'"
+    *rbac="['scheduledevents.list']"
+    >Dashboards</a
+  >
+  <a
+    href="javascript://"
+    class="nav-link nav-text"
+    [routerLink]="['/events']"
+    [routerLinkActive]="'active'"
+    *rbac="['scheduledevents.list']"
+    >Scheduled Events</a
+  >
+  <a
+    href="javascript://"
+    class="nav-link nav-text"
+    [routerLink]="['/content']"
+    [routerLinkActive]="'active'"
+    *rbac="['scenarios.list', 'courses.list']; op: 'OR'"
+    >Content Management</a
+  >
+  <a
+    href="javascript://"
+    class="nav-link nav-text"
+    [routerLink]="['/users']"
+    [routerLinkActive]="'active'"
+    *rbac="['users.list']"
+    >Users</a
+  >
+  @if (configurationRbac) {
+    <a
+      href="javascript://"
+      class="nav-link nav-text"
+      [routerLink]="['/configuration']"
+      [routerLinkActive]="'active'"
+      >Configuration</a
+    >
+  }
 </div>
 
 <div class="header-actions">
-    <clr-dropdown>
-        <button class="nav-text" clrDropdownToggle>
-            {{email}}
-            <cds-icon shape="angle" direction="down"></cds-icon>
-        </button>
-        <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
-            <a (click)="about()" clrDropdownItem>About</a>
-            <a (click)="openSettings()" clrDropdownItem>Settings</a>
-            <a (click)="logout()" clrDropdownItem>Logout</a>
-        </clr-dropdown-menu>
-    </clr-dropdown>
+  <clr-dropdown>
+    <button class="nav-text" clrDropdownToggle>
+      {{ email }}
+      <cds-icon shape="angle" direction="down"></cds-icon>
+    </button>
+    <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+      <a (click)="about()" clrDropdownItem>About</a>
+      <a (click)="openSettings()" clrDropdownItem>Settings</a>
+      <a (click)="logout()" clrDropdownItem>Logout</a>
+    </clr-dropdown-menu>
+  </clr-dropdown>
 </div>
 
 <clr-modal #settingsmodal [(clrModalOpen)]="settingsModalOpened">
-    <h3 class="modal-title">Settings</h3>
-    <div class="modal-body">
-      <ng-container *ngIf="fetchingSettings">
-        <span class="spinner spinner-inline"> Loading... </span>
-        <span> Loading... </span>
-      </ng-container>
-      <ng-container *ngIf="!fetchingSettings">
-        <form clrForm [formGroup]="settingsForm">
-          <clr-tabs>
-            <clr-tab>
-              <button clrTabLink>General</button>
-              <clr-tab-content>
-                <clr-toggle-container>
-                  <label class="clr-col-md-4">Hide Usernames</label>
-                  <clr-toggle-wrapper>
-                    <input
-                      class="clr-col-md-8"
-                      type="checkbox"
-                      clrToggle
-                      name="hide_usernames_status"
-                      formControlName="hide_usernames_status"
-                    />
-                    <label>Hide Usernames</label>
-                  </clr-toggle-wrapper>
-                  <clr-control-helper
-                    >Keep names hidden in screensharings
-                  </clr-control-helper>
-                </clr-toggle-container>
-              </clr-tab-content>
-              <clr-tab-content> </clr-tab-content>
-            </clr-tab>
-            <clr-tab>
-              <button clrTabLink>Theme</button>
-              <clr-tab-content>
-                <clr-combobox-container>
-                  <label>Theme</label>
-                  <clr-combobox
-                    name="Theme"
-                    required
-                    placeholder="system"
-                    formControlName="theme"
-                  >
-                    <clr-options>
-                      <clr-option clrValue="light">light</clr-option>
-                      <clr-option clrValue="dark">dark</clr-option>
-                      <clr-option clrValue="system"> system</clr-option>
-                    </clr-options>
-                  </clr-combobox>
-                </clr-combobox-container>
-              </clr-tab-content>
-              <clr-tab-content> </clr-tab-content>
-            </clr-tab>
-          </clr-tabs>
-        </form>
-      </ng-container>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" (click)="settingsModalOpened = false">Close</button>
-      <button class="btn btn-success" (click)="doSaveSettings()" [disabled]="isButtonDisabled">Save</button>
-    </div>
-  </clr-modal>
+  <h3 class="modal-title">Settings</h3>
+  <div class="modal-body">
+    @if (fetchingSettings) {
+      <span class="spinner spinner-inline"> Loading... </span>
+      <span> Loading... </span>
+    }
+    @if (!fetchingSettings) {
+      <form clrForm [formGroup]="settingsForm">
+        <clr-tabs>
+          <clr-tab>
+            <button clrTabLink>General</button>
+            <clr-tab-content>
+              <clr-toggle-container>
+                <label class="clr-col-md-4">Hide Usernames</label>
+                <clr-toggle-wrapper>
+                  <input
+                    class="clr-col-md-8"
+                    type="checkbox"
+                    clrToggle
+                    name="hide_usernames_status"
+                    formControlName="hide_usernames_status"
+                  />
+                  <label>Hide Usernames</label>
+                </clr-toggle-wrapper>
+                <clr-control-helper
+                  >Keep names hidden in screensharings
+                </clr-control-helper>
+              </clr-toggle-container>
+            </clr-tab-content>
+            <clr-tab-content> </clr-tab-content>
+          </clr-tab>
+          <clr-tab>
+            <button clrTabLink>Theme</button>
+            <clr-tab-content>
+              <clr-combobox-container>
+                <label>Theme</label>
+                <clr-combobox
+                  name="Theme"
+                  required
+                  placeholder="system"
+                  formControlName="theme"
+                >
+                  <clr-options>
+                    <clr-option clrValue="light">light</clr-option>
+                    <clr-option clrValue="dark">dark</clr-option>
+                    <clr-option clrValue="system"> system</clr-option>
+                  </clr-options>
+                </clr-combobox>
+              </clr-combobox-container>
+            </clr-tab-content>
+            <clr-tab-content> </clr-tab-content>
+          </clr-tab>
+        </clr-tabs>
+      </form>
+    }
+  </div>
+  <div class="modal-footer">
+    <button class="btn" (click)="settingsModalOpened = false">Close</button>
+    <button
+      class="btn btn-success"
+      (click)="doSaveSettings()"
+      [disabled]="isButtonDisabled"
+    >
+      Save
+    </button>
+  </div>
+</clr-modal>
 
 <clr-modal #logoutmodal [(clrModalOpen)]="logoutModalOpened">
-    <h3 class="modal-title">Confirm Logout</h3>
-    <div class="modal-body">
-        <p>
-            Are you sure you want to logout?
-        </p>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-outline" (click)="logoutModalOpened = false">Cancel</button>
-        <button type="button" class="btn btn-danger-outline" (click)="doLogout()">Logout</button>
-    </div>
+  <h3 class="modal-title">Confirm Logout</h3>
+  <div class="modal-body">
+    <p>Are you sure you want to logout?</p>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline"
+      (click)="logoutModalOpened = false"
+    >
+      Cancel
+    </button>
+    <button type="button" class="btn btn-danger-outline" (click)="doLogout()">
+      Logout
+    </button>
+  </div>
 </clr-modal>
 
 <clr-modal #aboutmodal [(clrModalOpen)]="aboutModalOpened">
-    <h3 class="modal-title">About HobbyFarm</h3>
-    <div class="modal-body">
-        <p>
-            HobbyFarm was lovingly crafted by &#64;ebauman and &#64;Oats87 from &#64;RancherLabs
-        </p>
-        <p>
-            <i>UI Version: {{version}}</i>
-        </p>
-    </div>
+  <h3 class="modal-title">About HobbyFarm</h3>
+  <div class="modal-body">
+    <p>
+      HobbyFarm was lovingly crafted by &#64;ebauman and &#64;Oats87 from
+      &#64;RancherLabs
+    </p>
+    <p>
+      <i>UI Version: {{ version }}</i>
+    </p>
+  </div>
 </clr-modal>

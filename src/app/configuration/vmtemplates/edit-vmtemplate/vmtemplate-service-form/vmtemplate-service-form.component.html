@@ -24,44 +24,45 @@
     [dragulaModel]="dragServices"
     (dragulaModelChange)="changeOrder($event)"
   >
-    <tr *ngFor="let interface of dragServices; let i = index">
-      <td>
-        <cds-icon class="handle" shape="drag-handle" size="24"></cds-icon>
-      </td>
-      <td>{{ interface.name }}</td>
-      <td>
-        {{ interface.hasWebinterface ? interface.port : "-" }}
-      </td>
-      <td>{{ interface.hasOwnTab ? interface.hasOwnTab : "-" }}</td>
-      <td>
-        <button
-          class="btn btn-table btn-link"
-          (click)="editVMServiceClicked(interface)"
-        >
-          EDIT
-        </button>
-      </td>
-      <td>
-        <button
-          class="btn btn-table btn-link"
-          (click)="cloudConfig.removeVMService(interface.name)"
-        >
-          DELETE
-        </button>
-      </td>
-    </tr>
+    @for (interface of dragServices; track interface; let i = $index) {
+      <tr>
+        <td>
+          <cds-icon class="handle" shape="drag-handle" size="24"></cds-icon>
+        </td>
+        <td>{{ interface.name }}</td>
+        <td>
+          {{ interface.hasWebinterface ? interface.port : "-" }}
+        </td>
+        <td>{{ interface.hasOwnTab ? interface.hasOwnTab : "-" }}</td>
+        <td>
+          <button
+            class="btn btn-table btn-link"
+            (click)="editVMServiceClicked(interface)"
+          >
+            EDIT
+          </button>
+        </td>
+        <td>
+          <button
+            class="btn btn-table btn-link"
+            (click)="cloudConfig.removeVMService(interface.name)"
+          >
+            DELETE
+          </button>
+        </td>
+      </tr>
+    }
   </tbody>
 
   <clr-modal [(clrModalOpen)]="selectVMServiceModalOpen" [clrModalSize]="'sm'">
     <h3 class="modal-title">Choose a Service</h3>
     <div class="modal-body">
       <select clrSelect [(ngModel)]="selectedNewInterface">
-        <option
-          *ngFor="let interface of predefinedInterfaces"
-          [ngValue]="interface"
-        >
-          {{ interface.name }}
-        </option>
+        @for (interface of predefinedInterfaces; track interface) {
+          <option [ngValue]="interface">
+            {{ interface.name }}
+          </option>
+        }
       </select>
     </div>
     <div class="modal-footer">
@@ -92,15 +93,17 @@
     </h3>
     <div class="modal-body">
       <form clrForm [formGroup]="newVMServiceFormGroup">
-        <clr-input-container *ngIf="!editVMService">
-          <label>Name</label>
-          <input
-            clrInput
-            placeholder="Webserver"
-            name="name"
-            formControlName="name"
-          />
-        </clr-input-container>
+        @if (!editVMService) {
+          <clr-input-container>
+            <label>Name</label>
+            <input
+              clrInput
+              placeholder="Webserver"
+              name="name"
+              formControlName="name"
+            />
+          </clr-input-container>
+        }
         <clr-checkbox-container>
           <clr-checkbox-wrapper>
             <input
@@ -113,7 +116,7 @@
             <label>Has a Webinterface</label>
           </clr-checkbox-wrapper>
         </clr-checkbox-container>
-        <ng-container *ngIf="newVMServiceFormGroup.value['hasWebinterface']">
+        @if (newVMServiceFormGroup.value["hasWebinterface"]) {
           <clr-checkbox-container>
             <clr-checkbox-wrapper>
               <input
@@ -277,7 +280,7 @@
               </clr-accordion-content>
             </clr-accordion-panel>
           </clr-accordion>
-        </ng-container>
+        }
         <app-code-with-syntax-highlighting
           [resizeable]="true"
           [textValue]="newVMServiceFormGroup.value['cloudConfigString']"

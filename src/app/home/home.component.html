@@ -1,8 +1,10 @@
 <div class="main-container">
   <header class="header header-7" app-header></header>
-  <div class="motd-container" *ngIf="motd">
-    <p class="motd">{{ motd }}</p>
-  </div>
+  @if (motd) {
+    <div class="motd-container">
+      <p class="motd">{{ motd }}</p>
+    </div>
+  }
   <div class="content-container">
     <clr-vertical-nav>
       <a
