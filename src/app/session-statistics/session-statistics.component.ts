@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
-import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
+import { Chart, ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
 import { Progress } from '../data/progress';
@@ -87,16 +87,12 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     DataLabelsPlugin,
     {
       id: 'legendMargin',
-      // chart is of type Chart<'bar'>. However, we are forced to use chart.js version 3.4.0 because it is used by ng2-charts as peer dependency.
-      // And the "legend" property is not defined in the type definitions of this version.
-
-      // We can not upgrade ng2-charts (and so its peer dependency) yet because it requires Angular 14.
-      beforeInit: function (chart: any) {
+      beforeInit: function (chart: Chart<'bar'>) {
         // Get the reference to the original fit function
-        const originalFit = (chart.legend as any).fit;
+        const originalFit = chart.legend.fit;
 
         // Override the fit function
-        (chart.legend as any).fit = function fit() {
+        chart.legend.fit = function fit() {
           // Call original function and bind scope in order to use `this` correctly inside it
           originalFit.bind(chart.legend)();
           // Change the height

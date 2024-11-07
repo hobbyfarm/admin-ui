@@ -81,7 +81,7 @@ import { NewRoleBindingComponent } from './user/new-role-binding/new-role-bindin
 import { DeleteProcessModalComponent } from './user/user/delete-process-modal/delete-process-modal.component';
 import { EnvironmentDetailComponent } from './configuration/environments/environment-detail/environment-detail.component';
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
-import { NgChartsModule } from 'ng2-charts';
+import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
 import { SessionTimeStatisticsComponent } from './session-statistics/session-time-statistics/session-time-statistics.component';
 import { VMTemplateServiceFormComponent } from './configuration/vmtemplates/edit-vmtemplate/vmtemplate-service-form/vmtemplate-service-form.component';
@@ -320,7 +320,7 @@ export function jwtOptionsFactory(): JwtConfig {
     DlDateTimeInputModule,
     DlDateTimePickerModule,
     ClarityModule,
-    NgChartsModule,
+    BaseChartDirective,
     HttpClientModule,
     JwtModule.forRoot({
       jwtOptionsProvider: {
@@ -370,6 +370,7 @@ export function jwtOptionsFactory(): JwtConfig {
         convertHTMLEntities: false,
       },
     }),
+    provideCharts(withDefaultRegisterables()),
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
