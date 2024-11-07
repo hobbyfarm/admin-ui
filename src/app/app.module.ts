@@ -64,7 +64,7 @@ import { VMService } from './step/vm.service';
 import { VMClaimService } from './data/vmclaim.service';
 import { HfMarkdownComponent } from './step/hf-markdown.component';
 import { AngularSplitModule } from 'angular-split';
-import { DynamicHooksModule } from 'ngx-dynamic-hooks';
+import { DynamicHooksComponent, provideDynamicHooks } from 'ngx-dynamic-hooks';
 import { CtrComponent } from './step/ctr-component/ctr.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
 import { ProgressService } from './data/progress.service';
@@ -202,7 +202,7 @@ ClarityIcons.addIcons(
   buildingIcon,
   numberListIcon,
   syncIcon,
-  downloadIcon
+  downloadIcon,
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {
@@ -328,26 +328,13 @@ export function jwtOptionsFactory(): JwtConfig {
         useFactory: jwtOptionsFactory,
       },
     }),
-    DynamicHooksModule.forRoot({
-      globalOptions: {
-        sanitize: false,
-        convertHTMLEntities: false,
-      },
-      globalParsers: [
-        { component: CtrComponent },
-        { component: GlossaryMdComponent },
-        { component: MermaidMdComponent },
-        { component: HiddenMdComponent },
-        { component: NoteMdComponent },
-        { component: SingleTaskVerificationMarkdownComponent },
-      ],
-    }),
     BrowserAnimationsModule,
     DragulaModule.forRoot(),
     MarkdownModule.forRoot({
       sanitize: SecurityContext.NONE,
     }),
     ScrollingModule,
+    DynamicHooksComponent,
   ],
   providers: [
     ScenarioService,
@@ -369,6 +356,20 @@ export function jwtOptionsFactory(): JwtConfig {
       multi: true,
       deps: [AppConfigService, RbacService], // rbacservice listed here to initialize it before anything else
     },
+    provideDynamicHooks({
+      parsers: [
+        { component: CtrComponent },
+        { component: GlossaryMdComponent },
+        { component: MermaidMdComponent },
+        { component: HiddenMdComponent },
+        { component: NoteMdComponent },
+        { component: SingleTaskVerificationMarkdownComponent },
+      ],
+      options: {
+        sanitize: false,
+        convertHTMLEntities: false,
+      },
+    }),
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
