@@ -163,6 +163,7 @@ import { SafeSvgPipe } from './pipes/safe-svg.pipe';
 import { TooltipDirective } from './directives/tooltip.directive';
 import { TooltipComponent } from './tooltip/tooltip.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { AuthnService } from './data/authn.service';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -214,7 +215,7 @@ const appInitializerFn = (appConfig: AppConfigService) => {
 export function jwtOptionsFactory(): JwtConfig {
   return {
     tokenGetter: () => {
-      return localStorage.getItem('hobbyfarm_admin_token');
+      return localStorage.getItem('hobbyfarm_admin_token') ?? '';
     },
     allowedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
     disallowedRoutes: [
@@ -337,6 +338,7 @@ export function jwtOptionsFactory(): JwtConfig {
     DynamicHooksComponent,
   ],
   providers: [
+    AuthnService,
     ScenarioService,
     CtrService,
     SessionService,

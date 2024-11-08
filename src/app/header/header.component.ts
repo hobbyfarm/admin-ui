@@ -2,16 +2,15 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import '@cds/core/icon/register.js';
 import { ClarityIcons } from '@cds/core/icon';
 import { ClrModal } from '@clr/angular';
-import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AppConfigService } from '../app-config.service';
 import { RbacService } from '../data/rbac.service';
 import { Title } from '@angular/platform-browser';
-import { themes } from '../step/terminal-themes/themes';
 import { first } from 'rxjs/operators';
 import { SettingsService } from '../data/settings.service';
 import { SettingFormGroup } from '../data/forms';
+import { AuthnService } from '../data/authn.service';
 
 @Component({
   selector: '[app-header]',
@@ -35,12 +34,12 @@ export class HeaderComponent implements OnInit {
   public logo = this.config.logo || '/assets/default/logo.svg';
 
   constructor(
-    public router: Router,
     public helper: JwtHelperService,
     public configService: AppConfigService,
     private rbacService: RbacService,
     private settingsService: SettingsService,
-    private titleService: Title
+    private titleService: Title,
+    private authenticationService: AuthnService,
   ) {
     this.configService.getLogo(this.logo).then((obj: string) => {
       ClarityIcons.addIcons(['logo', obj]);
@@ -71,22 +70,14 @@ export class HeaderComponent implements OnInit {
     if (typeof token === 'string') {
       const decodedToken = this.helper.decodeToken(token);
       this.email = decodedToken.email;
-
-      // Automatically logout the user after token expiration
-      const timeout = decodedToken.exp * 1000 - Date.now();
-      setTimeout(() => this.doLogout(), timeout);
-    } else {
-      // ... however if for some reason it is not the case, this means that the token could not be loaded from local storage
-      // hence we automatically logout the user
-      this.doLogout();
     }
-    this.settingsForm = this.settingsService.getForm()
+    this.settingsForm = this.settingsService.getForm();
   }
 
   @ViewChild('settingsmodal', { static: true }) settingsModal: ClrModal;
   @ViewChild('logoutmodal', { static: true }) logoutModal: ClrModal;
   @ViewChild('aboutmodal', { static: true }) aboutModal: ClrModal;
-  
+
   public logout() {
     this.logoutModal.open();
   }
@@ -96,8 +87,7 @@ export class HeaderComponent implements OnInit {
   }
 
   public doLogout() {
-    localStorage.removeItem('hobbyfarm_admin_token');
-    this.router.navigateByUrl('/login');
+    this.authenticationService.logout();
   }
 
   public openSettings() {
@@ -114,14 +104,16 @@ export class HeaderComponent implements OnInit {
           this.settingsForm.setValue({
             terminal_theme,
             hide_usernames_status,
-            theme
+            theme,
           });
 
           this.fetchingSettings = false;
         },
       );
     this.settingsModal.open();
-    this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value
+    this.hide_usernames_status = this.settingsForm.get(
+      'hide_usernames_status',
+    )?.value;
   }
 
   public doSaveSettings() {
@@ -130,7 +122,6 @@ export class HeaderComponent implements OnInit {
       next: () => {
         this.settingsModalOpened = false;
         this.isButtonDisabled = false;
-
       },
       error: () => {
         setTimeout(() => (this.settingsModalOpened = false), 2000);

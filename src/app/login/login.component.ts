@@ -2,13 +2,9 @@ import { Component } from '@angular/core';
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpParams,
 } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { ServerResponse } from '../data/serverresponse';
-import { environment } from 'src/environments/environment';
 import { AppConfigService } from '../app-config.service';
-import { RbacService } from '../data/rbac.service';
+import { AuthnService } from '../data/authn.service';
 
 @Component({
   selector: 'app-login',
@@ -26,9 +22,8 @@ export class LoginComponent {
 
   constructor(
     public http: HttpClient,
-    public router: Router,
     public configService: AppConfigService,
-    private rbacService: RbacService
+    private authenticationService: AuthnService,
   ) {
     if (this.config.login && this.config.login.logo) {
       this.logo = this.config.login.logo;
@@ -44,20 +39,8 @@ export class LoginComponent {
 
   public login() {
     this.error = '';
-    let body = new HttpParams()
-      .set('email', this.email)
-      .set('password', this.password);
 
-    this.http.post(environment.server + '/auth/authenticate', body).subscribe({
-      next: (s: ServerResponse) => {
-        // should have a token here
-        // persist it
-        localStorage.setItem('hobbyfarm_admin_token', s.message); // not b64 from authenticate
-        // load the access set in rbac
-        this.rbacService
-          .LoadAccessSet()
-          .then(() => this.router.navigateByUrl('/home'));
-      },
+    this.authenticationService.login(this.email, this.password).subscribe({
       error: (e: HttpErrorResponse) => {
         if (e.error instanceof ErrorEvent) {
           // frontend, maybe network?
