@@ -23,6 +23,8 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
   selectedEvent: ScheduledEventBase;
 
   public includeFinished: boolean = false;
+  public listView: boolean = false;
+  public cardView: boolean = true;
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
   public callInterval: any;
@@ -170,6 +172,17 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
       this.filter();
     });
   }
+
+  setListView(): void {
+    this.listView = true;
+    this.cardView = false;
+  }
+
+  setCardView(): void {
+    this.listView = false;
+    this.cardView = true;
+  }
+
 
   saveSettings(newHideUsernamesStatus: boolean) {
     if (this.settingsForm.value) {
