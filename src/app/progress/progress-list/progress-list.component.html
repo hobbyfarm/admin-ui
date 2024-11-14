@@ -30,7 +30,11 @@
           <cds-icon shape="ellipsis-horizontal" size="24" direction="down"></cds-icon>
         </button>
         <clr-dropdown-menu clrPosition="left-top" *clrIfOpen>
-          <div aria-label="Dropdown header info" (click)="openInfo()" clrDropdownItem>Info</div>
+          <div 
+            aria-label="Dropdown header info" 
+            (click)="openInfo()" 
+            clrDropdownItem
+          >Info</div>
           <div 
             aria-label="Dropdown header join" 
             clrDropdownItem
@@ -58,3 +62,9 @@
 
   </div>
 </div>
+
+<progress-info
+  #progressInfo
+  [progress]="progress"
+  [pause]="pause"
+></progress-info>
