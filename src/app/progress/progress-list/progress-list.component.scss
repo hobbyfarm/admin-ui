@@ -41,8 +41,16 @@ div {
         cursor: pointer;
     }
 
-    .center{
-        text-align: center;
+    .end{
+        text-align: end;
+    }
+
+    .small{
+        flex: 0.3;
+    }
+
+    .small-gap{
+        margin-left: -10px;
     }
 
     .color {
