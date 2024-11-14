@@ -5,9 +5,10 @@
     <div class="flex-cell">Username</div>
     <div class="flex-cell">Scenario</div>
     <div class="flex-cell">Course</div>
-    <div class="flex-cell center">Progress</div>
-    <div class="flex-cell center">Time</div>
-    <div class="flex-cell center">Action</div>
+    <div class="flex-cell ">Time</div>
+    <div class="flex-cell end small">Current / </div>
+    <div class="flex-cell small small-gap">Max Step</div>
+    <div class="flex-cell end small">Action</div>
 </div>
 
 <div class="flex-row">
@@ -18,12 +19,13 @@
           max="100"
         ></progress>
     </div>
-    <div class="flex-cell pointer">{{ getUsername() }} </div>
+    <div class="flex-cell pointer" (click)="progressFilterName()">{{ getUsername() }} </div>
     <div class="flex-cell"><cds-icon shape="play" solid></cds-icon> {{ progress.scenario_name }}</div>
     <div class="flex-cell"><cds-icon shape="layers" solid></cds-icon> {{ progress.course_name }}</div>
-    <div class="flex-cell center"><cds-icon shape="number-list"></cds-icon> {{ progress.current_step }} / {{ progress.total_step }}</div>
-    <div class="flex-cell center"><cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}</div>
-    <div class="flex-cell center">
+    <div class="flex-cell "><cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}</div>
+    <div class="flex-cell end small"><cds-icon shape="number-list"></cds-icon> {{ progress.current_step }} / </div>
+    <div class="flex-cell small small-gap"><cds-icon shape="checkbox-list"></cds-icon> {{ progress.total_step }}</div>
+    <div class="flex-cell end small">
       
       <clr-dropdown [clrCloseMenuOnItemClick]="false">
         <button clrDropdownTrigger aria-label="Dropdown demo button">
