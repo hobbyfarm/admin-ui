@@ -51,6 +51,7 @@ export class ProgressListComponent {
   }
 
   openInfo() {
+    console.log("OpenInfo")
     this.progressInfo.openModal();
   }
 
