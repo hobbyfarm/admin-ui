@@ -150,14 +150,21 @@
   <div class="clr-row" *ngIf="listView">
     <ng-container>
       <div class="flex-container" *ngIf="currentProgress?.length > 0; else no_sessions">
-        <progress-list class="flex-row" *ngFor="let p of filteredProgress; let i = index" 
+
+        <progress-list 
+          [progressList]="filteredProgress"
+          [pause]="pause"
+          [hideUsername]="hide_usernames_status"
+          (nameClickedEvent)="filterName($event)">
+        </progress-list>
+        <!-- <progress-list class="flex-row" *ngFor="let p of filteredProgress; let i = index" 
             [progress]="p"
             [pause]="pause"
             [index]="i"
             [hideUsername]="hide_usernames_status"
             (nameClickedEvent)="filterName($event)"
           >
-          </progress-list>
+          </progress-list> -->
       </div>
     </ng-container>
   </div>

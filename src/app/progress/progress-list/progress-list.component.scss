@@ -1,40 +1,32 @@
-.status-provisioning::-moz-progress-bar{
-    background-color:  var(--clr-color-warning-100, yellow);
-}
 
-.status-running::-moz-progress-bar{
-    background-color:  var(--clr-progress-default-color,#54cbf2);
-}
-
-.status-finished::-moz-progress-bar{
-    background-color:  var(--clr-color-danger-100,red);
-}
-
-.status-success::-moz-progress-bar{
-    background-color:  var(--clr-color-success-100,green);
-}
 
 .progress {
     margin-top: 4px;
 }
 
-.flex-row {
-    display: flex;
+table {
+    border-collapse: collapse;
     width: 100%;
-    gap: 16px; 
-    padding: 8px;
-    border-bottom: 1px solid #ccc;
-}
-  
-.flex-cell {
-    flex: 1;
-    margin: auto;
-}
 
-div {
+    td, th {
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        padding: 8px;
+      }
+
+    th{
+        background-color: #ddddddcc;
+    }
+
+    tr:hover {
+        background-color: rgba(255, 127, 80, 0.63);
+    }
+    cds-icon{
+        margin-right: 10px;
+    }
     progress {
-        margin: auto;
-        width: 25px;
+        width: 60px;
+        vertical-align: middle;
     }
 
     .pointer {
@@ -45,29 +37,41 @@ div {
         text-align: end;
     }
 
-    .small{
-        flex: 0.3;
+    .center{
+        text-align: center;
     }
 
     .small-gap{
-        margin-left: -10px;
+        padding: 0px;
     }
 
-    .color {
-        rotate: -90deg;
-        min-width: 50px;
-        max-width: 50px;
+    .color{
+        width: 60px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
-}
 
-.flex-header {
-    flex: 1;
-    background-color: hsl(198, 0%, 91%);
-    font-weight: bold;
-    display: flex;
-    width: 100%;
-    gap: 16px;
-    margin-bottom: 8px;
-    padding: 8px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    .step{
+        width: 88px;
+    }
+
+    .action{
+        width: 60px;
+    }
+
+    .status-provisioning::-moz-progress-bar{
+        background-color:  var(--clr-color-warning-100, yellow);
+    }
+    
+    .status-running::-moz-progress-bar{
+        background-color:  var(--clr-progress-default-color,#54cbf2);
+    }
+    
+    .status-finished::-moz-progress-bar{
+        background-color:  var(--clr-color-danger-100,red);
+    }
+    
+    .status-success::-moz-progress-bar{
+        background-color:  var(--clr-color-success-100,green);
+    }
 }
