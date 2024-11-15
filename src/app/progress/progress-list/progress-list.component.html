@@ -1,72 +1,68 @@
 
-  
-  <div class="flex-header" *ngIf="index===0">
-    <div class="flex-cell color"></div>
-    <div class="flex-cell">Username</div>
-    <div class="flex-cell">Scenario</div>
-    <div class="flex-cell">Course</div>
-    <div class="flex-cell ">Time</div>
-    <div class="flex-cell end small">Current / </div>
-    <div class="flex-cell small small-gap">Max Step</div>
-    <div class="flex-cell end small">Action</div>
-</div>
+  <table>
+    <tr>
+      <th class="color">Progress</th>
+      <th>Username</th>
+      <th>Scenario</th>
+      <th>Course</th>
+      <th>Time</th>
+      <th class="end step">Current &nbsp;&nbsp;/ </th>
+      <th class="small-gap step">Max Step</th>
+      <th class="center">Action</th>
+    </tr>
+    <tr *ngFor="let progress of progressList">
+      <td class="color"><progress
+        class="{{ getProgressColorClass(progress) }}"
+        [value]="getProgress(progress) || 0"
+        max="100"
+      ></progress></td>
+      <td class="pointer" (click)="progressFilterName(progress)">{{ getUsername(progress) }}</td>
+      <td><cds-icon shape="play" solid></cds-icon> {{ progress.scenario_name }} </td>
+      <td><cds-icon shape="layers" solid></cds-icon> {{ progress.course_name }}</td>
+      <td><cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}</td>
+      <td class="end step"><cds-icon shape="number-list"></cds-icon> {{ progress.current_step }}&nbsp;&nbsp;/ </td>
+      <td class="small-gap step">{{ progress.total_step }}</td>
+      <td class="center action pointer">
+        <clr-dropdown [clrCloseMenuOnItemClick]="false">
+          <button clrDropdownTrigger aria-label="Dropdown button">
+            <cds-icon shape="ellipsis-horizontal" size="24" direction="down"></cds-icon>
+          </button>
+          <clr-dropdown-menu clrPosition="left-top" *clrIfOpen>
+            <div 
+              aria-label="Dropdown header info" 
+              (click)="openInfo(progress)" 
+              clrDropdownItem
+            >Info</div>
+            <div 
+              aria-label="Dropdown header join" 
+              clrDropdownItem
+              class="dropdown-item"
+              (click)="openTerminalWindow(progress)"
+              [clrDisabled]="progress.finished"
+              *rbac="[
+                'sessions.get',
+                'courses.get',
+                'progresses.list',
+                'scenarios.get',
+                'virtualmachineclaims.get'
+              ]"
+              >Join Session</div>
+            <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
+            <div 
+              class="dropdown-item"
+              (click)="terminateSession(progress)"
+              [clrDisabled]="progress.finished"
+              clrDropdownItem
+              *rbac="['sessions.update']"
+            >Terminate Session</div>
+          </clr-dropdown-menu>
+        </clr-dropdown>
 
-<div class="flex-row">
-    <div class="flex-cell color progress">
-        <progress
-          class="{{ getProgressColorClass() }}"
-          [value]="getProgress() || 0"
-          max="100"
-        ></progress>
-    </div>
-    <div class="flex-cell pointer" (click)="progressFilterName()">{{ getUsername() }} </div>
-    <div class="flex-cell"><cds-icon shape="play" solid></cds-icon> {{ progress.scenario_name }}</div>
-    <div class="flex-cell"><cds-icon shape="layers" solid></cds-icon> {{ progress.course_name }}</div>
-    <div class="flex-cell "><cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}</div>
-    <div class="flex-cell end small"><cds-icon shape="number-list"></cds-icon> {{ progress.current_step }} / </div>
-    <div class="flex-cell small small-gap"><cds-icon shape="checkbox-list"></cds-icon> {{ progress.total_step }}</div>
-    <div class="flex-cell end small">
-      
-      <clr-dropdown [clrCloseMenuOnItemClick]="false">
-        <button clrDropdownTrigger aria-label="Dropdown demo button">
-          <cds-icon shape="ellipsis-horizontal" size="24" direction="down"></cds-icon>
-        </button>
-        <clr-dropdown-menu clrPosition="left-top" *clrIfOpen>
-          <div 
-            aria-label="Dropdown header info" 
-            (click)="openInfo()" 
-            clrDropdownItem
-          >Info</div>
-          <div 
-            aria-label="Dropdown header join" 
-            clrDropdownItem
-            class="dropdown-item"
-            (click)="openTerminalWindow()"
-            [clrDisabled]="progress.finished"
-            *rbac="[
-              'sessions.get',
-              'courses.get',
-              'progresses.list',
-              'scenarios.get',
-              'virtualmachineclaims.get'
-            ]"
-            >Join Session</div>
-          <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
-          <div 
-            class="dropdown-item"
-            (click)="terminateSession()"
-            [clrDisabled]="progress.finished"
-            clrDropdownItem
-            *rbac="['sessions.update']"
-          >Terminate Session</div>
-        </clr-dropdown-menu>
-      </clr-dropdown>
-
-  </div>
-</div>
-
-<progress-info
-  #progressInfo
-  [progress]="progress"
-  [pause]="pause"
-></progress-info>
+        <progress-info
+          #progressInfo
+          [progress]="progress"
+          [pause]="pause">
+        </progress-info>
+      </td>
+    </tr>
+  </table>
