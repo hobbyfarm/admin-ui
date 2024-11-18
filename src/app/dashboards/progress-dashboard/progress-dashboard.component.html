@@ -26,8 +26,7 @@
                 type="radio" 
                 clrRadio 
                 value="cardView" 
-                name="view_selection" 
-                (change)="setCardView()"
+                [formControl]="progressViewModeControl"
               />
               <label>Card View</label>
             </clr-radio-wrapper>
@@ -36,8 +35,7 @@
                 type="radio" 
                 clrRadio 
                 value="listView" 
-                name="view_selection" 
-                (change)="setListView()"
+                [formControl]="progressViewModeControl"
               />
               <label>List View</label>
             </clr-radio-wrapper>
@@ -49,7 +47,7 @@
                 clrToggle
                 name="hideUsernames"
                 [(ngModel)]="hide_usernames_status"
-                (ngModelChange)="saveSettings($event)"
+                (ngModelChange)="saveSettings({ hide_usernames_status: $event })"
               />
               <label>Hide Usernames</label>
             </clr-toggle-wrapper>
@@ -132,7 +130,7 @@
       <interval-timer (intervalElapsed)="refresh()"></interval-timer>
     </div>
   </div>
-  <div class="clr-row"  *ngIf="cardView">
+  <div class="clr-row"  *ngIf="progressViewModeControl.value === 'cardView'">
     <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
       <div
         class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3"
@@ -147,7 +145,7 @@
       </div>
     </ng-container>
   </div>
-  <div class="clr-row" *ngIf="listView">
+  <div class="clr-row" *ngIf="progressViewModeControl.value === 'listView'">
     <ng-container>
       <div class="flex-container" *ngIf="currentProgress?.length > 0; else no_sessions">
 
@@ -157,14 +155,6 @@
           [hideUsername]="hide_usernames_status"
           (nameClickedEvent)="filterName($event)">
         </progress-list>
-        <!-- <progress-list class="flex-row" *ngFor="let p of filteredProgress; let i = index" 
-            [progress]="p"
-            [pause]="pause"
-            [index]="i"
-            [hideUsername]="hide_usernames_status"
-            (nameClickedEvent)="filterName($event)"
-          >
-          </progress-list> -->
       </div>
     </ng-container>
   </div>

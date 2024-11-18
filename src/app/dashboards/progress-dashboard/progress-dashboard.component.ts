@@ -8,23 +8,22 @@ import { ScenarioService } from '../../data/scenario.service';
 import { CourseService } from '../../data/course.service';
 import { EventUserListComponent } from './event-user-list/event-user-list.component';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
+import { combineLatest, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { User } from '../../data/user';
 import { Settings, SettingsService } from 'src/app/data/settings.service';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'progress-dashboard',
   templateUrl: './progress-dashboard.component.html',
   styleUrls: ['./progress-dashboard.component.scss'],
 })
+
 export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges {
   @Input()
   selectedEvent: ScheduledEventBase;
 
   public includeFinished: boolean = false;
-  public listView: boolean = false;
-  public cardView: boolean = true;
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
   public callInterval: any;
@@ -32,6 +31,7 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
   public users: User[] = [];
   public settingsForm: FormGroup;
   public hide_usernames_status: boolean = false;
+  public progressViewModeControl = new FormControl<'cardView' | 'listView'>('cardView');
   private settings_service$ = new Subject<Readonly<Settings>>();
 
   public pauseCall: boolean = false; // Stop refreshing if we are looking at a progress
@@ -55,7 +55,7 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
     public progressService: ProgressService,
     public scheduledeventService: ScheduledeventService,
     public helper: JwtHelperService,
-    public settingsService: SettingsService
+    public settingsService: SettingsService,
   ) {}
 
   ngOnInit() {
@@ -65,13 +65,25 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
       .subscribe(
         ({
           hide_usernames_status = false,
+          progress_view_mode = 'cardView'
         }) => {
           this.settingsForm.patchValue({
-            hide_usernames_status
+            hide_usernames_status,
+            progress_view_mode
           });
           this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value
+          this.progressViewModeControl.setValue(this.settingsForm.get('progress_view_mode')?.value)
         },
       );
+      this.progressViewModeControl.valueChanges
+      .pipe(distinctUntilChanged())
+      .subscribe((value) => {
+          if (value === 'cardView') {
+            this.setCardView();
+          } else if (value === 'listView') {
+            this.setListView();
+          }
+      });
     this.refresh();
   }
 
@@ -121,6 +133,17 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
   filterName(name) {
     this.userFilter = name;
     this.filter();
+  }
+
+  setCardView() {
+    //this.progressViewModeService.setCardView();
+    this.saveSettings({ progress_view_mode: 'cardView' })
+  }
+
+  setListView() {
+    //this.progressViewModeService.setListView();
+    this.saveSettings({ progress_view_mode: 'listView' })
+
   }
 
   openUserList() {
@@ -173,27 +196,15 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
     });
   }
 
-  setListView(): void {
-    this.listView = true;
-    this.cardView = false;
-  }
-
-  setCardView(): void {
-    this.listView = false;
-    this.cardView = true;
-  }
-
-
-  saveSettings(newHideUsernamesStatus: boolean) {
+  saveSettings(update: Partial<Settings>) {
     if (this.settingsForm.value) {
-      this.settingsService.update({hide_usernames_status: newHideUsernamesStatus}).subscribe({
+      this.settingsService.update(update).subscribe({
         next: () => {
-          console.log('Saved Settings.');
         },
         error: (err) => {
           console.error('Error while saving settings:', err);
-        }
-      })
+        },
+      });
     }
   }
 

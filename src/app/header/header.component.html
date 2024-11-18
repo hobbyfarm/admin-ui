@@ -80,7 +80,7 @@
       <form clrForm [formGroup]="settingsForm">
         <clr-tabs>
           <clr-tab>
-            <button clrTabLink>General</button>
+            <button clrTabLink>Dashboard View</button>
             <clr-tab-content>
               <clr-toggle-container>
                 <label class="clr-col-md-4">Hide Usernames</label>
@@ -98,6 +98,29 @@
                   >Keep names hidden in screensharings
                 </clr-control-helper>
               </clr-toggle-container>
+                <clr-radio-container id="selectViewToggle" clrInline>
+                  <label class="clr-col-md-4">Select Dashboard View</label>
+                  <clr-radio-wrapper>
+                    <input 
+                      class="clr-col-md-2"
+                      type="radio" 
+                      clrRadio 
+                      value="cardView" 
+                      formControlName="progress_view_mode"
+                    />
+                    <label>Card View</label>
+                  </clr-radio-wrapper>
+                  <clr-radio-wrapper>
+                    <input 
+                      type="radio" 
+                      class="clr-col-md-2"
+                      clrRadio 
+                      value="listView" 
+                      formControlName="progress_view_mode"
+                    />
+                    <label>List View</label>
+                  </clr-radio-wrapper>
+                </clr-radio-container>
             </clr-tab-content>
             <clr-tab-content> </clr-tab-content>
           </clr-tab>
