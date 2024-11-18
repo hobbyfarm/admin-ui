@@ -2,9 +2,7 @@
   <div class="clr-col">
     <h3>
       Settings
-      <span class="scope">{{
-        this.selectedScope?.displayName ?? "scope"
-      }}</span>
+      <span class="scope">{{ selectedScope?.displayName ?? "scope" }}</span>
     </h3>
   </div>
 </div>
@@ -19,7 +17,7 @@
     <span> Settings are being loaded... </span>
   </div>
 }
-@if (!loading) {
+@if (!loading && selectedScope) {
   @if (settings.length > 0) {
     <app-typed-form
       [typedInputs]="settings"
@@ -28,10 +26,10 @@
       [groupType]="FormGroupType.TABS"
     ></app-typed-form>
   }
-  @if (settings.length == 0) {
+  @if (settings.length === 0) {
     <div>
       No settings available for scope
-      <code>{{ this.selectedScope.displayName }}</code
+      <code>{{ selectedScope.displayName }}</code
       >.
     </div>
   }

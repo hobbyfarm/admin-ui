@@ -20,18 +20,18 @@ export class CourseFormComponent implements OnInit, OnChanges {
   course: Course;
 
   @Output()
-  formReady: EventEmitter<CourseDetailFormGroup> = new EventEmitter(null);
+  formReady: EventEmitter<CourseDetailFormGroup> = new EventEmitter();
 
   public courseDetails: CourseDetailFormGroup = new FormGroup(
     {
-      course_name: new FormControl<string | null>(null, [
-        Validators.required,
-        Validators.minLength(4),
-      ]),
-      course_description: new FormControl<string | null>(null, [
-        Validators.required,
-        Validators.minLength(4),
-      ]),
+      course_name: new FormControl<string>('', {
+        validators: [Validators.required, Validators.minLength(4)],
+        nonNullable: true,
+      }),
+      course_description: new FormControl<string>('', {
+        validators: [Validators.required, Validators.minLength(4)],
+        nonNullable: true,
+      }),
       keepalive_amount: new FormControl<number>(10, {
         validators: Validators.required,
         nonNullable: true,
@@ -57,7 +57,7 @@ export class CourseFormComponent implements OnInit, OnChanges {
         nonNullable: true,
       }),
     },
-    { validators: KeepaliveValidator }
+    { validators: KeepaliveValidator },
   );
 
   constructor() {}
@@ -94,11 +94,11 @@ export class CourseFormComponent implements OnInit, OnChanges {
           keepalive_amount: Number(
             this.course.keepalive_duration?.substring(
               0,
-              this.course.keepalive_duration.length - 1
-            )
+              this.course.keepalive_duration.length - 1,
+            ),
           ),
           keepalive_unit: this.course.keepalive_duration?.substring(
-            this.course.keepalive_duration.length - 1
+            this.course.keepalive_duration.length - 1,
           ),
         });
       }
@@ -107,8 +107,8 @@ export class CourseFormComponent implements OnInit, OnChanges {
 
   resetFormToRenew(): void {
     this.courseDetails.reset({
-      course_name: null,
-      course_description: null,
+      course_name: '',
+      course_description: '',
       keepalive_amount: 10,
       keepalive_unit: 'm',
       pauseable: true,
@@ -126,9 +126,9 @@ export class CourseFormComponent implements OnInit, OnChanges {
     const ka = this.courseDetails.controls.keepalive_amount;
     const ku = this.courseDetails.controls.keepalive_unit;
 
-    if ((ka.dirty || ka.touched) && ka.invalid && ka.errors.required) {
+    if ((ka.dirty || ka.touched) && ka.invalid && ka.errors?.required) {
       return true;
-    } else if ((ku.dirty || ku.touched) && ku.invalid && ku.errors.required) {
+    } else if ((ku.dirty || ku.touched) && ku.invalid && ku.errors?.required) {
       return true;
     } else {
       return false;

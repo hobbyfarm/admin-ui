@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
 import { map, switchMap, tap, combineLatestAll } from 'rxjs/operators';
 import { BehaviorSubject, from, of } from 'rxjs';
 import { atou } from '../unicode';
 import { VMTemplateServiceConfiguration } from './vm-template-service-configuration';
 import { Protocol } from './protocol';
+import { GargantuaClientFactory } from './gargantua.service';
 
 interface IVMTemplateServiceConfiguration {
   has_webinterface?: boolean;
@@ -31,8 +30,9 @@ export class PredefinedServiceService {
   private bh: BehaviorSubject<VMTemplateServiceConfiguration[]> =
     new BehaviorSubject(this.cachedList);
   private fetchedList = false;
+  private gargAdmin = this.gcf.scopedClient('/a/predefinedservices');
 
-  constructor(public http: HttpClient) {}
+  constructor(private gcf: GargantuaClientFactory) {}
 
   public watch() {
     return this.bh.asObservable();
@@ -42,11 +42,12 @@ export class PredefinedServiceService {
     if (!force && this.fetchedList) {
       return of(this.cachedList);
     } else {
-      return this.http
-        .get(environment.server + '/a/predefinedservices/list')
+      return this.gargAdmin
+        .get('/list')
         .pipe(
           switchMap((s: ServerResponse) => {
-            return from(JSON.parse(atou(s.content)));
+            const templateServiceConfig: IVMTemplateServiceConfiguration = JSON.parse(atou(s.content));
+            return of(templateServiceConfig);
           }),
           map((resp: IVMTemplateServiceConfiguration) => {
             let parsedVmtsc = new VMTemplateServiceConfiguration(

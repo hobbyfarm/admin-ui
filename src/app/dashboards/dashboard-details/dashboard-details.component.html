@@ -1,26 +1,26 @@
 @if (selectedEvent) {
   <div class="content-area">
     @if (sessionDashboardActive && rbacSuccessSessions) {
-      <h3>Sessions for {{ selectedEvent?.event_name }}</h3>
+      <h3>Sessions for {{ selectedEvent.event_name }}</h3>
     }
     @if (vmDashboardActive && rbacSuccessVms) {
-      <h3>VMs for {{ selectedEvent?.event_name }}</h3>
+      <h3>VMs for {{ selectedEvent.event_name }}</h3>
     }
     @if (statisticsDashboardActive && rbacSuccessSessions) {
-      <h3>Statistics for {{ selectedEvent?.event_name }}</h3>
+      <h3>Statistics for {{ selectedEvent.event_name }}</h3>
     }
     <span class="additional-info">
       <ng-container *rbac="['accesscodes.get']">
         AC:
-        <span class="access-code">{{ selectedEvent?.access_code }}</span>
+        <span class="access-code">{{ selectedEvent.access_code }}</span>
         &#8226;
       </ng-container>
       <ng-container *rbac="['scheduledevents.get']">
         Until
-        {{ selectedEvent?.end_time | date: "MMM d, y, HH:mm" }}
+        {{ selectedEvent.end_time | date: "MMM d, y, HH:mm" }}
       </ng-container>
       <ng-container *rbac="['scheduledevents.get', 'users.list']">
-        <span>&#8226; Created by {{ selectedEvent?.creatorEmail }} </span>
+        <span>&#8226; Created by {{ selectedEvent.creatorEmail }} </span>
       </ng-container>
     </span>
     <clr-tabs>

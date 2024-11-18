@@ -12,6 +12,7 @@ import { ServerResponse } from '../data/serverresponse';
 import { ProgressInfoComponent } from './progress-info/progress-info.component';
 import { timeSince } from '../utils';
 import { Router } from '@angular/router';
+import { GargantuaClientFactory } from '../data/gargantua.service';
 
 @Component({
   selector: 'progress-card',
@@ -32,14 +33,16 @@ export class ProgressComponent {
 
   public timeSince = timeSince;
 
+  private gargSessionScopedClient = this.gcf.scopedClient('/session');
+
   @ViewChild('progressInfo') progressInfo: ProgressInfoComponent;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private gcf: GargantuaClientFactory, private router: Router) {}
 
   public terminateSession() {
-    this.http
+    this.gargSessionScopedClient
       .put(
-        environment.server + '/session/' + this.progress.session + '/finished',
+        `/${this.progress.session}/finished`,
         {}
       )
       .subscribe((_s: ServerResponse) => {

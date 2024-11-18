@@ -81,7 +81,11 @@ import { NewRoleBindingComponent } from './user/new-role-binding/new-role-bindin
 import { DeleteProcessModalComponent } from './user/user/delete-process-modal/delete-process-modal.component';
 import { EnvironmentDetailComponent } from './configuration/environments/environment-detail/environment-detail.component';
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
-import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import {
+  BaseChartDirective,
+  provideCharts,
+  withDefaultRegisterables,
+} from 'ng2-charts';
 import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
 import { SessionTimeStatisticsComponent } from './session-statistics/session-time-statistics/session-time-statistics.component';
 import { VMTemplateServiceFormComponent } from './configuration/vmtemplates/edit-vmtemplate/vmtemplate-service-form/vmtemplate-service-form.component';
@@ -213,14 +217,19 @@ const appInitializerFn = (appConfig: AppConfigService) => {
 };
 
 export function jwtOptionsFactory(): JwtConfig {
+  const allowedDomainsRegex = environment.server.match(/.*\:\/\/?([^\/]+)/);
+  let allowedDomains: string[] | undefined;
+  let disallowedRoutes: string[] | undefined;
+  if (allowedDomainsRegex && allowedDomainsRegex.length > 1) {
+    allowedDomains = [allowedDomainsRegex[1]];
+    disallowedRoutes = [allowedDomainsRegex[1] + '/auth/authenticate'];
+  }
   return {
     tokenGetter: () => {
       return localStorage.getItem('hobbyfarm_admin_token') ?? '';
     },
-    allowedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
-    disallowedRoutes: [
-      environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + '/auth/authenticate',
-    ],
+    allowedDomains: allowedDomains,
+    disallowedRoutes: disallowedRoutes,
   };
 }
 

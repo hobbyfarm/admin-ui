@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
-  HttpClient,
   HttpParams,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
 import { map, catchError, tap } from 'rxjs/operators';
 import { Course, CourseApi } from './course';
@@ -13,6 +11,7 @@ import { ScenarioService } from './scenario.service';
 import { atou, utoa } from '../unicode';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { RbacService } from './rbac.service';
+import { GargantuaClientFactory } from './gargantua.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,13 +20,15 @@ export class CourseService {
   private cachedCourseList: Course[] = [];
   private fetchedList = false;
   private bh: BehaviorSubject<Course[]> = new BehaviorSubject(
-    this.cachedCourseList
+    this.cachedCourseList,
   );
+  private gargAdmin = this.gcf.scopedClient('/a/course');
+  private garg = this.gcf.scopedClient('/course');
 
   constructor(
-    public http: HttpClient,
+    private gcf: GargantuaClientFactory,
     public scenarioService: ScenarioService,
-    public rbacService: RbacService
+    public rbacService: RbacService,
   ) {}
 
   public watch() {
@@ -38,7 +39,7 @@ export class CourseService {
     if (!force && this.fetchedList) {
       return of(this.cachedCourseList);
     } else {
-      return this.http.get(environment.server + '/a/course/list').pipe(
+      return this.gargAdmin.get('/list').pipe(
         map((s: ServerResponse) => {
           let obj: CourseApi[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
           let courses: Course[] = [];
@@ -54,7 +55,7 @@ export class CourseService {
             if (await this.rbacService.Grants('scenarios', 'list')) {
               this.scenarioService.list().subscribe((sc: Scenario[]) => {
                 tempCourse.scenarios = sc.filter((s: Scenario) =>
-                  c.scenarios.includes(s.id)
+                  c.scenarios.includes(s.id),
                 );
               });
             }
@@ -76,13 +77,13 @@ export class CourseService {
         }),
         tap((c: Course[]) => {
           this.set(c);
-        })
+        }),
       );
     }
   }
 
   public getCourseById(id: String) {
-    return this.http.get(environment.server + '/course/' + id).pipe(
+    return this.garg.get(`/${id}`).pipe(
       map((s: ServerResponse) => {
         let response: Course = JSON.parse(atou(s.content));
         response.name = atou(response.name);
@@ -91,7 +92,7 @@ export class CourseService {
       }),
       catchError((e: HttpErrorResponse) => {
         return throwError(() => e.error);
-      })
+      }),
     );
   }
 
@@ -109,13 +110,13 @@ export class CourseService {
     var params = new HttpParams()
       .set('name', utoa(c.name))
       .set('description', utoa(c.description))
-      .set('keepalive_duration', c.keepalive_duration)
-      .set('pause_duration', c.pause_duration)
+      .set('keepalive_duration', c.keepalive_duration ?? '')
+      .set('pause_duration', c.pause_duration ?? '')
       .set('pauseable', JSON.stringify(c.pauseable))
       .set('keep_vm', JSON.stringify(c.keep_vm))
       .set('virtualmachines', JSON.stringify(c.virtualmachines))
       .set('scenarios', JSON.stringify(scenarioArray));
-    return this.http.post(environment.server + '/a/course/new', params);
+    return this.gargAdmin.post('/new', params);
   }
 
   public update(c: Course) {
@@ -126,30 +127,30 @@ export class CourseService {
     var params = new HttpParams()
       .set('name', utoa(c.name))
       .set('description', utoa(c.description))
-      .set('keepalive_duration', c.keepalive_duration)
-      .set('pause_duration', c.pause_duration)
+      .set('keepalive_duration', c.keepalive_duration ?? '')
+      .set('pause_duration', c.pause_duration ?? '')
       .set('pauseable', JSON.stringify(c.pauseable))
       .set('virtualmachines', JSON.stringify(c.virtualmachines))
       .set('scenarios', JSON.stringify(scenarioArray))
       .set('keep_vm', JSON.stringify(c.keep_vm))
       .set('categories', JSON.stringify(c.categories));
 
-    return this.http.put(environment.server + '/a/course/' + c.id, params);
+    return this.gargAdmin.put(`/${c.id}`, params);
   }
 
   public delete(c: Course) {
-    return this.http.delete(environment.server + '/a/course/' + c.id);
+    return this.gargAdmin.delete(`/${c.id}`);
   }
 
   public listDynamicScenarios(categories: String[]) {
     var params = new HttpParams().set('categories', JSON.stringify(categories));
-    return this.http
-      .post(environment.server + '/a/course/previewDynamicScenarios', params)
+    return this.gargAdmin
+      .post('/previewDynamicScenarios', params)
       .pipe(
         map((s: ServerResponse) => {
           let obj: String[] = JSON.parse(atou(s.content));
           return obj;
-        })
+        }),
       );
   }
 }

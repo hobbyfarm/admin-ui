@@ -36,12 +36,12 @@ export class SettingsService {
   readonly settings$ = concat(this.fetch(), this.subject).pipe(shareReplay(1));
 
   public settingsForm: SettingFormGroup = new FormGroup({
-    terminal_theme: new FormControl<(typeof themes)[number]['id'] | null>(
-      null,
-      [Validators.required]
-    ),
-    hide_usernames_status: new FormControl<boolean>(false),
-    theme: new FormControl<'dark' | 'light' | 'system'>('system'),
+    terminal_theme: new FormControl<(typeof themes)[number]['id']>('default', {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
+    hide_usernames_status: new FormControl<boolean>(false, {nonNullable: true}),
+    theme: new FormControl<'dark' | 'light' | 'system'>('system', {nonNullable: true}),
   });
 
   fetch() {
@@ -54,11 +54,11 @@ export class SettingsService {
               terminal_theme: themes[0].id,
               hide_usernames_status: false,
               theme: 'system',
-            } as Settings)
+            } as Settings),
       ),
       tap((s: Settings) => {
         s.hide_usernames_status = JSON.parse(
-          String(s.hide_usernames_status ?? false)
+          String(s.hide_usernames_status ?? false),
         );
         this.settingsForm.patchValue(s);
         this.subject.next(s);
@@ -66,7 +66,7 @@ export class SettingsService {
       catchError((error) => {
         console.error('Error on fetching settings:', error);
         return throwError(() => error);
-      })
+      }),
     );
   }
 
@@ -79,7 +79,7 @@ export class SettingsService {
       tap(() => {
         this.settingsForm.patchValue(newSettings);
         this.subject.next(newSettings);
-      })
+      }),
     );
   }
 
@@ -88,7 +88,7 @@ export class SettingsService {
       take(1),
       switchMap((currentSettings) => {
         return this.set({ ...currentSettings, ...update });
-      })
+      }),
     );
   }
 

@@ -1,9 +1,16 @@
-import { ValidationErrors } from '@angular/forms';
-import { CourseDetailFormGroup, ScenarioFormGroup } from '../data/forms';
+import { AbstractControl } from '@angular/forms';
+import { isCourseDetailFormGroup, isScenarioFormGroup } from '../data/forms';
 
-export function KeepaliveValidator(
-  fg: CourseDetailFormGroup | ScenarioFormGroup
-): ValidationErrors | null {
+export function KeepaliveValidator(fg: AbstractControl): {
+  controlTypeMismatch?: string;
+  invalidKeepalivePeriod?: boolean;
+} | null {
+  if (!isCourseDetailFormGroup(fg) && !isScenarioFormGroup(fg)) {
+    return {
+      controlTypeMismatch:
+        'Expected CourseDetailFormGroup or ScenarioFormGroup',
+    };
+  }
   const keepalive_amount = fg.controls.keepalive_amount.value;
   const keepalive_unit = fg.controls.keepalive_unit.value;
 

@@ -22,7 +22,7 @@ export class CourseComponent implements OnInit {
   @ViewChild('deleteConfirmation')
   deleteConfirmation: DeleteConfirmationComponent;
 
-  public selectedCourse: Course;
+  public selectedCourse: Course | null = null;
 
   public alertType: string = 'warning';
   public alertText: string = '';
@@ -39,9 +39,8 @@ export class CourseComponent implements OnInit {
   constructor(
     public courseService: CourseService,
     public scenarioService: ScenarioService,
-    public rbacService: RbacService
-  ) {
-  }
+    public rbacService: RbacService,
+  ) {}
 
   ngOnInit(): void {
     const authorizationRequests = Promise.all([
@@ -51,8 +50,8 @@ export class CourseComponent implements OnInit {
       this.rbacService.Grants('courses', 'delete'),
     ]);
 
-    authorizationRequests
-      .then((permissions: [boolean, boolean, boolean, boolean]) => {
+    authorizationRequests.then(
+      (permissions: [boolean, boolean, boolean, boolean]) => {
         const allowedGet: boolean = permissions[0];
         const allowedUpdate: boolean = permissions[1];
         const allowListScenarios: boolean = permissions[2];
@@ -64,7 +63,8 @@ export class CourseComponent implements OnInit {
         // Enable permission to update courses
         this.updateRbac = allowedUpdate && this.listScenarios;
         return this.listScenarios;
-      })
+      },
+    );
 
     this.refresh();
   }
@@ -104,6 +104,12 @@ export class CourseComponent implements OnInit {
   }
 
   deleteSelected(): void {
+    if (!this.selectedCourse) {
+      this.alertDanger(
+        'Error deleting object: Selected course is unavailable!',
+      );
+      return;
+    }
     this.courseService.delete(this.selectedCourse).subscribe({
       next: (_s: ServerResponse) => {
         this.alertSuccess('Course deleted');

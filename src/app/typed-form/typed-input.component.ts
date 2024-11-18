@@ -21,7 +21,7 @@ export class TypedInputComponent {
       | GenericFormArray
       | GenericKeyValueMapArray;
   }>;
-  @Output() change: EventEmitter<boolean> = new EventEmitter(null);
+  @Output() change: EventEmitter<boolean> = new EventEmitter();
   readonly TypedInputType = TypedInputType; // Reference to TypedInputTypes enum for template use
   constructor() {}
 
@@ -166,5 +166,9 @@ export class TypedInputComponent {
       kControl.updateValueAndValidity();
       this.inputChanged();
     });
+  }
+
+  get maxLength() {
+    return this.input.getMaxLength();
   }
 }

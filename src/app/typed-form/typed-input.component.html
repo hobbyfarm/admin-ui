@@ -52,17 +52,17 @@
       class="btn btn-outline"
       type="button"
       (click)="addMapElement(input)"
-      [disabled]="getMapSize(input) >= input.getMaxLength()"
+      [disabled]="maxLength && getMapSize(input) >= maxLength"
     >
       Add Element
     </button>
   </div>
-  @if (getMapSize(input) > input.getMaxLength()) {
+  @if (maxLength && getMapSize(input) > maxLength) {
     <div>
       <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
         <clr-alert-item>
           <span class="alert-text">
-            {{ input.name }} takes {{ input.getMaxLength() }} key/value pairs at
+            {{ input.name }} takes {{ maxLength }} key/value pairs at
             maximum.
           </span>
         </clr-alert-item>
@@ -127,17 +127,17 @@
         class="btn btn-outline"
         type="button"
         (click)="addArrayElement(input)"
-        [disabled]="getArrayLength(input) >= input.getMaxLength()"
+        [disabled]="maxLength && getArrayLength(input) >= maxLength"
       >
         Add Element
       </button>
     </div>
-    @if (getArrayLength(input) > input.getMaxLength()) {
+    @if (maxLength && getArrayLength(input) > maxLength) {
       <div>
         <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
           <clr-alert-item>
             <span class="alert-text">
-              {{ input.name }} takes {{ input.getMaxLength() }} values at
+              {{ input.name }} takes {{ maxLength }} values at
               maximum.
             </span>
           </clr-alert-item>

@@ -11,12 +11,13 @@ import { ClrDatagridSortOrder } from '@clr/angular';
 import { Observable, Subject } from 'rxjs';
 import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { OTAC } from 'src/app/data/otac.type';
-import { ScheduledEvent } from 'src/app/data/scheduledevent';
+import { ScheduledEventBase } from 'src/app/data/scheduledevent';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { User } from 'src/app/data/user';
 import { UserService } from 'src/app/data/user.service';
 import parse from 'parse-duration';
+import { ClrAlertType } from 'src/app/clr-alert-type';
 
 interface iOTAC extends OTAC {
   userEmail?: string;
@@ -31,13 +32,18 @@ interface iOTAC extends OTAC {
 export class OTACManagementComponent implements OnInit, OnDestroy {
   @Input() open: boolean;
 
-  @Input() scheduledEvents: Observable<ScheduledEvent>;
+  @Input() scheduledEvents: Observable<ScheduledEventBase>;
 
   @Output() closeEvent = new EventEmitter<void>();
 
   private onDestroy = new Subject();
 
-  currentScheduledEvent: ScheduledEvent = null;
+  currentScheduledEvent: ScheduledEventBase | null = null;
+
+  scheduledEventAvailable = false;
+  containsInvalidDuration = false;
+  alertText = '';
+  alertType: ClrAlertType;
 
   // The Validator Pattern for the duration only accepts strings that make up a valid duration
   // For example "1d" for 1 day, "24h" for 24 Hours, "60m" for 60 minutes.
@@ -63,10 +69,11 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private seService: ScheduledeventService,
-    private userService: UserService
+    private userService: UserService,
   ) {}
 
   ngOnInit(): void {
+    this.toggleAlertState();
     this.userService.list().subscribe({
       next: (users) => (this.users = users),
       error: () => (this.users = []),
@@ -75,12 +82,14 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
     this.scheduledEvents
       .pipe(
         takeUntil(this.onDestroy),
-        tap((se: ScheduledEvent) => {
+        tap((se: ScheduledEventBase) => {
           this.currentScheduledEvent = se;
+          this.scheduledEventAvailable = true;
+          this.toggleAlertState();
         }),
-        switchMap((se: ScheduledEvent) => {
+        switchMap((se: ScheduledEventBase) => {
           return this.seService.listOtacs(se.id);
-        })
+        }),
       )
       .subscribe((otacList: OTAC[]) => {
         this.otacs =
@@ -104,21 +113,27 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
   }
 
   createOtacs() {
+    if (!this.currentScheduledEvent) {
+      return;
+    }
     this.seService
       .addOtacs(
         this.currentScheduledEvent.id,
         this.amountInputForm.controls.amountInput.value,
-        this.amountInputForm.controls.duration.value
+        this.amountInputForm.controls.duration.value,
       )
       .subscribe((newOtacs: OTAC[]) => {
         this.otacs.push(
-          ...newOtacs.map((otac) => this.addUserinformation(otac))
+          ...newOtacs.map((otac) => this.addUserinformation(otac)),
         );
         this.amountInputForm.controls.amountInput.setValue(1);
       });
   }
 
   deleteOtac(otac: iOTAC) {
+    if (!this.currentScheduledEvent) {
+      return;
+    }
     this.seService
       .deleteOtac(this.currentScheduledEvent.id, otac.name)
       .subscribe((res: ServerResponse) => {
@@ -130,34 +145,28 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   getOverallInfo() {
     const usedOtacs: number = this.otacs.filter(
-      (otac) => otac.user != ''
+      (otac) => otac.user != '',
     ).length;
     return usedOtacs + '/' + this.otacs.length + ' OTACs used';
   }
 
-  exportCSV() {
+  exportCSV(currentScheduledEvent: ScheduledEventBase) {
     let otacCSV = '';
     this.otacs.forEach((otac) => {
+      let userCSVpart = ', ';
+      const otacUser = otac.user;
+      if (otacUser) {
+        userCSVpart = `${otacUser}, ${this.getUsername(otacUser)}`;
+      }
       otacCSV = otacCSV.concat(
-        otac.name +
-          ', ' +
-          otac.user +
-          ', ' +
-          this.getUsername(otac.user) +
-          ', ' +
-          otac.redeemed_timestamp +
-          ', ' +
-          otac.max_duration +
-          ', ' +
-          otac.status +
-          '\n'
+        `${otac.name}, ${userCSVpart}, ${otac.redeemed_timestamp}, ${otac.max_duration}, ${otac.status}\n`,
       );
     });
-    const filename = this.currentScheduledEvent.event_name + '_OTACs.csv';
+    const filename = currentScheduledEvent.event_name + '_OTACs.csv';
     var element = document.createElement('a');
     element.setAttribute(
       'href',
-      'data:text/plain;charset=utf-8,' + encodeURIComponent(otacCSV)
+      'data:text/plain;charset=utf-8,' + encodeURIComponent(otacCSV),
     );
     element.setAttribute('download', filename);
     element.style.display = 'none';
@@ -168,6 +177,8 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   close() {
     this.currentScheduledEvent = null;
+    this.scheduledEventAvailable = false;
+    this.toggleAlertState();
     this.otacs = [];
     this.closeEvent.emit();
   }
@@ -187,10 +198,33 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
     }
     const redeemedTimestamp = Date.parse(otac.redeemed_timestamp);
     const duration = parse(otac.max_duration);
+    if (!duration) {
+      // duration could not be parsed and therefore does not seem to represent a valid duration string
+      this.containsInvalidDuration = true;
+      this.toggleAlertState();
+      return false;
+    }
     if (redeemedTimestamp + duration > Date.now()) {
       return true;
     }
 
     return false;
+  }
+
+  get alertClosed(): boolean {
+    return this.scheduledEventAvailable && !this.containsInvalidDuration;
+  }
+
+  private toggleAlertState() {
+    // note: only the alert state is toggled ... the alert itself is not necessarily shown ... only if modal is open
+    if (!this.scheduledEventAvailable) {
+      this.alertText = 'Scheduled Event is unavailable';
+      this.alertType = ClrAlertType.Danger;
+    } else if (this.containsInvalidDuration) {
+      this.alertText = 'OTAC list contains items with invalid max durations';
+      this.alertType = ClrAlertType.Warning;
+    } else {
+      this.alertText = '';
+    }
   }
 }

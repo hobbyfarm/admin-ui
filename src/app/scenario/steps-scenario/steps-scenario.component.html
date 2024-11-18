@@ -1,6 +1,6 @@
 <button
   class="btn btn-sm"
-  (click)="openEdit(scenario?.steps[0] ?? undefined, 0)"
+  (click)="openEdit(0)"
   *rbac="['scenarios.update']"
 >
   Open Step Editor
@@ -24,7 +24,7 @@
       @if (i < scenario.steps.length - 1) {
         <button class="action-item" (click)="moveStepDown(i)">Move Down</button>
       }
-      <button class="action-item" (click)="openEdit(s, i)">Edit</button>
+      <button class="action-item" (click)="openEdit(i)">Edit</button>
       <button class="action-item" (click)="openDeleteStep(i)">Delete</button>
     </clr-dg-action-overflow>
     <clr-dg-cell>{{ i + 1 }}</clr-dg-cell>

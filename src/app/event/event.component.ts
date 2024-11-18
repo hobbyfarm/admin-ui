@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ScheduledEvent } from 'src/app/data/scheduledevent';
+import { ScheduledEventBase } from 'src/app/data/scheduledevent';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { NewScheduledEventComponent } from './new-scheduled-event/new-scheduled-event.component';
 import { ClrModal, ClrDatagridSortOrder } from '@clr/angular';
@@ -9,7 +9,7 @@ import { UserService } from '../data/user.service';
 import { RbacService } from '../data/rbac.service';
 import { Subject } from 'rxjs';
 
-interface ExtendedScheduledEvent extends ScheduledEvent {
+interface ExtendedScheduledEvent extends ScheduledEventBase {
   creatorEmail?: String;
   courseNames?: String[];
   scenarioNames?: String[];
@@ -24,14 +24,14 @@ export class EventComponent implements OnInit {
 
   public deleteopen: boolean = false;
 
-  public deletingevent: ScheduledEvent = new ScheduledEvent();
+  public deletingevent: ScheduledEventBase = new ScheduledEventBase();
 
   public seSuccessAlert: string = '';
   public seDangerAlert: string = '';
   public seSuccessClosed: boolean = true;
   public seDangerClosed: boolean = true;
 
-  public editingEvent: ScheduledEvent;
+  public editingEvent: ScheduledEventBase | null;
 
   public descSort = ClrDatagridSortOrder.DESC;
 
@@ -42,7 +42,7 @@ export class EventComponent implements OnInit {
   private listUsers = false;
 
   otacModalOpen: boolean = false;
-  openModalEvents: Subject<ScheduledEvent> = new Subject<ScheduledEvent>();
+  openModalEvents: Subject<ScheduledEventBase> = new Subject<ScheduledEventBase>();
 
   constructor(
     public seService: ScheduledeventService,
@@ -79,7 +79,7 @@ export class EventComponent implements OnInit {
     );
   }
 
-  public openDelete(se: ScheduledEvent) {
+  public openDelete(se: ScheduledEventBase) {
     this.deletingevent = se;
     this.deletemodal.open();
   }
@@ -110,7 +110,7 @@ export class EventComponent implements OnInit {
     this.wizard.open();
   }
 
-  public openEdit(se: ScheduledEvent) {
+  public openEdit(se: ScheduledEventBase) {
     this.editingEvent = se;
     this.wizard.setOnCloseFn(() => {
       this.editingEvent = null;
@@ -165,7 +165,7 @@ export class EventComponent implements OnInit {
     this.refresh();
   }
 
-  openOtac(se: ScheduledEvent) {
+  openOtac(se: ScheduledEventBase) {
     this.openModalEvents.next(se);
     this.otacModalOpen = true;
   }

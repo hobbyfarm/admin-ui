@@ -59,7 +59,7 @@
             {{ input.validation.pattern }}</clr-control-error
           >
           <clr-control-error *clrIfError="'minlength'"
-            >Minimum length of {{ input.getMinLength() }}</clr-control-error
+            >Minimum length of {{ input.getMinLength() ?? 0 }}</clr-control-error
           >
           <clr-control-error *clrIfError="'maxlength'"
             >Maximum length of {{ input.getMaxLength() }}</clr-control-error

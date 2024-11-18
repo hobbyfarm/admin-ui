@@ -6,9 +6,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormControlStatus } from '@angular/forms';
 import { ClrCombobox } from '@clr/angular';
-import { FormControlStatus } from 'src/app/data/formstatus';
+import { FormControlStatus as FormControlStatusEnum } from 'src/app/data/formstatus';
 import {
   ApiGroup,
   hobbyfarmApiGroup,
@@ -88,7 +88,7 @@ export class RuleFormComponent implements OnInit {
     });
 
     this.form.statusChanges.subscribe((s: FormControlStatus) => {
-      s == FormControlStatus.Valid
+      s == FormControlStatusEnum.Valid
         ? this.valid.emit(true)
         : this.valid.emit(false);
     });

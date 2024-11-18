@@ -4,7 +4,7 @@ export class Course {
     id: string;
     name: string;
     description: string;
-    virtualmachines: {}[];
+    virtualmachines: Record<string, string>[];
     scenarios: Scenario[];
     categories: string[];
     keepalive_duration?: string;
@@ -17,7 +17,7 @@ export class CourseApi {
     id: string;
     name: string;
     description: string;
-    virtualmachines: {}[];
+    virtualmachines: Record<string, string>[];
     scenarios: string[];
     categories: string[];
     keepalive_duration?: string;

@@ -20,7 +20,7 @@ import { AlertComponent } from 'src/app/alert/alert.component';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { GenericKeyValueGroup } from 'src/app/data/forms';
 import { ServerResponse } from 'src/app/data/serverresponse';
-import { vmServiceToJSON } from 'src/app/data/vm-template-service-configuration';
+import { VMTemplateServiceConfiguration } from 'src/app/data/vm-template-service-configuration';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import * as uuid from 'uuid';
@@ -45,7 +45,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public cloudConfig: CloudInitConfig = new CloudInitConfig();
 
   @Input()
-  public editTemplate: VMTemplate;
+  public editTemplate: VMTemplate | null;
 
   @Output()
   public event: EventEmitter<boolean> = new EventEmitter(false);
@@ -57,11 +57,11 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   constructor(
     private _fb: NonNullableFormBuilder,
-    private vmTemplateService: VmtemplateService
+    private vmTemplateService: VmtemplateService,
   ) {}
 
   ngOnInit(): void {
-    this._build();    
+    this._build();
   }
 
   @ViewChild('wizard', { static: true }) wizard: ClrWizard;
@@ -73,7 +73,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     this._build();
     this.wizard.reset();
     if (this.editTemplate) {
-      this._prepare();
+      this._prepare(this.editTemplate);
     }
     this.wizard.open();
   }
@@ -83,15 +83,15 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     this.buildTemplateDetails();
   }
 
-  public buildTemplateDetails(edit: boolean = false) {
+  public buildTemplateDetails(vmTemplate: VMTemplate | null = null) {
     this.templateDetails = this._fb.group({
-      name: this._fb.control<string>(edit ? this.editTemplate.name : '', [
+      name: this._fb.control<string>(vmTemplate ? vmTemplate.name : '', [
         Validators.required,
         Validators.minLength(4),
       ]),
       image: this._fb.control<string>(
-        edit ? this.editTemplate.image : '',
-        Validators.required
+        vmTemplate ? vmTemplate.image : '',
+        Validators.required,
       ),
     });
   }
@@ -120,14 +120,14 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     } else return new Map();
   }
 
-  public prepareConfigMap() {
+  public prepareConfigMap(vmTemplate: VMTemplate) {
     // differs from buildConfigMap() in that we are copying existing values
     // into the form
-    let configKeys = Object.keys(this.editTemplate.config_map).filter(
-      (elem) => elem !== this.cloudConfigKey && elem != this.vmServiceKey
+    let configKeys = Object.keys(vmTemplate.config_map).filter(
+      (elem) => elem !== this.cloudConfigKey && elem != this.vmServiceKey,
     );
     this.cloudConfig.vmServices = this.buildVMServices(
-      this.editTemplate.config_map[this.vmServiceKey]
+      vmTemplate.config_map[this.vmServiceKey],
     );
     this.cloudConfig.buildNewYAMLFile();
     this.configMap = this._fb.group({
@@ -137,14 +137,14 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     for (let i = 0; i < configKeys.length; i++) {
       this.newConfigMapping(
         configKeys[i],
-        this.editTemplate.config_map[configKeys[i]]
+        vmTemplate.config_map[configKeys[i]],
       );
     }
   }
 
-  public fixNullValues() {
-    if (this.editTemplate.config_map == null) {
-      this.editTemplate.config_map = {};
+  public fixNullValues(vmTemplate: VMTemplate) {
+    if (vmTemplate.config_map == null) {
+      vmTemplate.config_map = {};
     }
   }
 
@@ -174,11 +174,12 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     }
     this.template.config_map[this.cloudConfigKey] =
       this.cloudConfig.cloudConfigYaml;
-    let tempArray = [];
-    this.cloudConfig.vmServices.forEach((vmService) => {
-      //tempArray.push(vmService);
-      tempArray.push(JSON.parse(vmServiceToJSON(vmService)));
-    });
+    let tempArray: VMTemplateServiceConfiguration[] = [];
+    this.cloudConfig.vmServices.forEach(
+      (vmService: VMTemplateServiceConfiguration) => {
+        tempArray.push(vmService);
+      },
+    );
     let jsonString = JSON.stringify(tempArray);
     this.template.config_map[this.vmServiceKey] = jsonString;
   }
@@ -201,7 +202,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
           this.alert.danger(
             'Error saving VM Template: ' + e.error.message,
             false,
-            3000
+            3000,
           );
           this.buttonsDisabled = false;
         },
@@ -217,7 +218,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
           this.alert.danger(
             'Error saving VM Template: ' + e.error.message,
             false,
-            3000
+            3000,
           );
           this.buttonsDisabled = false;
         },
@@ -225,23 +226,21 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     }
   }
 
-  private _prepare() {
-    this.buildTemplateDetails(true);
-    this.prepareConfigMap();
+  private _prepare(vmTemplate: VMTemplate) {
+    this.buildTemplateDetails(vmTemplate);
+    this.prepareConfigMap(vmTemplate);
   }
 
   ngOnChanges() {
     if (this.editTemplate) {
-      this.fixNullValues();
-      this._prepare();
+      this.fixNullValues(this.editTemplate);
+      this._prepare(this.editTemplate);
       this.wizard.navService.goTo(this.wizard.pages.last, true);
       this.wizard.pages.first.makeCurrent();
     } else {
       this.buildTemplateDetails();
       this.buildConfigMap();
     }
-    this.uneditedTemplate = JSON.parse(JSON.stringify(this.template));
+    this.uneditedTemplate = structuredClone(this.template);
   }
-  
 }
-

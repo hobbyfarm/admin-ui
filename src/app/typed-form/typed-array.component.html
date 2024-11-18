@@ -10,7 +10,7 @@
       class="btn btn-danger-outline"
       type="button"
       (click)="removeArrayElement(i)"
-      [disabled]="input.getMinLength() > i"
+      [disabled]="minLength && minLength > i"
     >
       <cds-icon shape="trash"></cds-icon> Remove
     </button>

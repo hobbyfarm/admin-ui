@@ -155,7 +155,7 @@
     </clr-wizard-page>
     <clr-wizard-page
       [clrWizardPageNextDisabled]="
-        se.start_time >= se.end_time || !se.start_time || !se.end_time
+        !se.start_time || !se.end_time || se.start_time >= se.end_time
       "
     >
       <ng-template clrPageTitle>Event Times</ng-template>
@@ -457,34 +457,36 @@
             </thead>
             <tbody [formGroup]="simpleModeVmCounts">
               @for (
-                fc of simpleModeVmCounts["controls"]?.envs["controls"];
+                fc of simpleModeVmCounts["controls"].envs["controls"].slice(0, selectedEnvironments.length);
                 track fc;
                 let it = $index
               ) {
-                <tr>
-                  <td class="left">
-                    {{
-                      getEnvironmentName(selectedEnvironments[it]?.environment)
-                    }}
-                  </td>
-                  <td class="left">
-                    <clr-input-container class="table-input">
-                      <input
-                        clrInput
-                        type="number"
-                        [formControl]="fc"
-                        pattern="^[0-9]*$"
-                        min="0"
-                        step="1"
-                      />
-                      <clr-control-error *clrIfError="'max'"
-                        >User count higher than max</clr-control-error
-                      >
-                    </clr-input-container>
-                    (max
-                    {{ maxUserCounts[selectedEnvironments[it]?.environment] }})
-                  </td>
-                </tr>
+                @if (selectedEnvironments.length > it) {
+                  <tr>
+                    <td class="left">
+                      {{
+                        getEnvironmentName(selectedEnvironments[it].environment)
+                      }}
+                    </td>
+                    <td class="left">
+                      <clr-input-container class="table-input">
+                        <input
+                          clrInput
+                          type="number"
+                          [formControl]="fc"
+                          pattern="^[0-9]*$"
+                          min="0"
+                          step="1"
+                        />
+                        <clr-control-error *clrIfError="'max'"
+                          >User count higher than max</clr-control-error
+                        >
+                      </clr-input-container>
+                      (max
+                      {{ maxUserCounts[selectedEnvironments[it].environment] }})
+                    </td>
+                  </tr>
+                }
               }
               <tr>
                 <td class="right">

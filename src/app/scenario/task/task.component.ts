@@ -30,7 +30,7 @@ export class TaskComponent {
     });
   }
 
-  @Input() readonly = false
+  @Input() readonly = false;
 
   editTasks: EditTask[] = [];
 
@@ -61,7 +61,7 @@ export class TaskComponent {
     this.tasksChanged.emit(this.vmTasks);
   }
 
-  buildTask(editTask: EditTask = null): Task {
+  buildTask(editTask: EditTask | null = null): Task {
     return {
       name: editTask?.name ?? '',
       description: editTask?.description ?? '',
@@ -81,7 +81,7 @@ export class TaskComponent {
       return;
     }
     this.changedTasks = this.changedTasks.map((task) =>
-      task.id !== changedTask.id ? task : changedTask
+      task.id !== changedTask.id ? task : changedTask,
     );
     this.buildEditedVMTasks();
   }

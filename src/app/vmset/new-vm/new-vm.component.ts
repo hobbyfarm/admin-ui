@@ -1,5 +1,18 @@
-import { Component, EventEmitter, Output, ViewChild, Input, OnChanges } from '@angular/core';
-import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  ViewChild,
+  Input,
+  OnChanges,
+} from '@angular/core';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  ValidatorFn,
+  AbstractControl,
+} from '@angular/forms';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { ClrModal } from '@clr/angular';
@@ -19,7 +32,7 @@ export class NewVmComponent implements OnChanges {
   public listVms: boolean;
 
   @Output()
-  public vm: EventEmitter<[string, string]> = new EventEmitter(null);
+  public vm: EventEmitter<[string, string]> = new EventEmitter();
 
   @ViewChild('modal') modal: ClrModal;
 
@@ -45,12 +58,18 @@ export class NewVmComponent implements OnChanges {
     vm_name: FormControl<string>;
     vm_template: FormControl<string>;
   }> = new FormGroup({
-    vm_name: new FormControl<string | null>(null, [
-      Validators.required,
-      Validators.minLength(4),
-      this.validateUniqueVmName()
-    ]),
-    vm_template: new FormControl<string | null>(null, [Validators.required]),
+    vm_name: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+        Validators.minLength(4),
+        this.validateUniqueVmName(),
+      ],
+      nonNullable: true,
+    }),
+    vm_template: new FormControl<string>('', {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
   });
 
   addVM() {
@@ -63,9 +82,10 @@ export class NewVmComponent implements OnChanges {
   }
 
   private validateUniqueVmName(): ValidatorFn {
-    return (control: FormControl<string | null>) => {
+    return (control: AbstractControl<string>) => {
       const vmName = control.value;
-      const isNotUnique = vmName && this.vms.some((vmSet: {}) => vmSet.hasOwnProperty(vmName))
+      const isNotUnique =
+        vmName && this.vms.some((vmSet: {}) => vmSet.hasOwnProperty(vmName));
       if (isNotUnique) {
         return {
           notUnique: true,

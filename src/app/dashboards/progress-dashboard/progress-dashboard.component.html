@@ -9,7 +9,7 @@
                 type="checkbox"
                 clrToggle
                 name="includeFinished"
-                [disabled]="selectedEvent?.finished"
+                [disabled]="selectedEvent.finished"
                 [(ngModel)]="includeFinished"
                 (change)="refresh()"
               />
@@ -101,10 +101,10 @@
     <div class="clr-col buttonCol">
       <button
         class="btn btn-link userlistIcon"
-        [disabled]="users?.length < 1"
+        [disabled]="users.length < 1"
         (click)="openUserList()"
       >
-        <cds-icon shape="users" size="48" solid></cds-icon>{{ users?.length }}
+        <cds-icon shape="users" size="48" solid></cds-icon>{{ users.length }}
       </button>
     </div>
     <div class="clr-col">
@@ -112,7 +112,7 @@
     </div>
   </div>
   <div class="clr-row">
-    @if (currentProgress?.length > 0) {
+    @if (currentProgress.length > 0) {
       @for (p of filteredProgress; track p) {
         <div class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3">
           <progress-card

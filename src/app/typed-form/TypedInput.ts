@@ -12,10 +12,9 @@ import {
   GenericFormControl,
   GenericKeyValueGroup,
   GenericKeyValueMapArray,
+  isGenericFormArray,
 } from '../data/forms';
 import { UniqueKeyValidator } from '../validators/uniquekey.validator';
-
-// TODO: Type reactive forms
 
 export enum TypedInputType {
   STRING,
@@ -75,34 +74,35 @@ export class TypedInput {
   }
 
   isEnum(): boolean {
-    return this.validation.enum && this.validation.enum.length > 0;
+    return (this.validation.enum && this.validation.enum.length > 0) ?? false;
   }
 
   isRequired(): boolean {
-    return this.validation.required;
+    return this.validation.required ?? false;
   }
 
-  getMinLength(): number {
+  getMinLength(): number | undefined {
     return this.validation.minLength;
   }
 
-  getMaxLength(): number {
+  getMaxLength(): number | undefined {
     return this.validation.maxLength;
   }
 
-  getMinimum(): number {
+  getMinimum(): number | undefined {
     return this.validation.minimum;
   }
 
-  getMaximum(): number {
+  getMaximum(): number | undefined {
     return this.validation.maximum;
   }
 
   getTypedInputEnumValues() {
-    if (!this.isEnum()) {
+    const enumArray = this.validation.enum;
+    if (!enumArray || enumArray.length <= 0) {
       return [];
     }
-    return this.validation.enum.map((v) => {
+    return enumArray.map((v) => {
       return this.parseScalarValue(v);
     });
   }
@@ -114,7 +114,7 @@ export class TypedInput {
   getTypedInputFormControl(value: number): FormControl<number>;
   getTypedInputFormControl(value: boolean): FormControl<boolean>;
   getTypedInputFormControl(
-    value: string | number | boolean
+    value: string | number | boolean,
   ): GenericFormControl;
   getTypedInputFormControl(value: string | number | boolean) {
     // TODO what is format vs pattern?
@@ -172,47 +172,53 @@ export class TypedInput {
       ]);
     }
 
+    const minLength = this.getMinLength();
     if (
-      this.getMinLength() != 0 &&
+      minLength &&
+      minLength != 0 &&
       this.type === TypedInputType.STRING &&
       !this.isArrayType()
     ) {
       control.setValidators([
         ...(control.validator ? [control.validator] : []),
-        Validators.minLength(this.getMinLength()),
+        Validators.minLength(minLength),
       ]);
     }
 
+    const maxLength = this.getMaxLength();
     if (
-      this.getMaxLength() != 0 &&
+      maxLength &&
+      maxLength != 0 &&
       this.type === TypedInputType.STRING &&
       !this.isArrayType()
     ) {
       control.setValidators([
         ...(control.validator ? [control.validator] : []),
-        Validators.maxLength(this.getMaxLength()),
+        Validators.maxLength(maxLength),
       ]);
     }
 
+    const minVal = this.getMinimum();
     if (
-      this.getMinimum() &&
+      minVal &&
       (this.type === TypedInputType.INTEGER ||
         this.type === TypedInputType.FLOAT)
     ) {
       control.setValidators([
         ...(control.validator ? [control.validator] : []),
-        Validators.min(this.getMinimum()),
+        Validators.min(minVal),
       ]);
     }
 
+    const maxVal = this.getMaximum();
     if (
-      this.getMaximum() &&
+      maxVal &&
       (this.type === TypedInputType.INTEGER ||
         this.type === TypedInputType.FLOAT)
     ) {
       control.setValidators([
         ...(control.validator ? [control.validator] : []),
-        Validators.max(this.getMaximum()),
+        Validators.max(maxVal),
       ]);
     }
 
@@ -233,7 +239,7 @@ export class TypedInput {
     // In reality, given our constraints on T, the result is always FormControl<T>[].
     // The type assertion corrects this inference.
     const controls = value.map((val: T) =>
-      this.getTypedInputFormControl(val)
+      this.getTypedInputFormControl(val),
     ) as FormControl<T>[];
     return new FormArray<FormControl<T>>(controls);
   }
@@ -282,22 +288,22 @@ export class TypedInput {
   }
 
   getTypedInputRawArray<T extends string | number | boolean>(
-    fa: FormArray<FormControl<T>>
+    fa: FormArray<FormControl<T>>,
   ) {
     return fa.controls.map(
       (control: FormControl<T>) =>
-        this.getTypedInputScalarValue(control.value) as T
+        this.getTypedInputScalarValue(control.value) as T,
     );
   }
 
   getTypedInputRawMap<T extends string | number | boolean>(
-    fa: FormArray<GenericKeyValueGroup<T>>
+    fa: FormArray<GenericKeyValueGroup<T>>,
   ) {
     let result: { [key: string]: T } = {};
     fa.controls.forEach((group: GenericKeyValueGroup<T>) => {
       let key = group.controls['key'].value;
       let value: T = this.getTypedInputScalarValue(
-        group.controls['value'].value
+        group.controls['value'].value,
       ) as T;
       result[key] = value;
     });
@@ -341,17 +347,22 @@ export class TypedInput {
     };
   }
 
-  uniqueArrayValueValidator(
-    control: GenericFormControl
-  ): ValidationErrors | null {
-    const siblings = (control.parent as GenericFormArray).controls;
+  uniqueArrayValueValidator(control: AbstractControl): ValidationErrors | null {
+    const parent = control.parent;
+    if (!isGenericFormArray(parent)) {
+      return {
+        controlTypeMismatch:
+          'Expected control.parent to be of type GenericFormArray',
+      };
+    }
+    const siblings = parent.controls;
     const values = siblings.map(
       (
         sibling:
           | FormControl<string>
           | FormControl<number>
-          | FormControl<boolean>
-      ) => sibling.value
+          | FormControl<boolean>,
+      ) => sibling.value,
     );
     const duplicates = values.filter((v) => v === control.value);
     return duplicates.length > 1 ? { duplicatearrayvalue: true } : null;
@@ -374,7 +385,7 @@ export class TypedInput {
     );
   }
   isArray(
-    _value: SettingsValueType
+    _value: SettingsValueType,
   ): _value is string[] | number[] | boolean[] {
     return this.isArrayType();
   }
@@ -392,7 +403,7 @@ export class TypedInput {
     return this.type === TypedInputType.BOOLEAN && this.isArrayType();
   }
   isMap(
-    _value: SettingsValueType
+    _value: SettingsValueType,
   ): _value is
     | { [key: string]: string }
     | { [key: string]: number }
@@ -410,31 +421,31 @@ export class TypedInput {
     );
   }
   isBooleanMap(
-    _value: SettingsValueType
+    _value: SettingsValueType,
   ): _value is { [key: string]: boolean } {
     return this.type === TypedInputType.BOOLEAN && this.isMapType();
   }
 
   isGenericFormControl(
-    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray
+    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray,
   ): _control is GenericFormControl {
     return this.isScalarType();
   }
 
   isGenericFormArray(
-    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray
+    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray,
   ): _control is GenericFormArray {
     return this.isArrayType();
   }
 
   isFormArrayString(
-    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray
+    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray,
   ): _control is FormArray<FormControl<string>> {
     return this.type === TypedInputType.STRING && this.isArrayType();
   }
 
   isFormArrayNumber(
-    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray
+    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray,
   ): _control is FormArray<FormControl<number>> {
     return (
       (this.type === TypedInputType.INTEGER ||
@@ -444,25 +455,25 @@ export class TypedInput {
   }
 
   isFormArrayBoolean(
-    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray
+    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray,
   ): _control is FormArray<FormControl<boolean>> {
     return this.type === TypedInputType.BOOLEAN && this.isArrayType();
   }
 
   isGenericKeyValueMapArray(
-    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray
+    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray,
   ): _control is GenericKeyValueMapArray {
     return this.isMapType();
   }
 
   isKeyValueMapArrayString(
-    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray
+    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray,
   ): _control is FormArray<GenericKeyValueGroup<string>> {
     return this.type === TypedInputType.STRING && this.isMapType();
   }
 
   isKeyValueMapArrayNumber(
-    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray
+    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray,
   ): _control is FormArray<GenericKeyValueGroup<number>> {
     return (
       (this.type === TypedInputType.INTEGER ||
@@ -472,7 +483,7 @@ export class TypedInput {
   }
 
   isKeyValueMapArrayBoolean(
-    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray
+    _control: GenericFormControl | GenericFormArray | GenericKeyValueMapArray,
   ): _control is FormArray<GenericKeyValueGroup<boolean>> {
     return this.type === TypedInputType.BOOLEAN && this.isMapType();
   }

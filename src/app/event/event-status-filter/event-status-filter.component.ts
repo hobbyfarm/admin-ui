@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { ClrDatagridFilter, ClrDatagridFilterInterface } from '@clr/angular';
 import { Subject } from 'rxjs';
-import { ScheduledEvent } from 'src/app/data/scheduledevent';
+import { ScheduledEventBase } from 'src/app/data/scheduledevent';
 
 @Component({
   selector: 'event-status-filter',
   templateUrl: './event-status-filter.component.html',
 })
-export class EventStatusFilterComponent implements ClrDatagridFilterInterface<ScheduledEvent, boolean> {
+export class EventStatusFilterComponent implements ClrDatagridFilterInterface<ScheduledEventBase, boolean> {
   enabled: boolean = true;
 
   constructor(filterContainer: ClrDatagridFilter) {
@@ -25,7 +25,7 @@ export class EventStatusFilterComponent implements ClrDatagridFilterInterface<Sc
     return this.enabled;
   }
 
-  accepts(se: ScheduledEvent): boolean {
+  accepts(se: ScheduledEventBase): boolean {
     return !se.finished;
   }
 }

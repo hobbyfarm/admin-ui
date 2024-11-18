@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { Progress } from 'src/app/data/progress';
 import { ProgressService } from 'src/app/data/progress.service';
-import { ScheduledEvent } from 'src/app/data/scheduledevent';
+import { ScheduledEventBase } from 'src/app/data/scheduledevent';
 import { UserService } from 'src/app/data/user.service';
 import { VirtualMachine } from 'src/app/data/virtualmachine';
 import { VmService } from 'src/app/data/vm.service';
@@ -23,7 +23,7 @@ interface dashboardVmSet extends VmSet {
 })
 export class VmDashboardComponent implements OnInit {
   @Input()
-  selectedEvent: ScheduledEvent;
+  selectedEvent: ScheduledEventBase;
 
   constructor(
     public vmService: VmService,
@@ -48,7 +48,7 @@ export class VmDashboardComponent implements OnInit {
     this.getVmList();
   }
 
-  setStepOpen(set) {
+  setStepOpen(set: dashboardVmSet) {
     this.openPanels.has(set.base_name)
       ? this.openPanels.delete(set.base_name)
       : this.openPanels.add(set.base_name);
@@ -102,7 +102,7 @@ export class VmDashboardComponent implements OnInit {
 
   openUsersTerminal(vm: VirtualMachine) {
     if (!vm.user) return;
-    var userId: string; //get the Users ID who has the VM allocated to him
+    let userId: string | undefined; //get the Users ID who has the VM allocated to him
     this.userService.list().subscribe((users) => {
       userId = users.filter((user) => user.email === vm.user)[0]?.id;
     });
@@ -128,8 +128,8 @@ export class VmDashboardComponent implements OnInit {
   groupByEnvironment(vms: VirtualMachine[]) {
     let envMap = new Map<string, VirtualMachine[]>();
     vms.forEach((element) => {
-      if (envMap.has(element.environment_id)) {
-        let envVms = envMap.get(element.environment_id);
+      const envVms = envMap.get(element.environment_id);
+      if (envVms) {
         envVms.push(element);
         envMap.set(element.environment_id, envVms);
       } else {

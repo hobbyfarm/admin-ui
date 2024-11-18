@@ -24,7 +24,7 @@ export interface deletionInformation {
 })
 export class DeleteProcessModalComponent implements OnInit {
   @Output()
-  public done: EventEmitter<boolean> = new EventEmitter(null);
+  public done: EventEmitter<boolean> = new EventEmitter();
 
   @Input()
   public selectedUsers: User[];

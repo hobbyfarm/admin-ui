@@ -7,8 +7,8 @@
     
     // begin strict mode WIP
     "strict": true,
-    "strictNullChecks": false,
-    "strictFunctionTypes": false,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
     "strictPropertyInitialization": false,
     "noImplicitAny": false,
     // end strict mode WIP
@@ -28,7 +28,7 @@
       "node_modules/@types"
     ],
     "lib": [
-      "es2018",
+      "es2022",
       "dom"
     ],
     "useDefineForClassFields": false

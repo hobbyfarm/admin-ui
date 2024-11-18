@@ -10,7 +10,7 @@ import { RbacService } from 'src/app/data/rbac.service';
 })
 export class EnvironmentsComponent implements OnInit {
   public environments: Environment[] = [];
-  public updateEnv: Environment;
+  public updateEnv: Environment | null;
   public showActionOverflow: boolean = false;
 
   constructor(
@@ -45,7 +45,7 @@ export class EnvironmentsComponent implements OnInit {
   }
 
   public openNew() {
-    this.updateEnv = undefined;
+    this.updateEnv = null;
     this.editWizard.open();
   }
 

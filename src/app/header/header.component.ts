@@ -111,9 +111,7 @@ export class HeaderComponent implements OnInit {
         },
       );
     this.settingsModal.open();
-    this.hide_usernames_status = this.settingsForm.get(
-      'hide_usernames_status',
-    )?.value;
+    this.hide_usernames_status = this.settingsForm.controls.hide_usernames_status.value;
   }
 
   public doSaveSettings() {

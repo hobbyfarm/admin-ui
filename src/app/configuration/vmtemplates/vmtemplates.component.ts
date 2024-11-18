@@ -15,7 +15,7 @@ import { EditVmtemplateComponent } from './edit-vmtemplate/edit-vmtemplate.compo
 })
 export class VmtemplatesComponent implements OnInit {
   public templates: VMTemplate[] = [];
-  public editTemplate: VMTemplate;
+  public editTemplate: VMTemplate | null;
   public deleteTemplate: VMTemplate;
   public ascSort = ClrDatagridSortOrder.ASC;
   public showActionOverflow: boolean = false;
@@ -63,7 +63,7 @@ export class VmtemplatesComponent implements OnInit {
   }
 
   public openNew() {
-    this.editTemplate = undefined;
+    this.editTemplate = null;
     this.editWizard.open();
   }
 

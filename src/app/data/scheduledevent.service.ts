@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import {
-  HttpClient,
   HttpErrorResponse,
   HttpParams,
 } from '@angular/common/http';
-import { DashboardScheduledEvent, ScheduledEvent } from './scheduledevent';
-import { environment } from 'src/environments/environment';
+import { DashboardScheduledEvent, ScheduledEvent, ScheduledEventBase } from './scheduledevent';
 import { ServerResponse } from './serverresponse';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { BehaviorSubject, from, of, throwError } from 'rxjs';
@@ -24,7 +22,9 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
     Map<string, DashboardScheduledEvent>
   > = new BehaviorSubject(new Map());
 
-  constructor(public http: HttpClient, gcf: GargantuaClientFactory) {
+  constructor(
+    gcf: GargantuaClientFactory,
+  ) {
     super(gcf.scopedClient('/a/scheduledevent'));
   }
 
@@ -34,7 +34,7 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
         ses.start_time = new Date(ses.start_time);
         ses.end_time = new Date(ses.end_time);
         return ses;
-      })
+      }),
     );
   }
 
@@ -46,7 +46,7 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
           event.end_time = new Date(event.end_time);
         });
         return ses;
-      })
+      }),
     );
   }
 
@@ -56,11 +56,11 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
       .set('description', se.description)
       .set(
         'start_time',
-        formatDate(se.start_time, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC')
+        formatDate(se.start_time, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC'),
       )
       .set(
         'end_time',
-        formatDate(se.end_time, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC')
+        formatDate(se.end_time, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC'),
       )
       .set('required_vms', JSON.stringify(se.required_vms))
       .set('access_code', se.access_code.toLowerCase()) // this needs to be lower case because of RFC-1123
@@ -75,16 +75,14 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
       params = params.set('courses', JSON.stringify(se.courses));
     }
 
-    return this.http
-      .post(environment.server + '/a/scheduledevent/new', params)
-      .pipe(
-        tap(() => {
-          this.list('', true);
-        }),
-        switchMap((s: ServerResponse) => {
-          return from(JSON.parse(atou(s.message)));
-        })
-      );
+    return this.garg.post('/new', params).pipe(
+      tap(() => {
+        this.list('', true);
+      }),
+      switchMap((s: ServerResponse) => {
+        return from(JSON.parse(atou(s.message)));
+      }),
+    );
   }
 
   public update(se: ScheduledEvent) {
@@ -93,11 +91,11 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
       .set('description', se.description)
       .set(
         'start_time',
-        formatDate(se.start_time, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC')
+        formatDate(se.start_time, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC'),
       )
       .set(
         'end_time',
-        formatDate(se.end_time, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC')
+        formatDate(se.end_time, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC'),
       )
       .set('required_vms', JSON.stringify(se.required_vms))
       .set('access_code', se.access_code.toLocaleLowerCase()) // this needs to be lower case because of RFC-1123
@@ -112,79 +110,58 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
       params = params.set('courses', JSON.stringify(se.courses));
     }
 
-    return this.http
-      .put(environment.server + '/a/scheduledevent/' + se.id, params)
-      .pipe(
-        switchMap((s: ServerResponse) => {
-          return from(JSON.parse(atou(s.message)));
-        })
-      );
+    return this.garg.put(`/${se.id}`, params).pipe(
+      switchMap((s: ServerResponse) => {
+        return from<string>(JSON.parse(atou(s.message)));
+      }),
+    );
   }
 
-  public delete(se: ScheduledEvent) {
-    return this.http
-      .delete(environment.server + '/a/scheduledevent/delete/' + se.id)
-      .pipe(
-        switchMap((s: ServerResponse) => {
-          return from(s.message);
-        }),
-        catchError((e: HttpErrorResponse) => {
-          return throwError(e.error);
-        }),
-        tap(() => {
-          this.deleteAndNotify(se.id);
-        })
-      );
+  public delete(se: ScheduledEventBase) {
+    return this.garg.delete(`/${se.id}`).pipe(
+      switchMap((s: ServerResponse) => {
+        return from(s.message);
+      }),
+      catchError((e: HttpErrorResponse) => {
+        return throwError(e.error);
+      }),
+      tap(() => {
+        this.deleteAndNotify(se.id);
+      }),
+    );
   }
 
   public addOtacs(seId: string, count: number, duration: string = '') {
     var params = new HttpParams().set('max_duration', duration);
 
-    return this.http
-      .post(
-        environment.server +
-          '/a/scheduledevent/' +
-          seId +
-          '/otacs/add/' +
-          count,
-        params
-      )
-      .pipe(
-        switchMap((s: ServerResponse) => {
-          let se = JSON.parse(atou(s.content));
-          return of(se);
-        })
-      );
-  }
-
-  public deleteOtac(seId: string, otacId: string) {
-    return this.http.get(
-      environment.server +
-        '/a/scheduledevent/' +
-        seId +
-        '/otacs/delete/' +
-        otacId
+    return this.garg.post(`/${seId}/otacs/add/${count}`, params).pipe(
+      switchMap((s: ServerResponse) => {
+        let se = JSON.parse(atou(s.content));
+        return of(se);
+      }),
     );
   }
 
-  public listOtacs(seId: string) {
-    return this.http
-      .get(environment.server + '/a/scheduledevent/' + seId + '/otacs/list')
-      .pipe(
-        switchMap((s: ServerResponse) => {
-          let se = JSON.parse(atou(s.content));
-          return of(se);
-        })
-      );
+  public deleteOtac(seId: string, otacId: string) {
+    return this.garg.get(`/${seId}/otacs/delete/${otacId}`);
   }
 
-  public setDashboardCache(
-    map: Map<string, DashboardScheduledEvent>,
-  ) {
+  public listOtacs(seId: string) {
+    return this.garg.get(`/${seId}/otacs/list`).pipe(
+      switchMap((s: ServerResponse) => {
+        let se = JSON.parse(atou(s.content));
+        return of(se);
+      }),
+    );
+  }
+
+  public setDashboardCache(map: Map<string, DashboardScheduledEvent>) {
     this.cachedDashboardEvents.next(map);
   }
 
-  public getDashboardCache(): BehaviorSubject<Map<string, DashboardScheduledEvent>> {
+  public getDashboardCache(): BehaviorSubject<
+    Map<string, DashboardScheduledEvent>
+  > {
     return this.cachedDashboardEvents;
   }
 }

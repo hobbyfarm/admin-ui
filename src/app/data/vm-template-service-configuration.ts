@@ -13,8 +13,8 @@ export class VMTemplateServiceConfiguration {
   public rewriteHostHeader?: boolean;
   public rewriteOriginHeader?: boolean;
   public disallowIFrame?: boolean;
-  public disableAuthorizationHeader: boolean;
-  public cloudConfigMap?: Map<string, Object>;
+  public disableAuthorizationHeader?: boolean;
+  public cloudConfigMap?: Record<string, Object>;
   public cloudConfigString?: string;
 
   constructor(
@@ -29,7 +29,7 @@ export class VMTemplateServiceConfiguration {
     rewriteOriginHeader: boolean = false,
     disallowIFrame: boolean = false,
     disableAuthorizationHeader: boolean = false,
-    cloudConfigString: string = ''
+    cloudConfigString: string = '',
   ) {
     this.id = uuid.v4();
     this.name = name;
@@ -44,7 +44,7 @@ export class VMTemplateServiceConfiguration {
     this.disallowIFrame = disallowIFrame;
     this.disableAuthorizationHeader = disableAuthorizationHeader;
     this.cloudConfigString = cloudConfigString;
-    this.cloudConfigMap = new Map();
+    this.cloudConfigMap = {};
     if (this.cloudConfigString.length > 0) {
       try {
         this.cloudConfigMap = YAML.parse(this.cloudConfigString);
@@ -52,86 +52,14 @@ export class VMTemplateServiceConfiguration {
         this.cloudConfigString = `YAML-Parse-Error: |
   The following Error occured while parsing the Cloud Config of this Service:
   ${(e as Error).message}`;
-        this.cloudConfigMap = new Map();
+        this.cloudConfigMap = {};
       }
     }
   }
 }
 
 export function getCloudConfigString(
-  vmService: VMTemplateServiceConfiguration
+  vmService: VMTemplateServiceConfiguration,
 ) {
   return YAML.stringify(vmService.cloudConfigMap);
-}
-
-export function vmServiceToJSON(vmService: VMTemplateServiceConfiguration) {
-  let result =
-    '{"id" : "' +
-    vmService.id +
-    '" , "name": "' +
-    vmService.name +
-    '" ,"hasWebinterface": ' +
-    vmService.hasWebinterface;
-
-  //only add webinterface settings if the service has a webinterface.
-  if (vmService.hasWebinterface) {
-    if (vmService.port) {
-      result += ', "port": ' + vmService.port;
-    }
-    if (vmService.path) {
-      result += ', "path": ' + JSON.stringify(vmService.path);
-    }
-    if (vmService.protocol) {
-      result += ', "protocol": ' + JSON.stringify(vmService.protocol);
-    }
-    if (vmService.hasOwnTab) {
-      result += ', "hasOwnTab": ' + vmService.hasOwnTab;
-    }
-    if (vmService.rewriteHostHeader) {
-      result += ', "rewriteHostHeader": ' + vmService.rewriteHostHeader;
-    }
-    if (vmService.rewriteOriginHeader) {
-      result += ', "rewriteOriginHeader": ' + vmService.rewriteOriginHeader;
-    }
-    if (vmService.disallowIFrame) {
-      result += ', "disallowIFrame": ' + vmService.disallowIFrame;
-    }
-    if (vmService.disableAuthorizationHeader) {
-      result +=
-        ', "disableAuthorizationHeader": ' +
-        vmService.disableAuthorizationHeader;
-    }
-    if (vmService.noRewriteRootPath) {
-      result += ', "noRewriteRootPath": ' + vmService.noRewriteRootPath;
-    }
-  }
-  if (vmService.cloudConfigMap) {
-    result +=
-      ', "cloudConfigMap": {' + mapToJson(vmService.cloudConfigMap, '') + '}'; //Potential alternative if es2019 or higher (configurable in tsconfig, field: lib): JSON.stringify(Object.fromEntries(vmService.cloudConfigMap))
-  }
-  result += '}';
-  return result;
-}
-
-export function mapToJson(map: Map<string, any>, jsonString: string): string {
-  let isfirstElement = true;
-  map.forEach((value, key) => {
-    if (!isfirstElement) {
-      jsonString += ',';
-    }
-    if (typeof value === 'string' || Array.isArray(value)) {
-      jsonString += '"' + key + '": ' + JSON.stringify(value) + ' ';
-    } else if (value instanceof Map) {
-      jsonString += '"' + key + '": {' + mapToJson(value, '') + '} ';
-    } else {
-      jsonString +=
-        '"' +
-        key +
-        '": {' +
-        mapToJson(new Map(Object.entries(value)), '') +
-        '} ';
-    }
-    isfirstElement = false;
-  });
-  return jsonString;
 }

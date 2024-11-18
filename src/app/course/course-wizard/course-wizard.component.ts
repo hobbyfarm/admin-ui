@@ -22,6 +22,7 @@ import { ServerResponse } from 'src/app/data/serverresponse';
 import { AddScenarioComponent } from '../add-scenario/add-scenario.component';
 import { cloneDeep } from 'lodash-es';
 import { CategoryFormGroup, CourseDetailFormGroup } from 'src/app/data/forms';
+import { lastValueFrom } from 'rxjs';
 @Component({
   selector: 'wizard-course',
   templateUrl: './course-wizard.component.html',
@@ -56,7 +57,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   @ViewChild('virtualmachine', { static: true }) virtualMachine: VmsetComponent;
   @ViewChild('addScenario', { static: true }) addScenario: AddScenarioComponent;
 
-  public form: CourseDetailFormGroup;
+  public form?: CourseDetailFormGroup;
   public newCategoryForm: CategoryFormGroup = new FormGroup({
     category: new FormControl<string | null>(null, [
       Validators.required,
@@ -64,7 +65,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     ]),
   });
 
-  public alertText: string = null;
+  public alertText: string = '';
   public isAlert: boolean = false;
   public isFormValid: boolean = false;
   public newCategory: boolean = false;
@@ -87,7 +88,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   constructor(
     public courseService: CourseService,
     public rbacService: RbacService,
-    public scenarioService: ScenarioService
+    public scenarioService: ScenarioService,
   ) {}
 
   ngOnInit(): void {
@@ -111,7 +112,10 @@ export class CourseWizardComponent implements OnChanges, OnInit {
       })
       .then((allowListScenarios: boolean) => {
         if (allowListScenarios) {
-          return this.scenarioService.list().toPromise();
+          const defaultVal: Scenario[] = [];
+          return lastValueFrom(this.scenarioService.list(), {
+            defaultValue: defaultVal,
+          });
         } else {
           return [];
         }
@@ -136,7 +140,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   @ViewChild('courseForm', { static: false }) set content(
-    content: CourseFormComponent
+    content: CourseFormComponent,
   ) {
     if (content) {
       this.courseForm = content;
@@ -162,7 +166,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
             return true;
           }
           return false;
-        }
+        },
       );
       if (validVMSets.length == this.editVirtualMachines.length) {
         return true;
@@ -190,8 +194,8 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   setupFormEdit(fg: CourseDetailFormGroup) {
     this.form = fg;
-    this.form.valueChanges.subscribe((a: any) => {
-      if (this.form.dirty) {
+    fg.valueChanges.subscribe(() => {
+      if (fg.dirty) {
         this.setModified();
       }
     });
@@ -202,8 +206,13 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   setCourseValues(course: Course) {
+    // "this.form" is always defined because otherwise the wizard would prevent further processing
+    if (!this.form) {
+      // In case this function is used without defining the course form ... throw an error
+      throw new Error('Form is not defined!');
+    }
     course.name = this.form.controls.course_name.value;
-    course.description = this.form.controls.course_description.value;
+    course.description = this.form.controls.course_description.value ?? '';
     course.keepalive_duration =
       this.form.controls.keepalive_amount.value +
       this.form.controls.keepalive_unit.value;
@@ -264,9 +273,9 @@ export class CourseWizardComponent implements OnChanges, OnInit {
         },
         (e: HttpErrorResponse) => {
           this.alertDanger(
-            'Error listing dynmamic scenarios: ' + e.error.message
+            'Error listing dynmamic scenarios: ' + e.error.message,
           );
-        }
+        },
       );
     }
   }
@@ -277,8 +286,8 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   addCategory() {
-    let categories = this.newCategoryForm.get('category').value;
-    const categoryArray = categories.split(',');
+    let categories = this.newCategoryForm.controls.category.value;
+    const categoryArray = categories?.split(',') ?? [];
     categoryArray.forEach((category) => {
       category = category.replace(/\s/g, ''); //remove all whitespaces
       if (category != '' && !this.editCategories.includes(category)) {
@@ -342,7 +351,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
       (e: HttpErrorResponse) => {
         this.alertText = 'Error creating object: ' + e.error.message;
         this.isAlert = true;
-      }
+      },
     );
   }
 
@@ -357,20 +366,20 @@ export class CourseWizardComponent implements OnChanges, OnInit {
       (e: HttpErrorResponse) => {
         this.alertText = 'Error creating object: ' + e.error.message;
         this.isAlert = true;
-      }
+      },
     );
   }
 
   getSelectedCourseVM(index: any, vmname: any) {
     const selectedCourseVMs = this.showVM(
-      this.selectedCourse.virtualmachines[index]
+      this.selectedCourse.virtualmachines[index],
     );
     return selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname) : 0;
   }
 
   getEditSelectedCourseVM(index: any, vmname: any) {
     const editSelectedCourseVMs = this.showVM(
-      this.editSelectedCourse.virtualmachines[index]
+      this.editSelectedCourse.virtualmachines[index],
     );
     return editSelectedCourseVMs.has(vmname)
       ? editSelectedCourseVMs.get(vmname)
@@ -378,14 +387,14 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   showVM(vms: any) {
-    if(!vms){
+    if (!vms) {
       return new Map();
     }
-    return new Map(Object.entries(JSON.parse(JSON.stringify(vms))));
+    return new Map(Object.entries(structuredClone(vms)));
   }
 
   isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {
-    return list.some((item) => item.name === scenario.name);
+    return list?.some((item) => item.name === scenario.name) ?? false;
   }
 
   isEditedVM(index: any, vmname: string, templateName: any): boolean {

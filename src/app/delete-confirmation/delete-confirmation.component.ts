@@ -9,7 +9,7 @@ export class DeleteConfirmationComponent {
   public modalOpen: boolean = false;
 
   @Output()
-  public delete: EventEmitter<boolean> = new EventEmitter(null);
+  public delete: EventEmitter<boolean> = new EventEmitter();
 
   @Input()
   public message: String = "Are you sure you wish to delete this object?"

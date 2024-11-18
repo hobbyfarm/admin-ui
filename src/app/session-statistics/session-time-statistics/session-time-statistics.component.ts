@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
+import { Chart, ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
 import { Progress } from '../../data/progress';
@@ -11,6 +11,7 @@ import {
   NonNullableFormBuilder,
   Validators,
 } from '@angular/forms';
+import { BarChartData } from 'src/app/data/barchartdata';
 
 type ChartDetailsFormGroup = FormGroup<{
   scenario: FormControl<string>;
@@ -41,11 +42,11 @@ export class SessionTimeStatisticsComponent implements OnInit {
   public totalMedianDuration: number;
 
   public chartDetails: ChartDetailsFormGroup;
-  public barChartData: ChartData<'bar'> = {
+  public barChartData: BarChartData = {
     labels: [],
     datasets: [],
   };
-  public barChartOptions: ChartConfiguration['options'] = {
+  public barChartOptions: ChartConfiguration<'bar', number[], string>['options'] = {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
     scales: {
@@ -56,7 +57,13 @@ export class SessionTimeStatisticsComponent implements OnInit {
           precision: 0,
           stepSize: 60,
           maxTicksLimit: 10,
-          callback: function (value: number, index, ticks) {
+          callback: function (value) {
+            if(typeof value === 'string') {
+              value = parseInt(value);
+            }
+            if(isNaN(value) || value < 0) {
+              throw new Error("Error parsing value: Invalid duration")
+            }
             // Format y-axis labels to time string
             return durationFormatter(value);
           },
@@ -81,26 +88,23 @@ export class SessionTimeStatisticsComponent implements OnInit {
       },
     },
   };
-  public barChartType: ChartType = 'bar';
   public barChartPlugins = [
     DataLabelsPlugin,
     {
       id: 'legendMargin',
-      // chart is of type Chart<'bar'>. However, we are forced to use chart.js version 3.4.0 because it is used by ng2-charts as peer dependency.
-      // And the "legend" property is not defined in the type definitions of this version.
+      beforeInit: function (chart: Chart<'bar', number[], string>) {
+        if (chart.legend) {
+          // Get the reference to the original fit function
+          const originalFit = chart.legend.fit;
 
-      // We can not upgrade ng2-charts (and so its peer dependency) yet because it requires Angular 14.
-      beforeInit: function (chart: any) {
-        // Get the reference to the original fit function
-        const originalFit = (chart.legend as any).fit;
-
-        // Override the fit function
-        (chart.legend as any).fit = function fit() {
-          // Call original function and bind scope in order to use `this` correctly inside it
-          originalFit.bind(chart.legend)();
-          // Change the height
-          this.height += 20;
-        };
+          // Override the fit function
+          chart.legend.fit = function fit() {
+            // Call original function and bind scope in order to use `this` correctly inside it
+            originalFit.bind(chart.legend)();
+            // Change the height
+            this.height += 20;
+          };
+        }
       },
     },
   ];
@@ -147,9 +151,9 @@ export class SessionTimeStatisticsComponent implements OnInit {
     );
 
     // Initialize step time and counts
-    let stepTime = [];
-    let stepTimes = [];
-    let stepProgressCount = [];
+    let stepTime: number[] = [];
+    let stepTimes: number[][] = [];
+    const stepProgressCount: number[] = [];
 
     evaluatedProgressData.forEach((progress) => {
       // Update step progress counts
@@ -158,7 +162,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
       }
 
       // Initialize temporary array to keep track of step times for this progress
-      let stepTimeForThisProgress = [];
+      let stepTimeForThisProgress: number[] = [];
 
       // Iterate through each step in the progress
       for (let i = 1; i < progress.steps.length; i++) {

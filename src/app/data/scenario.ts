@@ -6,7 +6,7 @@ export class Scenario {
     name: string;
     description: string;
     stepcount: number;
-    virtualmachines: {}[];
+    virtualmachines: Record<string, string>[];
     steps: Step[];
     categories: string[];
     tags: string[];

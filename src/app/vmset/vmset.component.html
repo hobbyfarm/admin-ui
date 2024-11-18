@@ -70,6 +70,6 @@
 <new-vm
   #newvm
   (vm)="addVM($event)"
-  [listVms]="allowedAddVm | async"
+  [listVms]="(allowedAddVm | async) ?? false"
   [vms]="vms"
 ></new-vm>

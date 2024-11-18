@@ -9,7 +9,7 @@ import { FormArray, FormControl } from '@angular/forms';
 export class TypedMapComponent<T extends string | number | boolean> {
   @Input() map: FormArray<GenericKeyValueGroup<T>>;
   @Input() input: TypedInput;
-  @Output() change: EventEmitter<boolean> = new EventEmitter(null);
+  @Output() change: EventEmitter<boolean> = new EventEmitter();
 
   inputChanged() {
     this.change.emit(true);
@@ -25,5 +25,9 @@ export class TypedMapComponent<T extends string | number | boolean> {
     controlName: 'key' | 'value'
   ): FormControl<T> | FormControl<string> {
     return ctrl.controls[controlName];
+  }
+
+  get minLength() {
+    return this.input.getMinLength();
   }
 }

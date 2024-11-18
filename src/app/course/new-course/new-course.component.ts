@@ -12,13 +12,13 @@ import { CourseDetailFormGroup } from 'src/app/data/forms';
 })
 export class NewCourseComponent {
   @Output()
-  public added: EventEmitter<boolean> = new EventEmitter(null);
+  public added: EventEmitter<boolean> = new EventEmitter();
 
   public course: Course = new Course();
 
-  public form: CourseDetailFormGroup;
+  public form?: CourseDetailFormGroup;
 
-  public alertText: string = null;
+  public alertText: string = '';
   public isAlert: boolean = false;
   public alertType: string = ClrAlertType.Info;
 
@@ -32,12 +32,19 @@ export class NewCourseComponent {
 
   public open() {
     this.course = new Course();
-    this.alertText = null;
+    this.alertText = '';
     this.isAlert = false;
     this.newCourseOpen = true;
   }
 
   save() {
+    if(!this.form) {
+      // This case currently can not occur because the "save" button is disabled if this.form is not defined.
+      this.alertText = 'Error creating object: Unable to read course form!';
+      this.isAlert = true;
+      this.alertType = ClrAlertType.Danger;
+      return;
+    }
     this.course.name = this.form.controls.course_name.value;
     this.course.description = this.form.controls.course_description.value;
     this.course.keepalive_duration =
@@ -58,6 +65,7 @@ export class NewCourseComponent {
       error: (e: HttpErrorResponse) => {
         this.alertText = 'Error creating object: ' + e.error.message;
         this.isAlert = true;
+        this.alertType = ClrAlertType.Danger;
       },
     });
   }
