@@ -19,6 +19,7 @@ import 'prismjs/components/prism-go';
 import 'prismjs/components/prism-docker';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-yaml';
+import { isNoteType, NoteType } from '../data/notetype';
 
 export interface HfMarkdownRenderContext {
   vmInfo: { [vmName: string]: VM };
@@ -28,11 +29,13 @@ export interface HfMarkdownRenderContext {
 @Component({
   selector: 'app-hf-markdown',
   template: `
-    <ngx-dynamic-hooks
-      class="hf-md-content"
-      [content]="processedContent | async"
-      [context]="context"
-    ></ngx-dynamic-hooks>
+    @if (processedContent | async; as content) {
+      <ngx-dynamic-hooks
+        class="hf-md-content"
+        [content]="processedContent | async"
+        [context]="context"
+      ></ngx-dynamic-hooks>
+    }
   `,
   styleUrls: ['./hf-markdown.component.scss'],
 })
@@ -44,7 +47,7 @@ export class HfMarkdownComponent implements OnChanges, OnInit {
 
   constructor(
     public markdownService: MarkdownService,
-    private ctrService: CtrService
+    private ctrService: CtrService,
   ) {}
 
   ngOnInit(): void {
@@ -92,7 +95,11 @@ export class HfMarkdownComponent implements OnChanges, OnInit {
     },
 
     note(code: string, type: string, message: string) {
-      return `<app-note-md [noteType]="'${type}'" [message]="'${message}'" [code]="'${code}'"></app-note-md>`;
+      let noteType: NoteType = 'info';
+      if(isNoteType(type)) {
+        noteType = type;
+      }
+      return `<app-note-md [noteType]="'${noteType}'" [message]="'${message}'" [code]="'${code}'"></app-note-md>`;
     },
 
     file(code: string, language: string, filepath: string, target: string) {
@@ -129,7 +136,7 @@ ${token}`;
   private renderHighlightedCode(
     code: string,
     language: string,
-    fileName?: string
+    fileName?: string,
   ) {
     const fileNameTag = fileName
       ? `<p class="filename" (click)=createFile(code,node)>${fileName}</p>`
@@ -161,12 +168,20 @@ ${token}`;
 
         // This case occurs inside nested blocks
       } else if (codePart) {
-        const [infoString, ...codeParts] = codePart.split("\n");
-        const processedCodePart = codeParts.join("\n");
-        if(infoString.trim().length > 0) {
-          content += this.markdownService.renderer.code(processedCodePart, infoString, false);
+        const [infoString, ...codeParts] = codePart.split('\n');
+        const processedCodePart = codeParts.join('\n');
+        if (infoString.trim().length > 0) {
+          content += this.markdownService.renderer.code(
+            processedCodePart,
+            infoString,
+            false,
+          );
         } else {
-          content += this.markdownService.renderer.code(processedCodePart, undefined, false);
+          content += this.markdownService.renderer.code(
+            processedCodePart,
+            undefined,
+            false,
+          );
         }
       } else {
         content += '~~~~~~';
@@ -194,7 +209,7 @@ ${token}`;
     }
 
     const contentWithReplacedTokens = this.replaceSessionToken(
-      this.replaceVmInfoTokens(this.content)
+      this.replaceVmInfoTokens(this.content),
     );
     // the parse method internally uses the Angular Dom Sanitizer and is therefore safe to use
     const parsedContent = this.markdownService.parse(contentWithReplacedTokens);
@@ -217,7 +232,7 @@ ${token}`;
       (match, vmName, propName) => {
         const vm = this.context.vmInfo?.[vmName.toLowerCase()];
         return String(vm?.[propName as keyof VM] ?? match);
-      }
+      },
     );
   }
 
