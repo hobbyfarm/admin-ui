@@ -5,8 +5,8 @@ import {
   TypedSettingsService,
 } from 'src/app/data/typedSettings.service';
 import { AlertComponent } from 'src/app/alert/alert.component';
-import { ServerResponse } from 'src/app/step/ServerResponse';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ProgressViewMode } from 'src/app/data/ProgressViewMode';
 
 @Component({
   selector: 'app-settings',
@@ -23,6 +23,7 @@ export class SettingsComponent {
   public loading: boolean = true; 
   public scopesLoading: boolean = true;
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
+  public progress_view_mode: ProgressViewMode = "cardView"
 
   @ViewChild('alert') alert: AlertComponent;
 
@@ -57,7 +58,7 @@ export class SettingsComponent {
       return;
     }
     this.typedSettingsService.updateCollection(this.updatedSettings).subscribe({
-      next: (resp: ServerResponse) => {
+      next: () => {
         this.hasChanges = false;
         this.alert.success(
           'Settings successfully saved',

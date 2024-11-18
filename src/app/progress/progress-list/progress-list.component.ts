@@ -37,11 +37,6 @@ export class ProgressListComponent {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  ngOnChanges(): void {
-    console.log('Progress list received:');
-    console.log(this.progressList)
-  }
-
   public terminateSession(p: Progress) {
     this.http
       .put(

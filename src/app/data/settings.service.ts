@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse, HttpParams } from '@angular/common/http';
+import {ProgressViewMode} from './ProgressViewMode' 
 import { Subject, concat, throwError } from 'rxjs';
 import {
   catchError,
@@ -19,6 +20,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export interface Settings {
   terminal_theme: (typeof themes)[number]['id'];
   hide_usernames_status: boolean;
+  progress_view_mode: ProgressViewMode;
 }
 
 /**
@@ -36,6 +38,7 @@ export class SettingsService {
   public settingsForm: FormGroup = new FormGroup({
     terminal_theme: new FormControl<typeof themes[number]['id'] | null> (null, [Validators.required,]),
     hide_usernames_status: new FormControl<boolean>(false),
+    progress_view_mode: new FormControl<ProgressViewMode>('cardView'),
   })
 
   fetch() {
@@ -46,7 +49,8 @@ export class SettingsService {
           ? s
           : ({
               terminal_theme: themes[0].id,
-              hide_usernames_status: false
+              hide_usernames_status: false,
+              progress_view_mode: 'cardView'
             } as Settings),
       ),
       tap((s: Settings) => {
