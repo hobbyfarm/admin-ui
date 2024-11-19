@@ -12,12 +12,12 @@
   <clr-dg-column>Index</clr-dg-column>
   <clr-dg-column>Title</clr-dg-column>
 
-  <clr-dg-row *clrDgItems="let s of scenarioSteps; let i = index">
+  <clr-dg-row *clrDgItems="let s of scenario.steps; let i = index">
     <clr-dg-action-overflow *rbac="['scenarios.update']">
       @if (i > 0) {
         <button class="action-item" (click)="moveStepUp(i)">Move Up</button>
       }
-      @if (i < scenarioSteps.length - 1) {
+      @if (i < scenario.steps.length - 1) {
         <button class="action-item" (click)="moveStepDown(i)">Move Down</button>
       }
       <button class="action-item" (click)="openEdit(i)">Edit</button>

@@ -4,6 +4,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ClrModal } from '@clr/angular';
+import { Scenario } from 'src/app/data/scenario';
 import { Step } from 'src/app/data/step';
 
 @Component({
@@ -13,7 +14,7 @@ import { Step } from 'src/app/data/step';
 })
 export class StepsScenarioComponent {
   @Input()
-  scenarioSteps: Step[];
+  scenario: Scenario;
 
   public scenarioTainted: boolean = false;
   public editOpen: boolean = false;
@@ -38,24 +39,24 @@ export class StepsScenarioComponent {
   moveStepUp(i: number) {
     this.scenarioTainted = true;
     // get a copy of the to-be-moved item
-    const obj = structuredClone(this.scenarioSteps[i]);
+    const obj = structuredClone(this.scenario.steps[i]);
     // delete at the index currently
-    this.scenarioSteps.splice(i, 1);
+    this.scenario.steps.splice(i, 1);
     // put into the i-1 index
-    this.scenarioSteps.splice(i - 1, 0, obj);
+    this.scenario.steps.splice(i - 1, 0, obj);
   }
   moveStepDown(i: number) {
     this.scenarioTainted = true;
     // get a copy of the to-be-moved item
-    const obj = structuredClone(this.scenarioSteps[i]);
+    const obj = structuredClone(this.scenario.steps[i]);
     // delete at the index currently
-    this.scenarioSteps.splice(i, 1);
+    this.scenario.steps.splice(i, 1);
     // put into the i+1 index
-    this.scenarioSteps.splice(i + 1, 0, obj);
+    this.scenario.steps.splice(i + 1, 0, obj);
   }
 
   openEdit(i: number) {
-    this.editingSteps = structuredClone(this.scenarioSteps);
+    this.editingSteps = structuredClone(this.scenario.steps);
     if (this.editingSteps.length == 0) {
       this.openNewStep();
       return;
@@ -66,7 +67,7 @@ export class StepsScenarioComponent {
   }
 
   openNewStep() {
-    this.editingSteps = structuredClone(this.scenarioSteps);
+    this.editingSteps = structuredClone(this.scenario.steps);
     this.editingIndex = this.editingSteps.length;
     this.editingStep = new Step();
     this.editingStep.title = 'Step ' + (this.editingIndex + 1);
@@ -109,14 +110,14 @@ export class StepsScenarioComponent {
   }
 
   saveCreatedStep() {
-    this.scenarioSteps = structuredClone(this.editingSteps);
+    this.scenario.steps = structuredClone(this.editingSteps);
     this.isStepsLengthNull = false;
     this.stepsToBeAdded = 0;
     this.editModal.close();
   }
   public doDeleteStep() {
-    this.scenarioSteps.splice(this.deletingStepIndex, 1);
+    this.scenario.steps.splice(this.deletingStepIndex, 1);
     this.deleteStepModal.close();
-    if (this.scenarioSteps.length == 0) this.isStepsLengthNull = true;
+    if (this.scenario.steps.length == 0) this.isStepsLengthNull = true;
   }
 }
