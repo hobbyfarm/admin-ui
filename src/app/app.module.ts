@@ -156,6 +156,7 @@ import {
   numberListIcon,
   syncIcon,
   downloadIcon,
+  plusCircleIcon,
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
 import { HiddenMdComponent } from './step/hidden-md-component/hidden-md.component';
@@ -208,6 +209,7 @@ ClarityIcons.addIcons(
   numberListIcon,
   syncIcon,
   downloadIcon,
+  plusCircleIcon,
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {

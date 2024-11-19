@@ -1,8 +1,4 @@
-<button
-  class="btn btn-sm"
-  (click)="openEdit(0)"
-  *rbac="['scenarios.update']"
->
+<button class="btn btn-sm" (click)="openEdit(0)" *rbac="['scenarios.update']">
   Open Step Editor
 </button>
 <button
@@ -10,18 +6,18 @@
   (click)="openNewStep()"
   *rbac="['scenarios.update']"
 >
-  <clr-icon shape="plus"></clr-icon> New Step
+  <cds-icon shape="plus-circle" solid="true"></cds-icon> New Step
 </button>
 <clr-datagrid>
   <clr-dg-column>Index</clr-dg-column>
   <clr-dg-column>Title</clr-dg-column>
 
-  <clr-dg-row *clrDgItems="let s of scenario.steps; let i = index">
+  <clr-dg-row *clrDgItems="let s of scenarioSteps; let i = index">
     <clr-dg-action-overflow *rbac="['scenarios.update']">
       @if (i > 0) {
         <button class="action-item" (click)="moveStepUp(i)">Move Up</button>
       }
-      @if (i < scenario.steps.length - 1) {
+      @if (i < scenarioSteps.length - 1) {
         <button class="action-item" (click)="moveStepDown(i)">Move Down</button>
       }
       <button class="action-item" (click)="openEdit(i)">Edit</button>

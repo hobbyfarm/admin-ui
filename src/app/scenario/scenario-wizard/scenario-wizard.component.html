@@ -263,9 +263,7 @@
     *rbac="['scenarios.update']"
   >
     <ng-template clrPageTitle>Steps</ng-template>
-    @if (selectedscenario) {
-      <steps-scenario [scenario]="selectedscenario"></steps-scenario>
-    }
+    <steps-scenario [scenarioSteps]="selectedscenario.steps"></steps-scenario>
   </clr-wizard-page>
 
   <clr-wizard-page #taskPage>
