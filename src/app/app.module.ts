@@ -31,7 +31,6 @@ import { EnvironmentsComponent } from './configuration/environments/environments
 import { EditEnvironmentComponent } from './configuration/environments/edit-environment/edit-environment.component';
 import { ContentComponent } from './content/content.component';
 import { CourseComponent } from './course/course.component';
-import { NewCourseComponent } from './course/new-course/new-course.component';
 import { CourseFormComponent } from './course/course-form/course-form.component';
 import { DragulaModule } from 'ng2-dragula';
 import { AddScenarioComponent } from './course/add-scenario/add-scenario.component';
@@ -253,7 +252,6 @@ export function jwtOptionsFactory(): JwtConfig {
     ContentComponent,
     CourseComponent,
     CourseDetailsComponent,
-    NewCourseComponent,
     CourseFormComponent,
     AddScenarioComponent,
     VmsetComponent,
