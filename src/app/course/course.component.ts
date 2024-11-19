@@ -8,6 +8,11 @@ import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confi
 import { RbacService } from '../data/rbac.service';
 import { ClrDatagridSortOrder } from '@clr/angular';
 import { CourseWizardComponent } from './course-wizard/course-wizard.component';
+import { AlertComponent } from '../alert/alert.component';
+import {
+  DEFAULT_ALERT_ERROR_DURATION,
+  DEFAULT_ALERT_SUCCESS_DURATION,
+} from '../alert/alert';
 
 @Component({
   selector: 'app-course',
@@ -21,12 +26,9 @@ export class CourseComponent implements OnInit {
   @ViewChild('editcourse') editCourseWizard: CourseWizardComponent;
   @ViewChild('deleteConfirmation')
   deleteConfirmation: DeleteConfirmationComponent;
+  @ViewChild('alert') alert: AlertComponent;
 
   public selectedCourse: Course | null = null;
-
-  public alertType: string = 'warning';
-  public alertText: string = '';
-  public alertClosed: boolean = true;
 
   public showActionOverflow: boolean = false;
 
@@ -70,23 +72,15 @@ export class CourseComponent implements OnInit {
   }
 
   refresh(): void {
-    this.courseService.list(true).subscribe((cList: Course[]) => {
-      this.courses = cList;
+    this.courseService.list(true).subscribe({
+      next: (cList: Course[]) => {
+        this.courses = cList;
+      },
+      error: () => {
+        const alertMsg = 'Failed to load courses!';
+        this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
+      },
     });
-  }
-
-  alertSuccess(msg: string) {
-    this.alertType = 'success';
-    this.alertText = msg;
-    this.alertClosed = false;
-    setTimeout(() => (this.alertClosed = true), 1000);
-  }
-
-  alertDanger(msg: string) {
-    this.alertType = 'danger';
-    this.alertText = msg;
-    this.alertClosed = false;
-    setTimeout(() => (this.alertClosed = true), 3000);
   }
 
   openNewWizard() {
@@ -105,19 +99,20 @@ export class CourseComponent implements OnInit {
 
   deleteSelected(): void {
     if (!this.selectedCourse) {
-      this.alertDanger(
-        'Error deleting object: Selected course is unavailable!',
-      );
+      const alertMsg = 'Error deleting object: Selected course is unavailable!';
+      this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       return;
     }
     this.courseService.delete(this.selectedCourse).subscribe({
       next: (_s: ServerResponse) => {
-        this.alertSuccess('Course deleted');
+        const alertMsg = 'Course deleted!';
+        this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();
         this.selectedCourse = null;
       },
       error: (e: HttpErrorResponse) => {
-        this.alertDanger('Error deleting object: ' + e.error.message);
+        const alertMsg = 'Error deleting object: ' + e.error.message;
+        this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
   }

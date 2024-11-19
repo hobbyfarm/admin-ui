@@ -1,5 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { DEFAULT_ALERT_WARNING_DURATION } from 'src/app/alert/alert';
+import { AlertComponent } from 'src/app/alert/alert.component';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { PredefinedServiceService } from 'src/app/data/predefinedservice.service';
 import { Protocol } from 'src/app/data/protocol';
@@ -16,8 +18,6 @@ import * as uuid from 'uuid';
 })
 export class VMTemplateServiceFormComponent implements OnInit {
   predefinedInterfaces: VMTemplateServiceConfiguration[];
-  alertText = 'Please select a valid predefined service or press "cancel"';
-  alertClosed = true;
 
   @Input()
   cloudConfig: CloudInitConfig;
@@ -47,6 +47,8 @@ export class VMTemplateServiceFormComponent implements OnInit {
 
   private DEFAULT_PORT = 80;
   private DEFAULT_PATH = '/';
+
+  @ViewChild('alert') alert: AlertComponent;
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -177,8 +179,9 @@ export class VMTemplateServiceFormComponent implements OnInit {
       !this.selectedNewInterface ||
       !this.selectedNewInterface.cloudConfigString
     ) {
-      this.alertClosed = false;
-      setTimeout(() => (this.alertClosed = true), 3000);
+      const alertMsg =
+        'Please select a valid predefined service or press "cancel"';
+      this.alert.warning(alertMsg, true, DEFAULT_ALERT_WARNING_DURATION);
       return;
     }
     this.selectedNewInterface.cloudConfigMap =

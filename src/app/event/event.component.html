@@ -2,28 +2,7 @@
   <header class="header header-7" app-header></header>
   <div class="content-container">
     <div class="content-area">
-      <clr-alert
-        [clrAlertType]="'danger'"
-        [(clrAlertClosed)]="seDangerClosed"
-        [clrAlertClosable]="false"
-      >
-        <clr-alert-item>
-          <span class="alert-text">
-            {{ seDangerAlert }}
-          </span>
-        </clr-alert-item>
-      </clr-alert>
-      <clr-alert
-        [clrAlertType]="'success'"
-        [(clrAlertClosed)]="seSuccessClosed"
-        [clrAlertClosable]="false"
-      >
-        <clr-alert-item>
-          <span class="alert-text">
-            {{ seSuccessAlert }}
-          </span>
-        </clr-alert-item>
-      </clr-alert>
+      <alert #alert></alert>
       <h3>Scheduled Events</h3>
       <div class="clr-row">
         <div class="clr-col">

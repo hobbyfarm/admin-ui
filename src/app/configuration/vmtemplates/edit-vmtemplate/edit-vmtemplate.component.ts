@@ -16,6 +16,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ClrWizard } from '@clr/angular';
+import { DEFAULT_ALERT_ERROR_DURATION } from 'src/app/alert/alert';
 import { AlertComponent } from 'src/app/alert/alert.component';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { GenericKeyValueGroup } from 'src/app/data/forms';
@@ -194,7 +195,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       this.template.id = this.editTemplate.id;
       this.vmTemplateService.update(this.template).subscribe({
         next: (_s: ServerResponse) => {
-          this.alert.success('VM Template saved', false, 1000);
+          const alertMsg = 'VM Template saved';
+          this.alert.success(alertMsg, false, 1000);
           this.event.next(true);
           setTimeout(() => this.wizard.close(), 1000);
         },
@@ -202,7 +204,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
           this.alert.danger(
             'Error saving VM Template: ' + e.error.message,
             false,
-            3000,
+            DEFAULT_ALERT_ERROR_DURATION,
           );
           this.buttonsDisabled = false;
         },
@@ -210,7 +212,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     } else {
       this.vmTemplateService.create(this.template).subscribe({
         next: (_s: ServerResponse) => {
-          this.alert.success('VM Template saved', false, 1000);
+          const alertMsg = 'VM Template saved';
+          this.alert.success(alertMsg, false, 1000);
           this.event.next(true);
           setTimeout(() => this.wizard.close(), 1000);
         },
@@ -218,7 +221,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
           this.alert.danger(
             'Error saving VM Template: ' + e.error.message,
             false,
-            3000,
+            DEFAULT_ALERT_ERROR_DURATION,
           );
           this.buttonsDisabled = false;
         },

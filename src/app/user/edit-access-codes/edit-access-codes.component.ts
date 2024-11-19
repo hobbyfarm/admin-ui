@@ -1,5 +1,10 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  DEFAULT_ALERT_ERROR_DURATION,
+  DEFAULT_ALERT_SUCCESS_DURATION,
+} from 'src/app/alert/alert';
+import { AlertComponent } from 'src/app/alert/alert.component';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { User } from 'src/app/data/user';
 import { UserService } from 'src/app/data/user.service';
@@ -12,9 +17,7 @@ export class EditAccessCodesComponent implements OnChanges {
   @Input()
   public user: User = new User();
 
-  public alertType: string = 'success';
-  public alertClosed: boolean = true;
-  public alertText: string = '';
+  @ViewChild('alert') alert: AlertComponent;
 
   public newAccessCode: boolean = false;
 
@@ -48,39 +51,31 @@ export class EditAccessCodesComponent implements OnChanges {
       .saveUser(this.user.id, '', '', this.user.access_codes)
       .subscribe({
         next: (_s: ServerResponse) => {
-          this.alertText = 'Access code deleted';
-          this.alertType = 'success';
-          this.alertClosed = false;
-          setTimeout(() => (this.alertClosed = true), 2000);
+          const alertText = 'Access code deleted';
+          this.alert.success(alertText, false, DEFAULT_ALERT_SUCCESS_DURATION);
         },
         error: (s: ServerResponse) => {
-          this.alertText = 'Failed to delete access code: ' + s.message;
-          this.alertType = 'danger';
-          this.alertClosed = false;
-          setTimeout(() => (this.alertClosed = true), 2000);
+          const alertText = 'Failed to delete access code: ' + s.message;
+          this.alert.danger(alertText, false, DEFAULT_ALERT_ERROR_DURATION);
         },
       });
   }
 
   saveAccessCode() {
     this.user.access_codes.push(
-      this.newAccessCodeForm.controls.access_code.value
+      this.newAccessCodeForm.controls.access_code.value,
     );
 
     this.userService
       .saveUser(this.user.id, '', '', this.user.access_codes)
       .subscribe({
         next: (_s: ServerResponse) => {
-          this.alertText = 'Access code saved';
-          this.alertType = 'success';
-          this.alertClosed = false;
-          setTimeout(() => (this.alertClosed = true), 2000);
+          const alertText = 'Access code saved';
+          this.alert.success(alertText, false, DEFAULT_ALERT_SUCCESS_DURATION);
         },
         error: (s: ServerResponse) => {
-          this.alertText = 'Failed to save access code: ' + s.message;
-          this.alertType = 'danger';
-          this.alertClosed = false;
-          setTimeout(() => (this.alertClosed = true), 2000);
+          const alertText = 'Failed to save access code: ' + s.message;
+          this.alert.danger(alertText, false, DEFAULT_ALERT_ERROR_DURATION);
         },
       });
   }

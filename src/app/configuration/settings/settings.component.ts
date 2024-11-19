@@ -1,9 +1,16 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { TypedInput, FormGroupType } from '../../typed-form/TypedInput';
-import { PreparedScope, TypedSettingsService } from 'src/app/data/typedSettings.service';
+import {
+  PreparedScope,
+  TypedSettingsService,
+} from 'src/app/data/typedSettings.service';
 import { AlertComponent } from 'src/app/alert/alert.component';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import {
+  DEFAULT_ALERT_ERROR_DURATION,
+  DEFAULT_ALERT_SUCCESS_DURATION,
+} from 'src/app/alert/alert';
 
 @Component({
   selector: 'app-settings',
@@ -24,13 +31,10 @@ export class SettingsComponent implements OnInit {
 
   @ViewChild('alert') alert: AlertComponent;
 
-  private readonly ALERT_SUCCESS_DURATION = 2000;
-  private readonly ALERT_ERROR_DURATION = 10000;
-
   constructor(
     private typedSettingsService: TypedSettingsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -55,9 +59,15 @@ export class SettingsComponent implements OnInit {
     this.typedSettingsService.updateCollection(this.updatedSettings).subscribe({
       next: () => {
         this.hasChanges = false;
-        this.alert.success('Settings successfully saved', true, this.ALERT_SUCCESS_DURATION);
+        const alertMsg = 'Settings successfully saved';
+        this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
       },
-      error: (err) => this.alert.danger(err.error.message, true, this.ALERT_ERROR_DURATION),
+      error: (err) =>
+        this.alert.danger(
+          err.error.message,
+          true,
+          DEFAULT_ALERT_ERROR_DURATION,
+        ),
     });
   }
 
@@ -70,7 +80,12 @@ export class SettingsComponent implements OnInit {
         this.settings = typedSettings;
         this.loading = false;
       },
-      error: (err) => this.alert.danger(err.error.message, true, this.ALERT_ERROR_DURATION),
+      error: (err) =>
+        this.alert.danger(
+          err.error.message,
+          true,
+          DEFAULT_ALERT_ERROR_DURATION,
+        ),
     });
   }
 
@@ -83,20 +98,30 @@ export class SettingsComponent implements OnInit {
         this.scopesLoading = false;
         this.handleRouteChange();
       },
-      error: (err) => this.alert.danger(err.error.message, true, this.ALERT_ERROR_DURATION),
+      error: (err) =>
+        this.alert.danger(
+          err.error.message,
+          true,
+          DEFAULT_ALERT_ERROR_DURATION,
+        ),
     });
   }
 
   private handleRouteChange(): void {
     if (this.scopes.length === 0) {
-      this.alert.danger('No available scopes to select.', true, this.ALERT_ERROR_DURATION);
+      this.alert.danger(
+        'No available scopes to select.',
+        true,
+        DEFAULT_ALERT_ERROR_DURATION,
+      );
       this.selectedScope = undefined;
       return;
     }
-  
+
     const scopeName = this.route.snapshot.paramMap.get('scope') || '';
-    const targetScope = this.scopes.find((scope) => scope.name === scopeName) || this.scopes[0];
-  
+    const targetScope =
+      this.scopes.find((scope) => scope.name === scopeName) || this.scopes[0];
+
     this.setScope(targetScope);
   }
 }

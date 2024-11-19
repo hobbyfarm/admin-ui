@@ -8,6 +8,10 @@ import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-confirmation.component';
 import { EditVmtemplateComponent } from './edit-vmtemplate/edit-vmtemplate.component';
+import {
+  DEFAULT_ALERT_ERROR_DURATION,
+  DEFAULT_ALERT_SUCCESS_DURATION,
+} from 'src/app/alert/alert';
 
 @Component({
   selector: 'app-vmtemplates',
@@ -22,7 +26,7 @@ export class VmtemplatesComponent implements OnInit {
 
   constructor(
     public vmTemplateService: VmtemplateService,
-    public rbacService: RbacService
+    public rbacService: RbacService,
   ) {}
 
   @ViewChild('editTemplateWizard') editWizard: EditVmtemplateComponent;
@@ -75,15 +79,14 @@ export class VmtemplatesComponent implements OnInit {
   public doDelete() {
     this.vmTemplateService.delete(this.deleteTemplate.id).subscribe({
       next: (s: ServerResponse) => {
-        this.alert.success('Deleted virtual machine template', false, 1000);
+        const alertMsg = 'Deleted virtual machine template';
+        this.alert.success(alertMsg, false, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();
       },
       error: (e: HttpErrorResponse) => {
-        this.alert.danger(
-          'Error deleting virtual machine template: ' + e.error.message,
-          false,
-          3000
-        );
+        const alertMsg =
+          'Error deleting virtual machine template: ' + e.error.message;
+        this.alert.danger(alertMsg, false, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
   }

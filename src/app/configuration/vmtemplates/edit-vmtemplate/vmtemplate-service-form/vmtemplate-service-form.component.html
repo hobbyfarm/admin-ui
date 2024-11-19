@@ -57,13 +57,7 @@
   <clr-modal [(clrModalOpen)]="selectVMServiceModalOpen" [clrModalSize]="'sm'">
     <h3 class="modal-title">Choose a Service</h3>
     <div class="modal-body">
-      <clr-alert [clrAlertType]="'warning'" [(clrAlertClosed)]="alertClosed">
-        <clr-alert-item>
-          <span class="alert-text">
-            {{ alertText }}
-          </span>
-        </clr-alert-item>
-      </clr-alert>
+      <alert #alert></alert>
       <select clrSelect [(ngModel)]="selectedNewInterface">
         @for (interface of predefinedInterfaces; track interface) {
           <option [ngValue]="interface">

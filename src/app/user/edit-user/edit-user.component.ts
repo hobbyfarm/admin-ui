@@ -9,6 +9,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  DEFAULT_ALERT_ERROR_DURATION,
+  DEFAULT_ALERT_SUCCESS_DURATION,
+} from 'src/app/alert/alert';
+import { AlertComponent } from 'src/app/alert/alert.component';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { User } from 'src/app/data/user';
 import { UserService } from 'src/app/data/user.service';
@@ -22,10 +27,6 @@ export class EditUserComponent implements OnInit, OnChanges {
   @Input()
   public user: User = new User();
 
-  public alertClosed: boolean = true;
-  public alertType: string = 'danger';
-  public alertText: string = '';
-
   @Output()
   public deleted: EventEmitter<boolean> = new EventEmitter(false);
 
@@ -33,6 +34,7 @@ export class EditUserComponent implements OnInit, OnChanges {
 
   @ViewChild('deleteconfirm') deleteConfirmModal: DeleteConfirmationComponent;
   @ViewChild('userDetails') userDetails: ElementRef;
+  @ViewChild('alert') alert: AlertComponent;
 
   constructor(public userService: UserService) {}
 
@@ -45,7 +47,7 @@ export class EditUserComponent implements OnInit, OnChanges {
             { opacity: 0.1, easing: 'ease-in' },
             { opacity: 0 },
           ],
-          200
+          200,
         );
       }
     });
@@ -63,8 +65,8 @@ export class EditUserComponent implements OnInit, OnChanges {
 
   public reset(): void {
     this.userDetailsForm.reset();
-    this.alertText = '';
-    this.alertClosed = true;
+    this.alert.text = '';
+    this.alert.isClosed = true;
   }
 
   saveDetails() {
@@ -79,22 +81,14 @@ export class EditUserComponent implements OnInit, OnChanges {
       .saveUser(this.user.id, this.user.email, password)
       .subscribe({
         next: (_s: ServerResponse) => {
-          this.alertText = 'User updated';
-          this.alertType = 'success';
-          this.alertClosed = false;
+          const alertText = 'User updated';
+          this.alert.success(alertText, false, DEFAULT_ALERT_SUCCESS_DURATION);
           this.saving = false;
-          setTimeout(() => {
-            this.alertClosed = true;
-          }, 2000);
         },
         error: (s: ServerResponse) => {
-          this.alertText = 'Error updating user: ' + s.message;
-          this.alertType = 'danger';
-          this.alertClosed = false;
+          const alertText = 'Error updating user: ' + s.message;
+          this.alert.danger(alertText, false, DEFAULT_ALERT_ERROR_DURATION);
           this.saving = false;
-          setTimeout(() => {
-            this.alertClosed = true;
-          }, 2000);
         },
       });
   }
@@ -109,12 +103,7 @@ export class EditUserComponent implements OnInit, OnChanges {
         this.deleted.next(true);
       },
       error: (s: ServerResponse) => {
-        this.alertText = s.message;
-        this.alertType = 'danger';
-        this.alertClosed = false;
-        setTimeout(() => {
-          this.alertClosed = true;
-        }, 2000);
+        this.alert.danger(s.message, false, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
   }
