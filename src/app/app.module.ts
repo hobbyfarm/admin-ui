@@ -156,6 +156,7 @@ import {
   syncIcon,
   downloadIcon,
   plusCircleIcon,
+  exclamationTriangleIcon,
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
 import { HiddenMdComponent } from './step/hidden-md-component/hidden-md.component';
@@ -209,6 +210,7 @@ ClarityIcons.addIcons(
   syncIcon,
   downloadIcon,
   plusCircleIcon,
+  exclamationTriangleIcon,
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {

@@ -91,10 +91,10 @@
                   <option value="m">Minute(s)</option>
                 </select>
               </div>
-              <clr-icon
+              <cds-icon
                 class="clr-validate-icon"
                 shape="exclamation-circle"
-              ></clr-icon>
+              ></cds-icon>
             </div>
             @if (
               !keepaliveRequired &&
@@ -286,7 +286,7 @@
         *rbac="['scenarios.update']"
         type="submit"
       >
-        <clr-icon shape="plus"></clr-icon> Add Category
+      <cds-icon shape="plus-circle" solid="true"></cds-icon> Add Category
       </button>
       @if (newCategory) {
         <p>
@@ -347,7 +347,7 @@
         *rbac="['scenarios.update']"
         type="submit"
       >
-        <clr-icon shape="plus"></clr-icon> Add Tag
+        <cds-icon shape="plus-circle" solid="true"></cds-icon> Add Tag
       </button>
       @if (newTag) {
         <p>
