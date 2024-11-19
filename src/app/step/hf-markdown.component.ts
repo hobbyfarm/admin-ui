@@ -32,7 +32,7 @@ export interface HfMarkdownRenderContext {
     @if (processedContent | async; as content) {
       <ngx-dynamic-hooks
         class="hf-md-content"
-        [content]="processedContent | async"
+        [content]="content"
         [context]="context"
       ></ngx-dynamic-hooks>
     }
