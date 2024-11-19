@@ -18,8 +18,6 @@ export class StepsScenarioComponent {
 
   public scenarioTainted: boolean = false;
   public editOpen: boolean = false;
-  public editDangerClosed: boolean = true;
-  public editSuccessClosed: boolean = true;
   public deleteStepOpen: boolean = false;
   public isStepsLengthNull: boolean = true;
 
@@ -29,9 +27,6 @@ export class StepsScenarioComponent {
   public editingIndex: number = 0;
   public stepsToBeAdded: number = 0;
   public deletingStepIndex: number = 0;
-
-  public editDangerAlert: string = '';
-  public editSuccessAlert: string = '';
 
   @ViewChild('editmodal', { static: true }) editModal: ClrModal;
   @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;

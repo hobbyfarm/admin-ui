@@ -34,23 +34,6 @@
     {{ this.editingSteps.length }}
   </h3>
   <div class="modal-body">
-    <clr-alert
-      [clrAlertType]="'danger'"
-      [(clrAlertClosed)]="editDangerClosed"
-      [clrAlertClosable]="false"
-    >
-      <clr-alert-item>
-        <span class="alert-text">
-          {{ editDangerAlert }}
-        </span>
-      </clr-alert-item>
-    </clr-alert>
-    <clr-alert
-      [clrAlertType]="'success'"
-      [(clrAlertClosed)]="editSuccessClosed"
-      [clrAlertClosable]="false"
-    >
-    </clr-alert>
     <div class="clr-row">
       <div class="clr-col-6">
         <form clrForm>
