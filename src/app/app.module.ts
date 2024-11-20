@@ -170,6 +170,7 @@ import { TooltipDirective } from './directives/tooltip.directive';
 import { TooltipComponent } from './tooltip/tooltip.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AuthnService } from './data/authn.service';
+import { SessionProgressService } from './progress/session-progress.service';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -362,6 +363,7 @@ export function jwtOptionsFactory(): JwtConfig {
     GargantuaClientFactory,
     AppConfigService,
     ProgressService,
+    SessionProgressService,
     PredefinedServiceService,
     ThemeService,
     TypedSettingsService,

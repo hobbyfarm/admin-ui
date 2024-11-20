@@ -4,26 +4,13 @@
     margin-top: 4px;
 }
 
-table {
-    border-collapse: collapse;
-    width: 100%;
+clr-datagrid {
 
-    td, th {
-        border-bottom: 1px solid #ddd;
-        text-align: left;
-        padding: 8px;
+    clr-dg-cell {
+        display: flex;
+        align-items: center; 
       }
 
-    th{
-        background-color: #ddddddcc;
-    }
-
-    tr:hover {
-        background-color: rgb(214, 214, 214);
-    }
-    cds-icon{
-        margin-right: 10px;
-    }
     progress {
         width: 60px;
         vertical-align: middle;
@@ -33,45 +20,17 @@ table {
         cursor: pointer;
     }
 
-    .end{
-        text-align: end;
-    }
-
-    .center{
-        text-align: center;
-    }
-
-    .small-gap{
-        padding: 0px;
-    }
-
     .color{
         width: 60px;
         padding-left: 12px;
         padding-right: 12px;
     }
 
+    .end{
+        justify-content: flex-end;
+    }
+
     .step{
-        width: 88px;
-    }
-
-    .action{
-        width: 60px;
-    }
-
-    .status-provisioning::-moz-progress-bar{
-        background-color:  var(--clr-color-warning-100, yellow);
-    }
-    
-    .status-running::-moz-progress-bar{
-        background-color:  var(--clr-progress-default-color,#54cbf2);
-    }
-    
-    .status-finished::-moz-progress-bar{
-        background-color:  var(--clr-color-danger-100,red);
-    }
-    
-    .status-success::-moz-progress-bar{
-        background-color:  var(--clr-color-success-100,green);
+        width: 85px;
     }
 }

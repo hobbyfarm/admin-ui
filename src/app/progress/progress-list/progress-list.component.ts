@@ -1,18 +1,14 @@
-import { HttpClient } from '@angular/common/http';
 import {
   Component,
   EventEmitter,
   Input,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { Progress } from '../../data/progress';
-import { ServerResponse } from '../../data/serverresponse';
 import { ProgressInfoComponent } from '../progress-info/progress-info.component';
 import { timeSince } from '../../utils';
-import { Router } from '@angular/router';
+import { SessionProgressService } from '../session-progress.service';
 
 @Component({
   selector: 'progress-list',
@@ -35,17 +31,12 @@ export class ProgressListComponent {
 
   @ViewChild('progressInfo') progressInfo: ProgressInfoComponent;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private sessionProgressService: SessionProgressService
+  ) {}
 
   public terminateSession(p: Progress) {
-    this.http
-      .put(
-        environment.server + '/session/' + p.session + '/finished',
-        {}
-      )
-      .subscribe((_s: ServerResponse) => {
-        p.finished = true;
-      });
+    return this.sessionProgressService.terminateSession(p);
   }
 
   openInfo(p: Progress) {
@@ -54,15 +45,7 @@ export class ProgressListComponent {
   }
 
   openTerminalWindow(p: Progress) {
-    const url = this.router.serializeUrl(
-      this.router.createUrlTree([
-        '/session',
-        p.session,
-        'steps',
-        Math.max(p.current_step - 1, 0),
-      ])
-    );
-    window.open(url, '_blank');
+    this.sessionProgressService.openTerminalWindow(p);
   }
 
   public progressFilterName(p: Progress) {
@@ -70,34 +53,11 @@ export class ProgressListComponent {
   }
 
   public getProgress(p: Progress) {
-    //If we are in the provisioning state or count of total steps is invalid
-    if (p.total_step == 0 || p.current_step == 0) {
-      return 100;
-    }
-    //if finished display the total step reached percentage
-    if (p.finished) {
-      return Math.floor(
-        (p.max_step / p.total_step) * 100
-      );
-    }
-
-    //if currently running display the current step percentage
-    return Math.floor(
-      (p.current_step / p.total_step) * 100
-    );
+    return this.sessionProgressService.getProgress(p);
   }
 
-  public getProgressColorClass(p: Progress) {
-    if (p.finished) {
-      return 'status-finished';
-    }
-    if (p.current_step == 0) {
-      return 'status-provisioning';
-    }
-    if (p.current_step == p.total_step) {
-      return 'status-success';
-    }
-    return 'status-running';
+  public getProgressColorClass(p: Progress): string {
+    return this.sessionProgressService.getProgressColorClass(p);
   }
 
   public getUsername(p: Progress) {
