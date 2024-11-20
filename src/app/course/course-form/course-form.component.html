@@ -59,11 +59,9 @@
         <span class="clr-subtext"
           >Period before VMs are reaped upon user inactivity.</span
         >
-      }
-      @if (keepaliveRequired) {
+      } @else if (keepaliveRequired) {
         <span class="clr-subtext">Keepalive duration is required.</span>
-      }
-      @if (courseDetails.errors?.invalidKeepalivePeriod) {
+      } @else if (courseDetails.errors?.invalidKeepalivePeriod) {
         <span class="clr-subtext"
           >Invalid keepalive period. Valid periods: at least 1m.</span
         >

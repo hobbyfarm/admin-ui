@@ -16,8 +16,7 @@
     <span class="spinner spinner-inline"> Please wait... </span>
     <span> Settings are being loaded... </span>
   </div>
-}
-@if (!loading && selectedScope) {
+} @else if (!loading && selectedScope) {
   @if (settings.length > 0) {
     <app-typed-form
       [typedInputs]="settings"
@@ -25,8 +24,7 @@
       (inputsValid)="changeFormValidity($event)"
       [groupType]="FormGroupType.TABS"
     ></app-typed-form>
-  }
-  @if (settings.length === 0) {
+  } @else {
     <div>
       No settings available for scope
       <code>{{ selectedScope.displayName }}</code

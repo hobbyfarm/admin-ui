@@ -34,8 +34,7 @@
             }}"
             disabled
           />
-        }
-        @if (!this.user.last_login_timestamp) {
+        } @else {
           <input clrInput name="last_login_timestamp" value="-" disabled />
         }
       </clr-input-container>

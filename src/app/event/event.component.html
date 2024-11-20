@@ -86,11 +86,9 @@
               <clr-dg-cell>
                 @if (se.active && se.provisioned && !se.finished && se.ready) {
                   <cds-icon shape="clock"></cds-icon> In Progress
-                }
-                @if (!se.active) {
+                } @else if (!se.active) {
                   <cds-icon shape="times"></cds-icon> Inactive
-                }
-                @if (se.finished) {
+                } @else if (se.finished) {
                   <cds-icon shape="check"></cds-icon> Finished
                 }
               </clr-dg-cell>

@@ -48,8 +48,7 @@
               <button class="btn btn-next" (click)="goNext()">
                 Next <cds-icon shape="arrow" direction="right"></cds-icon>
               </button>
-            }
-            @if (isLastStepActive) {
+            } @else {
               <button class="btn btn-success btn-next" (click)="goFinish()">
                 <cds-icon shape="check"></cds-icon> Finish
               </button>
@@ -82,8 +81,7 @@
                     [endpoint]="v.value.ws_endpoint"
                     #term
                   ></app-terminal>
-                }
-                @if (isGuacamoleTerminal(v.value.protocol)) {
+                } @else {
                   <h3 class="guac-terminal">
                     Admin access to terminals only possible on machines that
                     support ssh-connections

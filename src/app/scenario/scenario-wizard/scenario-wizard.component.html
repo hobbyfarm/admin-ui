@@ -103,11 +103,9 @@
               <span class="clr-subtext"
                 >Period before VMs are reaped upon user inactivity.</span
               >
-            }
-            @if (keepaliveRequired) {
+            } @else if (keepaliveRequired) {
               <span class="clr-subtext">Keepalive duration is required.</span>
-            }
-            @if (scenarioDetails.errors?.invalidKeepalivePeriod) {
+            } @else if (scenarioDetails.errors?.invalidKeepalivePeriod) {
               <span class="clr-subtext"
                 >Invalid keepalive period. Valid periods: 1m to 48h
                 inclusive.</span
@@ -175,8 +173,7 @@
           </div>
         </div>
       </div>
-    }
-    @if (selectedScenarioHasVMSet() && !selectedScenarioHasVM()) {
+    } @else if (selectedScenarioHasVMSet() && !selectedScenarioHasVM()) {
       <div class="alert alert-warning" role="alert">
         <div class="alert-items">
           <div class="alert-item static">
@@ -286,7 +283,7 @@
         *rbac="['scenarios.update']"
         type="submit"
       >
-      <cds-icon shape="plus-circle" solid="true"></cds-icon> Add Category
+        <cds-icon shape="plus-circle" solid="true"></cds-icon> Add Category
       </button>
       @if (newCategory) {
         <p>

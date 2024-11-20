@@ -7,8 +7,7 @@
     >
       @if (action.icon) {
         <cds-icon [attr.shape]="action.icon"></cds-icon>
-      }
-      @if (!action.icon) {
+      } @else {
         <b>{{ action.name }}</b>
       }
     </div>

@@ -54,11 +54,9 @@
             >
               @if (this.scenarioFilterList.size == 0) {
                 <span>Filter scenario(s)</span>
-              }
-              @if (this.scenarioFilterList.size == 1) {
+              } @else if (this.scenarioFilterList.size == 1) {
                 <span>1 Scenario selected</span>
-              }
-              @if (this.scenarioFilterList.size > 1) {
+              } @else if (this.scenarioFilterList.size > 1) {
                 <span
                   >{{ this.scenarioFilterList.size }} Scenarios selected</span
                 >

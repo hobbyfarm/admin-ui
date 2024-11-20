@@ -355,8 +355,7 @@
               <td>
                 {{ env.display_name }}
               </td>
-            }
-            @if (env.display_name != uneditedEnv.display_name) {
+            } @else {
               <td>
                 <span class="del-elem arrow-after">{{
                   uneditedEnv.display_name
@@ -371,8 +370,7 @@
               <td>
                 {{ env.dnssuffix }}
               </td>
-            }
-            @if (env.dnssuffix != uneditedEnv.dnssuffix) {
+            } @else {
               <td>
                 <span class="del-elem arrow-after">{{
                   uneditedEnv.dnssuffix
@@ -387,8 +385,7 @@
               <td>
                 {{ env.provider }}
               </td>
-            }
-            @if (env.provider != uneditedEnv.provider) {
+            } @else {
               <td>
                 <span class="del-elem arrow-after">{{
                   uneditedEnv.provider
@@ -403,8 +400,7 @@
               <td>
                 {{ env.ws_endpoint }}
               </td>
-            }
-            @if (env.ws_endpoint != uneditedEnv.ws_endpoint) {
+            } @else {
               <td>
                 <span class="del-elem arrow-after">{{
                   uneditedEnv.ws_endpoint
@@ -528,11 +524,7 @@
                   <td>
                     {{ getTemplateCount(template.key) }}
                   </td>
-                }
-                @if (
-                  getTemplateCount(template.key) !=
-                  getTemplateUnEditEnvCount(template.key)
-                ) {
+                } @else {
                   <td>
                     <span class="del-elem arrow-after">{{
                       getTemplateUnEditEnvCount(template.key)

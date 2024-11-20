@@ -160,8 +160,7 @@
               <td>
                 {{ template.name }}
               </td>
-            }
-            @if (template.name != uneditedTemplate.name) {
+            } @else {
               <td>
                 <span class="del-elem arrow-after">{{
                   uneditedTemplate.name
@@ -176,8 +175,7 @@
               <td>
                 {{ template.image }}
               </td>
-            }
-            @if (template.image != uneditedTemplate.image) {
+            } @else {
               <td>
                 <span class="del-elem arrow-after">{{
                   uneditedTemplate.image
@@ -307,11 +305,13 @@
           <!-- view deleted key -->
           @for (item of uneditedTemplate.config_map | keyvalue; track item) {
             <tr>
-              @if (item.key !== cloudConfigKey && item.key !== vmServiceKey) {
-                @if (!template.config_map.hasOwnProperty(item.key)) {
-                  <td class="del-elem">{{ item.key }}</td>
-                  <td class="del-elem">{{ item.value }}</td>
-                }
+              @if (
+                item.key !== cloudConfigKey &&
+                item.key !== vmServiceKey &&
+                !template.config_map.hasOwnProperty(item.key)
+              ) {
+                <td class="del-elem">{{ item.key }}</td>
+                <td class="del-elem">{{ item.value }}</td>
               }
             </tr>
           }

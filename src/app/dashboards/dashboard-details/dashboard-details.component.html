@@ -2,11 +2,9 @@
   <div class="content-area">
     @if (sessionDashboardActive && rbacSuccessSessions) {
       <h3>Sessions for {{ selectedEvent.event_name }}</h3>
-    }
-    @if (vmDashboardActive && rbacSuccessVms) {
+    } @else if (vmDashboardActive && rbacSuccessVms) {
       <h3>VMs for {{ selectedEvent.event_name }}</h3>
-    }
-    @if (statisticsDashboardActive && rbacSuccessSessions) {
+    } @else if (statisticsDashboardActive && rbacSuccessSessions) {
       <h3>Statistics for {{ selectedEvent.event_name }}</h3>
     }
     <span class="additional-info">

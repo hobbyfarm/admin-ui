@@ -26,16 +26,14 @@
           {{ progress.current_step }} /
           {{ progress.total_step }}
         </div>
-      }
-      @if (progress.current_step == 0) {
+      } @else {
         <div><cds-icon shape="number-list"></cds-icon> Not started yet</div>
       }
       @if (!progress.finished) {
         <div title="Since {{ progress.started }}">
           <cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}
         </div>
-      }
-      @if (progress.finished) {
+      } @else {
         <div title="{{ progress.started }}-{{ progress.last_update }}">
           <cds-icon shape="clock"></cds-icon>
           {{ timeSince(progress.started, progress.last_update) }}

@@ -6,10 +6,9 @@
     (change)="inputChanged()"
   >
   </app-typed-input-field>
-}
 
-<!--Map-->
-@if (input.isMapType()) {
+  <!--Map-->
+} @else if (input.isMapType()) {
   <div>
     <b
       ><label>{{ input.name }}</label></b
@@ -62,14 +61,12 @@
       <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
         <clr-alert-item>
           <span class="alert-text">
-            {{ input.name }} takes {{ maxLength }} key/value pairs at
-            maximum.
+            {{ input.name }} takes {{ maxLength }} key/value pairs at maximum.
           </span>
         </clr-alert-item>
       </clr-alert>
     </div>
-  }
-  @if (input.isRequired() && getMapSize(input) == 0) {
+  } @else if (input.isRequired() && getMapSize(input) == 0) {
     <div>
       <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
         <clr-alert-item>
@@ -80,10 +77,9 @@
       </clr-alert>
     </div>
   }
-}
 
-<!--Array-->
-@if (input.isArrayType()) {
+  <!--Array-->
+} @else if (input.isArrayType()) {
   <ng-container [formGroup]="formGroup">
     <div>
       <b
@@ -137,14 +133,12 @@
         <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
           <clr-alert-item>
             <span class="alert-text">
-              {{ input.name }} takes {{ maxLength }} values at
-              maximum.
+              {{ input.name }} takes {{ maxLength }} values at maximum.
             </span>
           </clr-alert-item>
         </clr-alert>
       </div>
-    }
-    @if (input.isRequired() && getArrayLength(input) == 0) {
+    } @else if (input.isRequired() && getArrayLength(input) == 0) {
       <div>
         <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
           <clr-alert-item>

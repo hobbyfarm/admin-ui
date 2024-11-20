@@ -76,8 +76,7 @@
     @if (fetchingSettings) {
       <span class="spinner spinner-inline"> Loading... </span>
       <span> Loading... </span>
-    }
-    @if (!fetchingSettings) {
+    } @else {
       <form clrForm [formGroup]="settingsForm">
         <clr-tabs>
           <clr-tab>

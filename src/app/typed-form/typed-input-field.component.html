@@ -2,8 +2,7 @@
   <clr-select-container>
     @if (input.representation === TypedInputRepresentation.SCALAR) {
       <label [for]="input.id">{{ input.name }}</label>
-    }
-    @if (input.representation !== TypedInputRepresentation.SCALAR) {
+    } @else {
       <label class="invisible-label"></label>
     }
     <select
@@ -36,8 +35,7 @@
         <clr-input-container>
           @if (input.representation === TypedInputRepresentation.SCALAR) {
             <label [for]="input.id">{{ input.name }}</label>
-          }
-          @if (input.representation !== TypedInputRepresentation.SCALAR) {
+          } @else {
             <label class="invisible-label"></label>
           }
           <input
@@ -70,8 +68,7 @@
         <clr-input-container>
           @if (input.representation === TypedInputRepresentation.SCALAR) {
             <label [for]="input.id">{{ input.name }}</label>
-          }
-          @if (input.representation !== TypedInputRepresentation.SCALAR) {
+          } @else {
             <label class="invisible-label"></label>
           }
           <input
@@ -101,8 +98,7 @@
         <clr-input-container>
           @if (input.representation === TypedInputRepresentation.SCALAR) {
             <label [for]="input.id">{{ input.name }}</label>
-          }
-          @if (input.representation !== TypedInputRepresentation.SCALAR) {
+          } @else {
             <label class="invisible-label"></label>
           }
           <input
@@ -132,8 +128,7 @@
         <clr-checkbox-container>
           @if (input.representation === TypedInputRepresentation.SCALAR) {
             <label [for]="input.id">{{ input.name }}</label>
-          }
-          @if (input.representation !== TypedInputRepresentation.SCALAR) {
+          } @else {
             <label class="invisible-label"></label>
           }
           <clr-checkbox-wrapper>

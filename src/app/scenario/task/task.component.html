@@ -35,8 +35,7 @@
             [editTask]="task"
             (taskChanged)="updateTask($event)"
           ></app-task-form>
-        }
-        @if (readonly) {
+        } @else {
           <app-readonly-task [editTask]="task"></app-readonly-task>
         }
       </clr-accordion-content>

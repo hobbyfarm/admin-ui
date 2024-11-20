@@ -13,8 +13,7 @@
               ></cds-icon>
               {{ info.user.email }} - {{ info.message }}
             </span>
-          }
-          @if (!info.deleted) {
+          } @else {
             <span>
               <cds-icon shape="error-standard" status="danger" solid></cds-icon>
               {{ info.user.email }} - {{ info.message }}
@@ -30,8 +29,7 @@
         <span class="spinner spinner-inline"> Deleting Users... </span>
         <span> Deleting Users... </span>
       </div>
-    }
-    @if (initialUsers == deletedUsers) {
+    } @else {
       <button class="btn btn-success-outline" (click)="deleteDone()">
         Done
       </button>

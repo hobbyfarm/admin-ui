@@ -9,10 +9,7 @@
     </h3>
   }
   <div class="modal-body">
-    <clr-alert
-      [clrAlertType]="alertType"
-      [(clrAlertClosed)]="alertClosed"
-    >
+    <clr-alert [clrAlertType]="alertType" [(clrAlertClosed)]="alertClosed">
       <clr-alert-item>
         <span class="alert-text">
           {{ alertText }}
@@ -80,11 +77,9 @@
             <clr-dg-cell>
               @if (otac.status == "free") {
                 <span class="badge badge-success">free</span>
-              }
-              @if (otac.status == "taken") {
+              } @else if (otac.status == "taken") {
                 <span class="badge badge-info">taken</span>
-              }
-              @if (otac.status == "out-of-time") {
+              } @else if (otac.status == "out-of-time") {
                 <span class="badge badge-danger">out-of-time</span>
               }
             </clr-dg-cell>
@@ -96,8 +91,7 @@
                 ><cds-icon shape="clock"></cds-icon>
                 {{ otac.max_duration }}</clr-dg-cell
               >
-            }
-            @if (!hasMaxDuration(otac)) {
+            } @else {
               <clr-dg-cell>Until Event ends</clr-dg-cell>
             }
             <clr-dg-cell *rbac="['scheduledevents.update']">
@@ -118,7 +112,11 @@
   </div>
   <div class="modal-footer">
     @if (currentScheduledEvent) {
-      <button type="button" class="btn btn-primary" (click)="exportCSV(currentScheduledEvent)">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="exportCSV(currentScheduledEvent)"
+      >
         Export to csv
       </button>
     }

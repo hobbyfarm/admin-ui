@@ -19,8 +19,7 @@
             @if (!set.dynamic) {
               <b>VMSet:</b> {{ set.base_name }} &nbsp; <b>Available:</b>
               {{ set.available }}/{{ set.count }}&nbsp;
-            }
-            @if (set.dynamic) {
+            } @else {
               <b>Dynamic:</b> {{ set.base_name }} &nbsp; <b>Count: </b
               >{{ set.count }} &nbsp;
             }
@@ -77,8 +76,7 @@
                     <clr-dg-cell class="dashboardCell">
                       @if (vm.status === "running") {
                         <span class="badge badge-success">{{ vm.status }}</span>
-                      }
-                      @if (vm.status !== "running") {
+                      } @else {
                         <span class="badge badge-warning">{{ vm.status }}</span>
                       }
                     </clr-dg-cell>

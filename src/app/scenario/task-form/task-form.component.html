@@ -79,9 +79,8 @@
         >Expected Output is required</clr-control-error
       >
     </clr-textarea-container>
-  }
 
-  @if (isOfReturnType(["Match Regex"])) {
+  } @else if (isOfReturnType(["Match Regex"])) {
     <clr-control-container class="codeInput">
       <label>Regex to match</label>
       <app-code-with-syntax-highlighting

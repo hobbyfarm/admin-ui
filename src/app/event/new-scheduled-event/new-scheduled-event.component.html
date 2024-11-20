@@ -250,11 +250,9 @@
               <span class="clr-subtext"
                 >Please specify when your event should end.</span
               >
-            }
-            @if (quicksetEndtimeForm.errors?.invalidQuicksetAmount) {
+            } @else if (quicksetEndtimeForm.errors?.invalidQuicksetAmount) {
               <span class="clr-subtext"> Invalid event duration. </span>
-            }
-            @if (quicksetEndtimeForm.errors?.invalidNumber) {
+            } @else if (quicksetEndtimeForm.errors?.invalidNumber) {
               <span class="clr-subtext">
                 Please enter an integral number.
               </span>
@@ -366,8 +364,7 @@
           >VirtualMachines are not needed. Only scenarios/courses without
           Machines were selected.</span
         >
-      }
-      @if (noEnvironmentsAvailable && !noVirtualMachinesNeeded) {
+      } @else {
         <span> No suitable environments found. </span>
       }
       @if (unavailableVMTs.length > 0) {
@@ -432,8 +429,7 @@
       @if (noVirtualMachinesNeeded) {
         VirtualMachines are not needed. Only scenarios/courses without Machines
         were selected.
-      }
-      @if (!noVirtualMachinesNeeded) {
+      } @else {
         <clr-toggle-wrapper>
           <input
             type="checkbox"
@@ -457,7 +453,10 @@
             </thead>
             <tbody [formGroup]="simpleModeVmCounts">
               @for (
-                fc of simpleModeVmCounts["controls"].envs["controls"].slice(0, selectedEnvironments.length);
+                fc of simpleModeVmCounts["controls"].envs["controls"].slice(
+                  0,
+                  selectedEnvironments.length
+                );
                 track fc;
                 let it = $index
               ) {
@@ -517,8 +516,7 @@
               }
             </ul>
           }
-        }
-        @if (!simpleMode) {
+        } @else {
           <i
             >In advanced mode, define the number of virtual machines per
             environment. Remember to account for the number of expected users,
@@ -634,8 +632,7 @@
         <h4>VM Information</h4>
         @if (noVirtualMachinesNeeded) {
           <span> VirtualMachines are not needed for this ScheduledEvent. </span>
-        }
-        @if (!noVirtualMachinesNeeded) {
+        } @else {
           <table class="table table-compact">
             <thead>
               <tr>
@@ -686,8 +683,7 @@
                 <td>
                   {{ se.event_name }}
                 </td>
-              }
-              @if (se.event_name != uneditedScheduledEvent.event_name) {
+              } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
                     uneditedScheduledEvent.event_name
@@ -702,8 +698,7 @@
                 <td>
                   {{ se.description }}
                 </td>
-              }
-              @if (se.description != uneditedScheduledEvent.description) {
+              } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
                     uneditedScheduledEvent.description
@@ -718,8 +713,7 @@
                 <td>
                   {{ se.access_code }}
                 </td>
-              }
-              @if (se.access_code != uneditedScheduledEvent.access_code) {
+              } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
                     uneditedScheduledEvent.access_code
@@ -731,17 +725,13 @@
             <tr>
               <td>Restricted Bind</td>
               @if (
-                !se.disable_restriction ==
-                !uneditedScheduledEvent.disable_restriction
+                se.disable_restriction ==
+                uneditedScheduledEvent.disable_restriction
               ) {
                 <td>
                   {{ !se.disable_restriction }}
                 </td>
-              }
-              @if (
-                !se.disable_restriction !=
-                !uneditedScheduledEvent.disable_restriction
-              ) {
+              } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
                     !uneditedScheduledEvent.disable_restriction
@@ -756,8 +746,7 @@
                 <td>
                   {{ se.on_demand }}
                 </td>
-              }
-              @if (se.on_demand != uneditedScheduledEvent.on_demand) {
+              } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
                     uneditedScheduledEvent.on_demand
@@ -772,8 +761,7 @@
                 <td>
                   {{ se.start_time | date: "long" }}
                 </td>
-              }
-              @if (isStartDateAsEditedCheck()) {
+              } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
                     uneditedScheduledEvent.start_time | date: "long"
@@ -790,8 +778,7 @@
                 <td>
                   {{ se.end_time | date: "long" }}
                 </td>
-              }
-              @if (isEndDateAsEditedCheck()) {
+              } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
                     uneditedScheduledEvent.end_time | date: "long"
@@ -806,8 +793,7 @@
                 @for (s of uneditedScheduledEvent.courses; track s) {
                   @if (isCourseInList(s, se.courses)) {
                     <span class="label">{{ s }}</span>
-                  }
-                  @if (!isCourseInList(s, se.courses)) {
+                  } @else {
                     <span class="label del-elem"
                       >{{ s }}<cds-icon shape="trash"></cds-icon>
                     </span>
@@ -828,8 +814,7 @@
                 @for (s of uneditedScheduledEvent.scenarios; track s) {
                   @if (isScenarioInList(s, se.scenarios)) {
                     <span class="label">{{ s }}</span>
-                  }
-                  @if (!isScenarioInList(s, se.scenarios)) {
+                  } @else {
                     <span class="label del-elem"
                       >{{ s }}<cds-icon shape="trash"></cds-icon
                     ></span>
@@ -861,8 +846,7 @@
         <h4>VM Information</h4>
         @if (noVirtualMachinesNeeded) {
           <span> VirtualMachines are not needed for this ScheduledEvent. </span>
-        }
-        @if (!noVirtualMachinesNeeded) {
+        } @else {
           <table class="table table-compact">
             <thead>
               <tr>
@@ -885,11 +869,7 @@
                           <span>
                             <span class="badge badge-blue"> {{ q.value }}</span>
                           </span>
-                        }
-                        @if (
-                          getUneditedScheduledEventVMCount(i.key, q.key) !=
-                          q.value
-                        ) {
+                        } @else {
                           <span>
                             <span
                               class="badge badge-danger"

@@ -50,8 +50,9 @@
           </div>
         </div>
       </div>
-    }
-    @if (courseHasAtLeastOneVMSet() && !courseHasValidVMCConfiguration()) {
+    } @else if (
+      courseHasAtLeastOneVMSet() && !courseHasValidVMCConfiguration()
+    ) {
       <div class="alert alert-warning" role="alert">
         <div class="alert-items">
           <div class="alert-item static">
@@ -156,9 +157,7 @@
         </clr-datagrid>
       }
     </clr-wizard-page>
-  }
-
-  @if (wizardCourse == "create") {
+  } @else if (wizardCourse == "create") {
     <clr-wizard-page (clrWizardPageNext)="saveCourseWizard()">
       <ng-template clrPageTitle>Scenarios</ng-template>
       @if (listScenarios) {
@@ -395,14 +394,12 @@
             <td>Name</td>
             @if (wizardCourse == "create") {
               <td>{{ course.name }}</td>
-            }
-            @if (wizardCourse == "edit") {
+            } @else if (wizardCourse == "edit") {
               @if (selectedCourse.name == editSelectedCourse.name) {
                 <td>
                   {{ selectedCourse.name }}
                 </td>
-              }
-              @if (selectedCourse.name != editSelectedCourse.name) {
+              } @else {
                 <td>
                   <span class="del-elem">{{ selectedCourse.name }}</span>
                   <cds-icon shape="arrow" direction="right"></cds-icon>
@@ -415,18 +412,14 @@
             <td>Description</td>
             @if (wizardCourse == "create") {
               <td>{{ course.description }}</td>
-            }
-            @if (wizardCourse == "edit") {
+            } @else if (wizardCourse == "edit") {
               @if (
                 selectedCourse.description == editSelectedCourse.description
               ) {
                 <td>
                   {{ selectedCourse.description }}
                 </td>
-              }
-              @if (
-                selectedCourse.description != editSelectedCourse.description
-              ) {
+              } @else {
                 <td>
                   <span class="del-elem">{{ selectedCourse.description }}</span>
                   <cds-icon shape="arrow" direction="right"></cds-icon>
@@ -441,8 +434,7 @@
             <td>Keepalive Duration</td>
             @if (wizardCourse == "create") {
               <td>{{ course.keepalive_duration }}</td>
-            }
-            @if (wizardCourse == "edit") {
+            } @else if (wizardCourse == "edit") {
               @if (
                 selectedCourse.keepalive_duration ==
                 editSelectedCourse.keepalive_duration
@@ -450,11 +442,7 @@
                 <td>
                   {{ selectedCourse.keepalive_duration }}
                 </td>
-              }
-              @if (
-                selectedCourse.keepalive_duration !=
-                editSelectedCourse.keepalive_duration
-              ) {
+              } @else {
                 <td>
                   <span class="del-elem">{{
                     selectedCourse.keepalive_duration
@@ -471,8 +459,7 @@
             <td>Pause Duration</td>
             @if (wizardCourse == "create") {
               <td>{{ course.pause_duration }}</td>
-            }
-            @if (wizardCourse == "edit") {
+            } @else if (wizardCourse == "edit") {
               @if (
                 selectedCourse.pause_duration ==
                 editSelectedCourse.pause_duration
@@ -480,11 +467,7 @@
                 <td>
                   {{ selectedCourse.pause_duration }}
                 </td>
-              }
-              @if (
-                selectedCourse.pause_duration !=
-                editSelectedCourse.pause_duration
-              ) {
+              } @else {
                 <td>
                   <span class="del-elem">{{
                     selectedCourse.pause_duration
@@ -503,8 +486,7 @@
               @for (s of selectedCourse.scenarios; track s) {
                 @if (isScenarioInList(s, editSelectedCourse.scenarios)) {
                   <span class="label">{{ s.name }}</span>
-                }
-                @if (!isScenarioInList(s, editSelectedCourse.scenarios)) {
+                } @else {
                   <span class="label del-elem"
                     >{{ s.name }}<cds-icon shape="trash"></cds-icon
                   ></span>
@@ -526,8 +508,7 @@
                 @for (categorie of course.categories; track categorie) {
                   <span class="label">{{ categorie }} </span>
                 }
-              }
-              @if (wizardCourse == "edit") {
+              } @else if (wizardCourse == "edit") {
                 @for (categorie of selectedCourse.categories; track categorie) {
                   <span class="label">{{ categorie }} </span>
                 }
