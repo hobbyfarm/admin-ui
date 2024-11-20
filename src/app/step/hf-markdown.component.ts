@@ -87,7 +87,9 @@ export class HfMarkdownComponent implements OnChanges, OnInit {
     },
 
     hidden(code: string, summary: string) {
-      return `<app-hidden-md [summary]="'${summary}'" [code]="'${code}'"></app-hidden-md>`;
+      // ngx-dynamic-hooks can only process stringified input objects
+      const ctxString = JSON.stringify(this.context);
+      return `<app-hidden-md [summary]="'${summary}'" [code]="'${code}'" [ctx]='${ctxString}'></app-hidden-md>`;
     },
 
     glossary(code: string, term: string) {
@@ -96,10 +98,11 @@ export class HfMarkdownComponent implements OnChanges, OnInit {
 
     note(code: string, type: string, message: string) {
       let noteType: NoteType = 'info';
-      if(isNoteType(type)) {
+      if (isNoteType(type)) {
         noteType = type;
       }
-      return `<app-note-md [noteType]="'${noteType}'" [message]="'${message}'" [code]="'${code}'"></app-note-md>`;
+      const ctxString = JSON.stringify(this.context);
+      return `<app-note-md [noteType]="'${noteType}'" [message]="'${message}'" [code]="'${code}'" [ctx]='${ctxString}'></app-note-md>`;
     },
 
     file(code: string, language: string, filepath: string, target: string) {
