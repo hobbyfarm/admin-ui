@@ -155,6 +155,7 @@ import {
   downloadIcon,
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
+import { SessionProgressService } from './progress/session-progress.service';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -341,6 +342,7 @@ export function jwtOptionsFactory(): JwtConfig {
     GargantuaClientFactory,
     AppConfigService,
     ProgressService,
+    SessionProgressService,
     PredefinedServiceService,
     TypedSettingsService,
     {

@@ -1,68 +1,70 @@
 
-  <table>
-    <tr>
-      <th class="color">Progress</th>
-      <th>Username</th>
-      <th>Scenario</th>
-      <th>Course</th>
-      <th>Time</th>
-      <th class="end step">Current &nbsp;&nbsp;/ </th>
-      <th class="small-gap step">Max Step</th>
-      <th class="center">Action</th>
-    </tr>
-    <tr *ngFor="let progress of progressList">
-      <td class="color"><progress
-        class="{{ getProgressColorClass(progress) }}"
-        [value]="getProgress(progress) || 0"
-        max="100"
-      ></progress></td>
-      <td class="pointer" (click)="progressFilterName(progress)">{{ getUsername(progress) }}</td>
-      <td><cds-icon shape="play" solid></cds-icon> {{ progress.scenario_name }} </td>
-      <td><cds-icon shape="layers" solid></cds-icon> {{ progress.course_name }}</td>
-      <td><cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}</td>
-      <td class="end step"><cds-icon shape="number-list"></cds-icon> {{ progress.current_step }}&nbsp;&nbsp;/ </td>
-      <td class="small-gap step">{{ progress.total_step }}</td>
-      <td class="center action pointer">
-        <clr-dropdown [clrCloseMenuOnItemClick]="false">
-          <button clrDropdownTrigger aria-label="Dropdown button">
-            <cds-icon shape="ellipsis-horizontal" size="24" direction="down"></cds-icon>
-          </button>
-          <clr-dropdown-menu clrPosition="left-top" *clrIfOpen>
-            <div 
-              aria-label="Dropdown header info" 
-              (click)="openInfo(progress)" 
-              clrDropdownItem
-            >Info</div>
-            <div 
-              aria-label="Dropdown header join" 
-              clrDropdownItem
-              class="dropdown-item"
-              (click)="openTerminalWindow(progress)"
-              [clrDisabled]="progress.finished"
-              *rbac="[
-                'sessions.get',
-                'courses.get',
-                'progresses.list',
-                'scenarios.get',
-                'virtualmachineclaims.get'
-              ]"
-              >Join Session</div>
-            <div class="dropdown-divider" role="separator" aria-hidden="true"></div>
-            <div 
-              class="dropdown-item"
-              (click)="terminateSession(progress)"
-              [clrDisabled]="progress.finished"
-              clrDropdownItem
-              *rbac="['sessions.update']"
-            >Terminate Session</div>
-          </clr-dropdown-menu>
-        </clr-dropdown>
+  <clr-datagrid>
+    <clr-dg-column [clrDgField]="'progress'" class="color">Progress</clr-dg-column>
+    <clr-dg-column [clrDgField]="'username'" >Username</clr-dg-column>
+    <clr-dg-column [clrDgField]="'scenario_name'" >Scenario</clr-dg-column>
+    <clr-dg-column [clrDgField]="'course_name'" >Course</clr-dg-column>
+    <clr-dg-column [clrDgField]="'time'" >Duration</clr-dg-column>
+    <clr-dg-column  [clrDgField]="'current_step'"class="end step">Current</clr-dg-column>
+    <clr-dg-column [clrDgField]="'max_step'" class="step">Max Step</clr-dg-column>
 
+    <clr-dg-row *clrDgItems="let progress of progressList">
+      <clr-dg-action-overflow>
+        <button 
+          class="action-item"
+          aria-label="session info" 
+          (click)="openInfo(progress)" 
+        >
+          Info
+        </button>
+        <button 
+          aria-label="session join" 
+          class="action-item"
+          (click)="openTerminalWindow(progress)"
+          [disabled]="progress.finished"
+          *rbac="[
+            'sessions.get',
+            'courses.get',
+            'progresses.list',
+            'scenarios.get',
+            'virtualmachineclaims.get'
+          ]"
+          >
+          Join Session
+        </button>
+        <button 
+          class="action-item"
+          aria-label="terminate session"
+          (click)="terminateSession(progress)"
+          [disabled]=progress.finished
+          *rbac="['sessions.update']"
+          >
+          Terminate Session
+        </button>
+
+      </clr-dg-action-overflow>
+      
+      <clr-dg-cell class="color">
+        <div class="progress {{ getProgressColorClass(progress) }}">
+          <progress
+            [value]="getProgress(progress) || 0"
+            max="100"
+          ></progress>
+        </div>
         <progress-info
-          #progressInfo
-          [progress]="progress"
-          [pause]="pause">
-        </progress-info>
-      </td>
-    </tr>
-  </table>
+        #progressInfo
+        [progress]="progress"
+        [pause]="pause">
+      </progress-info>
+      </clr-dg-cell>
+      <clr-dg-cell class="pointer" (click)="progressFilterName(progress)">{{ getUsername(progress) }}</clr-dg-cell>
+      <clr-dg-cell>{{ progress.scenario_name }} </clr-dg-cell>
+      <clr-dg-cell>{{ progress.course_name }}</clr-dg-cell>
+      <clr-dg-cell *ngIf="!progress.finished"> {{ timeSince(progress.started) }}</clr-dg-cell>
+      <clr-dg-cell *ngIf="progress.finished"> {{ timeSince(progress.started, progress.last_update) }}</clr-dg-cell>
+      <clr-dg-cell class="end step"> {{ progress.current_step }}&nbsp;&nbsp;/ </clr-dg-cell>
+      <clr-dg-cell class="step">{{ progress.total_step }}</clr-dg-cell>
+
+    </clr-dg-row>
+  </clr-datagrid>
+
