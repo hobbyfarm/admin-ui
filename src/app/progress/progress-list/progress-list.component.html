@@ -1,12 +1,12 @@
 
   <clr-datagrid>
-    <clr-dg-column [clrDgField]="'progress'" class="color">Progress</clr-dg-column>
+    <clr-dg-column class="color">Progress</clr-dg-column>
     <clr-dg-column [clrDgField]="'username'" >Username</clr-dg-column>
     <clr-dg-column [clrDgField]="'scenario_name'" >Scenario</clr-dg-column>
     <clr-dg-column [clrDgField]="'course_name'" >Course</clr-dg-column>
-    <clr-dg-column [clrDgField]="'time'" >Duration</clr-dg-column>
-    <clr-dg-column  [clrDgField]="'current_step'"class="end step">Current</clr-dg-column>
-    <clr-dg-column [clrDgField]="'max_step'" class="step">Max Step</clr-dg-column>
+    <clr-dg-column [clrDgSortBy]="durationComparator" >Duration</clr-dg-column>
+    <clr-dg-column [clrDgField]="'current_step'"class="end step">Current</clr-dg-column>
+    <clr-dg-column [clrDgField]="'total_step'" class="step">Max Step</clr-dg-column>
 
     <clr-dg-row *clrDgItems="let progress of progressList">
       <clr-dg-action-overflow>
