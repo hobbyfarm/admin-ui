@@ -19,6 +19,27 @@
               >Whether finished sessions should be included.
             </clr-control-helper>
           </clr-toggle-container>
+          <clr-radio-container id="selectViewToggle" clrInline>
+            <clr-radio-wrapper>
+              <input 
+                checked 
+                type="radio" 
+                clrRadio 
+                value="cardView" 
+                [formControl]="progressViewModeControl"
+              />
+              <label>Card View</label>
+            </clr-radio-wrapper>
+            <clr-radio-wrapper>
+              <input 
+                type="radio" 
+                clrRadio 
+                value="listView" 
+                [formControl]="progressViewModeControl"
+              />
+              <label>List View</label>
+            </clr-radio-wrapper>
+          </clr-radio-container>
           <clr-toggle-container id="hideUsernamesToggle">
             <clr-toggle-wrapper>
               <input
@@ -26,7 +47,7 @@
                 clrToggle
                 name="hideUsernames"
                 [(ngModel)]="hide_usernames_status"
-                (ngModelChange)="saveSettings($event)"
+                (ngModelChange)="saveSettings({ hide_usernames_status: $event })"
               />
               <label>Hide Usernames</label>
             </clr-toggle-wrapper>
@@ -110,7 +131,7 @@
       <interval-timer (intervalElapsed)="refresh()"></interval-timer>
     </div>
   </div>
-  <div class="clr-row">
+  <div class="clr-row"  *ngIf="progressViewModeControl.value === 'cardView'">
     <ng-container *ngIf="currentProgress?.length > 0; else no_sessions">
       <div
         class="clr-col-12 clr-col-sm-6 clr-col-md-4 clr-col-lg-3"
@@ -122,6 +143,19 @@
           [hideUsername]="hide_usernames_status"
           (nameClickedEvent)="filterName($event)"
         ></progress-card>
+      </div>
+    </ng-container>
+  </div>
+  <div class="clr-row" *ngIf="progressViewModeControl.value === 'listView'">
+    <ng-container>
+      <div class="flex-container" *ngIf="currentProgress?.length > 0; else no_sessions">
+
+        <progress-list 
+          [progressList]="filteredProgress"
+          [pause]="pause"
+          [hideUsername]="hide_usernames_status"
+          (nameClickedEvent)="filterName($event)">
+        </progress-list>
       </div>
     </ng-container>
   </div>

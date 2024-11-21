@@ -12,6 +12,7 @@ import { FormGroup } from '@angular/forms';
 import { themes } from '../step/terminal-themes/themes';
 import { first } from 'rxjs/operators';
 import { SettingsService } from '../data/settings.service';
+import { ProgressViewMode } from '../data/ProgressViewMode';
 
 @Component({
   selector: '[app-header]',
@@ -28,6 +29,7 @@ export class HeaderComponent implements OnInit {
   public fetchingSettings = false;
   public settingsForm: FormGroup;
   public hide_usernames_status: boolean;
+  public progress_view_mode: ProgressViewMode;
   public isButtonDisabled: boolean = false;
 
   private config = this.configService.getConfig();
@@ -109,17 +111,20 @@ export class HeaderComponent implements OnInit {
         ({
           terminal_theme = 'default',
           hide_usernames_status = false,
+          progress_view_mode = 'cardView',
         }) => {
           this.settingsForm.setValue({
             terminal_theme,
-            hide_usernames_status
+            hide_usernames_status,
+            progress_view_mode
           });
 
           this.fetchingSettings = false;
         },
       );
     this.settingsModal.open();
-    this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value
+    this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value;
+    this.progress_view_mode = this.settingsForm.get('progress_view_mode')?.value;
   }
 
   public doSaveSettings() {

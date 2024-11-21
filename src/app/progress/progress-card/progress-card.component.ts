@@ -7,18 +7,19 @@ import {
   ViewChild,
 } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Progress } from '../data/progress';
-import { ServerResponse } from '../data/serverresponse';
-import { ProgressInfoComponent } from './progress-info/progress-info.component';
-import { timeSince } from '../utils';
+import { Progress } from '../../data/progress';
+import { ServerResponse } from '../../data/serverresponse';
+import { ProgressInfoComponent } from '../progress-info/progress-info.component';
+import { timeSince } from '../../utils';
 import { Router } from '@angular/router';
+import { SessionProgressService } from '../session-progress.service';
 
 @Component({
   selector: 'progress-card',
-  templateUrl: './progress.component.html',
-  styleUrls: ['./progress.component.scss'],
+  templateUrl: './progress-card.component.html',
+  styleUrls: ['./progress-card.component.scss'],
 })
-export class ProgressComponent {
+export class ProgressCardComponent {
   @Input()
   public progress: Progress;
 
@@ -34,7 +35,11 @@ export class ProgressComponent {
 
   @ViewChild('progressInfo') progressInfo: ProgressInfoComponent;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private sessionProgressService: SessionProgressService
+  ) {}
 
   public terminateSession() {
     this.http
@@ -68,34 +73,11 @@ export class ProgressComponent {
   }
 
   public getProgress() {
-    //If we are in the provisioning state or count of total steps is invalid
-    if (this.progress.total_step == 0 || this.progress.current_step == 0) {
-      return 100;
-    }
-    //if finished display the total step reached percentage
-    if (this.progress.finished) {
-      return Math.floor(
-        (this.progress.max_step / this.progress.total_step) * 100
-      );
-    }
-
-    //if currently running display the current step percentage
-    return Math.floor(
-      (this.progress.current_step / this.progress.total_step) * 100
-    );
+    return this.sessionProgressService.getProgress(this.progress);
   }
 
   public getProgressColorClass() {
-    if (this.progress.finished) {
-      return 'status-finished';
-    }
-    if (this.progress.current_step == 0) {
-      return 'status-provisioning';
-    }
-    if (this.progress.current_step == this.progress.total_step) {
-      return 'status-success';
-    }
-    return 'status-running';
+    return this.sessionProgressService.getProgressColorClass(this.progress);
   }
 
   public getUsername() {
