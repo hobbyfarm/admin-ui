@@ -139,7 +139,7 @@ ${token}`;
   private renderHighlightedCode(
     code: string,
     language: string,
-    fileName?: string,
+    fileName?: string
   ) {
     const fileNameTag = fileName
       ? `<p class="filename" (click)=createFile(code,node)>${fileName}</p>`
@@ -212,7 +212,7 @@ ${token}`;
     }
 
     const contentWithReplacedTokens = this.replaceSessionToken(
-      this.replaceVmInfoTokens(this.content),
+      this.replaceVmInfoTokens(this.replaceSharedVmInfoTokens(this.content))
     );
     // the parse method internally uses the Angular Dom Sanitizer and is therefore safe to use
     const parsedContent = this.markdownService.parse(contentWithReplacedTokens);
@@ -231,11 +231,25 @@ ${token}`;
 
   private replaceVmInfoTokens(content: string) {
     return content.replace(
-      /\$\{vmInfo:([^:]*):([^}]*)\}/g,
+      /\$\{vminfo:([^:]*):([^}]*)\}/g,
       (match, vmName, propName) => {
         const vm = this.context.vmInfo?.[vmName.toLowerCase()];
-        return String(vm?.[propName as keyof VM] ?? match);
-      },
+        return String(
+          vm?.vm_type != 'SHARED' ? vm?.[propName as keyof VM] : match
+        );
+      }
+    );
+  }
+
+  private replaceSharedVmInfoTokens(content: string) {
+    return content.replace(
+      /\$\{shared:([^:]*):([^}]*)\}/g,
+      (match, vmName, propName) => {
+        const vm = this.context.vmInfo?.[vmName.toLowerCase()];
+        return String(
+          vm?.vm_type == 'SHARED' ? vm?.[propName as keyof VM] : match
+        );
+      }
     );
   }
 
