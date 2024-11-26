@@ -248,7 +248,6 @@ export class SessionTimeStatisticsComponent implements OnInit {
     event?: ChartEvent;
     active?: {}[];
   }): void {
-    // console.log(event, active);
   }
 
   public chartHovered({
@@ -258,7 +257,6 @@ export class SessionTimeStatisticsComponent implements OnInit {
     event?: ChartEvent;
     active?: {}[];
   }): void {
-    // console.log(event, active);
   }
 
   private prepareBarchartDatasets() {

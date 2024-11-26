@@ -1,6 +1,6 @@
 <div class="split-container">
-  <as-split unit="percent" direction="horizontal" (dragEnd)="dragEnd()">
-    <as-split-area [size]="40" class="split-area-1">
+  <as-split unit="percent" direction="horizontal" (dragEnd)="dragEnd()" >
+    <as-split-area [size]="40" class="split-area-1" *ngIf="isUserSession">
       <div class="card" id="sidebar">
         <div class="card-header">
           <h4 class="scenario-info bold">{{ scenario.name }}</h4>
@@ -63,17 +63,19 @@
         </div>
       </div>
     </as-split-area>
-    <as-split-area [size]="60" class="split-area-2">
+    <!-- *ngIf="true" here is a workaround so the two split-areas are shown in the correct order. *ngIf seems to mess with the order of Elements if only one Section uses it-->
+      <as-split-area [size]="60" class="split-area-2" *ngIf="true">        
       <div id="terminal-column">
         <clr-tabs>
-          <clr-tab *ngFor="let v of vms | keyvalue" #tab>
+          <ng-container *ngFor="let v of vms | keyvalue">
+          <clr-tab  #tab *ngIf="showTerminalTab(v.value)">
             <button clrTabLink [id]="v.key">
               <cds-icon size="24" shape="host"></cds-icon> {{ v.key }}
             </button>
             <clr-tab-content #tabcontent>
               <table class="table compact">
                 <tr>
-                  <td><b>Public IP:</b> {{ v.value.public_ip }}</td>
+                  <td><b>Public IP:</b> {{ v.value?.public_ip }}</td>
                   <td><b>Private IP:</b> {{ v.value.private_ip }}</td>
                   <td><b>Hostname:</b> {{ v.value.hostname }}</td>
                   <td><b>Shell Status:</b> {{ getShellStatus(v.key) }}</td>
@@ -89,6 +91,84 @@
               <h3 class="guac-terminal" *ngIf="isGuacamoleTerminal(v.value.protocol)">Admin access to terminals only possible on machines that support ssh-connections</h3>
             </clr-tab-content>
           </clr-tab>
+          <ng-container
+          *ngFor="let webinterface of v.value?.webinterfaces; let i = index"
+        >
+          <clr-tab
+            *ngIf="
+              (webinterface.hasOwnTab && i < maxInterfaceTabs) ||
+              webinterface.active
+            "
+            #tab
+          >
+            <button
+              clrTabLink
+              [id]="v.key + webinterface.name"
+              [clrTabLinkInOverflow]="false"
+              (click)="setTabActive(webinterface, v.key)"
+            >
+              {{ v.key }} - {{ webinterface.name }}
+            </button>
+            <clr-tab-content>
+              <table class="table compact no-margin">
+                <tr>
+                  <td><b>Webinterface:</b> {{ webinterface.name }}</td>
+                  <td><b>Node:</b> {{ v.key }}</td>
+                  <td><b>Port:</b> {{ webinterface.port }}</td>
+                  <td><b>Path:</b> {{ webinterface.path }}</td>
+                  <td style="padding: 0">
+                    <button
+                      class="btn btn-icon btn-primary btn-sm"
+                      title="Reload Tab"
+                      (click)="reloadWebinterface(v.value.id, webinterface)"
+                    >
+                      <cds-icon shape="refresh"></cds-icon>
+                    </button>
+                    <button
+                      class="btn btn-icon btn-primary btn-sm"
+                      title="Open in a new Tab"
+                      (click)="
+                        openWebinterfaceInNewTab(v.value, webinterface)
+                      "
+                    >
+                      <cds-icon shape="pop-out"></cds-icon>
+                    </button>
+                  </td>
+                </tr>
+              </table>
+              <app-webinterface-window
+                *ngIf="!isGuacamoleTerminal(v.value.protocol)"
+                [vmid]="v.value.id"
+                [endpoint]="v.value.ws_endpoint"
+                [port]="webinterface.port"
+                [path]="webinterface.path"
+                [disallowIFrame]="webinterface.disallowIFrame"
+                (openWebinterfaceFn)="
+                  openWebinterfaceInNewTab(v.value, webinterface)
+                "
+                [reloadEvent]="reloadTabObservable"
+              >
+              </app-webinterface-window>
+            </clr-tab-content>
+          </clr-tab>
+
+          <clr-tab
+            *ngIf="
+              (!webinterface.hasOwnTab ||
+                (webinterface.hasOwnTab && i >= maxInterfaceTabs)) &&
+              !webinterface.active
+            "
+          >
+            <button
+              clrTabLink
+              [clrTabLinkInOverflow]="true"
+              (click)="setTabActive(webinterface, v.key)"
+            >
+              {{ v.key }} - {{ webinterface.name }}
+            </button>
+          </clr-tab>
+        </ng-container>  
+      </ng-container>
         </clr-tabs>
       </div>
     </as-split-area>

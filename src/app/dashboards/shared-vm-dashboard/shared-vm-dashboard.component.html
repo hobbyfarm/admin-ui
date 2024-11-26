@@ -1,9 +1,4 @@
 <div>
-  <div class="clr-row">
-    <div class="clr-col-12">     
-        <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
-    </div>
-  </div>
   <div *ngIf="vmSets.length < 1">No active VMs</div>
   <clr-accordion [clrAccordionMultiPanel]="true">
     <div *ngFor="let set of vmSets">
@@ -12,15 +7,8 @@
         (click)="setStepOpen(set)"
       >
         <clr-accordion-title>
-          <ng-container *ngIf="!set.dynamic"
-            ><b>VMSet</b> &nbsp; <b>Available:</b>
-            {{ set.available }}/{{ set.count }}&nbsp;</ng-container
-          ><ng-container *ngIf="set.dynamic"
-            ><b>Dynamic</b> &nbsp; <b>Count: </b
-            >{{ set.count }} &nbsp;</ng-container
-          >
-
-          <b>Environment:</b> {{ set.environment }}
+          <b>Environment:</b> {{ set.environment }} &nbsp; <b>Count: </b
+          >{{ set.count }}
         </clr-accordion-title>
         <clr-accordion-content *clrIfExpanded>
           <div class="clr-row">
@@ -34,22 +22,20 @@
                     'scenarios.get',
                     'virtualmachineclaims.get'
                   ]"
-                  >Join Session</clr-dg-column
+                  >Access Terminal</clr-dg-column
                 >
                 <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
+                <clr-dg-column [clrDgField]="'public_ip'">Name</clr-dg-column>
                 <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
                 <clr-dg-column [clrDgField]="'vm_template_id'"
                   >VM-Template</clr-dg-column
                 >
-                <clr-dg-column [clrDgField]="'user'">User</clr-dg-column>
-                <clr-dg-column [clrDgField]="'allocated'"
-                  >Allocated</clr-dg-column
-                >
+
                 <clr-dg-column [clrDgField]="'id'">VM Id</clr-dg-column>
                 <clr-dg-column [clrDgField]="'hostname'"
                   >Hostname</clr-dg-column
                 >
-               
+
                 <clr-dg-row *clrDgItems="let vm of set.setVMs">
                   <clr-dg-cell
                     class="dashboardCell"
@@ -63,7 +49,7 @@
                     ><button
                       [disabled]="!vm.allocated"
                       class="btn btn-sm btn-primary dashboardCell joinButton"
-                      (click)="openUsersTerminal(vm)"
+                      (click)="openTerminal(vm)"
                     >
                       >_
                     </button></clr-dg-cell
@@ -85,15 +71,12 @@
                       >tainted</span
                     >
                   </clr-dg-cell>
+                  <clr-dg-cell class="dashboardCell">{{ vm.name }}</clr-dg-cell>
                   <clr-dg-cell class="dashboardCell">{{
                     vm.public_ip
                   }}</clr-dg-cell>
                   <clr-dg-cell class="dashboardCell">{{
                     vm.vm_template_id
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{ vm.user }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.allocated
                   }}</clr-dg-cell>
                   <clr-dg-cell class="dashboardCell">{{ vm.id }}</clr-dg-cell>
                   <clr-dg-cell class="dashboardCell">{{

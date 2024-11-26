@@ -54,6 +54,7 @@ import { IntervalTimer } from './IntervalTimer/interval-timer.component';
 import { ProgressDashboardComponent } from './dashboards/progress-dashboard/progress-dashboard.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
 import { VmDashboardComponent } from './dashboards/vm-dashboard/vm-dashboard.component';
+import { SharedVmDashboardComponent } from './dashboards/shared-vm-dashboard/shared-vm-dashboard.component';
 import { StepComponent } from './step/step-component/step.component';
 import { CtrService } from './data/ctr.service';
 import { SessionService } from './data/session.service';
@@ -152,8 +153,11 @@ import {
   numberListIcon,
   syncIcon,
   downloadIcon,
+  refreshIcon
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
+import { TerminalViewComponent } from './step/terminal/terminal-view.component';
+import { WebinterfaceWindowComponent } from './step/terminal/webinterface-window/webinterface-window.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -193,7 +197,8 @@ ClarityIcons.addIcons(
   buildingIcon,
   numberListIcon,
   syncIcon,
-  downloadIcon
+  downloadIcon,
+  refreshIcon
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {
@@ -202,12 +207,23 @@ const appInitializerFn = (appConfig: AppConfigService) => {
   };
 };
 
+export const jwtAllowedDomains = [
+  environment.server.replace(/(^\w+:|^)\/\//, ''),
+];
+
+export function addJwtAllowedDomain(domain: string) {
+  const newDomain = domain.replace(/(^\w+:|^)\/\//, '');
+  if (!jwtAllowedDomains.includes(newDomain)) {
+    jwtAllowedDomains.push(newDomain);
+  }
+}
+
 export function jwtOptionsFactory(): JwtConfig {
   return {
     tokenGetter: () => {
       return localStorage.getItem('hobbyfarm_admin_token');
     },
-    allowedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
+    allowedDomains: jwtAllowedDomains,
     disallowedRoutes: [
       environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + '/auth/authenticate',
     ],
@@ -253,9 +269,11 @@ export function jwtOptionsFactory(): JwtConfig {
     ProgressDashboardComponent,
     DashboardsComponent,
     VmDashboardComponent,
+    SharedVmDashboardComponent,
     StepComponent,
     HfMarkdownComponent,
     TerminalComponent,
+    TerminalViewComponent,
     CtrComponent,
     RbacDirective,
     ClarityDisableSelectionDirective,
@@ -292,6 +310,7 @@ export function jwtOptionsFactory(): JwtConfig {
     TaskFormComponent,
     ReadonlyTaskComponent,
     SingleTaskVerificationMarkdownComponent,
+    WebinterfaceWindowComponent,
   ],
   imports: [
     BrowserModule,

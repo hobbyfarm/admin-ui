@@ -15,4 +15,10 @@ export class VirtualMachine {
     ws_endpoint: string = "";
     vm_set_id: string = "";
     protocol: string = "";
+    vm_type: string = "";
 }
+
+type VirtualMachineType = 'USER' | 'SHARED';
+
+export const VirtualMachineTypeUser: VirtualMachineType = 'USER';
+export const VirtualMachineTypeShared: VirtualMachineType = 'SHARED';

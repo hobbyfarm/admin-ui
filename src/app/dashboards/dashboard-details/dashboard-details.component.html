@@ -8,6 +8,9 @@
   <h3 *ngIf="statisticsDashboardActive && rbacSuccessSessions">
     Statistics for {{ selectedEvent?.event_name }}
   </h3>
+  <h3 *ngIf="sharedVmDashboardActive && rbacSuccessVms">
+    SharedVMs for {{ selectedEvent?.event_name }}
+  </h3>
   <span class="additional-info">
     <ng-container *rbac="['accesscodes.get']">
       AC:
@@ -56,6 +59,18 @@
           <clr-tab-content *clrIfActive>
             <app-session-statistics [scheduledEvent]="selectedEvent">
             </app-session-statistics>
+          </clr-tab-content>
+        </ng-template>
+      </clr-tab>
+    </ng-container>
+    <ng-container *ngIf="rbacSuccessVms">
+      <clr-tab>
+        <button clrTabLink>Shared VMs</button>
+        <ng-template [(clrIfActive)]="sharedVmDashboardActive">
+          <clr-tab-content *clrIfActive>
+            <div class="content-area">
+              <shared-vm-dashboard [selectedEvent]="selectedEvent"></shared-vm-dashboard>
+            </div>
           </clr-tab-content>
         </ng-template>
       </clr-tab>

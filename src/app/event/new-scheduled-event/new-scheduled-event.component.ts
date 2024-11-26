@@ -127,6 +127,42 @@ export class NewScheduledEventComponent
   private onCloseFn: Function;
 
   private wizardSubscription: Subscription;
+  public newSharedVM: Record<string, Record<string, number>>;
+
+  public sharedVmForm = new FormGroup({
+    vm_name: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+        Validators.minLength(4),
+        this.noWhitespace(),
+        this.uniqueSharedVMName(),
+      ],
+      nonNullable: true,
+    }),
+    vm_env: new FormControl<string>(''),
+    vm_template: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+        this.templateMatchesEnv(),
+      ]
+    }),
+  });
+
+  templateMatchesEnv(): ValidatorFn {
+    
+    return (control: FormControl<string>): { matchEnv: boolean } | null => {
+      if (
+        !control.value ||
+        !this.sharedVmForm.controls.vm_env ||
+        !(this.getTemplates(this.sharedVmForm.controls.vm_env.value).includes(control.value))        
+      ) {        
+        return {
+          matchEnv: true,
+        };
+      }
+      return null;
+    };
+  }
 
   constructor(
     private _fb: NonNullableFormBuilder,
@@ -143,13 +179,11 @@ export class NewScheduledEventComponent
         if (!allowVMTemplateList) {
           return;
         }
-        vmTemplateService
-          .list()
-          .subscribe((list: VMTemplate[]) =>
-            list.forEach((v) =>
-              this.virtualMachineTemplateList.set(v.id, v.name)
-            )
-          );
+        vmTemplateService.list().subscribe((list: VMTemplate[]) =>
+          list.forEach((v) => {
+            this.virtualMachineTemplateList.set(v.id, v.name);
+          })
+        );
       });
   }
   ngOnDestroy(): void {
@@ -158,13 +192,26 @@ export class NewScheduledEventComponent
 
   ngAfterViewInit(): void {
     this.wizardSubscription = this.wizardPages.changes
-      .pipe(filter((wizardPages: QueryList<ClrWizardPage>) => wizardPages.length != 0 && !this.checkingEnvironments))
+      .pipe(
+        filter(
+          (wizardPages: QueryList<ClrWizardPage>) =>
+            wizardPages.length != 0 && !this.checkingEnvironments
+        )
+      )
       .subscribe((wizardPages: QueryList<ClrWizardPage>) => {
         setTimeout(() => {
           this.wizard.navService.goTo(wizardPages.last, true);
           wizardPages.first.makeCurrent();
         });
       });
+
+      this.sharedVmForm.controls.vm_env.valueChanges.subscribe((env) => {
+        this.sharedVmForm.controls.vm_template.setValue(this.getTemplates(env)[0] ?? "")
+      })
+
+      this.sharedVmForm.valueChanges.subscribe(() => {
+        this.sharedVmForm.controls.vm_template.updateValueAndValidity()
+      })
   }
 
   public eventDetails: FormGroup<{
@@ -298,6 +345,33 @@ export class NewScheduledEventComponent
     };
   }
 
+  public uniqueSharedVMName(): ValidatorFn {
+    return (control: FormControl<string>): { notUnique: boolean } | null => {
+      if (
+        !control.value ||
+        this.scheduledEvents.filter((el) =>
+          el.shared_vms.map((vm) => vm.name).includes(control.value)
+        ).length > 0
+      ) {
+        return {
+          notUnique: true,
+        };
+      }
+      return null;
+    };
+  }
+
+  public noWhitespace(): ValidatorFn {
+    return (control: FormControl<string>): { whitespace: boolean } | null => {
+      if (control.value.includes(' ')) {
+        return {
+          whitespace: true,
+        };
+      }
+      return null;
+    };
+  }
+
   @ViewChild('wizard', { static: true }) wizard: ClrWizard;
   @ViewChildren(ClrWizardPage) wizardPages: QueryList<ClrWizardPage>;
   @ViewChild('startTimeSignpost') startTimeSignpost: ClrSignpostContent;
@@ -331,6 +405,7 @@ export class NewScheduledEventComponent
   }
 
   public getTemplates(env: string) {
+    if (!this.keyedEnvironments || this.keyedEnvironments.size == 0 || !this.keyedEnvironments.has(env)) return []
     return Object.keys(this.keyedEnvironments.get(env).template_mapping);
   }
 
@@ -1109,5 +1184,30 @@ export class NewScheduledEventComponent
     return (
       this.uneditedScheduledEvent.required_vms[environment]?.[vmtemplate] ?? 0
     );
+  }
+
+  getTemplatesForEnv() {    
+    const templates = this.getTemplates(this.sharedVmForm.controls.vm_env.value)
+    let availableTemplates = new Map()
+    this.virtualMachineTemplateList.forEach((k, v) => {
+      if (templates.includes(k)) availableTemplates.set(k, v)
+    })
+    return availableTemplates;
+  }
+
+  public addSharedVM() {
+    if (this.se.shared_vms == null) {
+      this.se.shared_vms = [];
+    }
+    this.se.shared_vms.push({
+      vm_id: '',
+      name: this.sharedVmForm.controls.vm_name.value,
+      environment: this.sharedVmForm.controls.vm_env.value,
+      vm_template: this.sharedVmForm.controls.vm_template.value,
+    });
+  }
+
+  deleteSharedVm(index: number) {
+    this.se.shared_vms.splice(index, 1);
   }
 }
