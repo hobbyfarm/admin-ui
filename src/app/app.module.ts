@@ -371,12 +371,15 @@ export function jwtOptionsFactory(): JwtConfig {
     },
     provideDynamicHooks({
       parsers: [
-        { component: CtrComponent },
-        { component: GlossaryMdComponent },
-        { component: MermaidMdComponent },
-        { component: HiddenMdComponent },
-        { component: NoteMdComponent },
-        { component: SingleTaskVerificationMarkdownComponent },
+        { component: CtrComponent, unescapeStrings: false },
+        { component: GlossaryMdComponent, unescapeStrings: false },
+        { component: MermaidMdComponent, unescapeStrings: false },
+        { component: HiddenMdComponent, unescapeStrings: false },
+        { component: NoteMdComponent, unescapeStrings: false },
+        {
+          component: SingleTaskVerificationMarkdownComponent,
+          unescapeStrings: false,
+        },
       ],
       options: {
         sanitize: false,
