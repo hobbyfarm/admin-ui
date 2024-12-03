@@ -28,7 +28,8 @@
             "assets": [
               "src/favicon.ico",
               "src/config.json",
-              "src/assets"
+              "src/assets",
+              "src/custom.css"
             ],
             "styles": [
               "node_modules/@xterm/xterm/css/xterm.css",
