@@ -16,7 +16,7 @@ import { GenericFormControl } from '../data/forms';
 export class TypedInputFieldComponent {
   @Input() input: TypedInput;
   @Input() formControlRef: GenericFormControl;
-  @Output() change: EventEmitter<boolean> = new EventEmitter(null);
+  @Output() change: EventEmitter<boolean> = new EventEmitter();
   readonly TypedInputType = TypedInputType; // Reference to TypedInputTypes enum for template use
   readonly TypedInputRepresentation = TypedInputRepresentation; // Reference to TypedInputRepresentation enum for template use
   constructor() {}

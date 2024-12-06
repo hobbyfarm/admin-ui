@@ -1,8 +1,4 @@
-<button
-  class="btn btn-sm"
-  (click)="openEdit(scenario?.steps[0] ?? undefined, 0)"
-  *rbac="['scenarios.update']"
->
+<button class="btn btn-sm" (click)="openEdit(0)" *rbac="['scenarios.update']">
   Open Step Editor
 </button>
 <button
@@ -10,7 +6,7 @@
   (click)="openNewStep()"
   *rbac="['scenarios.update']"
 >
-  <clr-icon shape="plus"></clr-icon> New Step
+  <cds-icon shape="plus-circle" solid="true"></cds-icon> New Step
 </button>
 <clr-datagrid>
   <clr-dg-column>Index</clr-dg-column>
@@ -18,17 +14,13 @@
 
   <clr-dg-row *clrDgItems="let s of scenario.steps; let i = index">
     <clr-dg-action-overflow *rbac="['scenarios.update']">
-      <button class="action-item" *ngIf="i > 0" (click)="moveStepUp(i)">
-        Move Up
-      </button>
-      <button
-        class="action-item"
-        *ngIf="i < scenario.steps.length - 1"
-        (click)="moveStepDown(i)"
-      >
-        Move Down
-      </button>
-      <button class="action-item" (click)="openEdit(s, i)">Edit</button>
+      @if (i > 0) {
+        <button class="action-item" (click)="moveStepUp(i)">Move Up</button>
+      }
+      @if (i < scenario.steps.length - 1) {
+        <button class="action-item" (click)="moveStepDown(i)">Move Down</button>
+      }
+      <button class="action-item" (click)="openEdit(i)">Edit</button>
       <button class="action-item" (click)="openDeleteStep(i)">Delete</button>
     </clr-dg-action-overflow>
     <clr-dg-cell>{{ i + 1 }}</clr-dg-cell>
@@ -42,23 +34,6 @@
     {{ this.editingSteps.length }}
   </h3>
   <div class="modal-body">
-    <clr-alert
-      [clrAlertType]="'danger'"
-      [(clrAlertClosed)]="editDangerClosed"
-      [clrAlertClosable]="false"
-    >
-      <clr-alert-item>
-        <span class="alert-text">
-          {{ editDangerAlert }}
-        </span>
-      </clr-alert-item>
-    </clr-alert>
-    <clr-alert
-      [clrAlertType]="'success'"
-      [(clrAlertClosed)]="editSuccessClosed"
-      [clrAlertClosable]="false"
-    >
-    </clr-alert>
     <div class="clr-row">
       <div class="clr-col-6">
         <form clrForm>

@@ -16,7 +16,7 @@ export class DashboardDetailsComponent implements OnInit, OnDestroy {
   public vmDashboardActive: boolean = false;
   public statisticsDashboardActive: boolean = false;
 
-  public selectedEvent: DashboardScheduledEvent;
+  public selectedEvent?: DashboardScheduledEvent;
   public loggedInAdminEmail: string;
 
   public rbacSuccessSessions: boolean = false;

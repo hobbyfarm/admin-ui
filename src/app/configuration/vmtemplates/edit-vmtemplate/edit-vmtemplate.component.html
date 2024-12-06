@@ -77,12 +77,11 @@
         </tr>
       </thead>
       <tbody formArrayName="mappings">
-        <ng-container
-          *ngFor="
-            let m of configMap['controls'].mappings['controls'];
-            let i = index
-          "
-        >
+        @for (
+          m of configMap["controls"].mappings["controls"];
+          track m;
+          let i = $index
+        ) {
           <tr formGroupName="{{ i }}">
             <td>
               <clr-input-container class="table-input">
@@ -119,15 +118,15 @@
               </button>
             </td>
           </tr>
-        </ng-container>
+        }
       </tbody>
     </table>
-    <ng-container *ngIf="configMap && !configMap.valid">
+    @if (configMap && !configMap.valid) {
       <span class="clr-subtext"
         >All mappings must have key and value filled out. Complete, or remove,
         any entries that do not.</span
       >
-    </ng-container>
+    }
   </clr-wizard-page>
 
   <clr-wizard-page>
@@ -154,33 +153,38 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngIf="!!this.editTemplate; else newTemplate">
+        @if (!!this.editTemplate) {
           <tr>
             <td>Name</td>
-            <td *ngIf="template.name == uneditedTemplate.name">
-              {{ template.name }}
-            </td>
-            <td *ngIf="template.name != uneditedTemplate.name">
-              <span class="del-elem arrow-after">{{
-                uneditedTemplate.name
-              }}</span>
-              <span class="add-elem">{{ template.name }}</span>
-            </td>
+            @if (template.name == uneditedTemplate.name) {
+              <td>
+                {{ template.name }}
+              </td>
+            } @else {
+              <td>
+                <span class="del-elem arrow-after">{{
+                  uneditedTemplate.name
+                }}</span>
+                <span class="add-elem">{{ template.name }}</span>
+              </td>
+            }
           </tr>
           <tr>
             <td>Image</td>
-            <td *ngIf="template.image == uneditedTemplate.image">
-              {{ template.image }}
-            </td>
-            <td *ngIf="template.image != uneditedTemplate.image">
-              <span class="del-elem arrow-after">{{
-                uneditedTemplate.image
-              }}</span>
-              <span class="add-elem">{{ template.image }}</span>
-            </td>
+            @if (template.image == uneditedTemplate.image) {
+              <td>
+                {{ template.image }}
+              </td>
+            } @else {
+              <td>
+                <span class="del-elem arrow-after">{{
+                  uneditedTemplate.image
+                }}</span>
+                <span class="add-elem">{{ template.image }}</span>
+              </td>
+            }
           </tr>
-        </ng-container>
-        <ng-template #newTemplate>
+        } @else {
           <tr>
             <td>Name</td>
             <td>{{ template.name }}</td>
@@ -189,7 +193,7 @@
             <td>Image</td>
             <td>{{ template.image }}</td>
           </tr>
-        </ng-template>
+        }
       </tbody>
     </table>
 
@@ -202,114 +206,116 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of template.config_map | keyvalue">
-          <ng-container
-            *ngIf="
+        @for (item of template.config_map | keyvalue; track item) {
+          <tr>
+            @if (
               item.key === cloudConfigKey &&
               cloudConfig.cloudConfigYaml.length > 0
-            "
-          >
-            <td>
-              {{ item.key }}<br /><clr-signpost>
-                <clr-signpost-content *clrIfOpen>
-                  <h3>Cloud Config</h3>
-                  <p>
-                    This is the resulting Cloud Config from the previous step.
-                    It is put together based on the Order in which the Services
-                    are put in the List
-                  </p>
-                </clr-signpost-content>
-              </clr-signpost>
-            </td>
-            <td>
-              <markdown
-                [data]="cloudConfig.cloudConfigYaml | language : 'yaml'"
-              ></markdown>
-            </td>
-          </ng-container>
-          <ng-container *ngIf="item.key === vmServiceKey">
-            <td>{{ item.key }}</td>
-            <td>
-              <table class="table table-compact">
-                <th>Name</th>
-                <th>Port</th>
-                <th>Tab</th>
-                <tbody>
-                  <tr
-                    *ngFor="let interface of cloudConfig.vmServices | keyvalue"
-                  >
-                    <td>{{ interface.value.name }}</td>
-                    <td>
-                      {{
-                        interface.value.hasWebinterface
-                          ? interface.value.port
-                          : "-"
-                      }}
-                    </td>
-                    <td>
-                      {{
-                        interface.value.hasOwnTab
-                          ? interface.value.hasOwnTab
-                          : "-"
-                      }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </ng-container>
-          <ng-container *ngIf="!!this.editTemplate; else newTemplate">
-            <ng-container
-              *ngIf="item.key !== cloudConfigKey && item.key !== vmServiceKey"
-            >
-              <!-- view of unedit value -->
-              <td *ngIf="uneditedTemplate.config_map.hasOwnProperty(item.key)">
-                {{ item.key }}
+            ) {
+              <td>
+                {{ item.key }}<br /><clr-signpost>
+                  <clr-signpost-content *clrIfOpen>
+                    <h3>Cloud Config</h3>
+                    <p>
+                      This is the resulting Cloud Config from the previous step.
+                      It is put together based on the Order in which the
+                      Services are put in the List
+                    </p>
+                  </clr-signpost-content>
+                </clr-signpost>
               </td>
-              <td *ngIf="item.value == uneditedTemplate.config_map[item.key]">
-                {{ item.value }}
+              <td>
+                <markdown
+                  [data]="cloudConfig.cloudConfigYaml | language: 'yaml'"
+                ></markdown>
               </td>
-              <!-- view of new key  -->
-              <ng-container
-                *ngIf="!uneditedTemplate.config_map.hasOwnProperty(item.key)"
-              >
-                <td class="add-elem">{{ item.key }}</td>
-                <td class="add-elem">{{ item.value }}</td>
-              </ng-container>
-              <!-- view of edit value -->
-              <td
-                *ngIf="
+            }
+            @if (item.key === vmServiceKey) {
+              <td>{{ item.key }}</td>
+              <td>
+                <table class="table table-compact">
+                  <th>Name</th>
+                  <th>Port</th>
+                  <th>Tab</th>
+                  <tbody>
+                    @for (
+                      interface of cloudConfig.vmServices | keyvalue;
+                      track interface
+                    ) {
+                      <tr>
+                        <td>{{ interface.value.name }}</td>
+                        <td>
+                          {{
+                            interface.value.hasWebinterface
+                              ? interface.value.port
+                              : "-"
+                          }}
+                        </td>
+                        <td>
+                          {{
+                            interface.value.hasOwnTab
+                              ? interface.value.hasOwnTab
+                              : "-"
+                          }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </td>
+            }
+            @if (!!this.editTemplate) {
+              @if (item.key !== cloudConfigKey && item.key !== vmServiceKey) {
+                <!-- view of unedit value -->
+                @if (uneditedTemplate.config_map.hasOwnProperty(item.key)) {
+                  <td>
+                    {{ item.key }}
+                  </td>
+                }
+                @if (item.value == uneditedTemplate.config_map[item.key]) {
+                  <td>
+                    {{ item.value }}
+                  </td>
+                }
+                <!-- view of new key  -->
+                @if (!uneditedTemplate.config_map.hasOwnProperty(item.key)) {
+                  <td class="add-elem">{{ item.key }}</td>
+                  <td class="add-elem">{{ item.value }}</td>
+                }
+                <!-- view of edit value -->
+                @if (
                   uneditedTemplate.config_map.hasOwnProperty(item.key) &&
                   item.value != uneditedTemplate.config_map[item.key]
-                "
-              >
-                <span class="del-elem arrow-after">{{
-                  uneditedTemplate.config_map[item.key]
-                }}</span>
-                <span class="add-elem">{{ item.value }}</span>
-              </td>
-            </ng-container>
-          </ng-container>
-          <ng-template #newTemplate>
-            <td>{{ item.key }}</td>
-            <td>{{ item.value }}</td>
-          </ng-template>
-        </tr>
-        <ng-container *ngIf="!!this.editTemplate">
+                ) {
+                  <td>
+                    <span class="del-elem arrow-after">{{
+                      uneditedTemplate.config_map[item.key]
+                    }}</span>
+                    <span class="add-elem">{{ item.value }}</span>
+                  </td>
+                }
+              }
+            } @else {
+              <td>{{ item.key }}</td>
+              <td>{{ item.value }}</td>
+            }
+          </tr>
+        }
+        @if (!!this.editTemplate) {
           <!-- view deleted key -->
-          <tr *ngFor="let item of uneditedTemplate.config_map | keyvalue">
-            <ng-container
-              *ngIf="item.key !== cloudConfigKey && item.key !== vmServiceKey"
-            >
-              <ng-container
-                *ngIf="!template.config_map.hasOwnProperty(item.key)"
-              >
+          @for (item of uneditedTemplate.config_map | keyvalue; track item) {
+            <tr>
+              @if (
+                item.key !== cloudConfigKey &&
+                item.key !== vmServiceKey &&
+                !template.config_map.hasOwnProperty(item.key)
+              ) {
                 <td class="del-elem">{{ item.key }}</td>
                 <td class="del-elem">{{ item.value }}</td>
-              </ng-container>
-            </ng-container>
-          </tr>
-        </ng-container>
+              }
+            </tr>
+          }
+        }
       </tbody>
     </table>
   </clr-wizard-page>

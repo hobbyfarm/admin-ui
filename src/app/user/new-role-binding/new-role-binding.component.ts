@@ -23,7 +23,7 @@ export class NewRoleBindingComponent implements OnInit {
   public roles: Role[];
   public modalOpen: boolean = false;
   public rolebinding: RoleBinding;
-  public selectedRole: Role;
+  public selectedRole?: Role;
 
   @Input()
   public user: User;

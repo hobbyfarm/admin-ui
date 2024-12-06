@@ -31,7 +31,6 @@ import { EnvironmentsComponent } from './configuration/environments/environments
 import { EditEnvironmentComponent } from './configuration/environments/edit-environment/edit-environment.component';
 import { ContentComponent } from './content/content.component';
 import { CourseComponent } from './course/course.component';
-import { NewCourseComponent } from './course/new-course/new-course.component';
 import { CourseFormComponent } from './course/course-form/course-form.component';
 import { DragulaModule } from 'ng2-dragula';
 import { AddScenarioComponent } from './course/add-scenario/add-scenario.component';
@@ -64,8 +63,8 @@ import { VMService } from './step/vm.service';
 import { VMClaimService } from './data/vmclaim.service';
 import { HfMarkdownComponent } from './step/hf-markdown.component';
 import { AngularSplitModule } from 'angular-split';
-import { DynamicHooksModule } from 'ngx-dynamic-hooks';
-import { CtrComponent } from './step/ctr.component';
+import { DynamicHooksComponent, provideDynamicHooks } from 'ngx-dynamic-hooks';
+import { CtrComponent } from './step/ctr-component/ctr.component';
 import { TerminalComponent } from './step/terminal/terminal.component';
 import { ProgressService } from './data/progress.service';
 import { PredefinedServiceService } from './data/predefinedservice.service';
@@ -81,7 +80,11 @@ import { NewRoleBindingComponent } from './user/new-role-binding/new-role-bindin
 import { DeleteProcessModalComponent } from './user/user/delete-process-modal/delete-process-modal.component';
 import { EnvironmentDetailComponent } from './configuration/environments/environment-detail/environment-detail.component';
 import { VmTemplateDetailComponent } from './configuration/vmtemplates/vmtemplate-detail/vmtemplate-detail.component';
-import { NgChartsModule } from 'ng2-charts';
+import {
+  BaseChartDirective,
+  provideCharts,
+  withDefaultRegisterables,
+} from 'ng2-charts';
 import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
 import { SessionTimeStatisticsComponent } from './session-statistics/session-time-statistics/session-time-statistics.component';
 import { VMTemplateServiceFormComponent } from './configuration/vmtemplates/edit-vmtemplate/vmtemplate-service-form/vmtemplate-service-form.component';
@@ -152,8 +155,20 @@ import {
   numberListIcon,
   syncIcon,
   downloadIcon,
+  plusCircleIcon,
+  exclamationTriangleIcon,
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
+import { HiddenMdComponent } from './step/hidden-md-component/hidden-md.component';
+import { GlossaryMdComponent } from './step/glossary-md-component/glossary-md.component';
+import { MermaidMdComponent } from './step/mermaid-md-component/mermaid-md.component';
+import { NoteMdComponent } from './step/note-md-component/note-md.component';
+import { ThemeService } from './data/theme.service';
+import { SafeSvgPipe } from './pipes/safe-svg.pipe';
+import { TooltipDirective } from './directives/tooltip.directive';
+import { TooltipComponent } from './tooltip/tooltip.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { AuthnService } from './data/authn.service';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -193,7 +208,9 @@ ClarityIcons.addIcons(
   buildingIcon,
   numberListIcon,
   syncIcon,
-  downloadIcon
+  downloadIcon,
+  plusCircleIcon,
+  exclamationTriangleIcon,
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {
@@ -203,14 +220,19 @@ const appInitializerFn = (appConfig: AppConfigService) => {
 };
 
 export function jwtOptionsFactory(): JwtConfig {
+  const allowedDomainsRegex = environment.server.match(/.*\:\/\/?([^\/]+)/);
+  let allowedDomains: string[] | undefined;
+  let disallowedRoutes: string[] | undefined;
+  if (allowedDomainsRegex && allowedDomainsRegex.length > 1) {
+    allowedDomains = [allowedDomainsRegex[1]];
+    disallowedRoutes = [allowedDomainsRegex[1] + '/auth/authenticate'];
+  }
   return {
     tokenGetter: () => {
-      return localStorage.getItem('hobbyfarm_admin_token');
+      return localStorage.getItem('hobbyfarm_admin_token') ?? '';
     },
-    allowedDomains: [environment.server.match(/.*\:\/\/?([^\/]+)/)[1]],
-    disallowedRoutes: [
-      environment.server.match(/.*\:\/\/?([^\/]+)/)[1] + '/auth/authenticate',
-    ],
+    allowedDomains: allowedDomains,
+    disallowedRoutes: disallowedRoutes,
   };
 }
 
@@ -232,7 +254,6 @@ export function jwtOptionsFactory(): JwtConfig {
     ContentComponent,
     CourseComponent,
     CourseDetailsComponent,
-    NewCourseComponent,
     CourseFormComponent,
     AddScenarioComponent,
     VmsetComponent,
@@ -292,6 +313,13 @@ export function jwtOptionsFactory(): JwtConfig {
     TaskFormComponent,
     ReadonlyTaskComponent,
     SingleTaskVerificationMarkdownComponent,
+    GlossaryMdComponent,
+    HiddenMdComponent,
+    MermaidMdComponent,
+    NoteMdComponent,
+    SafeSvgPipe,
+    TooltipDirective,
+    TooltipComponent,
   ],
   imports: [
     BrowserModule,
@@ -304,7 +332,7 @@ export function jwtOptionsFactory(): JwtConfig {
     DlDateTimeInputModule,
     DlDateTimePickerModule,
     ClarityModule,
-    NgChartsModule,
+    BaseChartDirective,
     HttpClientModule,
     JwtModule.forRoot({
       jwtOptionsProvider: {
@@ -312,23 +340,16 @@ export function jwtOptionsFactory(): JwtConfig {
         useFactory: jwtOptionsFactory,
       },
     }),
-    DynamicHooksModule.forRoot({
-      globalOptions: {
-        sanitize: false,
-        convertHTMLEntities: false,
-      },
-      globalParsers: [
-        { component: CtrComponent },
-        { component: SingleTaskVerificationMarkdownComponent },
-      ],
-    }),
     BrowserAnimationsModule,
     DragulaModule.forRoot(),
     MarkdownModule.forRoot({
       sanitize: SecurityContext.NONE,
     }),
+    ScrollingModule,
+    DynamicHooksComponent,
   ],
   providers: [
+    AuthnService,
     ScenarioService,
     CtrService,
     SessionService,
@@ -340,6 +361,7 @@ export function jwtOptionsFactory(): JwtConfig {
     AppConfigService,
     ProgressService,
     PredefinedServiceService,
+    ThemeService,
     TypedSettingsService,
     {
       provide: APP_INITIALIZER,
@@ -347,6 +369,24 @@ export function jwtOptionsFactory(): JwtConfig {
       multi: true,
       deps: [AppConfigService, RbacService], // rbacservice listed here to initialize it before anything else
     },
+    provideDynamicHooks({
+      parsers: [
+        { component: CtrComponent, unescapeStrings: false },
+        { component: GlossaryMdComponent, unescapeStrings: false },
+        { component: MermaidMdComponent, unescapeStrings: false },
+        { component: HiddenMdComponent, unescapeStrings: false },
+        { component: NoteMdComponent, unescapeStrings: false },
+        {
+          component: SingleTaskVerificationMarkdownComponent,
+          unescapeStrings: false,
+        },
+      ],
+      options: {
+        sanitize: false,
+        convertHTMLEntities: false,
+      },
+    }),
+    provideCharts(withDefaultRegisterables()),
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

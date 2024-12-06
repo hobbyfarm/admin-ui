@@ -1,68 +1,75 @@
 <clr-modal #infoModal [(clrModalOpen)]="open" [clrModalSize]="'lg'">
-    <h3 class="modal-title">Info about Session</h3>
-    <div class="modal-body">
-        <h5>General Info</h5>
-        <table class="table table-compact">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Value</th>
+  <h3 class="modal-title">Info about Session</h3>
+  <div class="modal-body">
+    <h5>General Info</h5>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Scenario</td>
+          <td>{{ progress.scenario }}</td>
+        </tr>
+        @if (progress.course) {
+          <tr>
+            <td>Course</td>
+            <td>{{ progress.course }}</td>
+          </tr>
+        }
+        <tr>
+          <td>User</td>
+          <td>{{ progress.user }}</td>
+        </tr>
+        <tr>
+          <td>Progress</td>
+          <td>{{ progress.id }}</td>
+        </tr>
+        <tr>
+          <td>Session</td>
+          <td>{{ progress.session }}</td>
+        </tr>
+        <tr>
+          <td>Last Update</td>
+          <td>{{ progress.last_update }}</td>
+        </tr>
+      </tbody>
+    </table>
 
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Scenario</td>
-                    <td>{{ progress.scenario }}</td>
-                </tr>
-                <tr *ngIf="progress.course">
-                    <td>Course</td>
-                    <td>{{ progress.course }}</td>
-                </tr>
-                <tr>
-                    <td>User</td>
-                    <td>{{ progress.user }}</td>
-                </tr>
-                <tr>
-                    <td>Progress</td>
-                    <td>{{ progress.id }}</td>
-                </tr>
-                <tr>
-                    <td>Session</td>
-                    <td>{{ progress.session }}</td>
-                </tr>
-                <tr>
-                    <td>Last Update</td>
-                    <td>{{ progress.last_update }}</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h5>Step History</h5>
-        <table class="table table-compact">
-            <thead>
-                <tr>
-                    <th>Step</th>
-                    <th>Timestamp</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Preperation</td>
-                    <td>{{ progress.steps[0].timestamp | date:'MMMM d, y, HH:mm:ss z'}}</td>
-                </tr>
-                <tr *ngFor="let item of progress.steps.slice(1)">
-                    <td>{{ item.step }}</td>
-                    <td>{{ item.timestamp | date:'MMMM d, y, HH:mm:ss z'}}</td>
-                </tr>
-                <tr *ngIf="progress.finished">
-                    <td>Finished</td>
-                    <td>{{ progress.last_update | date:'MMMM d, y, HH:mm:ss z'}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-outline" (click)="open = false">Close</button>
-    </div>
+    <h5>Step History</h5>
+    <table class="table table-compact">
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Preperation</td>
+          <td>
+            {{ progress.steps[0].timestamp | date: "MMMM d, y, HH:mm:ss z" }}
+          </td>
+        </tr>
+        @for (item of progress.steps.slice(1); track item) {
+          <tr>
+            <td>{{ item.step }}</td>
+            <td>{{ item.timestamp | date: "MMMM d, y, HH:mm:ss z" }}</td>
+          </tr>
+        }
+        @if (progress.finished) {
+          <tr>
+            <td>Finished</td>
+            <td>{{ progress.last_update | date: "MMMM d, y, HH:mm:ss z" }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" (click)="open = false">Close</button>
+  </div>
 </clr-modal>

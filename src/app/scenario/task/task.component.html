@@ -1,6 +1,6 @@
 <div class="split-grid">
-  <ng-container *ngIf="!readonly">
-  <h4 style="margin-bottom: 0.4rem">Tasks</h4>
+  @if (!readonly) {
+    <h4 style="margin-bottom: 0.4rem">Tasks</h4>
     <button
       class="btn btn-sm btn-link add-task-btn"
       (click)="addTask()"
@@ -8,16 +8,16 @@
     >
       New Task
     </button>
-  </ng-container>
+  }
 </div>
 
 <clr-accordion>
-  <ng-container *ngFor="let task of editTasks; let i = index">
+  @for (task of editTasks; track task; let i = $index) {
     <clr-accordion-panel (clrAccordionPanelOpenChange)="applyChanges()">
       <clr-accordion-title style="width: 100%"
         ><div class="split-grid">
           <div>{{ task.vmName }}: {{ task.name }}</div>
-          <ng-container *ngIf="!readonly">
+          @if (!readonly) {
             <button
               class="btn btn-sm btn-link remove-task-btn"
               (click)="deleteTask(task.id)"
@@ -25,21 +25,20 @@
             >
               Delete Task
             </button>
-          </ng-container>
+          }
         </div>
       </clr-accordion-title>
       <clr-accordion-content *clrIfExpanded>
-        <app-task-form
-          *ngIf="!readonly"
-          [virtualMachineNames]="vmNames"
-          [editTask]="task"
-          (taskChanged)="updateTask($event)"
-        ></app-task-form>
-        <app-readonly-task
-          *ngIf="readonly"
-          [editTask]="task"
-        ></app-readonly-task>
+        @if (!readonly) {
+          <app-task-form
+            [virtualMachineNames]="vmNames"
+            [editTask]="task"
+            (taskChanged)="updateTask($event)"
+          ></app-task-form>
+        } @else {
+          <app-readonly-task [editTask]="task"></app-readonly-task>
+        }
       </clr-accordion-content>
     </clr-accordion-panel>
-  </ng-container>
+  }
 </clr-accordion>

@@ -59,7 +59,7 @@
           </clr-datagrid>
         </div>
         <div class="clr-col-8">
-          <ng-container *ngIf="selectedUser">
+          @if (selectedUser) {
             <clr-tabs>
               <clr-tab>
                 <button clrTabLink>Basic Info</button>
@@ -85,7 +85,7 @@
                 </clr-tab>
               </ng-container>
             </clr-tabs>
-          </ng-container>
+          }
         </div>
       </div>
     </div>

@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import {
-  HttpClient,
   HttpParams,
   HttpParameterCodec,
   HttpErrorResponse,
+  HttpClient,
 } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
 import { catchError, map, take, tap } from 'rxjs/operators';
 import { Scenario } from './scenario';
 import { Step } from './step';
-import { deepCopy } from '../deepcopy';
 import { atou, utoa } from '../unicode';
 import { BehaviorSubject, throwError } from 'rxjs';
+import { GargantuaClientFactory } from './gargantua.service';
+import { environment } from 'src/environments/environment';
 
 class CustomEncoder implements HttpParameterCodec {
   encodeKey(key: string): string {
@@ -40,10 +40,11 @@ export class ScenarioService {
   private fetchedList = false;
   private startedFetchedList = false;
   private bh: BehaviorSubject<Scenario[]> = new BehaviorSubject(
-    this.cachedScenarioList
+    this.cachedScenarioList,
   );
+  private gargAdmin = this.gcf.scopedClient('/a/scenario');
 
-  constructor(public http: HttpClient) {}
+  constructor(private gcf: GargantuaClientFactory, private http: HttpClient) {}
 
   public watch() {
     return this.bh.asObservable();
@@ -54,7 +55,7 @@ export class ScenarioService {
       return this.bh.pipe(take(1));
     } else {
       this.startedFetchedList = true;
-      return this.http.get(environment.server + '/a/scenario/list').pipe(
+      return this.gargAdmin.get('/list').pipe(
         map((s: ServerResponse) => {
           let obj: Scenario[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
           // so now we need to go vmset-by-vmset and build maps
@@ -76,7 +77,7 @@ export class ScenarioService {
         }),
         tap((s: Scenario[]) => {
           this.set(s);
-        })
+        }),
       );
     }
   }
@@ -88,7 +89,7 @@ export class ScenarioService {
   }
 
   public get(id: string) {
-    return this.http.get(environment.server + '/a/scenario/' + id).pipe(
+    return this.gargAdmin.get(`/${id}`).pipe(
       map((s: ServerResponse) => {
         return JSON.parse(atou(s.content));
       }),
@@ -105,12 +106,12 @@ export class ScenarioService {
         //Admin Route in Garg ("/a/scenario") returns Scenarios without StepCount
         s.stepcount = s.steps.length;
         return s;
-      })
+      }),
     );
   }
 
   public update(s: Scenario) {
-    var steps = <Step[]>deepCopy(s.steps);
+    var steps = structuredClone(s.steps);
     // step by step, re-encode to b64
     steps.forEach((st: Step) => {
       st.title = utoa(st.title);
@@ -128,22 +129,20 @@ export class ScenarioService {
       .set('keepalive_duration', s.keepalive_duration)
       .set('vm_tasks', JSON.stringify(s.vm_tasks));
 
-    return this.http
-      .put(environment.server + '/a/scenario/' + s.id, params)
-      .pipe(
-        tap(() => {
-          // Find the index of the scenario in the cached list
-          const index = this.cachedScenarioList.findIndex(
-            (scenario) => scenario.id === s.id
-          );
-          if (index !== -1) {
-            // Replace the old scenario with the updated one
-            this.cachedScenarioList[index] = s;
-          }
-          // Update the cache with the new list
-          this.set(this.cachedScenarioList);
-        })
-      );
+    return this.gargAdmin.put(`/${s.id}`, params).pipe(
+      tap(() => {
+        // Find the index of the scenario in the cached list
+        const index = this.cachedScenarioList.findIndex(
+          (scenario) => scenario.id === s.id,
+        );
+        if (index !== -1) {
+          // Replace the old scenario with the updated one
+          this.cachedScenarioList[index] = s;
+        }
+        // Update the cache with the new list
+        this.set(this.cachedScenarioList);
+      }),
+    );
   }
 
   public create(s: Scenario) {
@@ -163,7 +162,7 @@ export class ScenarioService {
       .set('keepalive_duration', s.keepalive_duration)
       .set('vm_tasks', JSON.stringify(s.vm_tasks));
 
-    return this.http.post(environment.server + '/a/scenario/new', params).pipe(
+    return this.gargAdmin.post('/new', params).pipe(
       catchError((e: HttpErrorResponse) => {
         return throwError(() => e.error);
       }),
@@ -179,18 +178,15 @@ export class ScenarioService {
       tap((scenario: Scenario) => {
         this.cachedScenarioList.push(scenario);
         this.set(this.cachedScenarioList);
-      })
+      }),
     );
   }
 
   public printable(id: string) {
-    return this.http.get(
-      environment.server + '/a/scenario/' + id + '/printable',
-      { responseType: 'text' }
-    );
+    return this.http.get(`${environment.server}/a/scenario/${id}/printable`, { responseType: 'text' });
   }
 
   public delete(id: string) {
-    return this.http.delete(environment.server + '/a/scenario/' + id);
+    return this.gargAdmin.delete(`/${id}`);
   }
 }

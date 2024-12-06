@@ -1,4 +1,5 @@
-export class ScheduledEvent {
+// For freshly created scheduled events, start_time or end_time might be undefined
+export class ScheduledEventBase {
   id: string;
   creator: string;
   event_name: string;
@@ -19,6 +20,12 @@ export class ScheduledEvent {
   on_demand: boolean;
   printable: boolean;
   activeSessions: number;
+}
+
+// start_time or end_time must be defined for scheduled events returned by our backend
+export class ScheduledEvent extends ScheduledEventBase {
+  start_time!: Date;
+  end_time!: Date;
 }
 
 export interface DashboardScheduledEvent extends ScheduledEvent {

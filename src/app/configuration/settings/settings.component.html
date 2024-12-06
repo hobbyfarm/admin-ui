@@ -2,9 +2,7 @@
   <div class="clr-col">
     <h3>
       Settings
-      <span class="scope">{{
-        this.selectedScope?.displayName ?? "scope"
-      }}</span>
+      <span class="scope">{{ selectedScope?.displayName ?? "scope" }}</span>
     </h3>
   </div>
 </div>
@@ -13,23 +11,24 @@
 <button class="btn" (click)="onSubmit()" [disabled]="!hasChanges || !valid">
   Save Changes
 </button>
-<ng-container *ngIf="loading">
+@if (loading) {
   <div>
     <span class="spinner spinner-inline"> Please wait... </span>
     <span> Settings are being loaded... </span>
   </div>
-</ng-container>
-<ng-container *ngIf="!loading">
-  <app-typed-form
-    *ngIf="settings.length > 0"
-    [typedInputs]="settings"
-    (syncedInputs)="onFormChange($event)"
-    (inputsValid)="changeFormValidity($event)"
-    [groupType]="FormGroupType.TABS"
-  ></app-typed-form>
-  <div *ngIf="settings.length == 0">
-    No settings available for scope
-    <code>{{ this.selectedScope.displayName }}</code
-    >.
-  </div>
-</ng-container>
+} @else if (!loading && selectedScope) {
+  @if (settings.length > 0) {
+    <app-typed-form
+      [typedInputs]="settings"
+      (syncedInputs)="onFormChange($event)"
+      (inputsValid)="changeFormValidity($event)"
+      [groupType]="FormGroupType.TABS"
+    ></app-typed-form>
+  } @else {
+    <div>
+      No settings available for scope
+      <code>{{ selectedScope.displayName }}</code
+      >.
+    </div>
+  }
+}

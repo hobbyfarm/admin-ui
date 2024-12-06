@@ -1,8 +1,11 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  ViewChild,
+} from '@angular/core';
 import { ClrModal } from '@clr/angular';
 import { Scenario } from 'src/app/data/scenario';
 import { Step } from 'src/app/data/step';
-import { deepCopy } from 'src/app/deepcopy';
 
 @Component({
   selector: 'steps-scenario',
@@ -13,12 +16,8 @@ export class StepsScenarioComponent {
   @Input()
   scenario: Scenario;
 
-
-
   public scenarioTainted: boolean = false;
   public editOpen: boolean = false;
-  public editDangerClosed: boolean = true;
-  public editSuccessClosed: boolean = true;
   public deleteStepOpen: boolean = false;
   public isStepsLengthNull: boolean = true;
 
@@ -29,16 +28,13 @@ export class StepsScenarioComponent {
   public stepsToBeAdded: number = 0;
   public deletingStepIndex: number = 0;
 
-  public editDangerAlert: string = '';
-  public editSuccessAlert: string = '';
-
   @ViewChild('editmodal', { static: true }) editModal: ClrModal;
   @ViewChild('deletestepmodal', { static: true }) deleteStepModal: ClrModal;
 
   moveStepUp(i: number) {
     this.scenarioTainted = true;
     // get a copy of the to-be-moved item
-    const obj = <Step>deepCopy(this.scenario.steps[i]);
+    const obj = structuredClone(this.scenario.steps[i]);
     // delete at the index currently
     this.scenario.steps.splice(i, 1);
     // put into the i-1 index
@@ -47,15 +43,15 @@ export class StepsScenarioComponent {
   moveStepDown(i: number) {
     this.scenarioTainted = true;
     // get a copy of the to-be-moved item
-    const obj = <Step>deepCopy(this.scenario.steps[i]);
+    const obj = structuredClone(this.scenario.steps[i]);
     // delete at the index currently
     this.scenario.steps.splice(i, 1);
     // put into the i+1 index
     this.scenario.steps.splice(i + 1, 0, obj);
   }
 
-  openEdit(s: Step, i: number) {
-    this.editingSteps = <Step[]>deepCopy(this.scenario.steps);
+  openEdit(i: number) {
+    this.editingSteps = structuredClone(this.scenario.steps);
     if (this.editingSteps.length == 0) {
       this.openNewStep();
       return;
@@ -66,7 +62,7 @@ export class StepsScenarioComponent {
   }
 
   openNewStep() {
-    this.editingSteps = <Step[]>deepCopy(this.scenario.steps);
+    this.editingSteps = structuredClone(this.scenario.steps);
     this.editingIndex = this.editingSteps.length;
     this.editingStep = new Step();
     this.editingStep.title = 'Step ' + (this.editingIndex + 1);
@@ -109,7 +105,7 @@ export class StepsScenarioComponent {
   }
 
   saveCreatedStep() {
-    this.scenario.steps =  <Step[]>deepCopy(this.editingSteps);
+    this.scenario.steps = structuredClone(this.editingSteps);
     this.isStepsLengthNull = false;
     this.stepsToBeAdded = 0;
     this.editModal.close();

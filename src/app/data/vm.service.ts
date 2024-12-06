@@ -1,57 +1,47 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { switchMap } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
 import { of } from 'rxjs';
 import { atou } from '../unicode';
-
-
-
-
+import { GargantuaClientFactory } from './gargantua.service';
 
 @Injectable({
-    providedIn: 'root'
-  })
-  export class VmService {
-  
-    constructor(
-      public http: HttpClient
-    ) { }
-  
-    public list() {
-      return this.http.get(environment.server + '/a/vm/list')
-      .pipe(
-        switchMap((s: ServerResponse) => {
-          return of(JSON.parse(atou(s.content)))
-        })
-      )
-    }
-    public listByScheduledEvent(id: String) {
-        
-        return this.http.get(environment.server + '/a/vm/scheduledevent/' + id )
-        .pipe(
-          switchMap((s: ServerResponse) => {
-            return of(JSON.parse(atou(s.content)))
-          })
-        )
-      }
+  providedIn: 'root',
+})
+export class VmService {
+  private garg = this.gcf.scopedClient('/vm');
+  private gargAdmin = this.gcf.scopedClient('/a/vm');
 
-    public getVmById(id: number) {
-        return this.http.get(environment.server + '/vm?' + id )
-        .pipe(
-          switchMap((s: ServerResponse) => {
-            return of(JSON.parse(atou(s.content)))
-          })
-        )
-    }
+  constructor(private gcf: GargantuaClientFactory) {}
 
-    public count() {
-      return this.http.get(environment.server + "/a/vm/count")
-      .pipe(
-        switchMap((s : ServerResponse) => {
-          return of(JSON.parse(atou(s.content)))
-        })
-      )
-    }
+  public list() {
+    return this.gargAdmin.get('/list').pipe(
+      switchMap((s: ServerResponse) => {
+        return of(JSON.parse(atou(s.content)));
+      }),
+    );
+  }
+  public listByScheduledEvent(id: String) {
+    return this.gargAdmin.get(`/a/vm/scheduledevent/${id}`).pipe(
+      switchMap((s: ServerResponse) => {
+        return of(JSON.parse(atou(s.content)));
+      }),
+    );
+  }
+
+  public getVmById(id: number) {
+    return this.garg.get(`?${id}`).pipe(
+      switchMap((s: ServerResponse) => {
+        return of(JSON.parse(atou(s.content)));
+      }),
+    );
+  }
+
+  public count() {
+    return this.gargAdmin.get('/count').pipe(
+      switchMap((s: ServerResponse) => {
+        return of(JSON.parse(atou(s.content)));
+      }),
+    );
+  }
 }

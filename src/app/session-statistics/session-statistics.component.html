@@ -23,7 +23,7 @@
             name="scenarios"
             clrMulti="true"
           >
-            <ng-container *clrOptionSelected="let scenario of scenarioSelected">
+            <ng-container *clrOptionSelected="let scenario">
               {{ getScenarioName(scenario) }}
             </ng-container>
             <clr-options>
@@ -128,16 +128,15 @@
             </dl-date-time-picker>
           </clr-signpost-content>
         </clr-signpost>
-        <span
-          class="clr-subtext"
-          *ngIf="chartDetails.errors?.endDateLowerThanStartDate"
-        >
-          <cds-icon
-            class="clr-validate-icon"
-            shape="exclamation-circle"
-          ></cds-icon>
-          Start date must occur before end time!
-        </span>
+        @if (chartDetails.errors?.endDateLowerThanStartDate) {
+          <span class="clr-subtext">
+            <cds-icon
+              class="clr-validate-icon"
+              shape="exclamation-circle"
+            ></cds-icon>
+            Start date must occur before end time!
+          </span>
+        }
       </div>
     </div>
   </form>
@@ -150,7 +149,7 @@
           [data]="barChartData"
           [options]="barChartOptions"
           [plugins]="barChartPlugins"
-          [type]="barChartType"
+          [type]="'bar'"
           (chartHover)="chartHovered($event)"
           (chartClick)="chartClicked($event)"
         >
@@ -174,13 +173,15 @@
     </div>
   </div>
   <h3>Scenario Statistics</h3>
-  <div class="clr-row" *ngIf="progressesCache">
-    <div class="clr-col-12">
-      <app-session-time-statistics
-        [progresses]="progressesCache"
-        [scenariosWithSessionMap]="scenariosWithSessionMap"
-      >
-      </app-session-time-statistics>
+  @if (progressesCache) {
+    <div class="clr-row">
+      <div class="clr-col-12">
+        <app-session-time-statistics
+          [progresses]="progressesCache"
+          [scenariosWithSessionMap]="scenariosWithSessionMap"
+        >
+        </app-session-time-statistics>
+      </div>
     </div>
-  </div>
+  }
 </div>

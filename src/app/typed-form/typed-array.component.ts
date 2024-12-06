@@ -8,7 +8,7 @@ import { FormArray, FormControl } from '@angular/forms';
 export class TypedArrayComponent<T extends string | number | boolean> {
   @Input() array: FormArray<FormControl<T>>;
   @Input() input: TypedInput;
-  @Output() change: EventEmitter<boolean> = new EventEmitter(null);
+  @Output() change: EventEmitter<boolean> = new EventEmitter();
 
   inputChanged() {
     this.change.emit(true);
@@ -17,5 +17,9 @@ export class TypedArrayComponent<T extends string | number | boolean> {
   removeArrayElement(index: number) {
     this.array.removeAt(index);
     this.inputChanged();
+  }
+
+  get minLength() {
+    return this.input.getMinLength();
   }
 }

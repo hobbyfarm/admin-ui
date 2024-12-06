@@ -153,7 +153,6 @@ export class CodeWithSyntaxHighlightingComponent
   }
 
   ngOnDestroy() {
-    this._textValue = null;
     this.observer.disconnect();
   }
 }

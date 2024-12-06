@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Input, OnDestroy, OnChanges } from '@angu
 import { ProgressService } from 'src/app/data/progress.service';
 import { Progress } from 'src/app/data/progress';
 import { UserService } from '../../data/user.service';
-import { ScheduledEvent } from '../../data/scheduledevent';
+import { ScheduledEventBase } from '../../data/scheduledevent';
 import { ScheduledeventService } from '../../data/scheduledevent.service';
 import { ScenarioService } from '../../data/scenario.service';
 import { CourseService } from '../../data/course.service';
@@ -20,14 +20,14 @@ import { FormGroup } from '@angular/forms';
 })
 export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges {
   @Input()
-  selectedEvent: ScheduledEvent;
+  selectedEvent: ScheduledEventBase;
 
   public includeFinished: boolean = false;
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
   public callInterval: any;
   public circleVisible: boolean = true;
-  public users: User[];
+  public users: User[] = [];
   public settingsForm: FormGroup;
   public hide_usernames_status: boolean = false;
   private settings_service$ = new Subject<Readonly<Settings>>();
@@ -127,9 +127,6 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
 
   refresh() {
     if (this.pauseCall) {
-      return;
-    }
-    if (!this.selectedEvent) {
       return;
     }
 

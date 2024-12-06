@@ -7,7 +7,11 @@ import { FilterScenariosComponent } from '../filter-scenarios/filter-scenarios.c
 import { HttpErrorResponse } from '@angular/common/http';
 import { ScenarioWizardComponent } from './scenario-wizard/scenario-wizard.component';
 import { RbacService } from '../data/rbac.service';
-import { AlertDetails } from '../alert/alert';
+import {
+  AlertDetails,
+  DEFAULT_ALERT_ERROR_DURATION,
+  DEFAULT_ALERT_SUCCESS_DURATION,
+} from '../alert/alert';
 import { AlertComponent } from '../alert/alert.component';
 
 @Component({
@@ -28,7 +32,7 @@ export class ScenarioComponent implements OnInit {
 
   constructor(
     public scenarioService: ScenarioService,
-    public rbacService: RbacService
+    public rbacService: RbacService,
   ) {}
 
   @ViewChild('deletescenariomodal', { static: true })
@@ -48,7 +52,8 @@ export class ScenarioComponent implements OnInit {
           this.selectedscenario = s;
         },
         error: (e: HttpErrorResponse) => {
-          this.alert.danger('Error retrieving object: ' + e.error.message, true, 3000);
+          const alertMsg = 'Error retrieving object: ' + e.error.message;
+          this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
         },
       });
     }
@@ -62,7 +67,8 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.get(scenario.id).subscribe({
       next: (scenario) => (this.selectedscenario = scenario),
       error: (e: HttpErrorResponse) => {
-        this.alert.danger('Error deleting object: ' + e.error.message, true, 3000);
+        const alertMsg = 'Error deleting object: ' + e.error.message;
+        this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
     this.deleteScenarioModal.open();
@@ -76,7 +82,8 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.list(true).subscribe({
       next: (sList: Scenario[]) => (this.filteredScenarios = sList),
       error: (e: HttpErrorResponse) => {
-        this.alert.danger('Error listing objects: ' + e.error.message, true, 3000);
+        const alertMsg = 'Error listing objects: ' + e.error.message;
+        this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
   }
@@ -84,11 +91,13 @@ export class ScenarioComponent implements OnInit {
   deleteScenario(scenarioId: string) {
     this.scenarioService.delete(scenarioId).subscribe({
       next: (_s: ServerResponse) => {
-        this.alert.success('Scenario deleted', true, 3000);
+        const alertMsg = 'Scenario deleted';
+        this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();
       },
       error: (e: HttpErrorResponse) => {
-        this.alert.danger('Error deleting object: ' + e.error.message, true, 3000);
+        const alertMsg = 'Error deleting object: ' + e.error.message;
+        this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
   }
@@ -102,7 +111,12 @@ export class ScenarioComponent implements OnInit {
 
   refreshAndDisplayAlert(alertDetails: AlertDetails) {
     this._reloadScenario();
-    this.alert.doAlert(alertDetails.message, alertDetails.type, alertDetails.closable, alertDetails.duration);
+    this.alert.doAlert(
+      alertDetails.message,
+      alertDetails.type,
+      alertDetails.closable,
+      alertDetails.duration,
+    );
   }
 
   ngOnInit() {

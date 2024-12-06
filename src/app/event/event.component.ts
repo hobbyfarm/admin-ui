@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ScheduledEvent } from 'src/app/data/scheduledevent';
+import { ScheduledEventBase } from 'src/app/data/scheduledevent';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { NewScheduledEventComponent } from './new-scheduled-event/new-scheduled-event.component';
 import { ClrModal, ClrDatagridSortOrder } from '@clr/angular';
@@ -8,8 +8,13 @@ import { ScenarioService } from '../data/scenario.service';
 import { UserService } from '../data/user.service';
 import { RbacService } from '../data/rbac.service';
 import { Subject } from 'rxjs';
+import { AlertComponent } from '../alert/alert.component';
+import {
+  DEFAULT_ALERT_ERROR_DURATION,
+  DEFAULT_ALERT_SUCCESS_DURATION,
+} from '../alert/alert';
 
-interface ExtendedScheduledEvent extends ScheduledEvent {
+interface ExtendedScheduledEvent extends ScheduledEventBase {
   creatorEmail?: String;
   courseNames?: String[];
   scenarioNames?: String[];
@@ -24,14 +29,9 @@ export class EventComponent implements OnInit {
 
   public deleteopen: boolean = false;
 
-  public deletingevent: ScheduledEvent = new ScheduledEvent();
+  public deletingevent: ScheduledEventBase = new ScheduledEventBase();
 
-  public seSuccessAlert: string = '';
-  public seDangerAlert: string = '';
-  public seSuccessClosed: boolean = true;
-  public seDangerClosed: boolean = true;
-
-  public editingEvent: ScheduledEvent;
+  public editingEvent: ScheduledEventBase | null;
 
   public descSort = ClrDatagridSortOrder.DESC;
 
@@ -42,18 +42,20 @@ export class EventComponent implements OnInit {
   private listUsers = false;
 
   otacModalOpen: boolean = false;
-  openModalEvents: Subject<ScheduledEvent> = new Subject<ScheduledEvent>();
+  openModalEvents: Subject<ScheduledEventBase> =
+    new Subject<ScheduledEventBase>();
 
   constructor(
     public seService: ScheduledeventService,
     public courseService: CourseService,
     public scenarioService: ScenarioService,
     public userService: UserService,
-    public rbacService: RbacService
+    public rbacService: RbacService,
   ) {}
 
   @ViewChild('wizard', { static: true }) wizard: NewScheduledEventComponent;
   @ViewChild('deletemodal', { static: true }) deletemodal: ClrModal;
+  @ViewChild('alert') alert: AlertComponent;
 
   ngOnInit() {
     // list permissions for the following ressources are required in order to edit scheduled events
@@ -72,14 +74,15 @@ export class EventComponent implements OnInit {
         const listEnvironments: boolean = permissions[2];
         const deleteEvents: boolean = permissions[3];
         this.listUsers = permissions[4];
-        this.allowEdit = (this.listScenarios || this.listCourses) && listEnvironments;
+        this.allowEdit =
+          (this.listScenarios || this.listCourses) && listEnvironments;
         this.showActionOverflow = this.allowEdit || deleteEvents;
         this.refresh(true);
-      }
+      },
     );
   }
 
-  public openDelete(se: ScheduledEvent) {
+  public openDelete(se: ScheduledEventBase) {
     this.deletingevent = se;
     this.deletemodal.open();
   }
@@ -89,18 +92,11 @@ export class EventComponent implements OnInit {
     this.seService.delete(this.deletingevent).subscribe({
       next: (_reply: string) => {
         this.refresh();
-        this.seSuccessAlert = `Deleted scheduled event \"${this.deletingevent.event_name}\" successfully!`;
-        this.seSuccessClosed = false;
-        setTimeout(() => {
-          this.seSuccessClosed = true;
-        }, 2000);
+        const alertMsg = `Deleted scheduled event \"${this.deletingevent.event_name}\" successfully!`;
+        this.alert.success(alertMsg, false, DEFAULT_ALERT_SUCCESS_DURATION);
       },
       error: (reply: string) => {
-        this.seDangerAlert = reply;
-        this.seDangerClosed = false;
-        setTimeout(() => {
-          this.seDangerClosed = true;
-        }, 1000);
+        this.alert.danger(reply, false, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
   }
@@ -110,7 +106,7 @@ export class EventComponent implements OnInit {
     this.wizard.open();
   }
 
-  public openEdit(se: ScheduledEvent) {
+  public openEdit(se: ScheduledEventBase) {
     this.editingEvent = se;
     this.wizard.setOnCloseFn(() => {
       this.editingEvent = null;
@@ -139,17 +135,15 @@ export class EventComponent implements OnInit {
     }
 
     if (this.listScenarios) {
-      this.scenarioService
-        .list()
-        .subscribe((scenarioList) => {
-          this.events.forEach((se) => {
-            if (se.scenarios) {
-              se.scenarioNames = scenarioList
-                .filter((scenario) => se.scenarios.includes(scenario.id))
-                .map((s) => s.name);
-            }
-          });
+      this.scenarioService.list().subscribe((scenarioList) => {
+        this.events.forEach((se) => {
+          if (se.scenarios) {
+            se.scenarioNames = scenarioList
+              .filter((scenario) => se.scenarios.includes(scenario.id))
+              .map((s) => s.name);
+          }
         });
+      });
     }
 
     if (this.listUsers) {
@@ -165,7 +159,7 @@ export class EventComponent implements OnInit {
     this.refresh();
   }
 
-  openOtac(se: ScheduledEvent) {
+  openOtac(se: ScheduledEventBase) {
     this.openModalEvents.next(se);
     this.otacModalOpen = true;
   }

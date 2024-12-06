@@ -23,7 +23,7 @@ import { ClrAlertType } from 'src/app/clr-alert-type';
 import { VMTasks } from 'src/app/data/vm-tasks';
 
 interface ValidationError {
-  message: string
+  message: string;
 }
 @Component({
   selector: 'scenario-wizard',
@@ -64,9 +64,9 @@ export class ScenarioWizardComponent implements OnInit {
     const ku = this.scenarioDetails.controls.keepalive_unit;
 
     // validate
-    if ((ka.dirty || ka.touched) && ka.invalid && ka.errors.required) {
+    if ((ka.dirty || ka.touched) && ka.invalid && ka.errors?.required) {
       return true;
-    } else if ((ku.dirty || ku.touched) && ku.invalid && ku.errors.required) {
+    } else if ((ku.dirty || ku.touched) && ku.invalid && ku.errors?.required) {
       return true;
     } else {
       return false;
@@ -83,21 +83,21 @@ export class ScenarioWizardComponent implements OnInit {
   constructor(
     public scenarioService: ScenarioService,
     public vmTemplateService: VmtemplateService,
-    public rbacService: RbacService
+    public rbacService: RbacService,
   ) {}
 
   @ViewChild('wizard', { static: true }) wizard: ClrWizard;
 
   public scenarioDetails: ScenarioFormGroup = new FormGroup(
     {
-      scenario_name: new FormControl<string | null>(null, [
-        Validators.required,
-        Validators.minLength(4),
-      ]),
-      scenario_description: new FormControl<string | null>(null, [
-        Validators.required,
-        Validators.minLength(4),
-      ]),
+      scenario_name: new FormControl<string>('', {
+        validators: [Validators.required, Validators.minLength(4)],
+        nonNullable: true,
+      }),
+      scenario_description: new FormControl<string>('', {
+        validators: [Validators.required, Validators.minLength(4)],
+        nonNullable: true,
+      }),
       keepalive_amount: new FormControl<number>(10, {
         validators: Validators.required,
         nonNullable: true,
@@ -115,25 +115,28 @@ export class ScenarioWizardComponent implements OnInit {
         nonNullable: true,
       }),
     },
-    { validators: KeepaliveValidator }
+    { validators: KeepaliveValidator },
   );
 
   public vmform: FormGroup<{
-    vm_name: FormControl<string | null>;
-    vm_template: FormControl<string | null>;
+    vm_name: FormControl<string>;
+    vm_template: FormControl<string>;
   }> = new FormGroup({
-    vm_name: new FormControl<string | null>(null, [
-      Validators.required,
-      Validators.minLength(4),
-    ]),
-    vm_template: new FormControl<string | null>(null, [Validators.required]),
+    vm_name: new FormControl<string>('', {
+      validators: [Validators.required, Validators.minLength(4)],
+      nonNullable: true,
+    }),
+    vm_template: new FormControl<string>('', {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
   });
 
   public newCategoryForm: CategoryFormGroup = new FormGroup({
     category: new FormControl<string | null>(null, [Validators.required]),
   });
   public newTagForm: FormGroup<{
-    tag: FormControl<string>;
+    tag: FormControl<string | null>;
   }> = new FormGroup({
     tag: new FormControl<string | null>(null, [Validators.required]),
   });
@@ -157,57 +160,78 @@ export class ScenarioWizardComponent implements OnInit {
       });
 
     this.wizard.currentPageChanged.subscribe(() => {
-      this.validationErrors = []
-        if (this.selectedscenario.vm_tasks?.length > 0) {
-          this.validateTaskDefinitions()
-        }
-      this.disableFinalizeButton = !(this.validationErrors.length == 0)
+      this.validationErrors = [];
+      if (this.selectedscenario.vm_tasks?.length > 0) {
+        this.validateTaskDefinitions();
+      }
+      this.disableFinalizeButton = !(this.validationErrors.length == 0);
     });
   }
 
   validateTaskDefinitions() {
-    this.taskWizardPage.hasError = false
+    this.taskWizardPage.hasError = false;
     this.validateVMsExist();
     this.validateNoDuplicateNames();
-    this.validateAllFieldsHaveValues()
+    this.validateAllFieldsHaveValues();
   }
 
-  
   private validateVMsExist() {
-    const vmNames = this.selectedscenario.virtualmachines.map(vm => Object.keys(vm)).reduce((acc, val) => acc.concat(val), []);
-    const taskVmNames = this.selectedscenario.vm_tasks.map(vmTask => vmTask.vm_name);
+    const vmNames = this.selectedscenario.virtualmachines
+      .map((vm) => Object.keys(vm))
+      .reduce((acc, val) => acc.concat(val), []);
+    const taskVmNames = this.selectedscenario.vm_tasks.map(
+      (vmTask) => vmTask.vm_name,
+    );
     taskVmNames.forEach((name) => {
       if (!vmNames.includes(name)) {
         this.taskWizardPage.hasError = true;
-        this.validationErrors.push({ message: "One or more Tasks reference a Virtual Machnine Name, that does not exist" });
+        this.validationErrors.push({
+          message:
+            'One or more Tasks reference a Virtual Machnine Name, that does not exist',
+        });
       }
     });
   }
-  
+
   private validateNoDuplicateNames() {
-    this.selectedscenario.vm_tasks.forEach(vmTask => {
-      let tmpArr = [];
-      vmTask.tasks.forEach(task => {
+    this.selectedscenario.vm_tasks.forEach((vmTask) => {
+      const tmpArr: string[] = [];
+      vmTask.tasks.forEach((task) => {
         const taskName = task.name;
         if (tmpArr.indexOf(taskName) < 0) {
           tmpArr.push(taskName);
         } else {
           this.taskWizardPage.hasError = true;
-          this.validationErrors.push({ message: "Task " + vmTask.vm_name + ": " + taskName + " is a Duplicate" });
+          this.validationErrors.push({
+            message:
+              'Task ' + vmTask.vm_name + ': ' + taskName + ' is a Duplicate',
+          });
         }
       });
     });
   }
 
   private validateAllFieldsHaveValues() {
-    this.selectedscenario.vm_tasks.forEach(vmTask => {
+    this.selectedscenario.vm_tasks.forEach((vmTask) => {
       vmTask.tasks.forEach((task) => {
-        if (task.name.length == 0 || task.command.length == 0 || task.description.length == 0 || task.return_type.length == 0) {
+        if (
+          task.name.length == 0 ||
+          task.command.length == 0 ||
+          task.description.length == 0 ||
+          task.return_type.length == 0
+        ) {
           this.taskWizardPage.hasError = true;
-          this.validationErrors.push({ message: "Task " + vmTask.vm_name + ": " + task.name + " is missing required information" });
+          this.validationErrors.push({
+            message:
+              'Task ' +
+              vmTask.vm_name +
+              ': ' +
+              task.name +
+              ' is missing required information',
+          });
         }
-      })      
-    })
+      });
+    });
   }
 
   open(wizardMode: 'create' | 'edit', scenario?: Scenario) {
@@ -268,7 +292,7 @@ export class ScenarioWizardComponent implements OnInit {
   }
 
   saveUpdatedScenario() {
-    if(!this.selectedScenarioHasVM()){
+    if (!this.selectedScenarioHasVM()) {
       this.selectedscenario.virtualmachines = [];
     }
 
@@ -345,7 +369,7 @@ export class ScenarioWizardComponent implements OnInit {
   }
 
   selectedScenarioHasVMSet(): boolean {
-    return this.selectedscenario.virtualmachines.length > 0
+    return this.selectedscenario.virtualmachines.length > 0;
   }
 
   selectedScenarioHasVM(): boolean {
@@ -356,7 +380,7 @@ export class ScenarioWizardComponent implements OnInit {
             return true;
           }
           return false;
-        }
+        },
       );
       if (validVMSet.length == this.selectedscenario.virtualmachines.length) {
         return true;
@@ -414,8 +438,8 @@ export class ScenarioWizardComponent implements OnInit {
     this._editScenario(scenario);
   }
 
-  private _editScenario(s: Scenario) {
-    if (s != undefined) {
+  private _editScenario(s?: Scenario) {
+    if (s) {
       // this is only a partial scenario, we need to get the full
       this.scenarioService.get(s.id).subscribe({
         next: (s: Scenario) => {
@@ -424,11 +448,14 @@ export class ScenarioWizardComponent implements OnInit {
             scenario_name: s.name,
             scenario_description: s.description,
             keepalive_amount: Number(
-              s.keepalive_duration.substring(0, s.keepalive_duration.length - 1)
+              s.keepalive_duration.substring(
+                0,
+                s.keepalive_duration.length - 1,
+              ),
             ),
             keepalive_unit: s.keepalive_duration.substring(
               s.keepalive_duration.length - 1,
-              s.keepalive_duration.length
+              s.keepalive_duration.length,
             ),
           });
           const pauseDuration = Number(s.pause_duration?.slice(0, -1));

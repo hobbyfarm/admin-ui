@@ -1,19 +1,22 @@
 <div class="editor-actions">
-  <div
-    *ngFor="let action of ACTIONS"
-    class="editor-action-button"
-    [title]="action.title ?? action.name"
-    (click)="editorPreset(action)"
-  >
-    <ng-container *ngIf="action.icon"
-      ><cds-icon [attr.shape]="action.icon"></cds-icon
-    ></ng-container>
-    <ng-container *ngIf="!action.icon"
-      ><b>{{ action.name }}</b></ng-container
+  @for (action of ACTIONS; track action) {
+    <div
+      class="editor-action-button"
+      [title]="action.title ?? action.name"
+      (click)="editorPreset(action)"
     >
-  </div>
+      @if (action.icon) {
+        <cds-icon [attr.shape]="action.icon"></cds-icon>
+      } @else {
+        <b>{{ action.name }}</b>
+      }
+    </div>
+  }
   <div class="editor-action-button reference">
-    <a href="https://hobbyfarm.github.io/docs/appendix/markdown_syntax/" target="_blank" >
+    <a
+      href="https://hobbyfarm.github.io/docs/appendix/markdown_syntax/"
+      target="_blank"
+    >
       <cds-icon shape="pop-out"></cds-icon>
       Syntax Reference
     </a>

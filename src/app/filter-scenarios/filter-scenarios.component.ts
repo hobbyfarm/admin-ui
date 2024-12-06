@@ -4,7 +4,7 @@ import { ClrDatagridSortOrder } from '@clr/angular';
 import { RbacService } from '../data/rbac.service';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
-import { ScheduledEvent } from '../data/scheduledevent';
+import { ScheduledEventBase } from '../data/scheduledevent';
 import { VMTemplate } from '../data/vmtemplate';
 import { VmtemplateService } from '../data/vmtemplate.service';
 
@@ -16,7 +16,7 @@ import { VmtemplateService } from '../data/vmtemplate.service';
 export class FilterScenariosComponent implements OnInit {
   public categories: string[] = [];
   public selectedCategories: string[] = [];
-  public se: ScheduledEvent = new ScheduledEvent();
+  public se: ScheduledEventBase = new ScheduledEventBase();
   public ascSort = ClrDatagridSortOrder.ASC;
   public scenarios: Scenario[] = [];
   public filteredScenarios: Scenario[] = [];
@@ -57,7 +57,7 @@ export class FilterScenariosComponent implements OnInit {
       return;
     }
 
-    let sc = [];
+    let sc: Scenario[] = [];
 
     if (this.selectedCategories.includes('__none__')) {
       this.scenarios.forEach((s) => {

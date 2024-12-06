@@ -1,8 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
 import { atou } from '../unicode';
 import { AccessSet } from './accessset';
 import {
@@ -13,22 +11,24 @@ import {
   Verb,
 } from './rbac';
 import { ServerResponse } from './serverresponse';
+import { GargantuaClientFactory } from './gargantua.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RbacService {
   private static all: string = '*';
+  private userAccess: Promise<AccessSet | null>;
+  private garg = this.gcf.scopedClient('/auth');
 
-  private userAccess: Promise<AccessSet>;
-
-  constructor(public http: HttpClient) {
+  constructor(private gcf: GargantuaClientFactory) {
     // only load an access set if the hobbyfarm token is in place
     // otherwise we would be loading an empty access set
-    if (localStorage.getItem('hobbyfarm_admin_token')?.length > 0) {
+    const hfToken = localStorage.getItem('hobbyfarm_admin_token');
+    if (hfToken && hfToken.length > 0) {
       this.LoadAccessSet();
     } else {
-      this.userAccess = new Promise<AccessSet>((resolve) => {
+      this.userAccess = new Promise<AccessSet | null>((resolve) => {
         resolve(null);
       });
     }
@@ -38,14 +38,14 @@ export class RbacService {
   // can wait for its completion. This is especially important in
   // login.component, because we don't want to navigate the user to
   // the home page before we have completed setting up rbac.
-  public LoadAccessSet(): Promise<AccessSet> {
+  public LoadAccessSet(): Promise<AccessSet | null> {
     this.userAccess = lastValueFrom(
-      this.http.get(environment.server + '/auth/access').pipe(
+      this.garg.get('/access').pipe(
         map((s: ServerResponse) => {
           const accessSet: AccessSet = JSON.parse(atou(s.content));
           return accessSet;
-        })
-      )
+        }),
+      ),
     );
     return this.userAccess;
   }
@@ -59,7 +59,7 @@ export class RbacService {
     }
 
     let allowed = false;
-    return this.userAccess.then((accessSet: AccessSet) => {
+    return this.userAccess.then((accessSet: AccessSet | null) => {
       if (accessSet) {
         [RbacService.all, apiGroup].forEach((a) => {
           [RbacService.all, resource].forEach((r) => {

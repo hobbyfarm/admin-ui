@@ -1,42 +1,60 @@
 <clr-modal #modal [(clrModalOpen)]="modalOpen" [clrModalSize]="'lg'">
-    <h3 class="modal-title">Create Role Binding</h3>
-    <div class="modal-body">
-        <form clrForm [formGroup]="form">
-            <clr-select-container>
-                <label>Role</label>
-                <select clrSelect name="role" formControlName="role">
-                    <option [ngValue]="null" hidden>Select a role</option>
-                    <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
-                </select>
-                <clr-control-helper>Select a role for the new role binding</clr-control-helper>
-                <clr-control-error>Role is required</clr-control-error>
-            </clr-select-container>
-        </form>
-        <table class="table table-compact" *ngIf="selectedRole">
-            <thead>
-                <tr>
-                    <th>API Groups</th>
-                    <th>Resources</th>
-                    <th>Verbs</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let rule of selectedRole?.rules">
-                    <td>
-                        <span class="label label-purple" *ngFor="let apiGroup of rule?.apiGroups">{{ apiGroup }}</span>
-                    </td>
-                    <td>
-                        <span class="label label-purple" *ngFor="let resource of rule?.resources">{{ resource }}</span>
-                    </td>
-                    <td>
-                        <span class="label label-purple" *ngFor="let verb of rule?.verbs">{{ verb }}</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-danger-outline" (click)="modalOpen = false">Cancel</button>
-        <button class="btn btn-success" (click)="save()" [disabled]="!form.valid">Save</button>
-    </div>
+  <h3 class="modal-title">Create Role Binding</h3>
+  <div class="modal-body">
+    <form clrForm [formGroup]="form">
+      <clr-select-container>
+        <label>Role</label>
+        <select clrSelect name="role" formControlName="role">
+          <option [ngValue]="null" hidden>Select a role</option>
+          @for (role of roles; track role) {
+            <option [value]="role.name">{{ role.name }}</option>
+          }
+        </select>
+        <clr-control-helper
+          >Select a role for the new role binding</clr-control-helper
+        >
+        <clr-control-error>Role is required</clr-control-error>
+      </clr-select-container>
+    </form>
+    @if (selectedRole) {
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>API Groups</th>
+            <th>Resources</th>
+            <th>Verbs</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rule of selectedRole.rules; track rule) {
+            <tr>
+              <td>
+                @for (apiGroup of rule?.apiGroups; track apiGroup) {
+                  <span class="label label-purple">{{ apiGroup }}</span>
+                }
+              </td>
+              <td>
+                @for (resource of rule?.resources; track resource) {
+                  <span class="label label-purple">{{ resource }}</span>
+                }
+              </td>
+              <td>
+                @for (verb of rule?.verbs; track verb) {
+                  <span class="label label-purple">{{ verb }}</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-danger-outline" (click)="modalOpen = false">
+      Cancel
+    </button>
+    <button class="btn btn-success" (click)="save()" [disabled]="!form.valid">
+      Save
+    </button>
+  </div>
 </clr-modal>

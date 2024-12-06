@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CodeExec } from '../step/CodeExec';
+import { CodeExec } from './CodeExec';
 
 @Injectable()
 export class CtrService {

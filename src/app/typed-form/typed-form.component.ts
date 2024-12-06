@@ -24,7 +24,7 @@ import {
 })
 export class TypedFormComponent implements OnInit, OnChanges {
   @Input() typedInputs: TypedInput[] = []; // Input: List of typed inputs for the form
-  @Output() syncedInputs: EventEmitter<TypedInput[]> = new EventEmitter(null); // Output: Emit updated TypedInput list when form changes
+  @Output() syncedInputs: EventEmitter<TypedInput[]> = new EventEmitter(); // Output: Emit updated TypedInput list when form changes
   @Output() inputsValid: EventEmitter<boolean> = new EventEmitter(false); // Output: Form is invalid
   @Input() groupType: FormGroupType = FormGroupType.LIST; // group Items, otherwise display all settings
   @Input() groupOrder: string[] = []; // start with this groups, other groups follow alphabetically.
@@ -72,10 +72,12 @@ export class TypedFormComponent implements OnInit, OnChanges {
       } else if (input.isBooleanArray(input.value)) {
         control = input.getTypedInputFormArray(input.value);
       } else if (input.isStringMap(input.value)) {
+        // Use individual branches for each map type. getTypedInputMap() does not accept union types.
         control = input.getTypedInputMap(input.value);
       } else if (input.isNumberMap(input.value)) {
         control = input.getTypedInputMap(input.value);
-      } else if (input.isBooleanMap(input.value)) {
+      } else {
+        // input must be boolean map (only option left)
         control = input.getTypedInputMap(input.value);
       }
       this.formGroup.addControl(input.id, control);
@@ -118,13 +120,13 @@ export class TypedFormComponent implements OnInit, OnChanges {
             arrayControl:
               | FormControl<string>
               | FormControl<number>
-              | FormControl<boolean>
+              | FormControl<boolean>,
           ) => {
             if (arrayControl.errors) {
               valid = false;
               return;
             }
-          }
+          },
         );
       } else if (input.isGenericKeyValueMapArray(control)) {
         //is required but has no field
@@ -138,7 +140,7 @@ export class TypedFormComponent implements OnInit, OnChanges {
             formGroup:
               | GenericKeyValueGroup<string>
               | GenericKeyValueGroup<number>
-              | GenericKeyValueGroup<boolean>
+              | GenericKeyValueGroup<boolean>,
           ) => {
             if (
               formGroup.controls['key'].errors ||
@@ -147,7 +149,7 @@ export class TypedFormComponent implements OnInit, OnChanges {
               valid = false;
               return;
             }
-          }
+          },
         );
       }
     });
@@ -173,7 +175,7 @@ export class TypedFormComponent implements OnInit, OnChanges {
     // Sort the inputs within each group by their 'weight' property in descending order
     for (const groupName in groupedInputs) {
       groupedInputs[groupName].sort(
-        (a, b) => (b.weight || 0) - (a.weight || 0)
+        (a, b) => (b.weight || 0) - (a.weight || 0),
       );
     }
     return groupedInputs;
@@ -197,14 +199,5 @@ export class TypedFormComponent implements OnInit, OnChanges {
       // if(input.isKeyValueMapArrayNumber(formControl))
       return input.getTypedInputRawMap(formControl);
     }
-  }
-
-  getTypedInputEnumValues(input: TypedInput) {
-    if (!input.isEnum()) {
-      return [];
-    }
-    return input.validation.enum.map((v) => {
-      return input.getTypedInputScalarValue(v);
-    });
   }
 }

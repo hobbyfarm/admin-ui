@@ -2,29 +2,37 @@
   <h3 class="modal-title">Delete Information</h3>
   <div class="modal-body">
     <ul>
-      <li *ngFor="let info of deleteInfo" class="info-li">
-        <span *ngIf="info.deleted">
-          <cds-icon shape="success-standard" status="success" solid></cds-icon>
-          {{ info.user.email }} - {{ info.message }}
-        </span>
-        <span *ngIf="!info.deleted">
-          <cds-icon shape="error-standard" status="danger" solid></cds-icon>
-          {{ info.user.email }} - {{ info.message }}
-        </span>
-      </li>
+      @for (info of deleteInfo; track info) {
+        <li class="info-li">
+          @if (info.deleted) {
+            <span>
+              <cds-icon
+                shape="success-standard"
+                status="success"
+                solid
+              ></cds-icon>
+              {{ info.user.email }} - {{ info.message }}
+            </span>
+          } @else {
+            <span>
+              <cds-icon shape="error-standard" status="danger" solid></cds-icon>
+              {{ info.user.email }} - {{ info.message }}
+            </span>
+          }
+        </li>
+      }
     </ul>
   </div>
   <div class="modal-footer">
-    <div *ngIf="initialUsers != deletedUsers">
-      <span class="spinner spinner-inline"> Deleting Users... </span>
-      <span> Deleting Users... </span>
-    </div>
-    <button
-      class="btn btn-success-outline"
-      *ngIf="initialUsers == deletedUsers"
-      (click)="deleteDone()"
-    >
-      Done
-    </button>
+    @if (initialUsers != deletedUsers) {
+      <div>
+        <span class="spinner spinner-inline"> Deleting Users... </span>
+        <span> Deleting Users... </span>
+      </div>
+    } @else {
+      <button class="btn btn-success-outline" (click)="deleteDone()">
+        Done
+      </button>
+    }
   </div>
 </clr-modal>

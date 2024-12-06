@@ -25,21 +25,23 @@
     </div>
   </summary>
 
-  <ul class="list-group" *ngIf="task">
-    <li class="list-group-item">
-      <p>Description: {{ task.description }}</p>
-      <p>Command: {{ task.command }}</p>
-    </li>
-    <li class="list-group-item">
-      <p>Expected Output: {{ task.expected_output_value }}</p>
-      <p>Actual Output: ''</p>
-    </li>
-    <li class="list-group-item">
-      <p>Expected Returncode: {{ task.expected_return_code }}</p>
-      <p>Actual Returncode: ''</p>
-    </li>
-    <li class="list-group-item">
-      <p>Success: true/false</p>
-    </li>
-  </ul>
+  @if (task) {
+    <ul class="list-group">
+      <li class="list-group-item">
+        <p>Description: {{ task.description }}</p>
+        <p>Command: {{ task.command }}</p>
+      </li>
+      <li class="list-group-item">
+        <p>Expected Output: {{ task.expected_output_value }}</p>
+        <p>Actual Output: ''</p>
+      </li>
+      <li class="list-group-item">
+        <p>Expected Returncode: {{ task.expected_return_code }}</p>
+        <p>Actual Returncode: ''</p>
+      </li>
+      <li class="list-group-item">
+        <p>Success: true/false</p>
+      </li>
+    </ul>
+  }
 </details>

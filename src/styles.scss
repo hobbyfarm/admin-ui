@@ -1,5 +1,6 @@
 @import "./theme.scss";
 @import "../node_modules/@clr/ui/src/main.scss";
+@import "../node_modules/@angular/cdk/overlay-prebuilt.css";
 
 .row {
   @extend .clr-row;
@@ -93,4 +94,13 @@ overflows the modal and hence displays an unneeded scrollbar */
     background-color: $clr-global-selection-color;
     color: $clr-color-action-800;
   }
+}
+
+.cdk-overlay-container {
+  z-index: 9999;
+}
+
+.cdk-overlay-container .tooltip-content p {
+  margin: 0px;
+  color: var(--clr-tooltip-color, #fff);
 }

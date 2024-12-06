@@ -2,28 +2,7 @@
   <header class="header header-7" app-header></header>
   <div class="content-container">
     <div class="content-area">
-      <clr-alert
-        [clrAlertType]="'danger'"
-        [(clrAlertClosed)]="seDangerClosed"
-        [clrAlertClosable]="false"
-      >
-        <clr-alert-item>
-          <span class="alert-text">
-            {{ seDangerAlert }}
-          </span>
-        </clr-alert-item>
-      </clr-alert>
-      <clr-alert
-        [clrAlertType]="'success'"
-        [(clrAlertClosed)]="seSuccessClosed"
-        [clrAlertClosable]="false"
-      >
-        <clr-alert-item>
-          <span class="alert-text">
-            {{ seSuccessAlert }}
-          </span>
-        </clr-alert-item>
-      </clr-alert>
+      <alert #alert></alert>
       <h3>Scheduled Events</h3>
       <div class="clr-row">
         <div class="clr-col">
@@ -63,61 +42,55 @@
             </clr-dg-column>
 
             <clr-dg-row *clrDgItems="let se of events">
-              <clr-dg-action-overflow *ngIf="showActionOverflow">
-                <button
-                  class="action-item"
-                  (click)="openEdit(se)"
-                  *ngIf="allowEdit"
-                >
-                  Edit
-                </button>
-                <button class="action-item" (click)="openOtac(se)">
-                  OTACs
-                </button>
-                <button
-                  class="action-item"
-                  (click)="openDelete(se)"
-                  *rbac="['scheduledevents.delete']"
-                >
-                  Delete
-                </button>
-              </clr-dg-action-overflow>
+              @if (showActionOverflow) {
+                <clr-dg-action-overflow>
+                  @if (allowEdit) {
+                    <button class="action-item" (click)="openEdit(se)">
+                      Edit
+                    </button>
+                  }
+                  <button class="action-item" (click)="openOtac(se)">
+                    OTACs
+                  </button>
+                  <button
+                    class="action-item"
+                    (click)="openDelete(se)"
+                    *rbac="['scheduledevents.delete']"
+                  >
+                    Delete
+                  </button>
+                </clr-dg-action-overflow>
+              }
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
               <clr-dg-cell *rbac="['users.list']">{{
                 se.creatorEmail ? se.creatorEmail : "...loading"
               }}</clr-dg-cell>
-              <clr-dg-cell>{{ se.start_time | date : "long" }}</clr-dg-cell>
-              <clr-dg-cell>{{ se.end_time | date : "long" }}</clr-dg-cell>
+              <clr-dg-cell>{{ se.start_time | date: "long" }}</clr-dg-cell>
+              <clr-dg-cell>{{ se.end_time | date: "long" }}</clr-dg-cell>
               <clr-dg-cell *rbac="['courses.list']">
-                <ng-container *ngIf="se.courses && !se.courseNames"
-                  >...loading</ng-container
-                >
-                <span class="label" *ngFor="let c of se.courseNames">{{
-                  c
-                }}</span>
+                @if (se.courses && !se.courseNames) {
+                  ...loading
+                }
+                @for (c of se.courseNames; track c) {
+                  <span class="label">{{ c }}</span>
+                }
               </clr-dg-cell>
               <clr-dg-cell *rbac="['scenarios.list']">
-                <ng-container *ngIf="se.scenarios && !se.scenarioNames"
-                  >...loading</ng-container
-                >
-                <span class="label" *ngFor="let s of se.scenarioNames">{{
-                  s
-                }}</span>
+                @if (se.scenarios && !se.scenarioNames) {
+                  ...loading
+                }
+                @for (s of se.scenarioNames; track s) {
+                  <span class="label">{{ s }}</span>
+                }
               </clr-dg-cell>
               <clr-dg-cell>
-                <ng-container
-                  *ngIf="
-                    se.active && se.provisioned && !se.finished && se.ready
-                  "
-                >
+                @if (se.active && se.provisioned && !se.finished && se.ready) {
                   <cds-icon shape="clock"></cds-icon> In Progress
-                </ng-container>
-                <ng-container *ngIf="!se.active">
+                } @else if (!se.active) {
                   <cds-icon shape="times"></cds-icon> Inactive
-                </ng-container>
-                <ng-container *ngIf="se.finished">
+                } @else if (se.finished) {
                   <cds-icon shape="check"></cds-icon> Finished
-                </ng-container>
+                }
               </clr-dg-cell>
             </clr-dg-row>
           </clr-datagrid>

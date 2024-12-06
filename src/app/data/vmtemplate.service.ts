@@ -33,7 +33,10 @@ export class CustomHttpParamEncoder implements HttpParameterCodec {
   providedIn: 'root',
 })
 export class VmtemplateService extends ListableResourceClient<VMTemplate> {
-  constructor(public http: HttpClient, gcf: GargantuaClientFactory) {
+  constructor(
+    public http: HttpClient,
+    gcf: GargantuaClientFactory,
+  ) {
     super(gcf.scopedClient('/a/vmtemplate'));
   }
 
@@ -44,10 +47,7 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
       .set('image', template.image)
       .set('config_map', JSON.stringify(template.config_map));
 
-    return this.http.put(
-      environment.server + '/a/vmtemplate/' + template.id + '/update',
-      params
-    );
+    return this.garg.put(`/${template.id}/update`, params);
   }
 
   public create(template: VMTemplate) {
@@ -56,30 +56,30 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
       .set('image', template.image)
       .set('config_map', JSON.stringify(template.config_map));
 
-    return this.http
-      .post(environment.server + '/a/vmtemplate/create', params)
+    return this.garg
+      .post('/create', params)
       .pipe(
         tap(() => {
           this.list('', true);
-        })
+        }),
       );
   }
 
   public get(id: string) {
-    return this.http.get(environment.server + '/a/vmtemplate/' + id).pipe(
+    return this.garg.get(`/${id}`).pipe(
       switchMap((s: ServerResponse) => {
         return of(JSON.parse(atou(s.content)));
-      })
+      }),
     );
   }
 
   public delete(id: string) {
-    return this.http
-      .delete(environment.server + '/a/vmtemplate/' + id + '/delete')
+    return this.garg
+      .delete(`/${id}/delete`)
       .pipe(
         tap(() => {
           this.deleteAndNotify(id);
-        })
+        }),
       );
   }
 }

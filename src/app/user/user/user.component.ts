@@ -16,7 +16,7 @@ import { RbacService } from 'src/app/data/rbac.service';
 export class UserComponent implements OnInit {
   public users: User[] = [];
 
-  public selectedUser: User;
+  public selectedUser: User | null = null;
   public selectedUsers: User[] = [];
 
   public selectRbac: boolean = false;

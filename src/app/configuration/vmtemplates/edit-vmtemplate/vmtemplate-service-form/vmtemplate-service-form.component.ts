@@ -1,5 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { DEFAULT_ALERT_WARNING_DURATION } from 'src/app/alert/alert';
+import { AlertComponent } from 'src/app/alert/alert.component';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { PredefinedServiceService } from 'src/app/data/predefinedservice.service';
 import { Protocol } from 'src/app/data/protocol';
@@ -15,12 +17,12 @@ import * as uuid from 'uuid';
   styleUrls: ['./vmtemplate-service-form.component.scss'],
 })
 export class VMTemplateServiceFormComponent implements OnInit {
-  public predefinedInterfaces: VMTemplateServiceConfiguration[];
+  predefinedInterfaces: VMTemplateServiceConfiguration[];
 
   @Input()
   cloudConfig: CloudInitConfig;
 
-  public selectedNewInterface: VMTemplateServiceConfiguration = undefined;
+  public selectedNewInterface?: VMTemplateServiceConfiguration;
   public newVMServiceFormGroup: FormGroup<{
     name: FormControl<string>;
     port: FormControl<number>;
@@ -35,8 +37,8 @@ export class VMTemplateServiceFormComponent implements OnInit {
     cloudConfigString: FormControl<string>;
     hasWebinterface: FormControl<boolean>;
   }>;
-  public editVMService: VMTemplateServiceConfiguration;
-  public dragServices = [];
+  public editVMService: VMTemplateServiceConfiguration | null;
+  public dragServices: VMTemplateServiceConfiguration[] = [];
 
   //Open/Close Modals
   public editCloudConfigModalOpen: boolean = false;
@@ -46,9 +48,11 @@ export class VMTemplateServiceFormComponent implements OnInit {
   private DEFAULT_PORT = 80;
   private DEFAULT_PATH = '/';
 
+  @ViewChild('alert') alert: AlertComponent;
+
   constructor(
     private fb: NonNullableFormBuilder,
-    private pdsService: PredefinedServiceService
+    private pdsService: PredefinedServiceService,
   ) {}
 
   ngOnInit(): void {
@@ -76,47 +80,53 @@ export class VMTemplateServiceFormComponent implements OnInit {
   changeOrder(event: VMTemplateServiceConfiguration[]) {
     this.dragServices = event;
     const newOrderedMap = new Map(
-      this.dragServices.map((service) => [service.name, service])
+      this.dragServices.map((service) => [service.name, service]),
     );
     this.cloudConfig.vmServices = newOrderedMap;
     this.cloudConfig.buildNewYAMLFile();
   }
 
-  public buildNewVMServiceDetails(edit: boolean = false) {
+  public buildNewVMServiceDetails(
+    vmSvcConfig: VMTemplateServiceConfiguration | null = null,
+  ) {
     this.newVMServiceFormGroup = this.fb.group({
-      name: this.fb.control<string>(edit ? this.editVMService.name : ''),
+      name: this.fb.control<string>(vmSvcConfig ? vmSvcConfig.name : ''),
       port: this.fb.control<number>(
-        edit ? this.editVMService.port ?? this.DEFAULT_PORT : this.DEFAULT_PORT
+        vmSvcConfig
+          ? (vmSvcConfig.port ?? this.DEFAULT_PORT)
+          : this.DEFAULT_PORT,
       ),
       path: this.fb.control<string>(
-        edit ? this.editVMService.path ?? this.DEFAULT_PATH : this.DEFAULT_PATH
+        vmSvcConfig
+          ? (vmSvcConfig.path ?? this.DEFAULT_PATH)
+          : this.DEFAULT_PATH,
       ),
       protocol: this.fb.control<Protocol>(
-        edit ? this.editVMService.protocol ?? 'http' : 'http'
+        vmSvcConfig ? (vmSvcConfig.protocol ?? 'http') : 'http',
       ),
       hasOwnTab: this.fb.control<boolean>(
-        edit ? this.editVMService.hasOwnTab : false
+        vmSvcConfig ? (vmSvcConfig.hasOwnTab ?? false) : false,
       ),
       noPathRewriting: this.fb.control<boolean>(
-        edit ? this.editVMService.noRewriteRootPath : false
+        vmSvcConfig ? (vmSvcConfig.noRewriteRootPath ?? false) : false,
       ),
       proxyHostHeaderRewriting: this.fb.control<boolean>(
-        edit ? this.editVMService.rewriteHostHeader : true
+        vmSvcConfig ? (vmSvcConfig.rewriteHostHeader ?? true) : true,
       ),
       proxyOriginHeaderRewriting: this.fb.control<boolean>(
-        edit ? this.editVMService.rewriteOriginHeader : false
+        vmSvcConfig ? (vmSvcConfig.rewriteOriginHeader ?? false) : false,
       ),
       disallowIFrame: this.fb.control<boolean>(
-        edit ? this.editVMService.disallowIFrame : true
+        vmSvcConfig ? (vmSvcConfig.disallowIFrame ?? true) : true,
       ),
       disableAuthorizationHeader: this.fb.control<boolean>(
-        edit ? this.editVMService.disableAuthorizationHeader : true
+        vmSvcConfig ? (vmSvcConfig.disableAuthorizationHeader ?? true) : true,
       ),
       cloudConfigString: this.fb.control<string>(
-        edit ? getCloudConfigString(this.editVMService) : ''
+        vmSvcConfig ? getCloudConfigString(vmSvcConfig) : '',
       ),
       hasWebinterface: this.fb.control<boolean>(
-        edit ? this.editVMService.hasWebinterface : false
+        vmSvcConfig ? vmSvcConfig.hasWebinterface : false,
       ),
     });
   }
@@ -156,7 +166,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
     newVMService.cloudConfigString =
       this.newVMServiceFormGroup.controls.cloudConfigString.value;
     newVMService.cloudConfigMap = this.cloudConfig.buildMapFromString(
-      newVMService.cloudConfigString
+      newVMService.cloudConfigString,
     );
     this.cloudConfig.addVMService(newVMService);
     this.buildNewVMServiceDetails();
@@ -165,9 +175,18 @@ export class VMTemplateServiceFormComponent implements OnInit {
   }
 
   selectModalClose() {
+    if (
+      !this.selectedNewInterface ||
+      !this.selectedNewInterface.cloudConfigString
+    ) {
+      const alertMsg =
+        'Please select a valid predefined service or press "cancel"';
+      this.alert.warning(alertMsg, true, DEFAULT_ALERT_WARNING_DURATION);
+      return;
+    }
     this.selectedNewInterface.cloudConfigMap =
       this.cloudConfig.buildMapFromString(
-        this.selectedNewInterface.cloudConfigString
+        this.selectedNewInterface.cloudConfigString,
       );
     this.cloudConfig.addVMService(this.selectedNewInterface);
     this.selectedNewInterface = undefined;
@@ -176,7 +195,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
 
   editVMServiceClicked(editVMService: VMTemplateServiceConfiguration) {
     this.editVMService = editVMService;
-    this.buildNewVMServiceDetails(true);
+    this.buildNewVMServiceDetails(editVMService);
     this.newVMServiceModalOpen = true;
   }
 }

@@ -105,12 +105,11 @@
         </tr>
       </thead>
       <tbody formArrayName="params">
-        <ng-container
-          *ngFor="
-            let p of environmentSpecifics['controls'].params['controls'];
-            let i = index
-          "
-        >
+        @for (
+          p of environmentSpecifics["controls"].params["controls"];
+          track p;
+          let i = $index
+        ) {
           <tr formGroupName="{{ i }}">
             <td>
               <clr-input-container class="table-input">
@@ -147,15 +146,15 @@
               </button>
             </td>
           </tr>
-        </ng-container>
+        }
       </tbody>
     </table>
-    <span
-      class="clr-subtext"
-      *ngIf="environmentSpecifics['controls'].params['controls'].length != 0"
-      >Parameters require both 'key' and 'value' fields to be set. Remove any
-      parameters that do not meet this criteria.</span
-    >
+    @if (environmentSpecifics["controls"].params["controls"].length != 0) {
+      <span class="clr-subtext"
+        >Parameters require both 'key' and 'value' fields to be set. Remove any
+        parameters that do not meet this criteria.</span
+      >
+    }
   </clr-wizard-page>
 
   <clr-wizard-page
@@ -168,99 +167,100 @@
     this environment.
 
     <br />
-    <ng-container
-      [formGroup]="templateSelection"
-      *ngIf="getValidVMTemplates().length > 0"
-    >
-      <select formControlName="vmt_select">
-        <option
-          *ngFor="let t of getValidVMTemplates(); let i = index"
-          value="{{ t.id }}"
+    @if (getValidVMTemplates().length > 0) {
+      <ng-container [formGroup]="templateSelection">
+        <select formControlName="vmt_select">
+          @for (t of getValidVMTemplates(); track t; let i = $index) {
+            <option value="{{ t.id }}">
+              {{ t.name }}
+            </option>
+          }
+        </select>
+        <button
+          class="btn btn-table btn-link"
+          (click)="newTemplateMapping()"
+          [disabled]="!hasTemplateSelection()"
         >
-          {{ t.name }}
-        </option>
-      </select>
-      <button
-        class="btn btn-table btn-link"
-        (click)="newTemplateMapping()"
-        [disabled]="!hasTemplateSelection()"
-      >
-        <cds-icon shape="plus"></cds-icon> Add VMT
-      </button>
-    </ng-container>
+          <cds-icon shape="plus"></cds-icon> Add VMT
+        </button>
+      </ng-container>
+    }
     <span class="clr-subtext"
       >Parameters require both 'key' and 'value' fields to be set. Remove any
       parameters that do not meet this criteria.</span
     >
     <ng-container [formGroup]="templateMappings">
       <clr-stack-view formArrayName="templates">
-        <clr-stack-block
-          *ngFor="
-            let t of templateMappings['controls'].templates['controls'];
-            let it = index
-          "
-          formGroupName="{{ it }}"
-        >
-          <clr-stack-label>
-            {{ getVirtualMachineTemplateName(t["controls"].template.value) }}
-          </clr-stack-label>
-          <clr-stack-content>
-            <button
-              class="btn btn-table btn-link"
-              (click)="newTemplateParameter(it)"
-            >
-              <cds-icon shape="plus"></cds-icon> Add Parameter
-            </button>
-            <button
-              class="btn btn-table btn-danger-outline"
-              (click)="deleteTemplateMapping(it)"
-            >
-              <cds-icon shape="trash"></cds-icon> Delete
-            </button>
-          </clr-stack-content>
-          <clr-stack-block>
-            <clr-stack-label> Limit </clr-stack-label>
-            <clr-stack-content>
-              <clr-input-container class="no-margin-top">
-                <input
-                  clrInput
-                  type="number"
-                  placeholder="Max. count e.g. 10"
-                  name="count"
-                  width="48"
-                  formControlName="count"
-                />
-              </clr-input-container>
-            </clr-stack-content>
-          </clr-stack-block>
-          <clr-stack-block
-            *ngFor="let p of t['controls'].params['controls']; let ip = index"
-            formArrayName="params"
-          >
-            <clr-stack-label formGroupName="{{ ip }}">
-              <input
-                clrStackInput
-                type="text"
-                placeholder="key"
-                formControlName="key"
-              />
+        @for (
+          t of templateMappings["controls"].templates["controls"];
+          track t;
+          let it = $index
+        ) {
+          <clr-stack-block formGroupName="{{ it }}">
+            <clr-stack-label>
+              {{ getVirtualMachineTemplateName(t["controls"].template.value) }}
             </clr-stack-label>
-            <clr-stack-content formGroupName="{{ ip }}">
-              <input
-                clrStackInput
-                type="text"
-                placeholder="value"
-                formControlName="value"
-              />
+            <clr-stack-content>
+              <button
+                class="btn btn-table btn-link"
+                (click)="newTemplateParameter(it)"
+              >
+                <cds-icon shape="plus"></cds-icon> Add Parameter
+              </button>
               <button
                 class="btn btn-table btn-danger-outline"
-                (click)="deleteTemplateParameter(it, ip)"
+                (click)="deleteTemplateMapping(it)"
               >
-                <cds-icon shape="trash"></cds-icon> Delete Parameter
+                <cds-icon shape="trash"></cds-icon> Delete
               </button>
             </clr-stack-content>
+            <clr-stack-block>
+              <clr-stack-label> Limit </clr-stack-label>
+              <clr-stack-content>
+                <clr-input-container class="no-margin-top">
+                  <input
+                    clrInput
+                    type="number"
+                    placeholder="Max. count e.g. 10"
+                    name="count"
+                    width="48"
+                    formControlName="count"
+                  />
+                </clr-input-container>
+              </clr-stack-content>
+            </clr-stack-block>
+            @for (
+              p of t["controls"].params["controls"];
+              track p;
+              let ip = $index
+            ) {
+              <clr-stack-block formArrayName="params">
+                <clr-stack-label formGroupName="{{ ip }}">
+                  <input
+                    clrStackInput
+                    type="text"
+                    placeholder="key"
+                    formControlName="key"
+                  />
+                </clr-stack-label>
+                <clr-stack-content formGroupName="{{ ip }}">
+                  <input
+                    clrStackInput
+                    type="text"
+                    placeholder="value"
+                    formControlName="value"
+                  />
+                  <button
+                    class="btn btn-table btn-danger-outline"
+                    (click)="deleteTemplateParameter(it, ip)"
+                  >
+                    <cds-icon shape="trash"></cds-icon> Delete Parameter
+                  </button>
+                </clr-stack-content>
+              </clr-stack-block>
+            }
           </clr-stack-block>
-        </clr-stack-block>
+        }
       </clr-stack-view>
     </ng-container>
   </clr-wizard-page>
@@ -283,12 +283,11 @@
         </tr>
       </thead>
       <tbody formArrayName="mappings">
-        <ng-container
-          *ngFor="
-            let im of ipMapping['controls'].mappings['controls'];
-            let i = index
-          "
-        >
+        @for (
+          im of ipMapping["controls"].mappings["controls"];
+          track im;
+          let i = $index
+        ) {
           <tr formGroupName="{{ i }}">
             <td>
               <clr-input-container class="table-input">
@@ -325,15 +324,15 @@
               </button>
             </td>
           </tr>
-        </ng-container>
+        }
       </tbody>
     </table>
-    <span
-      class="clr-subtext"
-      *ngIf="ipMapping['controls'].mappings['controls'].length != 0"
-      >IP mappings require both 'from' and 'to' fields to be set. Remove any
-      mappings that do not meet this criteria.</span
-    >
+    @if (ipMapping["controls"].mappings["controls"].length != 0) {
+      <span class="clr-subtext"
+        >IP mappings require both 'from' and 'to' fields to be set. Remove any
+        mappings that do not meet this criteria.</span
+      >
+    }
   </clr-wizard-page>
 
   <clr-wizard-page (clrWizardPageOnLoad)="updateFormValues()">
@@ -349,57 +348,68 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngIf="!!updateEnv; else newTemplate">
+        @if (!!updateEnv) {
           <tr>
             <td>Display Name</td>
-            <td *ngIf="env.display_name == uneditedEnv.display_name">
-              {{ env.display_name }}
-            </td>
-            <td *ngIf="env.display_name != uneditedEnv.display_name">
-              <span class="del-elem arrow-after">{{
-                uneditedEnv.display_name
-              }}</span>
-              <span class="add-elem">{{ env.display_name }}</span>
-            </td>
+            @if (env.display_name == uneditedEnv.display_name) {
+              <td>
+                {{ env.display_name }}
+              </td>
+            } @else {
+              <td>
+                <span class="del-elem arrow-after">{{
+                  uneditedEnv.display_name
+                }}</span>
+                <span class="add-elem">{{ env.display_name }}</span>
+              </td>
+            }
           </tr>
           <tr>
             <td>DNS Suffix</td>
-            <td *ngIf="env.dnssuffix == uneditedEnv.dnssuffix">
-              {{ env.dnssuffix }}
-            </td>
-            <td *ngIf="env.dnssuffix != uneditedEnv.dnssuffix">
-              <span class="del-elem arrow-after">{{
-                uneditedEnv.dnssuffix
-              }}</span>
-              <span class="add-elem">{{ env.dnssuffix }}</span>
-            </td>
+            @if (env.dnssuffix == uneditedEnv.dnssuffix) {
+              <td>
+                {{ env.dnssuffix }}
+              </td>
+            } @else {
+              <td>
+                <span class="del-elem arrow-after">{{
+                  uneditedEnv.dnssuffix
+                }}</span>
+                <span class="add-elem">{{ env.dnssuffix }}</span>
+              </td>
+            }
           </tr>
           <tr>
             <td>Provider</td>
-            <td *ngIf="env.provider == uneditedEnv.provider">
-              {{ env.provider }}
-            </td>
-            <td *ngIf="env.provider != uneditedEnv.provider">
-              <span class="del-elem arrow-after">{{
-                uneditedEnv.provider
-              }}</span>
-              <span class="add-elem">{{ env.provider }}</span>
-            </td>
+            @if (env.provider == uneditedEnv.provider) {
+              <td>
+                {{ env.provider }}
+              </td>
+            } @else {
+              <td>
+                <span class="del-elem arrow-after">{{
+                  uneditedEnv.provider
+                }}</span>
+                <span class="add-elem">{{ env.provider }}</span>
+              </td>
+            }
           </tr>
           <tr>
             <td>Websocket Endpoint</td>
-            <td *ngIf="env.ws_endpoint == uneditedEnv.ws_endpoint">
-              {{ env.ws_endpoint }}
-            </td>
-            <td *ngIf="env.ws_endpoint != uneditedEnv.ws_endpoint">
-              <span class="del-elem arrow-after">{{
-                uneditedEnv.ws_endpoint
-              }}</span>
-              <span class="add-elem">{{ env.ws_endpoint }}</span>
-            </td>
+            @if (env.ws_endpoint == uneditedEnv.ws_endpoint) {
+              <td>
+                {{ env.ws_endpoint }}
+              </td>
+            } @else {
+              <td>
+                <span class="del-elem arrow-after">{{
+                  uneditedEnv.ws_endpoint
+                }}</span>
+                <span class="add-elem">{{ env.ws_endpoint }}</span>
+              </td>
+            }
           </tr>
-        </ng-container>
-        <ng-template #newTemplate>
+        } @else {
           <tr>
             <td>Display Name</td>
             <td>{{ env.display_name }}</td>
@@ -416,7 +426,7 @@
             <td>Websocket Endpoint</td>
             <td>{{ env.ws_endpoint }}</td>
           </tr>
-        </ng-template>
+        }
       </tbody>
     </table>
 
@@ -429,57 +439,61 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngIf="!!updateEnv; else newTemplate">
-          <tr *ngFor="let item of env.environment_specifics | keyvalue">
-            <!-- view of unedit value -->
-            <td
-              *ngIf="uneditedEnv.environment_specifics.hasOwnProperty(item.key)"
-            >
-              {{ item.key }}
-            </td>
-            <td
-              *ngIf="item.value == uneditedEnv.environment_specifics[item.key]"
-            >
-              {{ item.value }}
-            </td>
-            <!-- view of new key -->
-            <ng-container
-              *ngIf="
+        @if (!!updateEnv) {
+          @for (item of env.environment_specifics | keyvalue; track item) {
+            <tr>
+              <!-- view of unedit value -->
+              @if (uneditedEnv.environment_specifics.hasOwnProperty(item.key)) {
+                <td>
+                  {{ item.key }}
+                </td>
+              }
+              @if (item.value == uneditedEnv.environment_specifics[item.key]) {
+                <td>
+                  {{ item.value }}
+                </td>
+              }
+              <!-- view of new key -->
+              @if (
                 !uneditedEnv.environment_specifics.hasOwnProperty(item.key)
-              "
-            >
-              <td class="add-elem">{{ item.key }}</td>
-              <td class="add-elem">{{ item.value }}</td>
-            </ng-container>
-            <!-- view of edit value -->
-            <td
-              *ngIf="
+              ) {
+                <td class="add-elem">{{ item.key }}</td>
+                <td class="add-elem">{{ item.value }}</td>
+              }
+              <!-- view of edit value -->
+              @if (
                 uneditedEnv.environment_specifics.hasOwnProperty(item.key) &&
                 item.value != uneditedEnv.environment_specifics[item.key]
-              "
-            >
-              <span class="del-elem arrow-after">{{
-                uneditedEnv.environment_specifics[item.key]
-              }}</span>
-              <span class="add-elem">{{ item.value }}</span>
-            </td>
-          </tr>
+              ) {
+                <td>
+                  <span class="del-elem arrow-after">{{
+                    uneditedEnv.environment_specifics[item.key]
+                  }}</span>
+                  <span class="add-elem">{{ item.value }}</span>
+                </td>
+              }
+            </tr>
+          }
           <!-- view deleted key -->
-          <tr *ngFor="let item of uneditedEnv.environment_specifics | keyvalue">
-            <ng-container
-              *ngIf="!env.environment_specifics.hasOwnProperty(item.key)"
-            >
-              <td class="del-elem">{{ item.key }}</td>
-              <td class="del-elem">{{ item.value }}</td>
-            </ng-container>
-          </tr></ng-container
-        >
-        <ng-template #newTemplate>
-          <tr *ngFor="let item of env.environment_specifics | keyvalue">
-            <td>{{ item.key }}</td>
-            <td>{{ item.value }}</td>
-          </tr>
-        </ng-template>
+          @for (
+            item of uneditedEnv.environment_specifics | keyvalue;
+            track item
+          ) {
+            <tr>
+              @if (!env.environment_specifics.hasOwnProperty(item.key)) {
+                <td class="del-elem">{{ item.key }}</td>
+                <td class="del-elem">{{ item.value }}</td>
+              }
+            </tr>
+          }
+        } @else {
+          @for (item of env.environment_specifics | keyvalue; track item) {
+            <tr>
+              <td>{{ item.key }}</td>
+              <td>{{ item.value }}</td>
+            </tr>
+          }
+        }
       </tbody>
     </table>
 
@@ -493,156 +507,150 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngIf="!!updateEnv; else newTemplate">
-          <tr *ngFor="let template of env.template_mapping | keyvalue">
-            <ng-container
-              *ngIf="
-                !isVMTemplateInUneditedEnv(template.key);
-                else templateCountInUneditedEnv
-              "
-            >
-              <td class="add-elem">
-                {{ getVirtualMachineTemplateName(template.key) }}
-              </td>
-              <td class="add-elem">{{ getTemplateCount(template.key) }}</td>
-            </ng-container>
-            <ng-template #templateCountInUneditedEnv>
-              <td>{{ getVirtualMachineTemplateName(template.key) }}</td>
-              <td
-                *ngIf="
+        @if (!!updateEnv) {
+          @for (template of env.template_mapping | keyvalue; track template) {
+            <tr>
+              @if (!isVMTemplateInUneditedEnv(template.key)) {
+                <td class="add-elem">
+                  {{ getVirtualMachineTemplateName(template.key) }}
+                </td>
+                <td class="add-elem">{{ getTemplateCount(template.key) }}</td>
+              } @else {
+                <td>{{ getVirtualMachineTemplateName(template.key) }}</td>
+                @if (
                   getTemplateCount(template.key) ==
                   getTemplateUnEditEnvCount(template.key)
-                "
-              >
-                {{ getTemplateCount(template.key) }}
-              </td>
-              <td
-                *ngIf="
-                  getTemplateCount(template.key) !=
-                  getTemplateUnEditEnvCount(template.key)
-                "
-              >
-                <span class="del-elem arrow-after">{{
-                  getTemplateUnEditEnvCount(template.key)
-                }}</span>
-                <span class="add-elem">{{
-                  getTemplateCount(template.key)
-                }}</span>
-              </td>
-            </ng-template>
-            <td>
-              <table class="table table-compact">
-                <thead>
-                  <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <ng-container
-                    *ngIf="
-                      !isVMTemplateInUneditedEnv(template.key);
-                      else templateInUneditedEnv
-                    "
-                  >
-                    <tr *ngFor="let item of template.value | keyvalue">
-                      <td class="add-elem">{{ item.key }}</td>
-                      <td class="add-elem">{{ item.value }}</td>
+                ) {
+                  <td>
+                    {{ getTemplateCount(template.key) }}
+                  </td>
+                } @else {
+                  <td>
+                    <span class="del-elem arrow-after">{{
+                      getTemplateUnEditEnvCount(template.key)
+                    }}</span>
+                    <span class="add-elem">{{
+                      getTemplateCount(template.key)
+                    }}</span>
+                  </td>
+                }
+              }
+              <td>
+                <table class="table table-compact">
+                  <thead>
+                    <tr>
+                      <th>Key</th>
+                      <th>Value</th>
                     </tr>
-                  </ng-container>
-                  <ng-template #templateInUneditedEnv>
-                    <tr *ngFor="let item of template.value | keyvalue">
-                      <!-- view of unedit value -->
-                      <td
-                        *ngIf="
-                          uneditedEnv.template_mapping[
-                            template.key
-                          ].hasOwnProperty(item.key)
-                        "
-                      >
-                        {{ item.key }}
-                      </td>
-                      <td
-                        *ngIf="
-                          item.value ==
-                          uneditedEnv.template_mapping[template.key][item.key]
-                        "
-                      >
-                        {{ item.value }}
-                      </td>
-                      <!-- view of new key -->
-                      <ng-container
-                        *ngIf="
-                          !uneditedEnv.template_mapping[
-                            template.key
-                          ].hasOwnProperty(item.key)
-                        "
-                      >
-                        <td class="add-elem">{{ item.key }}</td>
-                        <td class="add-elem">{{ item.value }}</td>
-                      </ng-container>
-                      <!-- view of edit value -->
-                      <td
-                        *ngIf="
-                          uneditedEnv.template_mapping[
-                            template.key
-                          ].hasOwnProperty(item.key) &&
-                          item.value !=
+                  </thead>
+                  <tbody>
+                    @if (!isVMTemplateInUneditedEnv(template.key)) {
+                      @for (item of template.value | keyvalue; track item) {
+                        <tr>
+                          <td class="add-elem">{{ item.key }}</td>
+                          <td class="add-elem">{{ item.value }}</td>
+                        </tr>
+                      }
+                    } @else {
+                      @for (item of template.value | keyvalue; track item) {
+                        <tr>
+                          <!-- view of unedit value -->
+                          @if (
+                            uneditedEnv.template_mapping[
+                              template.key
+                            ].hasOwnProperty(item.key)
+                          ) {
+                            <td>
+                              {{ item.key }}
+                            </td>
+                          }
+                          @if (
+                            item.value ==
                             uneditedEnv.template_mapping[template.key][item.key]
-                        "
-                      >
-                        <span class="del-elem arrow-after">{{
-                          uneditedEnv.template_mapping[template.key][item.key]
-                        }}</span>
-                        <span class="add-elem">{{ item.value }}</span>
-                      </td>
+                          ) {
+                            <td>
+                              {{ item.value }}
+                            </td>
+                          }
+                          <!-- view of new key -->
+                          @if (
+                            !uneditedEnv.template_mapping[
+                              template.key
+                            ].hasOwnProperty(item.key)
+                          ) {
+                            <td class="add-elem">{{ item.key }}</td>
+                            <td class="add-elem">{{ item.value }}</td>
+                          }
+                          <!-- view of edit value -->
+                          @if (
+                            uneditedEnv.template_mapping[
+                              template.key
+                            ].hasOwnProperty(item.key) &&
+                            item.value !=
+                              uneditedEnv.template_mapping[template.key][
+                                item.key
+                              ]
+                          ) {
+                            <td>
+                              <span class="del-elem arrow-after">{{
+                                uneditedEnv.template_mapping[template.key][
+                                  item.key
+                                ]
+                              }}</span>
+                              <span class="add-elem">{{ item.value }}</span>
+                            </td>
+                          }
+                        </tr>
+                      }
+                      <!-- view deleted key -->
+                      @for (
+                        item of uneditedEnv.template_mapping[template.key]
+                          | keyvalue;
+                        track item
+                      ) {
+                        <tr>
+                          @if (
+                            !env.template_mapping[template.key].hasOwnProperty(
+                              item.key
+                            )
+                          ) {
+                            <td class="del-elem">{{ item.key }}</td>
+                            <td class="del-elem">{{ item.value }}</td>
+                          }
+                        </tr>
+                      }
+                    }
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          }
+        } @else {
+          @for (template of env.template_mapping | keyvalue; track template) {
+            <tr>
+              <td>{{ template.key }}</td>
+              <td>{{ getTemplateCount(template.key) }}</td>
+              <td>
+                <table class="table table-compact">
+                  <thead>
+                    <tr>
+                      <th>Key</th>
+                      <th>Value</th>
                     </tr>
-                    <!-- view deleted key -->
-                    <tr
-                      *ngFor="
-                        let item of uneditedEnv.template_mapping[template.key]
-                          | keyvalue
-                      "
-                    >
-                      <ng-container
-                        *ngIf="
-                          !env.template_mapping[template.key].hasOwnProperty(
-                            item.key
-                          )
-                        "
-                      >
-                        <td class="del-elem">{{ item.key }}</td>
-                        <td class="del-elem">{{ item.value }}</td>
-                      </ng-container>
-                    </tr>
-                  </ng-template>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </ng-container>
-        <ng-template #newTemplate>
-          <tr *ngFor="let template of env.template_mapping | keyvalue">
-            <td>{{ template.key }}</td>
-            <td>{{ getTemplateCount(template.key) }}</td>
-            <td>
-              <table class="table table-compact">
-                <thead>
-                  <tr>
-                    <th>Key</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let item of template.value | keyvalue">
-                    <td>{{ item.key }}</td>
-                    <td>{{ item.value }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </ng-template>
+                  </thead>
+                  <tbody>
+                    @for (item of template.value | keyvalue; track item) {
+                      <tr>
+                        <td>{{ item.key }}</td>
+                        <td>{{ item.value }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          }
+        }
       </tbody>
     </table>
 
@@ -655,51 +663,56 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngIf="!!updateEnv; else newTemplate">
-          <tr *ngFor="let item of env.ip_translation_map | keyvalue">
-            <!-- view of unedit value -->
-            <td *ngIf="uneditedEnv.ip_translation_map.hasOwnProperty(item.key)">
-              {{ item.key }}
-            </td>
-            <td *ngIf="item.value == uneditedEnv.ip_translation_map[item.key]">
-              {{ item.value }}
-            </td>
-            <!-- view of new key -->
-            <ng-container
-              *ngIf="!uneditedEnv.ip_translation_map.hasOwnProperty(item.key)"
-            >
-              <td class="add-elem">{{ item.key }}</td>
-              <td class="add-elem">{{ item.value }}</td>
-            </ng-container>
-            <!-- view of edit value -->
-            <td
-              *ngIf="
+        @if (!!updateEnv) {
+          @for (item of env.ip_translation_map | keyvalue; track item) {
+            <tr>
+              <!-- view of unedit value -->
+              @if (uneditedEnv.ip_translation_map.hasOwnProperty(item.key)) {
+                <td>
+                  {{ item.key }}
+                </td>
+              }
+              @if (item.value == uneditedEnv.ip_translation_map[item.key]) {
+                <td>
+                  {{ item.value }}
+                </td>
+              }
+              <!-- view of new key -->
+              @if (!uneditedEnv.ip_translation_map.hasOwnProperty(item.key)) {
+                <td class="add-elem">{{ item.key }}</td>
+                <td class="add-elem">{{ item.value }}</td>
+              }
+              <!-- view of edit value -->
+              @if (
                 uneditedEnv.ip_translation_map.hasOwnProperty(item.key) &&
                 item.value != uneditedEnv.ip_translation_map[item.key]
-              "
-            >
-              <span class="del-elem arrow-after">{{
-                uneditedEnv.ip_translation_map[item.key]
-              }}</span>
-              <span class="add-elem">{{ item.value }}</span>
-            </td>
-          </tr>
+              ) {
+                <td>
+                  <span class="del-elem arrow-after">{{
+                    uneditedEnv.ip_translation_map[item.key]
+                  }}</span>
+                  <span class="add-elem">{{ item.value }}</span>
+                </td>
+              }
+            </tr>
+          }
           <!-- view deleted key -->
-          <tr *ngFor="let item of uneditedEnv.ip_translation_map | keyvalue">
-            <ng-container
-              *ngIf="!env.ip_translation_map.hasOwnProperty(item.key)"
-            >
-              <td class="del-elem">{{ item.key }}</td>
-              <td class="del-elem">{{ item.value }}</td>
-            </ng-container>
-          </tr>
-        </ng-container>
-        <ng-template #newTemplate>
-          <tr *ngFor="let item of env.ip_translation_map | keyvalue">
-            <td>{{ item.key }}</td>
-            <td>{{ item.value }}</td>
-          </tr>
-        </ng-template>
+          @for (item of uneditedEnv.ip_translation_map | keyvalue; track item) {
+            <tr>
+              @if (!env.ip_translation_map.hasOwnProperty(item.key)) {
+                <td class="del-elem">{{ item.key }}</td>
+                <td class="del-elem">{{ item.value }}</td>
+              }
+            </tr>
+          }
+        } @else {
+          @for (item of env.ip_translation_map | keyvalue; track item) {
+            <tr>
+              <td>{{ item.key }}</td>
+              <td>{{ item.value }}</td>
+            </tr>
+          }
+        }
       </tbody>
     </table>
   </clr-wizard-page>

@@ -1,34 +1,75 @@
 <clr-stack-view>
-    <clr-stack-header>
-        Virtual Machines
-        <button class="stack-action btn btn-sm btn-link" (click)="addVMSet()" *ngIf="updateRbac">Add VM Set</button>
-    </clr-stack-header>
-    <clr-stack-block *ngFor="let vmset of vms; let i = index">
-        <clr-stack-label>Virtual Machine Set {{ i+1 }} </clr-stack-label>
-        <clr-stack-content>
-            <button class="btn btn-sm btn-link btn-link-stack" (click)="deleteVMSet(i)" *ngIf="updateRbac">Delete VM
-                Set</button>
-        </clr-stack-content>
-        <clr-stack-block *ngFor="let item of vmset | keyvalue">
-            <clr-stack-label>{{ item.key }}</clr-stack-label>
-            <clr-stack-content>{{ item.value }} <button class="btn btn-sm btn-link btn-link-stack"
-                    (click)="deleteVM(i, item.key)" *ngIf="updateRbac">Delete
-                    VM</button></clr-stack-content>
+  <clr-stack-header>
+    Virtual Machines
+    @if (updateRbac) {
+      <button class="stack-action btn btn-sm btn-link" (click)="addVMSet()">
+        Add VM Set
+      </button>
+    }
+  </clr-stack-header>
+  @for (vmset of vms; track vmset; let i = $index) {
+    <clr-stack-block>
+      <clr-stack-label>Virtual Machine Set {{ i + 1 }} </clr-stack-label>
+      <clr-stack-content>
+        @if (updateRbac) {
+          <button
+            class="btn btn-sm btn-link btn-link-stack"
+            (click)="deleteVMSet(i)"
+          >
+            Delete VM Set
+          </button>
+        }
+      </clr-stack-content>
+      @for (item of vmset | keyvalue; track item) {
+        <clr-stack-block>
+          <clr-stack-label>{{ item.key }}</clr-stack-label>
+          <clr-stack-content
+            >{{ item.value }}
+            @if (updateRbac) {
+              <button
+                class="btn btn-sm btn-link btn-link-stack"
+                (click)="deleteVM(i, item.key)"
+              >
+                Delete VM
+              </button>
+            }
+          </clr-stack-content>
         </clr-stack-block>
-        <clr-stack-block *ngIf="updateRbac">
-            <clr-stack-label><button class="btn btn-sm btn-link btn-link-stack" (click)="openAddVm(i)" [disabled]="!(allowedAddVm | async)">New
-                    VM</button>
-            </clr-stack-label>
-            <clr-stack-content *ngIf="!(allowedAddVm | async)">
-                <clr-alert [clrAlertType]="'info'" [clrAlertSizeSmall]="true" [clrAlertClosable]="false">
-                    <clr-alert-item>
-                      <span class="alert-text">
-                        Permission virtualmachinetemplates.LIST required to add VMs
-                      </span>
-                    </clr-alert-item>
-                  </clr-alert>
+      }
+      @if (updateRbac) {
+        <clr-stack-block>
+          <clr-stack-label
+            ><button
+              class="btn btn-sm btn-link btn-link-stack"
+              (click)="openAddVm(i)"
+              [disabled]="!(allowedAddVm | async)"
+            >
+              New VM
+            </button>
+          </clr-stack-label>
+          @if (!(allowedAddVm | async)) {
+            <clr-stack-content>
+              <clr-alert
+                [clrAlertType]="'info'"
+                [clrAlertSizeSmall]="true"
+                [clrAlertClosable]="false"
+              >
+                <clr-alert-item>
+                  <span class="alert-text">
+                    Permission virtualmachinetemplates.LIST required to add VMs
+                  </span>
+                </clr-alert-item>
+              </clr-alert>
             </clr-stack-content>
+          }
         </clr-stack-block>
+      }
     </clr-stack-block>
+  }
 </clr-stack-view>
-<new-vm #newvm (vm)="addVM($event)" [listVms]="allowedAddVm | async" [vms]="vms"></new-vm>
+<new-vm
+  #newvm
+  (vm)="addVM($event)"
+  [listVms]="(allowedAddVm | async) ?? false"
+  [vms]="vms"
+></new-vm>

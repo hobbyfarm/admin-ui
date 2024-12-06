@@ -1,24 +1,10 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { CtrService } from '../data/ctr.service';
+import { CtrService } from '../../data/ctr.service';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'ctr',
-  template: `
-    <pre
-      [attr.executed]="executed"
-      class="file-{{ file }}"
-      title="{{ title }}"
-      (click)="ctr()"
-      #code
-    ><ng-content></ng-content></pre>
-    <i>
-      <cds-icon [attr.shape]="shape"></cds-icon> {{ statusText }}
-      <b>{{ target }}</b>
-      <span> {{ countContent }}</span>
-      <span> {{ disabledText }}</span>
-    </i>
-  `,
+  templateUrl: './ctr.component.html',
   styleUrls: ['ctr.component.scss'],
 })
 export class CtrComponent implements OnInit {

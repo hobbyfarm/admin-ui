@@ -30,23 +30,25 @@
       </clr-stack-block>
       <clr-stack-block>
         <clr-stack-label>Scenarios</clr-stack-label>
-        <clr-stack-content
-          ><span class="label" *ngFor="let scenario of course.scenarios">
-            {{ scenario.name }}</span
-          ></clr-stack-content
-        >
+        <clr-stack-content>
+          @for (scenario of course.scenarios; track scenario) {
+            <span class="label"> {{ scenario.name }}</span>
+          }
+        </clr-stack-content>
       </clr-stack-block>
     </clr-stack-block>
-    <clr-stack-block *ngIf="course.categories.length > 0">
-      <clr-stack-label>Dynamic Scenarios</clr-stack-label>
+    @if (course.categories.length > 0) {
       <clr-stack-block>
         <clr-stack-label>Dynamic Scenarios</clr-stack-label>
-        <clr-stack-content
-          ><span class="label" *ngFor="let categorie of course.categories">
-            {{ categorie }}</span
-          ></clr-stack-content
-        >
+        <clr-stack-block>
+          <clr-stack-label>Dynamic Scenarios</clr-stack-label>
+          <clr-stack-content>
+            @for (categorie of course.categories; track categorie) {
+              <span class="label"> {{ categorie }}</span>
+            }
+          </clr-stack-content>
+        </clr-stack-block>
       </clr-stack-block>
-    </clr-stack-block>
+    }
   </clr-stack-view>
 </div>

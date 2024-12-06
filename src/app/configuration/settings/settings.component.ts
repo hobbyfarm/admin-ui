@@ -1,120 +1,127 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { TypedInput, FormGroupType } from '../../typed-form/TypedInput';
 import {
   PreparedScope,
   TypedSettingsService,
 } from 'src/app/data/typedSettings.service';
 import { AlertComponent } from 'src/app/alert/alert.component';
-import { ServerResponse } from 'src/app/step/ServerResponse';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import {
+  DEFAULT_ALERT_ERROR_DURATION,
+  DEFAULT_ALERT_SUCCESS_DURATION,
+} from 'src/app/alert/alert';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
 })
-export class SettingsComponent {
-  public settings: TypedInput[] = [];
-  public updatedSettings: TypedInput[] = [];
-  public hasChanges: boolean = false;
-  public valid: boolean = true;
-  public scopes: PreparedScope[] = [];
-  public selectedScope: PreparedScope;
-  public loading: boolean = true; 
-  public scopesLoading: boolean = true;
+export class SettingsComponent implements OnInit {
+  settings: TypedInput[] = [];
+  updatedSettings: TypedInput[] = [];
+  hasChanges = false;
+  valid = true;
+  scopes: PreparedScope[] = [];
+  selectedScope?: PreparedScope;
+  loading = true;
+  scopesLoading = true;
+
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
 
   @ViewChild('alert') alert: AlertComponent;
 
-  private alertTime = 2000;
-  private alertErrorTime = 10000;
-
   constructor(
-    public typedSettingsService: TypedSettingsService,
+    private typedSettingsService: TypedSettingsService,
     private route: ActivatedRoute,
-    private router: Router
-  ) {
-    this.getScopes();
-    this.router.events.subscribe((val) => {
-      if (val instanceof NavigationEnd) {
-        this.testPath();
-      }
-    });
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadScopes();
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => this.handleRouteChange());
   }
 
-  onFormChange(data: TypedInput[]) {
+  onFormChange(data: TypedInput[]): void {
     this.updatedSettings = data;
     this.hasChanges = true;
   }
 
-  changeFormValidity(valid: boolean) {
+  changeFormValidity(valid: boolean): void {
     this.valid = valid;
   }
 
-  onSubmit() {
-    if (!this.updatedSettings) {
-      return;
-    }
+  onSubmit(): void {
+    if (!this.updatedSettings) return;
+
     this.typedSettingsService.updateCollection(this.updatedSettings).subscribe({
-      next: (resp: ServerResponse) => {
+      next: () => {
         this.hasChanges = false;
-        this.alert.success(
-          'Settings successfully saved',
+        const alertMsg = 'Settings successfully saved';
+        this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
+      },
+      error: (err) =>
+        this.alert.danger(
+          err.error.message,
           true,
-          this.alertTime
-        );
-      },
-      error: (err) => {
-        this.alert.danger(err.error.message, true, this.alertErrorTime);
-      },
+          DEFAULT_ALERT_ERROR_DURATION,
+        ),
     });
   }
 
-  setScope(scope: PreparedScope) {
+  setScope(scope: PreparedScope): void {
     this.loading = true;
     this.selectedScope = scope;
-    this.typedSettingsService.list(this.selectedScope.name).subscribe({
-      next: (typedSettings: TypedInput[]) => {
+
+    this.typedSettingsService.list(scope.name).subscribe({
+      next: (typedSettings) => {
         this.settings = typedSettings;
         this.loading = false;
       },
-      error: (err) => {
-        this.alert.danger(err.error.message, true, this.alertErrorTime);
-      },
+      error: (err) =>
+        this.alert.danger(
+          err.error.message,
+          true,
+          DEFAULT_ALERT_ERROR_DURATION,
+        ),
     });
   }
 
-  getScopes() {
-    this.scopes = [];
+  private loadScopes(): void {
+    this.scopesLoading = true;
+
     this.typedSettingsService.listScopes().subscribe({
-      next: (scopes: PreparedScope[]) => {
+      next: (scopes) => {
         this.scopes = scopes;
         this.scopesLoading = false;
-        this.testPath();
+        this.handleRouteChange();
       },
-      error: (err) => {
-        this.alert.danger(err.error.message, true, this.alertErrorTime);
-      },
+      error: (err) =>
+        this.alert.danger(
+          err.error.message,
+          true,
+          DEFAULT_ALERT_ERROR_DURATION,
+        ),
     });
   }
 
-  testPath() {
-    const { paramMap } = this.route.snapshot;
-    const scope = paramMap.get('scope')!;
-    if (this.scopes.length < 1) {
+  private handleRouteChange(): void {
+    if (this.scopes.length === 0) {
+      this.alert.danger(
+        'No available scopes to select.',
+        true,
+        DEFAULT_ALERT_ERROR_DURATION,
+      );
+      this.selectedScope = undefined;
       return;
     }
 
-    if (scope != '') {
-      const findScope = this.scopes.filter((a) => {
-        return a.name == scope;
-      });
+    const scopeName = this.route.snapshot.paramMap.get('scope') || '';
+    const targetScope =
+      this.scopes.find((scope) => scope.name === scopeName) || this.scopes[0];
 
-      if (findScope && findScope[0]) {
-        this.setScope(findScope[0]);
-      }
-    } else {
-      this.setScope(this.scopes[0]);
-    }
+    this.setScope(targetScope);
   }
 }

@@ -62,7 +62,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   public VMTemplates: VMTemplate[] = [];
 
   @Input()
-  public updateEnv: Environment;
+  public updateEnv: Environment | null;
 
   @Output()
   public event: EventEmitter<boolean> = new EventEmitter(false);
@@ -75,7 +75,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     private _fb: NonNullableFormBuilder,
     private envService: EnvironmentService,
     private vmTemplateService: VmtemplateService,
-    private rbacService: RbacService
+    private rbacService: RbacService,
   ) {
     this.rbacService
       .Grants('virtualmachinetemplates', 'list')
@@ -87,34 +87,31 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
           .list()
           .subscribe((list: VMTemplate[]) =>
             list.forEach((v) =>
-              this.virtualMachineTemplateList.set(v.id, v.name)
-            )
+              this.virtualMachineTemplateList.set(v.id, v.name),
+            ),
           );
       });
   }
 
   @ViewChild('wizard', { static: true }) wizard: ClrWizard;
 
-  public buildEnvironmentDetails(edit: boolean = false) {
+  public buildEnvironmentDetails(env: Environment | null = null) {
     this.environmentDetails = this._fb.group({
-      display_name: this._fb.control<string>(
-        edit ? this.updateEnv.display_name : '',
-        [Validators.required, Validators.minLength(4)]
-      ),
-      dnssuffix: this._fb.control<string>(edit ? this.updateEnv.dnssuffix : ''),
-      provider: this._fb.control<string>(edit ? this.updateEnv.provider : '', [
+      display_name: this._fb.control<string>(env ? env.display_name : '', [
+        Validators.required,
+        Validators.minLength(4),
+      ]),
+      dnssuffix: this._fb.control<string>(env ? env.dnssuffix : ''),
+      provider: this._fb.control<string>(env ? env.provider : '', [
         Validators.required,
         Validators.minLength(2),
       ]),
-      ws_endpoint: this._fb.control<string>(
-        edit ? this.updateEnv.ws_endpoint : '',
-        [
-          Validators.required,
-          Validators.pattern(
-            /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/
-          ),
-        ]
-      ),
+      ws_endpoint: this._fb.control<string>(env ? env.ws_endpoint : '', [
+        Validators.required,
+        Validators.pattern(
+          /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/,
+        ),
+      ]),
     });
   }
 
@@ -152,25 +149,25 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     });
   }
 
-  public prepareEnvironmentSpecifics() {
+  public prepareEnvironmentSpecifics(env: Environment) {
     // prepare differs from 'build' in that we are filling out a form with
     // values from an existing environment
-    const envKeys = Object.keys(this.updateEnv.environment_specifics);
+    const envKeys = Object.keys(env.environment_specifics);
     this.environmentSpecifics = this._fb.group({
       params: this._fb.array<GenericKeyValueGroup<string>>([]),
     });
     for (let i = 0; i < envKeys.length; i++) {
       this.newEnvironmentSpecific(
         envKeys[i],
-        this.updateEnv.environment_specifics[envKeys[i]]
+        env.environment_specifics[envKeys[i]],
       );
     }
   }
 
-  public prepareTemplateMapping() {
+  public prepareTemplateMapping(env: Environment) {
     // prepare differs from 'build' in that we are filling out a form with
     // values from an existing environment
-    const templateKeys = Object.keys(this.updateEnv.template_mapping);
+    const templateKeys = Object.keys(env.template_mapping);
     this.templateMappings = this._fb.group({
       templates: this._fb.array<TemplateMapping>([]),
     });
@@ -179,23 +176,23 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       const newGroup: TemplateMapping = this._fb.group({
         template: this._fb.control<string>(
           templateKeys[i],
-          Validators.required
+          Validators.required,
         ),
         count: this._fb.control<number>(
-          this.updateEnv.count_capacity[templateKeys[i]],
-          [Validators.required, Validators.pattern(/-?\d+/)]
+          env.count_capacity[templateKeys[i]],
+          [Validators.required, Validators.pattern(/-?\d+/)],
         ),
         params: this._fb.array<GenericKeyValueGroup<string>>([]),
       });
       const paramKeys = Object.keys(
-        this.updateEnv.template_mapping[templateKeys[i]]
+        env.template_mapping[templateKeys[i]],
       );
       for (let j = 0; j < paramKeys.length; j++) {
         const newParam: GenericKeyValueGroup<string> = this._fb.group({
           key: this._fb.control<string>(paramKeys[j], Validators.required),
           value: this._fb.control<string>(
-            this.updateEnv.template_mapping[templateKeys[i]][paramKeys[j]],
-            Validators.required
+            env.template_mapping[templateKeys[i]][paramKeys[j]],
+            Validators.required,
           ), // yuck
         });
         newGroup.controls.params.push(newParam);
@@ -204,41 +201,36 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     }
   }
 
-  public prepareIpMapping() {
+  public prepareIpMapping(env: Environment) {
     // prepare differs from 'build' in that we are filling out a form with
     // values from an existing environment
-    const ipKeys = Object.keys(this.updateEnv.ip_translation_map);
+    const ipKeys = Object.keys(env.ip_translation_map);
     this.ipMapping = this._fb.group({
       mappings: this._fb.array<FromToGroup>([]),
     });
     for (let i = 0; i < ipKeys.length; i++) {
       this.newIpMapping(
         ipKeys[i],
-        this.updateEnv.ip_translation_map[ipKeys[i]]
+        env.ip_translation_map[ipKeys[i]],
       );
     }
   }
 
-  public fixNullValues() {
-    if (this.updateEnv.ip_translation_map == null) {
-      this.updateEnv.ip_translation_map = {};
-    }
-
-    if (this.updateEnv.template_mapping == null) {
-      this.updateEnv.template_mapping = {};
-    }
-
-    if (this.updateEnv.environment_specifics == null) {
-      this.updateEnv.environment_specifics = {};
-    }
+  public fixNullValues(env: Environment) {
+    env = {
+      ...env,
+      ip_translation_map: env.ip_translation_map ?? {},
+      template_mapping: env.template_mapping ?? {},
+      environment_specifics: env.environment_specifics ?? {},
+    };
   }
 
   ngOnChanges() {
     if (this.updateEnv) {
-      this.fixNullValues();
+      this.fixNullValues(this.updateEnv);
       this.env = this.updateEnv;
-      this.uneditedEnv = JSON.parse(JSON.stringify(this.updateEnv));
-      this._prepare();
+      this.uneditedEnv = structuredClone(this.updateEnv);
+      this._prepare(this.env);
       this.wizard.navService.goTo(this.wizard.pages.last, true);
       this.wizard.pages.first.makeCurrent();
     }
@@ -267,7 +259,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     for (let i = 0; i < this.templateMappings.controls.templates.length; i++) {
       // i = index of template
       selectedVMTs.push(
-        this.templateMappings.controls.templates.at(i).controls.template.value
+        this.templateMappings.controls.templates.at(i).controls.template.value,
       );
     }
 
@@ -298,11 +290,11 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this.buildVMTSelection();
   }
 
-  private _prepare() {
-    this.buildEnvironmentDetails(true);
-    this.prepareEnvironmentSpecifics();
-    this.prepareIpMapping();
-    this.prepareTemplateMapping();
+  private _prepare(env: Environment) {
+    this.buildEnvironmentDetails(env);
+    this.prepareEnvironmentSpecifics(env);
+    this.prepareIpMapping(env);
+    this.prepareTemplateMapping(env);
   }
 
   public open() {
@@ -311,7 +303,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this.wizard.reset();
     if (this.updateEnv) {
       this.env = this.updateEnv;
-      this._prepare();
+      this._prepare(this.env);
     }
     this.wizard.open();
   }
@@ -322,10 +314,10 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   }
 
   public copyEnvironmentDetails() {
-    this.env.display_name = this.environmentDetails.get('display_name').value;
-    this.env.dnssuffix = this.environmentDetails.get('dnssuffix').value;
-    this.env.provider = this.environmentDetails.get('provider').value;
-    this.env.ws_endpoint = this.environmentDetails.get('ws_endpoint').value;
+    this.env.display_name = this.environmentDetails.controls.display_name.value;
+    this.env.dnssuffix = this.environmentDetails.controls.dnssuffix.value;
+    this.env.provider = this.environmentDetails.controls.provider.value;
+    this.env.ws_endpoint = this.environmentDetails.controls.ws_endpoint.value;
   }
 
   public newIpMapping(from: string = '', to: string = '') {
@@ -381,7 +373,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     const newGroup: TemplateMapping = this._fb.group({
       template: this._fb.control<string>(
         this.templateSelection.controls.vmt_select.value,
-        Validators.required
+        Validators.required,
       ),
       count: this._fb.control<number>(0, [
         Validators.required,
@@ -453,7 +445,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   public deleteTemplateParameter(
     templateIndex: number,
-    parameterIndex: number
+    parameterIndex: number,
   ) {
     this.templateMappings.controls.templates
       .at(templateIndex)

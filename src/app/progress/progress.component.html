@@ -15,26 +15,30 @@
       <div>
         <cds-icon shape="play" solid></cds-icon> {{ progress.scenario_name }}
       </div>
-      <div *ngIf="progress.course">
-        <cds-icon shape="layers" solid></cds-icon> {{ progress.course_name }}
-      </div>
-      <div *ngIf="progress.current_step > 0">
-        <cds-icon shape="number-list"></cds-icon> {{ progress.current_step }} /
-        {{ progress.total_step }}
-      </div>
-      <div *ngIf="progress.current_step == 0">
-        <cds-icon shape="number-list"></cds-icon> Not started yet
-      </div>
-      <div *ngIf="!progress.finished" title="Since {{ progress.started }}">
-        <cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}
-      </div>
-      <div
-        *ngIf="progress.finished"
-        title="{{ progress.started }}-{{ progress.last_update }}"
-      >
-        <cds-icon shape="clock"></cds-icon>
-        {{ timeSince(progress.started, progress.last_update) }}
-      </div>
+      @if (progress.course) {
+        <div>
+          <cds-icon shape="layers" solid></cds-icon> {{ progress.course_name }}
+        </div>
+      }
+      @if (progress.current_step > 0) {
+        <div>
+          <cds-icon shape="number-list"></cds-icon>
+          {{ progress.current_step }} /
+          {{ progress.total_step }}
+        </div>
+      } @else {
+        <div><cds-icon shape="number-list"></cds-icon> Not started yet</div>
+      }
+      @if (!progress.finished) {
+        <div title="Since {{ progress.started }}">
+          <cds-icon shape="clock"></cds-icon> {{ timeSince(progress.started) }}
+        </div>
+      } @else {
+        <div title="{{ progress.started }}-{{ progress.last_update }}">
+          <cds-icon shape="clock"></cds-icon>
+          {{ timeSince(progress.started, progress.last_update) }}
+        </div>
+      }
     </div>
   </div>
 
@@ -58,7 +62,7 @@
             'courses.get',
             'progresses.list',
             'scenarios.get',
-            'virtualmachineclaims.get'
+            'virtualmachineclaims.get',
           ]"
         >
           Join Session

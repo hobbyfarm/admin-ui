@@ -8,19 +8,19 @@ import {
   AfterViewInit,
   OnDestroy,
 } from '@angular/core';
-import { Terminal } from 'xterm';
-import { AttachAddon } from 'xterm-addon-attach';
-import { FitAddon, ITerminalDimensions } from 'xterm-addon-fit';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { CtrService } from '../../data/ctr.service';
-import { CodeExec } from '../CodeExec';
+import { CodeExec } from '../../data/CodeExec';
 import { ShellService } from '../../data/shell.service';
 import { environment } from 'src/environments/environment';
 import { HostListener } from '@angular/core';
 import { interval, Subscription, timer } from 'rxjs';
 import { themes } from '../terminal-themes/themes';
 import { SettingsService } from '../../data/settings.service';
-import { CanvasAddon } from 'xterm-addon-canvas';
+import { Terminal } from '@xterm/xterm';
+import { FitAddon, ITerminalDimensions } from '@xterm/addon-fit';
+import { AttachAddon } from '@xterm/addon-attach';
+import { CanvasAddon } from '@xterm/addon-canvas';
 
 const WS_CODE_NORMAL_CLOSURE = 1000;
 

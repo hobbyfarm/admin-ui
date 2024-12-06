@@ -15,7 +15,7 @@ import { ClrModal } from '@clr/angular';
 export class AddScenarioComponent {
   public addOpen: boolean = false;
 
-  public selectedScenarios = [];
+  public selectedScenarios: Scenario[] = [];
   public filteredScenarios: Scenario[] = [];
 
   @Input()

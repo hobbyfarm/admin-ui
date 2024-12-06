@@ -21,7 +21,12 @@ export class PrintableComponent implements OnInit {
       .pipe(
         take(1),
         switchMap((p: ParamMap) => {
-          return this.scenarioService.printable(p.get('scenario'));
+          const scenarioId = p.get('scenario');
+          if (scenarioId) {
+            return this.scenarioService.printable(scenarioId);
+          } else {
+            throw new Error('Error: Scenario id not defined!')
+          }
         })
       )
       .subscribe({

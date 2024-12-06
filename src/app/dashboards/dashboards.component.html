@@ -9,46 +9,44 @@
           *clrIfExpanded="expandActiveEvents"
           #activeChildren
         >
-          <a
-            *ngFor="let se of activeEvents"
-            clrVerticalNavLink
-            [routerLink]="['./event', se.id]"
-            routerLinkActive="active"
-            title="{{ getTooltipTitle(se) }}"
-          >
-            <cds-icon
-              *ngIf="
+          @for (se of activeEvents; track se) {
+            <a
+              clrVerticalNavLink
+              [routerLink]="['./event', se.id]"
+              routerLinkActive="active"
+              title="{{ getTooltipTitle(se) }}"
+            >
+              @if (
                 se.activeSessions > 0 ||
                 (se.provisionedVMs && se.provisionedVMs > 0)
-              "
-              shape="info-circle"
-              status="info"
-            ></cds-icon>
-            {{ se.event_name }}
-          </a>
+              ) {
+                <cds-icon shape="info-circle" status="info"></cds-icon>
+              }
+              {{ se.event_name }}
+            </a>
+          }
         </clr-vertical-nav-group-children>
       </clr-vertical-nav-group>
       <clr-vertical-nav-group routerLinkActive="active">
         <a routerLink="./dashboards" hidden aria-hidden="true"></a>
         Finished Events
         <clr-vertical-nav-group-children *clrIfExpanded>
-          <a
-            *ngFor="let se of finishedEvents"
-            clrVerticalNavLink
-            [routerLink]="['./event', se.id]"
-            routerLinkActive="active"
-            title="{{ getTooltipTitle(se) }}"
-          >
-            <cds-icon
-              *ngIf="
+          @for (se of finishedEvents; track se) {
+            <a
+              clrVerticalNavLink
+              [routerLink]="['./event', se.id]"
+              routerLinkActive="active"
+              title="{{ getTooltipTitle(se) }}"
+            >
+              @if (
                 se.activeSessions > 0 ||
                 (se.provisionedVMs && se.provisionedVMs > 0)
-              "
-              shape="info-circle"
-              status="info"
-            ></cds-icon>
-            {{ se.event_name }}
-          </a>
+              ) {
+                <cds-icon shape="info-circle" status="info"></cds-icon>
+              }
+              {{ se.event_name }}
+            </a>
+          }
         </clr-vertical-nav-group-children>
       </clr-vertical-nav-group>
     </clr-vertical-nav>

@@ -1,0 +1,13 @@
+<pre
+  [attr.executed]="executed"
+  class="file-{{ file }}"
+  title="{{ title }}"
+  (click)="ctr()"
+  #code
+><ng-content></ng-content></pre>
+<i>
+  <cds-icon [attr.shape]="shape"></cds-icon> {{ statusText }}
+  <b>{{ target }}</b>
+  <span> {{ countContent }}</span>
+  <span> {{ disabledText }}</span>
+</i>

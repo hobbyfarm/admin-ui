@@ -4,106 +4,108 @@
       <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
     </div>
   </div>
-  <div *ngIf="vmSets.length < 1">No active VMs</div>
+  @if (vmSets.length < 1) {
+    <div>No active VMs</div>
+  }
   <clr-accordion [clrAccordionMultiPanel]="true">
-    <div *ngFor="let set of vmSets">
-      <clr-accordion-panel
-        [(clrAccordionPanelOpen)]="set.stepOpen"
-        (click)="setStepOpen(set)"
-      >
-        <clr-accordion-title>
-          <ng-container *ngIf="!set.dynamic"
-            ><b>VMSet:</b> {{ set.base_name }} &nbsp; <b>Available:</b>
-            {{ set.available }}/{{ set.count }}&nbsp;</ng-container
-          ><ng-container *ngIf="set.dynamic"
-            ><b>Dynamic:</b> {{ set.base_name }} &nbsp; <b>Count: </b
-            >{{ set.count }} &nbsp;</ng-container
-          >
-
-          <b>Environment:</b> {{ set.environment }}
-        </clr-accordion-title>
-        <clr-accordion-content *clrIfExpanded>
-          <div class="clr-row">
-            <div class="clr-col">
-              <clr-datagrid>
-                <clr-dg-column
-                  *rbac="[
-                    'sessions.get',
-                    'courses.get',
-                    'progresses.list',
-                    'scenarios.get',
-                    'virtualmachineclaims.get'
-                  ]"
-                  >Join Session</clr-dg-column
-                >
-                <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
-                <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
-                <clr-dg-column [clrDgField]="'vm_template_id'"
-                  >VM-Template</clr-dg-column
-                >
-                <clr-dg-column [clrDgField]="'user'">User</clr-dg-column>
-                <clr-dg-column [clrDgField]="'allocated'"
-                  >Allocated</clr-dg-column
-                >
-                <clr-dg-column [clrDgField]="'tainted'">Tainted</clr-dg-column>
-                <clr-dg-column [clrDgField]="'id'">VM Id</clr-dg-column>
-                <clr-dg-column [clrDgField]="'hostname'"
-                  >Hostname</clr-dg-column
-                >
-
-                <clr-dg-row *clrDgItems="let vm of set.setVMs">
-                  <clr-dg-cell
-                    class="dashboardCell"
+    @for (set of vmSets; track set) {
+      <div>
+        <clr-accordion-panel
+          [clrAccordionPanelOpen]="set.stepOpen ?? false"
+          (clrAccordionPanelOpenChange)="set.stepOpen = $event"
+          (click)="setStepOpen(set)"
+        >
+          <clr-accordion-title>
+            @if (!set.dynamic) {
+              <b>VMSet:</b> {{ set.base_name }} &nbsp; <b>Available:</b>
+              {{ set.available }}/{{ set.count }}&nbsp;
+            } @else {
+              <b>Dynamic:</b> {{ set.base_name }} &nbsp; <b>Count: </b
+              >{{ set.count }} &nbsp;
+            }
+            <b>Environment:</b> {{ set.environment }}
+          </clr-accordion-title>
+          <clr-accordion-content *clrIfExpanded>
+            <div class="clr-row">
+              <div class="clr-col">
+                <clr-datagrid>
+                  <clr-dg-column
                     *rbac="[
                       'sessions.get',
                       'courses.get',
                       'progresses.list',
                       'scenarios.get',
-                      'virtualmachineclaims.get'
+                      'virtualmachineclaims.get',
                     ]"
-                    ><button
-                      [disabled]="!vm.allocated"
-                      class="btn btn-sm btn-primary dashboardCell joinButton"
-                      (click)="openUsersTerminal(vm)"
-                    >
-                      >_
-                    </button></clr-dg-cell
+                    >Join Session</clr-dg-column
                   >
-                  <clr-dg-cell class="dashboardCell">
-                    <span
-                      *ngIf="vm.status === 'running'"
-                      class="badge badge-success"
-                      >{{ vm.status }}</span
+                  <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
+                  <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
+                  <clr-dg-column [clrDgField]="'vm_template_id'"
+                    >VM-Template</clr-dg-column
+                  >
+                  <clr-dg-column [clrDgField]="'user'">User</clr-dg-column>
+                  <clr-dg-column [clrDgField]="'allocated'"
+                    >Allocated</clr-dg-column
+                  >
+                  <clr-dg-column [clrDgField]="'tainted'"
+                    >Tainted</clr-dg-column
+                  >
+                  <clr-dg-column [clrDgField]="'id'">VM Id</clr-dg-column>
+                  <clr-dg-column [clrDgField]="'hostname'"
+                    >Hostname</clr-dg-column
+                  >
+                  <clr-dg-row *clrDgItems="let vm of set.setVMs ?? []">
+                    <clr-dg-cell
+                      class="dashboardCell"
+                      *rbac="[
+                        'sessions.get',
+                        'courses.get',
+                        'progresses.list',
+                        'scenarios.get',
+                        'virtualmachineclaims.get',
+                      ]"
+                      ><button
+                        [disabled]="!vm.allocated"
+                        class="btn btn-sm btn-primary dashboardCell joinButton"
+                        (click)="openUsersTerminal(vm)"
+                      >
+                        >_
+                      </button></clr-dg-cell
                     >
-                    <span
-                      *ngIf="vm.status !== 'running'"
-                      class="badge badge-warning"
-                      >{{ vm.status }}</span
-                    >
-                  </clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.public_ip
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.vm_template_id
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{ vm.user }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.allocated
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.tainted
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{ vm.id }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.hostname
-                  }}</clr-dg-cell>
-                </clr-dg-row>
-              </clr-datagrid>
+                    <clr-dg-cell class="dashboardCell">
+                      @if (vm.status === "running") {
+                        <span class="badge badge-success">{{ vm.status }}</span>
+                      } @else {
+                        <span class="badge badge-warning">{{ vm.status }}</span>
+                      }
+                    </clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.public_ip
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.vm_template_id
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.user
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.allocated
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.tainted
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{ vm.id }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.hostname
+                    }}</clr-dg-cell>
+                  </clr-dg-row>
+                </clr-datagrid>
+              </div>
             </div>
-          </div>
-        </clr-accordion-content>
-      </clr-accordion-panel>
-    </div>
+          </clr-accordion-content>
+        </clr-accordion-panel>
+      </div>
+    }
   </clr-accordion>
 </div>
