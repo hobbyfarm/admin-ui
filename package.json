@@ -16,7 +16,7 @@
     "build:prod": "ng build --configuration production --aot",
     "test": "ng test",
     "lint": "ng lint",
-    "prettify": "lint-staged"
+    "prettify": "lint-staged --allow-empty"
   },
   "private": true,
   "dependencies": {
