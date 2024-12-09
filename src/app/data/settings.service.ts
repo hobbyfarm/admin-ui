@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse, HttpParams } from '@angular/common/http';
-import {ProgressViewMode} from './ProgressViewMode' 
+import { ProgressViewMode } from './ProgressViewMode';
 import { Subject, concat, throwError } from 'rxjs';
 import {
   catchError,
@@ -42,9 +42,15 @@ export class SettingsService {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    hide_usernames_status: new FormControl<boolean>(false, {nonNullable: true}),
-    progress_view_mode: new FormControl<ProgressViewMode>('cardView'),
-    theme: new FormControl<'dark' | 'light' | 'system'>('system', {nonNullable: true}),
+    hide_usernames_status: new FormControl<boolean>(false, {
+      nonNullable: true,
+    }),
+    progress_view_mode: new FormControl<ProgressViewMode>('cardView', {
+      nonNullable: true,
+    }),
+    theme: new FormControl<'dark' | 'light' | 'system'>('system', {
+      nonNullable: true,
+    }),
   });
 
   fetch() {
@@ -57,7 +63,7 @@ export class SettingsService {
               terminal_theme: themes[0].id,
               hide_usernames_status: false,
               theme: 'system',
-              progress_view_mode: 'cardView'
+              progress_view_mode: 'cardView',
             } as Settings),
       ),
       tap((s: Settings) => {

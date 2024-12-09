@@ -10,8 +10,8 @@ import { Router } from '@angular/router';
 })
 export class SessionProgressService {
   constructor(
-    private http: HttpClient, 
-    private router: Router, 
+    private http: HttpClient,
+    private router: Router,
   ) {}
 
   public getProgressColorClass(progress: Progress): string {
@@ -34,22 +34,18 @@ export class SessionProgressService {
     }
     //if finished display the total step reached percentage
     if (p.finished) {
-      return Math.floor(
-        (p.max_step / p.total_step) * 100
-      );
+      return Math.floor((p.max_step / p.total_step) * 100);
     }
 
     //if currently running display the current step percentage
-    return Math.floor(
-      (p.current_step / p.total_step) * 100
-    );
+    return Math.floor((p.current_step / p.total_step) * 100);
   }
 
   public terminateSession(p: Progress) {
     this.http
-      .put(
+      .put<ServerResponse>(
         environment.server + '/session/' + p.session + '/finished',
-        {}
+        {},
       )
       .subscribe((_s: ServerResponse) => {
         p.finished = true;
@@ -63,7 +59,7 @@ export class SessionProgressService {
         p.session,
         'steps',
         Math.max(p.current_step - 1, 0),
-      ])
+      ]),
     );
     window.open(url, '_blank');
   }
