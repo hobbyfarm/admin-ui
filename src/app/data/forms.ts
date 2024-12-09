@@ -4,6 +4,7 @@ import {
   FormControl,
   FormGroup,
 } from '@angular/forms';
+import { ProgressViewMode } from './ProgressViewMode';
 
 export type ChartDetailsFormGroup = FormGroup<{
   observationPeriod: FormControl<'daily' | 'weekly' | 'monthly'>;
@@ -71,6 +72,7 @@ export type SettingFormGroup = FormGroup<{
   >;
   hide_usernames_status: FormControl<boolean>;
   theme: FormControl<'dark' | 'light' | 'system'>;
+  progress_view_mode: FormControl<ProgressViewMode>;
 }>;
 
 // This object type maps VMTemplate names to the number of requested VMs
@@ -188,10 +190,14 @@ export function isChartDetailsFormGroup(
   return (
     formGroup instanceof FormGroup &&
     formGroup.controls.observationPeriod instanceof FormControl &&
-    ['daily', 'weekly', 'monthly'].includes(formGroup.controls.observationPeriod.value) &&
+    ['daily', 'weekly', 'monthly'].includes(
+      formGroup.controls.observationPeriod.value,
+    ) &&
     formGroup.controls.scenarios instanceof FormControl &&
     Array.isArray(formGroup.controls.scenarios.value) &&
-    formGroup.controls.scenarios.value.every((item) => typeof item === 'string') &&
+    formGroup.controls.scenarios.value.every(
+      (item) => typeof item === 'string',
+    ) &&
     formGroup.controls.startDate instanceof FormControl &&
     typeof formGroup.controls.startDate.value === 'string' &&
     formGroup.controls.endDate instanceof FormControl &&
@@ -200,7 +206,7 @@ export function isChartDetailsFormGroup(
 }
 
 export function isGenericFormControl(
-  control: AbstractControl
+  control: AbstractControl,
 ): control is GenericFormControl {
   return (
     control instanceof FormControl &&
@@ -210,9 +216,7 @@ export function isGenericFormControl(
   );
 }
 
-export function isGenericFormArray(
-  control: any
-): control is GenericFormArray {
+export function isGenericFormArray(control: any): control is GenericFormArray {
   return (
     control instanceof FormArray &&
     control.controls.every(
@@ -220,7 +224,7 @@ export function isGenericFormArray(
         ctrl instanceof FormControl &&
         (typeof ctrl.value === 'string' ||
           typeof ctrl.value === 'number' ||
-          typeof ctrl.value === 'boolean')
+          typeof ctrl.value === 'boolean'),
     )
   );
 }

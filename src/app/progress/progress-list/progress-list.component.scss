@@ -1,0 +1,36 @@
+
+
+.progress {
+    margin-top: 4px;
+}
+
+clr-datagrid {
+
+    clr-dg-cell {
+        display: flex;
+        align-items: center; 
+      }
+
+    progress {
+        width: 60px;
+        vertical-align: middle;
+    }
+
+    .pointer {
+        cursor: pointer;
+    }
+
+    .color{
+        width: 60px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .end{
+        justify-content: flex-end;
+    }
+
+    .step{
+        width: 85px;
+    }
+}
