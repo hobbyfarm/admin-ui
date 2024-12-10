@@ -41,6 +41,10 @@ export class UsersDashboardComponent implements OnInit {
     this.getList();
   }
 
+  downloadCSV(): void {
+    // To be implemented
+  }
+
   getList(): void {
     this.loading = true;
     combineLatest([

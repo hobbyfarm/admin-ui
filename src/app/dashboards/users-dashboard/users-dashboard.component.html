@@ -2,8 +2,6 @@
   <span class="spinner spinner-inline"> Loading... </span>
   <span> Loading... </span>
 } @else {
-  <div>TODO add export here</div>
-
   @if (dashboardUsers.length < 1) {
     <div>No Users found</div>
   }
@@ -38,5 +36,23 @@
       </clr-dg-cell>
       <clr-dg-cell>{{ user.uniqueScenarios }}</clr-dg-cell>
     </clr-dg-row>
+    <clr-dg-footer>
+      <clr-dg-action-bar>
+        <button
+          type="button"
+          class="btn btn-sm btn-secondary btn-outline"
+          (click)="downloadCSV()"
+        >
+          <cds-icon shape="download"></cds-icon> Download CSV
+        </button>
+      </clr-dg-action-bar>
+      <clr-dg-pagination #pagination [clrDgPageSize]="20">
+        <clr-dg-page-size [clrPageSizeOptions]="[10, 20, 50]"
+          >Users per page</clr-dg-page-size
+        >
+        {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of
+        {{ pagination.totalItems }} users
+      </clr-dg-pagination>
+    </clr-dg-footer>
   </clr-datagrid>
 }
