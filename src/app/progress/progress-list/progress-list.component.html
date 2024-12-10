@@ -1,0 +1,73 @@
+<clr-datagrid>
+  <clr-dg-column class="color">Progress</clr-dg-column>
+  <clr-dg-column [clrDgField]="'username'">Username</clr-dg-column>
+  <clr-dg-column [clrDgField]="'scenario_name'">Scenario</clr-dg-column>
+  <clr-dg-column [clrDgField]="'course_name'">Course</clr-dg-column>
+  <clr-dg-column [clrDgSortBy]="durationComparator">Duration</clr-dg-column>
+  <clr-dg-column [clrDgField]="'current_step'" class="end step"
+    >Current</clr-dg-column
+  >
+  <clr-dg-column [clrDgField]="'total_step'" class="step"
+    >Max Step</clr-dg-column
+  >
+
+  <clr-dg-row *clrDgItems="let progress of progressList">
+    <clr-dg-action-overflow>
+      <button
+        class="action-item"
+        aria-label="session info"
+        (click)="openInfo(progress)"
+      >
+        Info
+      </button>
+      <button
+        aria-label="session join"
+        class="action-item"
+        (click)="openTerminalWindow(progress)"
+        [disabled]="progress.finished"
+        *rbac="[
+          'sessions.get',
+          'courses.get',
+          'progresses.list',
+          'scenarios.get',
+          'virtualmachineclaims.get',
+        ]"
+      >
+        Join Session
+      </button>
+      <button
+        class="action-item"
+        aria-label="terminate session"
+        (click)="terminateSession(progress)"
+        [disabled]="progress.finished"
+        *rbac="['sessions.update']"
+      >
+        Terminate Session
+      </button>
+    </clr-dg-action-overflow>
+
+    <clr-dg-cell class="color">
+      <div class="progress {{ getProgressColorClass(progress) }}">
+        <progress [value]="getProgress(progress) || 0" max="100"></progress>
+      </div>
+      <progress-info #progressInfo [progress]="progress" [pause]="pause">
+      </progress-info>
+    </clr-dg-cell>
+    <clr-dg-cell class="pointer" (click)="progressFilterName(progress)">{{
+      getUsername(progress)
+    }}</clr-dg-cell>
+    <clr-dg-cell>{{ progress.scenario_name }} </clr-dg-cell>
+    <clr-dg-cell>{{ progress.course_name }}</clr-dg-cell>
+    @if (!progress.finished) {
+      <clr-dg-cell> {{ timeSince(progress.started) }}</clr-dg-cell>
+    } @else {
+      <clr-dg-cell>
+        {{ timeSince(progress.started, progress.last_update) }}</clr-dg-cell
+      >
+    }
+    <clr-dg-cell class="end step">
+      {{ progress.current_step }}&nbsp;&nbsp;/
+    </clr-dg-cell>
+    <clr-dg-cell class="step">{{ progress.total_step }}</clr-dg-cell>
+  </clr-dg-row>
+</clr-datagrid>

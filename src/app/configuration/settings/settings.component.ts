@@ -11,6 +11,7 @@ import {
   DEFAULT_ALERT_ERROR_DURATION,
   DEFAULT_ALERT_SUCCESS_DURATION,
 } from 'src/app/alert/alert';
+import { ProgressViewMode } from 'src/app/data/ProgressViewMode';
 
 @Component({
   selector: 'app-settings',
@@ -28,6 +29,7 @@ export class SettingsComponent implements OnInit {
   scopesLoading = true;
 
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
+  public progress_view_mode: ProgressViewMode = "cardView"
 
   @ViewChild('alert') alert: AlertComponent;
 

@@ -11,6 +11,7 @@ import { first } from 'rxjs/operators';
 import { SettingsService } from '../data/settings.service';
 import { SettingFormGroup } from '../data/forms';
 import { AuthnService } from '../data/authn.service';
+import { ProgressViewMode } from '../data/ProgressViewMode';
 
 @Component({
   selector: '[app-header]',
@@ -27,6 +28,7 @@ export class HeaderComponent implements OnInit {
   public fetchingSettings = false;
   public settingsForm: SettingFormGroup;
   public hide_usernames_status: boolean;
+  public progress_view_mode: ProgressViewMode;
   public isButtonDisabled: boolean = false;
 
   private config = this.configService.getConfig();
@@ -100,18 +102,21 @@ export class HeaderComponent implements OnInit {
           terminal_theme = 'default',
           hide_usernames_status = false,
           theme = 'system',
+          progress_view_mode = 'cardView',
         }) => {
           this.settingsForm.setValue({
             terminal_theme,
             hide_usernames_status,
             theme,
+            progress_view_mode
           });
 
           this.fetchingSettings = false;
         },
       );
     this.settingsModal.open();
-    this.hide_usernames_status = this.settingsForm.controls.hide_usernames_status.value;
+    this.hide_usernames_status = this.settingsForm.controls.hide_usernames_status.value;;
+    this.progress_view_mode = this.settingsForm.controls.progress_view_mode.value;
   }
 
   public doSaveSettings() {
