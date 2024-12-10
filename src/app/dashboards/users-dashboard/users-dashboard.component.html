@@ -1,0 +1,42 @@
+@if (loading) {
+  <span class="spinner spinner-inline"> Loading... </span>
+  <span> Loading... </span>
+} @else {
+  <div>TODO add export here</div>
+
+  @if (dashboardUsers.length < 1) {
+    <div>No Users found</div>
+  }
+
+  <clr-datagrid>
+    <clr-dg-column>ID</clr-dg-column>
+    <clr-dg-column [clrDgField]="'email'">Username</clr-dg-column>
+    <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
+    <clr-dg-column [clrDgField]="'otac'">OTAC</clr-dg-column>
+    <clr-dg-column [clrDgSortBy]="'started'">Started</clr-dg-column>
+    <clr-dg-column [clrDgSortBy]="'progresses.size'">Sessions</clr-dg-column>
+    <clr-dg-column [clrDgSortBy]="'uniqueScenarios'"
+      >Unique Scenarios</clr-dg-column
+    >
+
+    <clr-dg-row *clrDgItems="let user of dashboardUsers">
+      <clr-dg-cell>{{ user.id }} </clr-dg-cell>
+      <clr-dg-cell>{{ user.email }}</clr-dg-cell>
+      <clr-dg-cell>STATUS</clr-dg-cell>
+      <clr-dg-cell>
+        @if (user.otac) {
+          {{ user.otac.name }}
+        } @else {
+          -
+        }
+      </clr-dg-cell>
+      <clr-dg-cell>
+        {{ user.started | date: "MMMM d, y, HH:mm:ss z" }}
+      </clr-dg-cell>
+      <clr-dg-cell>
+        {{ user.progresses?.length ?? 0 }}
+      </clr-dg-cell>
+      <clr-dg-cell>{{ user.uniqueScenarios }}</clr-dg-cell>
+    </clr-dg-row>
+  </clr-datagrid>
+}
