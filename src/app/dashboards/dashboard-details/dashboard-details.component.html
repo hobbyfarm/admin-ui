@@ -4,6 +4,8 @@
       <h3>Sessions for {{ selectedEvent.event_name }}</h3>
     } @else if (vmDashboardActive && rbacSuccessVms) {
       <h3>VMs for {{ selectedEvent.event_name }}</h3>
+    } @else if (usersDashboardActive && rbacSuccessVms) {
+      <h3>Users participating in {{ selectedEvent.event_name }}</h3>
     } @else if (statisticsDashboardActive && rbacSuccessSessions) {
       <h3>Statistics for {{ selectedEvent.event_name }}</h3>
     }
@@ -43,6 +45,20 @@
             <clr-tab-content *clrIfActive>
               <div class="content-area">
                 <vm-dashboard [selectedEvent]="selectedEvent"></vm-dashboard>
+              </div>
+            </clr-tab-content>
+          </ng-template>
+        </clr-tab>
+      }
+      @if (rbacSuccessSessions) {
+        <clr-tab>
+          <button clrTabLink>Users</button>
+          <ng-template [(clrIfActive)]="usersDashboardActive">
+            <clr-tab-content *clrIfActive>
+              <div class="content-area">
+                <users-dashboard
+                  [selectedEvent]="selectedEvent"
+                ></users-dashboard>
               </div>
             </clr-tab-content>
           </ng-template>

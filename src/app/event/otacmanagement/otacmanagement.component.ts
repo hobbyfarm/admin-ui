@@ -101,7 +101,7 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
     if (otac.user) {
       return {
         ...otac,
-        status: this.hasRunOutOfTime(otac) ? 'taken' : 'out-of-time',
+        status: this.otacHasTimeLeft(otac) ? 'taken' : 'out-of-time',
         userEmail: this.getUsername(otac.user),
       };
     }
@@ -192,7 +192,7 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
     return otac.max_duration != '';
   }
 
-  hasRunOutOfTime(otac: OTAC) {
+  otacHasTimeLeft(otac: OTAC) {
     if (!otac.user || !otac.redeemed_timestamp || !otac.max_duration) {
       return false;
     }

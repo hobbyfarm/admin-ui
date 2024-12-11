@@ -54,6 +54,7 @@ import { IntervalTimer } from './IntervalTimer/interval-timer.component';
 import { ProgressDashboardComponent } from './dashboards/progress-dashboard/progress-dashboard.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
 import { VmDashboardComponent } from './dashboards/vm-dashboard/vm-dashboard.component';
+import { UsersDashboardComponent } from './dashboards/users-dashboard/users-dashboard.component';
 import { StepComponent } from './step/step-component/step.component';
 import { CtrService } from './data/ctr.service';
 import { SessionService } from './data/session.service';
@@ -277,6 +278,7 @@ export function jwtOptionsFactory(): JwtConfig {
     ProgressDashboardComponent,
     DashboardsComponent,
     VmDashboardComponent,
+    UsersDashboardComponent,
     StepComponent,
     HfMarkdownComponent,
     TerminalComponent,

@@ -15,6 +15,7 @@ export class DashboardDetailsComponent implements OnInit, OnDestroy {
   public sessionDashboardActive: boolean = true;
   public vmDashboardActive: boolean = false;
   public statisticsDashboardActive: boolean = false;
+  public usersDashboardActive: boolean = false;
 
   public selectedEvent?: DashboardScheduledEvent;
   public loggedInAdminEmail: string;
@@ -28,7 +29,7 @@ export class DashboardDetailsComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private scheduledeventService: ScheduledeventService,
-    private rbacService: RbacService
+    private rbacService: RbacService,
   ) {}
   ngOnDestroy(): void {
     this.eventSubscription.unsubscribe();
@@ -40,7 +41,7 @@ export class DashboardDetailsComponent implements OnInit, OnDestroy {
         tap((params: Params) => {
           this.eventId = params['id'] ?? '';
         }),
-        switchMap(() => this.scheduledeventService.getDashboardCache())
+        switchMap(() => this.scheduledeventService.getDashboardCache()),
       )
       .subscribe((cache: Map<string, DashboardScheduledEvent>) => {
         const currentEvent = cache.get(this.eventId);
@@ -59,14 +60,14 @@ export class DashboardDetailsComponent implements OnInit, OnDestroy {
         'courses',
         'scenarios',
       ],
-      ['list', 'get']
+      ['list', 'get'],
     ).then((rbacCheckSessions: boolean) => {
       this.rbacSuccessSessions = rbacCheckSessions;
     });
 
     this.setRbacCheck(
       ['scheduledevents', 'virtualmachines', 'virtualmachinesets', 'users'],
-      ['list', 'get']
+      ['list', 'get'],
     ).then((rbacCheck: boolean) => {
       this.rbacSuccessVms = rbacCheck;
     });
