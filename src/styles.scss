@@ -108,3 +108,19 @@ overflows the modal and hence displays an unneeded scrollbar */
 clr-signpost clr-signpost-content .signpost-content-body {
   overflow-y: visible;
 }
+
+.status-provisioning{
+  --clr-progress-default-color:  var(--clr-color-warning-100, yellow);
+}
+
+.status-running{
+  --clr-progress-default-color:  var(--clr-progress-default-color,#54cbf2);
+}
+
+.status-finished{ 
+  --clr-progress-default-color:  var(--clr-color-danger-100,red);
+}
+
+.status-success{
+  --clr-progress-default-color:  var(--clr-color-success-100,green);
+}

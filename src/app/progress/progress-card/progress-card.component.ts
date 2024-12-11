@@ -7,19 +7,19 @@ import {
   ViewChild,
 } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Progress } from '../data/progress';
-import { ServerResponse } from '../data/serverresponse';
-import { ProgressInfoComponent } from './progress-info/progress-info.component';
-import { timeSince } from '../utils';
+import { Progress } from '../../data/progress';
+import { ServerResponse } from '../../data/serverresponse';
+import { ProgressInfoComponent } from '../progress-info/progress-info.component';
+import { timeSince } from '../../utils';
 import { Router } from '@angular/router';
-import { GargantuaClientFactory } from '../data/gargantua.service';
+import { GargantuaClientFactory } from 'src/app/data/gargantua.service';
 
 @Component({
   selector: 'progress-card',
-  templateUrl: './progress.component.html',
-  styleUrls: ['./progress.component.scss'],
+  templateUrl: './progress-card.component.html',
+  styleUrls: ['./progress-card.component.scss'],
 })
-export class ProgressComponent {
+export class ProgressCardComponent {
   @Input()
   public progress: Progress;
 
@@ -37,14 +37,14 @@ export class ProgressComponent {
 
   @ViewChild('progressInfo') progressInfo: ProgressInfoComponent;
 
-  constructor(private gcf: GargantuaClientFactory, private router: Router) {}
+  constructor(
+    private gcf: GargantuaClientFactory,
+    private router: Router,
+  ) {}
 
   public terminateSession() {
     this.gargSessionScopedClient
-      .put(
-        `/${this.progress.session}/finished`,
-        {}
-      )
+      .put(`/${this.progress.session}/finished`, {})
       .subscribe((_s: ServerResponse) => {
         this.progress.finished = true;
       });
@@ -61,7 +61,7 @@ export class ProgressComponent {
         this.progress.session,
         'steps',
         Math.max(this.progress.current_step - 1, 0),
-      ])
+      ]),
     );
     window.open(url, '_blank');
   }
@@ -78,13 +78,13 @@ export class ProgressComponent {
     //if finished display the total step reached percentage
     if (this.progress.finished) {
       return Math.floor(
-        (this.progress.max_step / this.progress.total_step) * 100
+        (this.progress.max_step / this.progress.total_step) * 100,
       );
     }
 
     //if currently running display the current step percentage
     return Math.floor(
-      (this.progress.current_step / this.progress.total_step) * 100
+      (this.progress.current_step / this.progress.total_step) * 100,
     );
   }
 
