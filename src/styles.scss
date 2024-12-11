@@ -104,3 +104,7 @@ overflows the modal and hence displays an unneeded scrollbar */
   margin: 0px;
   color: var(--clr-tooltip-color, #fff);
 }
+
+clr-signpost clr-signpost-content .signpost-content-body {
+  overflow-y: visible;
+}
