@@ -98,6 +98,17 @@ export class UsersDashboardComponent implements OnInit {
       // List of users with OTACs (those linked to OTACs)
       const usersWithOtacs = new Set(safeOtacs.map((otac) => otac.user));
 
+      // Extract all available scenario IDs from the event
+      const eventScenarioIds = new Set<string>(this.selectedEvent.scenarios);
+
+      courses.forEach((course) => {
+        if (this.selectedEvent.courses?.includes(course.id)) {
+          course.scenarios.forEach((scenario) => {
+            eventScenarioIds.add(scenario.id);
+          });
+        }
+      });
+
       // Filter and enrich users
       this.dashboardUsers = users
         .filter(
@@ -136,7 +147,7 @@ export class UsersDashboardComponent implements OnInit {
             status: this.getUsersStatus(
               userProgresses,
               otacMap.get(user.id) || null,
-              courses,
+              eventScenarioIds,
             ),
           } as dashboardUsers;
         });
@@ -148,19 +159,8 @@ export class UsersDashboardComponent implements OnInit {
   getUsersStatus(
     progresses: Progress[],
     otac: OTAC | null,
-    courses: Course[],
+    eventScenarioIds: Set<string>,
   ): string {
-    // Extract all available scenario IDs from the event
-    const eventScenarioIds = new Set<string>(this.selectedEvent.scenarios);
-
-    courses.forEach((course) => {
-      if (this.selectedEvent.courses?.includes(course.id)) {
-        course.scenarios.forEach((scenario) => {
-          eventScenarioIds.add(scenario.id);
-        });
-      }
-    });
-
     // Check if the user has finished all required scenarios
     const completedScenarioIds = new Set(
       progresses
@@ -176,7 +176,6 @@ export class UsersDashboardComponent implements OnInit {
     if (allScenariosCompleted) {
       return 'completed';
     } else if (otac && !this.otacHasTimeLeft(otac)) {
-      console.log(otac);
       return 'out-of-time';
     } else {
       return 'in-progress';
