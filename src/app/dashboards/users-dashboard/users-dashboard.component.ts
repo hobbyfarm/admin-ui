@@ -1,5 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { combineLatest } from 'rxjs';
+import {
+  combineLatest,
+  filter,
+  finalize,
+  forkJoin,
+  of,
+  retry,
+  switchMap,
+  take,
+  throwError,
+} from 'rxjs';
 import { Course } from 'src/app/data/course';
 import { CourseService } from 'src/app/data/course.service';
 import { OTAC } from 'src/app/data/otac.type';
@@ -79,81 +89,118 @@ export class UsersDashboardComponent implements OnInit {
       this.progressService.listByScheduledEvent(this.selectedEvent.id, true), // List of progresses
       this.scheduledEventService.listOtacs(this.selectedEvent.id), // List of OTACs
       this.courseService.list(),
-    ]).subscribe(([users, progresses, otacs, courses]) => {
-      const safeOtacs = otacs || []; // Default to empty array if null
-      // Map OTACs to users
-      const otacMap = new Map<string, OTAC>(
-        safeOtacs.map((otac) => [otac.user, otac]),
-      );
+    ])
+      .pipe(
+        switchMap(([users, progresses, otacs, courses]) => {
+          const eventScenarioIds = new Set<string>(
+            this.selectedEvent.scenarios,
+          );
+          const categories: string[] = [];
 
-      // Group progresses by user ID
-      const progressMap = new Map<string, Progress[]>();
-      progresses.forEach((progress) => {
-        if (!progressMap.has(progress.user)) {
-          progressMap.set(progress.user, []);
-        }
-        progressMap.get(progress.user)?.push(progress);
-      });
-
-      // List of users with OTACs (those linked to OTACs)
-      const usersWithOtacs = new Set(safeOtacs.map((otac) => otac.user));
-
-      // Extract all available scenario IDs from the event
-      const eventScenarioIds = new Set<string>(this.selectedEvent.scenarios);
-
-      courses.forEach((course) => {
-        if (this.selectedEvent.courses?.includes(course.id)) {
-          course.scenarios.forEach((scenario) => {
-            eventScenarioIds.add(scenario.id);
+          // Add scenarios from courses
+          courses.forEach((course) => {
+            if (this.selectedEvent.courses?.includes(course.id)) {
+              course.scenarios.forEach((s) => eventScenarioIds.add(s.id));
+              categories.push(...(course.categories || []));
+            }
           });
-        }
-      });
 
-      // Filter and enrich users
-      this.dashboardUsers = users
-        .filter(
-          (user) =>
-            user.access_codes?.includes(this.selectedEvent.access_code) || // Check for event access code
-            usersWithOtacs.has(user.id), // Users linked to OTACs
-        )
-        .map((user) => {
-          // Enrich user object with progresses, unique scenario count, and OTAC
-          const userProgresses = progressMap.get(user.id) || [];
-          // Calculate the earliest progress started timestamp
-
-          const firstProgressStarted = userProgresses.reduce(
-            (earliest, progress) =>
-              !earliest ||
-              new Date(progress.started) < new Date(earliest.started)
-                ? progress
-                : earliest,
-            null as Progress | null,
+          // Fetch dynamic scenarios if categories exist
+          return forkJoin({
+            users: of(users),
+            progresses: of(progresses),
+            otacs: of(otacs),
+            categories: of(categories),
+            eventScenarioIds: of(eventScenarioIds),
+          });
+        }),
+        switchMap(
+          ({ users, progresses, otacs, categories, eventScenarioIds }) => {
+            return forkJoin({
+              users: of(users),
+              progresses: of(progresses),
+              otacs: of(otacs),
+              dynamicScenarios: this.listDynamicScenarios(categories),
+              eventScenarioIds: of(eventScenarioIds),
+            });
+          },
+        ),
+      )
+      .subscribe(
+        ({ users, progresses, otacs, dynamicScenarios, eventScenarioIds }) => {
+          const safeOtacs = otacs || []; // Default to empty array if null
+          // Map OTACs to users
+          const otacMap = new Map<string, OTAC>(
+            safeOtacs.map((otac) => [otac.user, otac]),
           );
 
-          let started = firstProgressStarted?.started;
-          if (otacMap.get(user.id)) {
-            started = new Date(otacMap.get(user.id)?.redeemed_timestamp ?? '');
+          // Group progresses by user ID
+          const progressMap = new Map<string, Progress[]>();
+          progresses.forEach((progress) => {
+            if (!progressMap.has(progress.user)) {
+              progressMap.set(progress.user, []);
+            }
+            progressMap.get(progress.user)?.push(progress);
+          });
+
+          // List of users with OTACs (those linked to OTACs)
+          const usersWithOtacs = new Set(safeOtacs.map((otac) => otac.user));
+
+          if (dynamicScenarios) {
+            dynamicScenarios.forEach((sc) => {
+              eventScenarioIds.add(sc.toString());
+            });
           }
 
-          const uniqueScenarios = new Set(userProgresses.map((p) => p.scenario))
-            .size;
+          // Filter and enrich users
+          this.dashboardUsers = users
+            .filter(
+              (user) =>
+                user.access_codes?.includes(this.selectedEvent.access_code) || // Check for event access code
+                usersWithOtacs.has(user.id), // Users linked to OTACs
+            )
+            .map((user) => {
+              // Enrich user object with progresses, unique scenario count, and OTAC
+              const userProgresses = progressMap.get(user.id) || [];
+              // Calculate the earliest progress started timestamp
 
-          return {
-            ...user, // Spread original user properties
-            progresses: userProgresses,
-            uniqueScenarios,
-            otac: otacMap.get(user.id) || null, // Add OTAC if applicable
-            started: started,
-            status: this.getUsersStatus(
-              userProgresses,
-              otacMap.get(user.id) || null,
-              eventScenarioIds,
-            ),
-          } as dashboardUsers;
-        });
+              const firstProgressStarted = userProgresses.reduce(
+                (earliest, progress) =>
+                  !earliest ||
+                  new Date(progress.started) < new Date(earliest.started)
+                    ? progress
+                    : earliest,
+                null as Progress | null,
+              );
 
-      this.loading = false; // remove spinner
-    });
+              let started = firstProgressStarted?.started;
+              if (otacMap.get(user.id)) {
+                started = new Date(
+                  otacMap.get(user.id)?.redeemed_timestamp ?? '',
+                );
+              }
+
+              const uniqueScenarios = new Set(
+                userProgresses.map((p) => p.scenario),
+              ).size;
+
+              return {
+                ...user, // Spread original user properties
+                progresses: userProgresses,
+                uniqueScenarios,
+                otac: otacMap.get(user.id) || null, // Add OTAC if applicable
+                started: started,
+                status: this.getUsersStatus(
+                  userProgresses,
+                  otacMap.get(user.id) || null,
+                  eventScenarioIds,
+                ),
+              } as dashboardUsers;
+            });
+
+          this.loading = false; // remove spinner
+        },
+      );
   }
 
   getUsersStatus(
@@ -197,5 +244,11 @@ export class UsersDashboardComponent implements OnInit {
     }
 
     return false;
+  }
+
+  private listDynamicScenarios(categories: string[]) {
+    return this.courseService
+      .listDynamicScenarios(categories)
+      .pipe(retry({ count: 5, delay: 250 }), take(1));
   }
 }

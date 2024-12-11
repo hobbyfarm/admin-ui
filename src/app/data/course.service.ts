@@ -9,8 +9,6 @@ import {
   filter,
   take,
   retry,
-  mergeMap,
-  toArray,
 } from 'rxjs/operators';
 import { Course, CourseApi } from './course';
 import { Scenario } from './scenario';
@@ -18,7 +16,7 @@ import { ScenarioService } from './scenario.service';
 import { atou, utoa } from '../unicode';
 import {
   BehaviorSubject,
-  firstValueFrom,
+  forkJoin,
   from,
   Observable,
   of,
@@ -54,18 +52,26 @@ export class CourseService {
       return of(this.cachedCourseList); // Return cached list
     } else {
       return this.gargAdmin.get<ServerResponse>('/list').pipe(
-        switchMap((s: ServerResponse): Observable<Course[]> => {
-          const obj: CourseApi[] = JSON.parse(atou(s.content));
-          if (!obj) return of([] as Course[]);
-
-          return from(obj).pipe(
-            mergeMap(
-              (c: CourseApi): Observable<Course> =>
-                from(this.createCourseWithScenarios(c)), // Create each course
-            ),
-            toArray(), // Collect all courses into an array
-          );
+        switchMap((s: ServerResponse) => {
+          const obj: CourseApi[] = JSON.parse(atou(s.content)) ?? [];
+          return forkJoin([
+            of(obj),
+            from(this.rbacService.Grants('scenarios', 'list')),
+          ]);
         }),
+        switchMap(([obj, canList]) => {
+          const scenarios = canList
+            ? this.listScenarios()
+            : of([] as Scenario[]);
+          return forkJoin([of(obj), scenarios]);
+        }),
+        switchMap(([obj, scenarios]) =>
+          of(
+            obj.map((c: CourseApi) =>
+              this.createCourseWithScenarios(c, scenarios),
+            ),
+          ),
+        ),
         tap((courses: Course[]) => {
           this.set(courses); // Cache the courses
         }),
@@ -144,7 +150,10 @@ export class CourseService {
   }
 
   // Helper function to create a Course with Scenarios
-  private async createCourseWithScenarios(c: CourseApi): Promise<Course> {
+  private createCourseWithScenarios(
+    c: CourseApi,
+    scenarios: Scenario[],
+  ): Course {
     const tempCourse: Course = new Course();
 
     tempCourse.id = c.id;
@@ -161,21 +170,7 @@ export class CourseService {
         Object.fromEntries(Object.entries(v)) as Record<string, string>,
     );
 
-    if (await this.rbacService.Grants('scenarios', 'list')) {
-      const scenarios = await firstValueFrom(
-        this.scenarioService.list().pipe(
-          switchMap((sc: Scenario[]) => {
-            if (sc.length === 0) {
-              return throwError(() => new Error('Empty list, retrying...'));
-            }
-            return of(sc);
-          }),
-          retry({ count: 5, delay: 1000 }),
-          filter((sc: Scenario[]) => sc.length > 0),
-          take(1),
-        ),
-      );
-
+    if (scenarios.length > 0) {
       tempCourse.scenarios = scenarios.filter((s: Scenario) =>
         c.scenarios?.includes(s.id),
       );
@@ -186,5 +181,19 @@ export class CourseService {
     }
 
     return tempCourse;
+  }
+
+  private listScenarios() {
+    return this.scenarioService.list().pipe(
+      switchMap((sc: Scenario[]) => {
+        if (sc.length === 0) {
+          return throwError(() => new Error('Empty list, retrying...'));
+        }
+        return of(sc);
+      }),
+      retry({ count: 5, delay: 1000 }),
+      filter((sc: Scenario[]) => sc.length > 0),
+      take(1),
+    );
   }
 }
