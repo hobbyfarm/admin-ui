@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { combineLatest } from 'rxjs';
+import { Course } from 'src/app/data/course';
+import { CourseService } from 'src/app/data/course.service';
 import { OTAC } from 'src/app/data/otac.type';
 import { Progress } from 'src/app/data/progress';
 import { ProgressService } from 'src/app/data/progress.service';
@@ -7,12 +9,14 @@ import { ScheduledEventBase } from 'src/app/data/scheduledevent';
 import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
 import { User } from 'src/app/data/user';
 import { UserService } from 'src/app/data/user.service';
+import parse from 'parse-duration';
 
 interface dashboardUsers extends User {
   progresses?: Progress[];
   uniqueScenarios?: number;
   otac?: OTAC;
   started?: string;
+  status?: string;
 }
 
 @Component({
@@ -28,6 +32,7 @@ export class UsersDashboardComponent implements OnInit {
     public userService: UserService,
     public progressService: ProgressService,
     public scheduledEventService: ScheduledeventService,
+    public courseService: CourseService,
   ) {}
 
   public dashboardUsers: dashboardUsers[] = [];
@@ -51,7 +56,8 @@ export class UsersDashboardComponent implements OnInit {
       this.userService.list(), // List of users
       this.progressService.listByScheduledEvent(this.selectedEvent.id, true), // List of progresses
       this.scheduledEventService.listOtacs(this.selectedEvent.id), // List of OTACs
-    ]).subscribe(([users, progresses, otacs]) => {
+      this.courseService.list(),
+    ]).subscribe(([users, progresses, otacs, courses]) => {
       const safeOtacs = otacs || []; // Default to empty array if null
       // Map OTACs to users
       const otacMap = new Map<string, OTAC>(
@@ -105,10 +111,70 @@ export class UsersDashboardComponent implements OnInit {
             uniqueScenarios,
             otac: otacMap.get(user.id) || null, // Add OTAC if applicable
             started: started,
+            status: this.getUsersStatus(
+              userProgresses,
+              otacMap.get(user.id) || null,
+              courses,
+            ),
           } as dashboardUsers;
         });
 
       this.loading = false; // remove spinner
     });
+  }
+
+  getUsersStatus(
+    progresses: Progress[],
+    otac: OTAC | null,
+    courses: Course[],
+  ): string {
+    // Extract all available scenario IDs from the event
+    const eventScenarioIds = new Set<string>(this.selectedEvent.scenarios);
+
+    courses.forEach((course) => {
+      if (this.selectedEvent.courses?.includes(course.id)) {
+        course.scenarios.forEach((scenario) => {
+          eventScenarioIds.add(scenario.id);
+        });
+      }
+    });
+
+    // Check if the user has finished all required scenarios
+    const completedScenarioIds = new Set(
+      progresses
+        .filter((progress) => progress.total_step === progress.max_step)
+        .map((progress) => progress.scenario),
+    );
+
+    const allScenariosCompleted = [...eventScenarioIds].every((scenarioId) =>
+      completedScenarioIds.has(scenarioId),
+    );
+
+    // Determine user status based on progress and time
+    if (allScenariosCompleted) {
+      return 'completed';
+    } else if (otac && !this.otacHasTimeLeft(otac)) {
+      console.log(otac);
+      return 'out-of-time';
+    } else {
+      return 'in-progress';
+    }
+  }
+
+  otacHasTimeLeft(otac: OTAC) {
+    if (!otac || !otac.user || !otac.redeemed_timestamp || !otac.max_duration) {
+      return false;
+    }
+
+    const redeemedTimestamp = Date.parse(otac.redeemed_timestamp);
+    const duration = parse(otac.max_duration);
+    if (!duration) {
+      return false;
+    }
+    if (redeemedTimestamp + duration > Date.now()) {
+      return true;
+    }
+
+    return false;
   }
 }

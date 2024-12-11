@@ -1,15 +1,36 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpParams,
-  HttpErrorResponse,
-} from '@angular/common/http';
+import { HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { ServerResponse } from './serverresponse';
-import { map, catchError, tap } from 'rxjs/operators';
+import {
+  map,
+  catchError,
+  tap,
+  switchMap,
+  filter,
+  take,
+  skipWhile,
+  defaultIfEmpty,
+  repeat,
+  retry,
+  retryWhen,
+  delayWhen,
+  mergeMap,
+  toArray,
+} from 'rxjs/operators';
 import { Course, CourseApi } from './course';
 import { Scenario } from './scenario';
 import { ScenarioService } from './scenario.service';
 import { atou, utoa } from '../unicode';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  firstValueFrom,
+  forkJoin,
+  from,
+  Observable,
+  of,
+  throwError,
+  timer,
+} from 'rxjs';
 import { RbacService } from './rbac.service';
 import { GargantuaClientFactory } from './gargantua.service';
 
@@ -35,48 +56,25 @@ export class CourseService {
     return this.bh.asObservable();
   }
 
-  public list(force = false) {
+  public list(force = false): Observable<Course[]> {
     if (!force && this.fetchedList) {
-      return of(this.cachedCourseList);
+      return of(this.cachedCourseList); // Return cached list
     } else {
-      return this.gargAdmin.get('/list').pipe(
-        map((s: ServerResponse) => {
-          let obj: CourseApi[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
-          let courses: Course[] = [];
-          // so now we need to go vmset-by-vmset and build maps
-          if (obj == null) {
-            return [];
-          }
-          obj.forEach(async (c: CourseApi) => {
-            c.virtualmachines.forEach((v: Object) => {
-              v = new Map(Object.entries(v));
-            });
-            const tempCourse: Course = new Course();
-            if (await this.rbacService.Grants('scenarios', 'list')) {
-              this.scenarioService.list().subscribe((sc: Scenario[]) => {
-                tempCourse.scenarios = sc.filter((s: Scenario) =>
-                  c.scenarios.includes(s.id),
-                );
-              });
-            }
-            tempCourse.id = c.id;
-            tempCourse.description = atou(c.description);
-            tempCourse.categories = c.categories ?? [];
-            tempCourse.keep_vm = c.keep_vm;
-            tempCourse.keepalive_duration = c.keepalive_duration;
-            tempCourse.name = atou(c.name);
-            tempCourse.pause_duration = c.pause_duration;
-            tempCourse.pauseable = c.pauseable;
-            tempCourse.virtualmachines = c.virtualmachines;
-            tempCourse.scenarios.sort((a, b) => {
-              return a.id > b.id ? 1 : b.id > a.id ? -1 : 0;
-            });
-            courses.push(tempCourse);
-          });
-          return courses;
+      return this.gargAdmin.get<ServerResponse>('/list').pipe(
+        switchMap((s: ServerResponse): Observable<Course[]> => {
+          const obj: CourseApi[] = JSON.parse(atou(s.content));
+          if (!obj) return of([] as Course[]);
+
+          return from(obj).pipe(
+            mergeMap(
+              (c: CourseApi): Observable<Course> =>
+                from(this.createCourseWithScenarios(c)), // Create each course
+            ),
+            toArray(), // Collect all courses into an array
+          );
         }),
-        tap((c: Course[]) => {
-          this.set(c);
+        tap((courses: Course[]) => {
+          this.set(courses); // Cache the courses
         }),
       );
     }
@@ -144,13 +142,56 @@ export class CourseService {
 
   public listDynamicScenarios(categories: String[]) {
     var params = new HttpParams().set('categories', JSON.stringify(categories));
-    return this.gargAdmin
-      .post('/previewDynamicScenarios', params)
-      .pipe(
-        map((s: ServerResponse) => {
-          let obj: String[] = JSON.parse(atou(s.content));
-          return obj;
-        }),
+    return this.gargAdmin.post('/previewDynamicScenarios', params).pipe(
+      map((s: ServerResponse) => {
+        let obj: String[] = JSON.parse(atou(s.content));
+        return obj;
+      }),
+    );
+  }
+
+  // Helper function to create a Course with Scenarios
+  private async createCourseWithScenarios(c: CourseApi): Promise<Course> {
+    const tempCourse: Course = new Course();
+
+    tempCourse.id = c.id;
+    tempCourse.description = atou(c.description);
+    tempCourse.categories = c.categories ?? [];
+    tempCourse.keep_vm = c.keep_vm;
+    tempCourse.keepalive_duration = c.keepalive_duration;
+    tempCourse.name = atou(c.name);
+    tempCourse.pause_duration = c.pause_duration;
+    tempCourse.pauseable = c.pauseable;
+
+    tempCourse.virtualmachines = c.virtualmachines.map(
+      (v: Object) =>
+        Object.fromEntries(Object.entries(v)) as Record<string, string>,
+    );
+
+    if (await this.rbacService.Grants('scenarios', 'list')) {
+      const scenarios = await firstValueFrom(
+        this.scenarioService.list().pipe(
+          switchMap((sc: Scenario[]) => {
+            if (sc.length === 0) {
+              return throwError(() => new Error('Empty list, retrying...'));
+            }
+            return of(sc);
+          }),
+          retry({ count: 5, delay: 1000 }),
+          filter((sc: Scenario[]) => sc.length > 0),
+          take(1),
+        ),
       );
+
+      tempCourse.scenarios = scenarios.filter((s: Scenario) =>
+        c.scenarios?.includes(s.id),
+      );
+
+      tempCourse.scenarios.sort((a, b) =>
+        a.id > b.id ? 1 : b.id > a.id ? -1 : 0,
+      );
+    }
+
+    return tempCourse;
   }
 }
