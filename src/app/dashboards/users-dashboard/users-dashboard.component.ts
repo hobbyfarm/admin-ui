@@ -47,7 +47,29 @@ export class UsersDashboardComponent implements OnInit {
   }
 
   downloadCSV(): void {
-    // To be implemented
+    let userCSV = 'id,email,otac,started,sessionCount,uniqueScenarios,status\n'; // Add a header row
+    this.dashboardUsers.forEach((userData) => {
+      userCSV = userCSV.concat(
+        `${userData.id || ''},` + // ID column
+          `${userData.email || ''},` + // Email column
+          `${userData.otac?.name || ''},` + // OTAC name column
+          `${userData.started || ''},` + // Started column
+          `${userData.progresses?.length || 0},` + // Progress count column
+          `${userData.uniqueScenarios || 0},` + // Unique scenarios column
+          `${userData.status || ''}\n`, // Status column and newline
+      );
+    });
+    const filename = this.selectedEvent.event_name + '_users.csv';
+    var element = document.createElement('a');
+    element.setAttribute(
+      'href',
+      'data:text/plain;charset=utf-8,' + encodeURIComponent(userCSV),
+    );
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   }
 
   getList(): void {
