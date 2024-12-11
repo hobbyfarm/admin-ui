@@ -110,21 +110,10 @@ export class UsersDashboardComponent implements OnInit {
             users: of(users),
             progresses: of(progresses),
             otacs: of(otacs),
-            categories: of(categories),
+            dynamicScenarios: this.listDynamicScenarios(categories),
             eventScenarioIds: of(eventScenarioIds),
           });
         }),
-        switchMap(
-          ({ users, progresses, otacs, categories, eventScenarioIds }) => {
-            return forkJoin({
-              users: of(users),
-              progresses: of(progresses),
-              otacs: of(otacs),
-              dynamicScenarios: this.listDynamicScenarios(categories),
-              eventScenarioIds: of(eventScenarioIds),
-            });
-          },
-        ),
       )
       .subscribe(
         ({ users, progresses, otacs, dynamicScenarios, eventScenarioIds }) => {
