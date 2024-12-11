@@ -158,7 +158,6 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   courseHasValidVMCConfiguration(): boolean {
-    console.log(this.editVirtualMachines);
     if (this.editVirtualMachines.length > 0) {
       const validVMSets = this.editVirtualMachines.filter(
         (virtualmachine, i) => {

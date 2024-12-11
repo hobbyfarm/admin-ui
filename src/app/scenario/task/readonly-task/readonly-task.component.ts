@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Component, Input } from '@angular/core';
 import { ReturnType, Task } from 'src/app/data/vm-tasks';
 import { supportedLanguages } from 'src/app/configuration/code-with-syntax-highlighting/code-with-syntax-highlighting.component';
 

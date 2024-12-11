@@ -15,8 +15,6 @@ import {
   GenericKeyValueMapArray,
 } from '../data/forms';
 
-// TODO: Type reactive forms!
-
 @Component({
   selector: 'app-typed-form',
   templateUrl: './typed-form.component.html',
