@@ -36,7 +36,6 @@ import {
   FormControl,
   NonNullableFormBuilder,
   FormArray,
-  ValidationErrors,
   AbstractControl,
 } from '@angular/forms';
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
@@ -174,7 +173,7 @@ export class NewScheduledEventComponent
       validators: [
         Validators.required,
         Validators.minLength(4),
-        this.uniqueEventName,
+        this.uniqueEventNameValidator(),
       ],
       nonNullable: true,
     }),
@@ -187,7 +186,7 @@ export class NewScheduledEventComponent
         Validators.required,
         Validators.minLength(5),
         Validators.pattern(/^[a-z0-9][a-z0-9.-]{3,}[a-z0-9]$/),
-        this.uniqueAccessCode,
+        this.uniqueAccessCodeValidator(),
       ],
       nonNullable: true,
     }),
@@ -198,7 +197,7 @@ export class NewScheduledEventComponent
 
   public vmCounts: VmCountFormGroup = new FormGroup<EnvToVmTemplatesMappings>(
     {},
-    this.validateAdvancedVmPage,
+    this.advancedVmPageValidator(),
   );
 
   public simpleModeVmCounts: FormGroup<{
@@ -262,6 +261,12 @@ export class NewScheduledEventComponent
     };
   }
 
+  private uniqueAccessCodeValidator(): (
+    control: AbstractControl,
+  ) => { notUnique: boolean } | null {
+    return (control: AbstractControl<string>) => this.uniqueAccessCode(control);
+  }
+
   public uniqueAccessCode(
     control: AbstractControl<string>,
   ): { notUnique: boolean } | null {
@@ -280,7 +285,13 @@ export class NewScheduledEventComponent
     return null;
   }
 
-  public uniqueEventName(
+  private uniqueEventNameValidator(): (
+    control: AbstractControl,
+  ) => { notUnique: boolean } | null {
+    return (control: AbstractControl<string>) => this.uniqueEventName(control);
+  }
+
+  private uniqueEventName(
     control: AbstractControl<string>,
   ): { notUnique: boolean } | null {
     if (
@@ -341,7 +352,7 @@ export class NewScheduledEventComponent
     // reset
     this.vmCounts = new FormGroup<EnvToVmTemplatesMappings>(
       {},
-      this.validateAdvancedVmPage,
+      this.advancedVmPageValidator(),
     );
 
     this.simpleModeVmCounts = this._fb.group({
@@ -357,6 +368,13 @@ export class NewScheduledEventComponent
       this.setupSimpleVMPage(ea);
       this.setupAdvancedVMPage(ea);
     });
+  }
+
+  private advancedVmPageValidator(): (control: AbstractControl) => {
+    controlTypeMismatch?: string;
+    requiredVmCountSatisfied?: boolean;
+  } | null {
+    return (control: AbstractControl) => this.validateAdvancedVmPage(control);
   }
 
   private validateAdvancedVmPage(vmCountFormGroup: AbstractControl): {
@@ -992,7 +1010,7 @@ export class NewScheduledEventComponent
     this.wizard.open();
     this.vmCounts = new FormGroup<EnvToVmTemplatesMappings>(
       {},
-      this.validateAdvancedVmPage,
+      this.advancedVmPageValidator(),
     );
   }
 

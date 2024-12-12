@@ -37,7 +37,7 @@
     "@xterm/addon-canvas": "^0.7.0",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
-    "angular-bootstrap-datetimepicker": "file:./datetimepicker",
+    "angular-bootstrap-datetimepicker": "npm:@philipab/angular-bootstrap-datetimepicker@^17.0.2",
     "angular-split": "^17.2.0",
     "brace": "^0.11.1",
     "chart.js": "^4.3.0",

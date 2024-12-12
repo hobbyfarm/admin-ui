@@ -105,6 +105,10 @@ overflows the modal and hence displays an unneeded scrollbar */
   color: var(--clr-tooltip-color, #fff);
 }
 
+clr-signpost clr-signpost-content .signpost-content-body {
+  overflow-y: visible;
+}
+
 .status-provisioning{
   --clr-progress-default-color:  var(--clr-color-warning-100, yellow);
 }

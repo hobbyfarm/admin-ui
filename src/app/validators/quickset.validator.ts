@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
 import { isQuickSetEndTimeFormGroup } from '../data/forms';
 
 export function QuicksetValidator(
