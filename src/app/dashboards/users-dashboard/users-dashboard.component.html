@@ -1,0 +1,66 @@
+@if (loading) {
+  <span class="spinner spinner-inline"> Loading... </span>
+  <span> Loading... </span>
+} @else {
+  @if (dashboardUsers.length < 1) {
+    <div>No Users found</div>
+  }
+
+  <clr-datagrid>
+    <clr-dg-column>ID</clr-dg-column>
+    <clr-dg-column [clrDgField]="'email'">Username</clr-dg-column>
+    <clr-dg-column [clrDgField]="'otac'">OTAC</clr-dg-column>
+    <clr-dg-column [clrDgSortBy]="'started'">Started</clr-dg-column>
+    <clr-dg-column [clrDgSortBy]="'progresses.size'">Sessions</clr-dg-column>
+    <clr-dg-column [clrDgSortBy]="'uniqueScenarios'"
+      >Unique Scenarios</clr-dg-column
+    >
+    <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
+
+    <clr-dg-row *clrDgItems="let user of dashboardUsers">
+      <clr-dg-cell>{{ user.id }} </clr-dg-cell>
+      <clr-dg-cell>{{ user.email }}</clr-dg-cell>
+      <clr-dg-cell>
+        @if (user.otac) {
+          {{ user.otac.name }}
+        } @else {
+          -
+        }
+      </clr-dg-cell>
+      <clr-dg-cell>
+        {{ user.started | date: "MMMM d, y, HH:mm:ss z" }}
+      </clr-dg-cell>
+      <clr-dg-cell>
+        {{ user.progresses?.length ?? 0 }}
+      </clr-dg-cell>
+      <clr-dg-cell>{{ user.uniqueScenarios }}</clr-dg-cell>
+      <clr-dg-cell>
+        @if (user.status == "completed") {
+          <span class="badge badge-success">COMPLETED</span>
+        } @else if (user.status == "in-progress") {
+          <span class="badge badge-info">IN PROGRESS</span>
+        } @else if (user.status == "out-of-time") {
+          <span class="badge badge-danger">OUT OF TIME</span>
+        }
+      </clr-dg-cell>
+    </clr-dg-row>
+    <clr-dg-footer>
+      <clr-dg-action-bar>
+        <button
+          type="button"
+          class="btn btn-sm btn-secondary btn-outline"
+          (click)="downloadCSV()"
+        >
+          <cds-icon shape="download"></cds-icon> Download CSV
+        </button>
+      </clr-dg-action-bar>
+      <clr-dg-pagination #pagination [clrDgPageSize]="20">
+        <clr-dg-page-size [clrPageSizeOptions]="[10, 20, 50]"
+          >Users per page</clr-dg-page-size
+        >
+        {{ pagination.firstItem + 1 }} - {{ pagination.lastItem + 1 }} of
+        {{ pagination.totalItems }} users
+      </clr-dg-pagination>
+    </clr-dg-footer>
+  </clr-datagrid>
+}
