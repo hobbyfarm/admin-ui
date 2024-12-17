@@ -1,7 +1,10 @@
 <div>
-  <div *ngIf="vmSets.length < 1">No active VMs</div>
+  @if (vmSets.length < 1) {
+    <div>No active VMs</div>
+  }
   <clr-accordion [clrAccordionMultiPanel]="true">
-    <div *ngFor="let set of vmSets">
+    @for(set of vmSets; track $index) {
+      <div>
       <clr-accordion-panel
         [(clrAccordionPanelOpen)]="set.stepOpen"
         (click)="setStepOpen(set)"
@@ -36,7 +39,7 @@
                   >Hostname</clr-dg-column
                 >
 
-                <clr-dg-row *clrDgItems="let vm of set.setVMs">
+                <clr-dg-row *clrDgItems="let vm of set.setVMs!">
                   <clr-dg-cell
                     class="dashboardCell"
                     *rbac="[
@@ -89,5 +92,6 @@
         </clr-accordion-content>
       </clr-accordion-panel>
     </div>
+  }
   </clr-accordion>
 </div>

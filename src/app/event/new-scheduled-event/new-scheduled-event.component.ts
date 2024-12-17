@@ -54,22 +54,6 @@ import {
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 
-// This object type maps VMTemplate names to the number of requested VMs
-// The key specifies the template name
-// The FormControl holds the number of requested VMs
-type VmTemplateMappings = { [key: string]: FormControl<number> };
-
-// This type holds (multiple) VMTemplateMappings within a FormGroup.
-type VmTemplatesFormGroup = FormGroup<VmTemplateMappings>;
-
-// This type maps Environment names to the VMTemplateMappings of the respective environment wrapped in a FormGroup
-// The key specifies the environment name
-// The VMTemplatesFormGroup holds the VMTemplateMappings of the respective environment
-type EnvToVmTemplatesMappings = { [key: string]: VmTemplatesFormGroup };
-
-// This type holds all Environment to VMTemplates mappings
-type VmCountFormGroup = FormGroup<EnvToVmTemplatesMappings>;
-
 @Component({
   selector: 'new-scheduled-event',
   templateUrl: './new-scheduled-event.component.html',
@@ -139,35 +123,27 @@ export class NewScheduledEventComponent
       validators: [
         Validators.required,
         Validators.minLength(4),
-        this.noWhitespace(),
-        this.uniqueSharedVMName(),
+        this.noWhitespaceValidator(),
+        this.uniqueSharedVMNameValidator(),
       ],
       nonNullable: true,
     }),
-    vm_env: new FormControl<string>(''),
+    vm_env: new FormControl<string>('', {
+      validators: [
+        Validators.required,
+      ],
+      nonNullable: true,
+    }),
     vm_template: new FormControl<string>('', {
       validators: [
         Validators.required,
-        this.templateMatchesEnv(),
-      ]
+        this.templateMatchesEnvValidator(),
+      ],
+      nonNullable: true,
     }),
   });
 
-  templateMatchesEnv(): ValidatorFn {
-    
-    return (control: FormControl<string>): { matchEnv: boolean } | null => {
-      if (
-        !control.value ||
-        !this.sharedVmForm.controls.vm_env ||
-        !(this.getTemplates(this.sharedVmForm.controls.vm_env.value).includes(control.value))        
-      ) {        
-        return {
-          matchEnv: true,
-        };
-      }
-      return null;
-    };
-  }
+
 
   constructor(
     private _fb: NonNullableFormBuilder,
@@ -369,31 +345,64 @@ export class NewScheduledEventComponent
     return null;
   }
 
-  public uniqueSharedVMName(): ValidatorFn {
-    return (control: FormControl<string>): { notUnique: boolean } | null => {
-      if (
-        !control.value ||
-        this.scheduledEvents.filter((el) =>
-          el.shared_vms.map((vm) => vm.name).includes(control.value)
-        ).length > 0
-      ) {
-        return {
-          notUnique: true,
-        };
-      }
-      return null;
-    };
+  private uniqueSharedVMNameValidator(): (
+    control: AbstractControl,
+  ) => { notUnique: boolean } | null {
+    return (control: AbstractControl<string>) => this.uniqueSharedVMName(control);
   }
 
-  public noWhitespace(): ValidatorFn {
-    return (control: FormControl<string>): { whitespace: boolean } | null => {
-      if (control.value.includes(' ')) {
-        return {
-          whitespace: true,
-        };
-      }
-      return null;
-    };
+  private uniqueSharedVMName(
+    control: AbstractControl<string>,
+  ): { notUnique: boolean } | null {
+    if (
+      !control.value ||
+      this.scheduledEvents.filter((el) =>
+        el.shared_vms.map((vm) => vm.name).includes(control.value)
+      ).length > 0
+    ) {
+      return {
+        notUnique: true,
+      };
+    }
+    return null;
+  }
+
+  private noWhitespaceValidator(): (
+    control: AbstractControl,
+  ) => { whitespace: boolean } | null {
+    return (control: AbstractControl<string>) => this.noWhitespace(control);
+  }
+
+  private noWhitespace(
+    control: AbstractControl<string>,
+  ): { whitespace: boolean } | null {
+    if (control.value.includes(' ')) {
+      return {
+        whitespace: true,
+      };
+    }
+    return null;
+  }
+
+  private templateMatchesEnvValidator(): (
+    control: AbstractControl,
+  ) => { matchEnv: boolean } | null {
+    return (control: AbstractControl<string>) => this.templateMatchesEnv(control);
+  }
+
+  private templateMatchesEnv(
+    control: AbstractControl<string>,
+  ): { matchEnv: boolean } | null {
+    if (
+      !control.value ||
+      !this.sharedVmForm.controls.vm_env ||
+      !(this.getTemplates(this.sharedVmForm.controls.vm_env.value).includes(control.value))        
+    ) {        
+      return {
+        matchEnv: true,
+      };
+    }
+    return null;
   }
 
   

@@ -567,8 +567,8 @@
               }
             </tbody>
           </table>
-        </ng-container>
-      </ng-container>
+        }
+      }
     </clr-wizard-page>
     <clr-wizard-page>
       <ng-template clrPageTitle>Select Shared Virtual Machines</ng-template>   
@@ -981,8 +981,10 @@
                     }
                   </td>
                  </tr>
-        </tbody>
+                }
+            </tbody> 
       </table>
+    }
       <h4>SharedVM Information</h4>
           <table class="table table-compact">
             <thead>
@@ -999,44 +1001,14 @@
                   <tr >
                     <td>{{ sharedVm.name }}</td>
                     <td>{{ sharedVm.environment }}</td>
-                    <td>{{ sharedVm.vmTemplate }}</td>                
+                    <td>{{ sharedVm.vm_template }}</td>                
                   </tr>
                 }
               
             </tbody>
           </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                </tr>
-              }
-            </tbody>
-          </table>
-        }
+        
+        
       </clr-wizard-page>
-    }
-  }
+    }  }
 </clr-wizard>

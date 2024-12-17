@@ -13,8 +13,8 @@ interface DashboardVm extends VirtualMachine {
 }
 
 interface dashboardVmSet extends VmSet {
-  setVMs?: DashboardVm[];
-  stepOpen?: boolean;
+  setVMs: DashboardVm[];
+  stepOpen: boolean;
   dynamic: boolean;
 }
 
@@ -80,8 +80,8 @@ export class SharedVmDashboardComponent implements OnChanges {
           base_name: environment,
           stepOpen: this.openPanels.has(environment),
           dynamic: false,
+          setVMs: element
         };
-        vmSet.setVMs = element;
         vmSet.count = element.length;
         vmSet.available = element.filter((vm) => vm.status == 'running').length;
         vmSet.environment = environment;
@@ -125,7 +125,7 @@ export class SharedVmDashboardComponent implements OnChanges {
     let envMap = new Map<string, VirtualMachine[]>();
     vms.forEach((element) => {
       if (envMap.has(element.environment_id)) {
-        let envVms = envMap.get(element.environment_id);
+        let envVms = envMap.get(element.environment_id)!;
         envVms.push(element);
         envMap.set(element.environment_id, envVms);
       } else {

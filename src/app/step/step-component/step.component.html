@@ -93,7 +93,7 @@
             </clr-tab>
           }
           
-          @for (webinterface of v.value?.webinterfaces; track $index; let i = $index) {
+          @for (webinterface of v.value.webinterfaces; track webinterface; let i = $index) {
             @if ((webinterface.hasOwnTab && i < maxInterfaceTabs) || webinterface.active) {
               <clr-tab #tab>
             <button

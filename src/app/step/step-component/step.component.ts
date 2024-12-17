@@ -98,8 +98,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   public courseName: String = '';
 
   @Input() public isUserSession: boolean = true;
-  @Input() public vmId?: string;
-  @Input() public vmName?: string;
+  @Input() public vmId: string;
+  @Input() public vmName: string;
 
   public maxInterfaceTabs: number = 10;
   private activeWebinterface: Service;
@@ -133,7 +133,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private courseService: CourseService,
     private jwtHelper: JwtHelperService,
-    private scheduledEventService: ScheduledeventService
+    private scheduledEventService: ScheduledeventService,
   ) {}
 
   handleStepContentClick(e: MouseEvent) {
@@ -171,12 +171,12 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         tap((res: VM) => this.vms.set(this.vmName, res)),
         switchMap((vm: stepVM) => {
           return this.vmService.getWebinterfaces(vm.id);
-        })
+        }),
       )
-      .subscribe((res) => {
-        this.vms.get(this.vmName).webinterfaces = JSON.parse(
-          JSON.parse(atob(res.content))
-        );
+      .subscribe((res) => {        
+          this.vms.get(this.vmName)!.webinterfaces = JSON.parse(
+            JSON.parse(atob(res.content)),
+          ); 
       });
   }
 
@@ -230,7 +230,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
           return this.vmService.get(v.vm_id).pipe(
             first(),
             tap((vm) => addJwtAllowedDomain(vm.ws_endpoint)), //Allow JwtModule to intercept and add the JWT on shell-server requests
-            map((vm) => [k, vm] as const)
+            map((vm) => [k, vm] as const),
           );
         }),
         toArray(),
@@ -240,7 +240,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
           const vmObservables = this.getWebinterfaces();
           // Using forkJoin to ensure that all inner observables complete, before we return their combined output
           return forkJoin(vmObservables);
-        })
+        }),
       )
       .subscribe({
         next: () => {
@@ -311,8 +311,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         catchError(() => {
           vm.webinterfaces = [];
           return of(vm);
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -329,10 +329,10 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
           .find((se) => se.access_code === sess.access_code)
           ?.shared_vms.forEach((vm) => {
             let matchingVM = this.sharedVMs.find((sVM) => sVM.id === vm.vm_id);
-            matchingVM.name = vm.name;
+            if (matchingVM) matchingVM.name = vm.name;
           });
       }),
-      switchMap(([se, sess]) => of(sess))
+      switchMap(([se, sess]) => of(sess)),
     );
   }
 
@@ -342,7 +342,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
       tap(([sVMs]) => {
         this.sharedVMs = sVMs;
       }),
-      switchMap(([sVMs, sess]) => of(sess))
+      switchMap(([sVMs, sess]) => of(sess)),
     );
   }
 
@@ -365,7 +365,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   goNext() {
     this.stepnumber += 1;
     this.router.navigateByUrl(
-      '/session/' + this.session.id + '/steps/' + this.stepnumber
+      '/session/' + this.session.id + '/steps/' + this.stepnumber,
     );
     this._loadStep();
     this.contentDiv.nativeElement.scrollTop = 0;
@@ -399,7 +399,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   goPrevious() {
     this.stepnumber -= 1;
     this.router.navigateByUrl(
-      '/session/' + this.session.id + '/steps/' + this.stepnumber
+      '/session/' + this.session.id + '/steps/' + this.stepnumber,
     );
     this._loadStep();
     this.contentDiv.nativeElement.scrollTop = 0;

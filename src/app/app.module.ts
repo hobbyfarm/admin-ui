@@ -217,7 +217,7 @@ ClarityIcons.addIcons(
   syncIcon,
   downloadIcon,
   plusCircleIcon,
-  exclamationTriangleIcon,,
+  exclamationTriangleIcon,
   refreshIcon
 );
 
