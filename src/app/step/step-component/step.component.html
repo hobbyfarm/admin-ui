@@ -1,98 +1,168 @@
 <div class="split-container">
-  <as-split unit="percent" direction="horizontal" (dragEnd)="dragEnd()">
-    <as-split-area [size]="40" class="split-area-1">
-      <div class="card" id="sidebar">
-        <div class="card-header">
-          <h4 class="scenario-info bold">{{ scenario.name }}</h4>
-          @if (!!session.course) {
-            <section class="scenario-info">Course: {{ courseName }}</section>
-          }
-          <section class="scenario-info">User: {{ username }}</section>
-
-          <button class="btn btn-next btn-warning-outline" (click)="goFinish()">
-            <cds-icon shape="check"></cds-icon>
-            Terminate Session
-          </button>
-        </div>
-
-        <div class="card-block" #contentdiv>
-          <h4 class="card-title">
-            {{ this.stepnumber + 1 }}. {{ step.title }}
-          </h4>
-          <div class="card-text">
-            <app-hf-markdown
-              [content]="stepcontent"
-              [context]="mdContext"
-              (click)="handleStepContentClick($event)"
-            ></app-hf-markdown>
-          </div>
-        </div>
-
-        <div class="card-footer">
-          <div class="progress">
-            <!-- <div class="progress-meter" data-value="getProgress()"></div> -->
-            <progress [value]="getProgress() || 0" max="100"></progress>
-          </div>
-          <div id="step-navigator">
-            <button
-              class="btn btn-outline btn-previous"
-              (click)="goPrevious()"
-              [disabled]="this.stepnumber < 1"
-            >
-              <cds-icon shape="arrow" direction="left"></cds-icon> Prev
-            </button>
-            <span id="step-counter">
-              {{ this.stepnumber + 1 }}/{{ this.scenario.stepcount }}
-            </span>
-            @if (!isLastStepActive) {
-              <button class="btn btn-next" (click)="goNext()">
-                Next <cds-icon shape="arrow" direction="right"></cds-icon>
-              </button>
-            } @else {
-              <button class="btn btn-success btn-next" (click)="goFinish()">
-                <cds-icon shape="check"></cds-icon> Finish
-              </button>
+  <as-split unit="percent" direction="horizontal" (dragEnd)="dragEnd()" >
+    @if (isUserSession) {
+      <as-split-area [size]="40" class="split-area-1">
+        <div class="card" id="sidebar">
+          <div class="card-header">
+            <h4 class="scenario-info bold">{{ scenario.name }}</h4>
+            @if (!!session.course) {
+              <section class="scenario-info">Course: {{ courseName }}</section>
             }
+            <section class="scenario-info">User: {{ username }}</section>
+            <button class="btn btn-next btn-warning-outline" (click)="goFinish()">
+              <cds-icon shape="check"></cds-icon>
+              Terminate Session
+            </button>
+          </div>
+          <div class="card-block" #contentdiv>
+            <h4 class="card-title">
+              {{ this.stepnumber + 1 }}. {{ step.title }}
+            </h4>
+            <div class="card-text">
+              <app-hf-markdown
+                [content]="stepcontent"
+                [context]="mdContext"
+                (click)="handleStepContentClick($event)"
+              ></app-hf-markdown>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="progress">
+              <!-- <div class="progress-meter" data-value="getProgress()"></div> -->
+              <progress [value]="getProgress() || 0" max="100"></progress>
+            </div>
+            <div id="step-navigator">
+              <button
+                class="btn btn-outline btn-previous"
+                (click)="goPrevious()"
+                [disabled]="this.stepnumber < 1"
+                >
+                <cds-icon shape="arrow" direction="left"></cds-icon> Prev
+              </button>
+              <span id="step-counter">
+                {{ this.stepnumber + 1 }}/{{ this.scenario.stepcount }}
+              </span>
+              @if (!isLastStepActive) {
+                <button class="btn btn-next" (click)="goNext()">
+                  Next <cds-icon shape="arrow" direction="right"></cds-icon>
+                </button>
+              } @else {
+                <button class="btn btn-success btn-next" (click)="goFinish()">
+                  <cds-icon shape="check"></cds-icon> Finish
+                </button>
+              }
+            </div>
           </div>
         </div>
-      </div>
-    </as-split-area>
-    <as-split-area [size]="60" class="split-area-2">
-      <div id="terminal-column">
-        <clr-tabs>
-          @for (v of vms | keyvalue; track v) {
-            <clr-tab #tab>
-              <button clrTabLink [id]="v.key">
-                <cds-icon size="24" shape="host"></cds-icon> {{ v.key }}
-              </button>
-              <clr-tab-content #tabcontent>
-                <table class="table compact">
-                  <tr>
-                    <td><b>Public IP:</b> {{ v.value.public_ip }}</td>
-                    <td><b>Private IP:</b> {{ v.value.private_ip }}</td>
-                    <td><b>Hostname:</b> {{ v.value.hostname }}</td>
-                    <td><b>Shell Status:</b> {{ getShellStatus(v.key) }}</td>
-                  </tr>
-                </table>
-                @if (!isGuacamoleTerminal(v.value.protocol)) {
-                  <app-terminal
-                    [vmname]="v.key"
-                    [vmid]="v.value.id"
-                    [endpoint]="v.value.ws_endpoint"
-                    #term
-                  ></app-terminal>
+      </as-split-area>
+    }
+    <!-- *ngIf="true" here is a workaround so the two split-areas are shown in the correct order. *ngIf seems to mess with the order of Elements if only one Section uses it-->
+    @if (true) {
+      <as-split-area [size]="60" class="split-area-2">
+        <div id="terminal-column">
+          <clr-tabs>
+            @for (v of vms | keyvalue; track v) {
+              @if (showTerminalTab(v.value)) {
+                <clr-tab #tab>
+                  <button clrTabLink [id]="v.key">
+                    <cds-icon size="24" shape="host"></cds-icon> {{ v.key }}
+                  </button>
+                  <clr-tab-content #tabcontent>
+                    <table class="table compact">
+                      <tr>
+                        <td><b>Public IP:</b> {{ v.value.public_ip }}</td>
+                        <td><b>Private IP:</b> {{ v.value.private_ip }}</td>
+                        <td><b>Hostname:</b> {{ v.value.hostname }}</td>
+                        <td><b>Shell Status:</b> {{ getShellStatus(v.key) }}</td>
+                      </tr>
+                    </table>
+                    @if (!isGuacamoleTerminal(v.value.protocol)) {
+                      <app-terminal
+                        [vmname]="v.key"
+                        [vmid]="v.value.id"
+                        [endpoint]="v.value.ws_endpoint"
+                        #term
+                      ></app-terminal>
+                    } @else {
+                      <h3 class="guac-terminal">
+                        Admin access to terminals only possible on machines that
+                        support ssh-connections
+                      </h3>
+                    }
+                  </clr-tab-content>
+                </clr-tab>
+              }
+              @for (webinterface of v.value.webinterfaces; track webinterface; let i = $index) {
+                @if ((webinterface.hasOwnTab && i < maxInterfaceTabs) || webinterface.active) {
+                  <clr-tab #tab>
+                    <button
+                      clrTabLink
+                      [id]="v.key + webinterface.name"
+                      [clrTabLinkInOverflow]="false"
+                      (click)="setTabActive(webinterface, v.key)"
+                      >
+                      {{ v.key }} - {{ webinterface.name }}
+                    </button>
+                    <clr-tab-content>
+                      <table class="table compact no-margin">
+                        <tr>
+                          <td><b>Webinterface:</b> {{ webinterface.name }}</td>
+                          <td><b>Node:</b> {{ v.key }}</td>
+                          <td><b>Port:</b> {{ webinterface.port }}</td>
+                          <td><b>Path:</b> {{ webinterface.path }}</td>
+                          <td style="padding: 0">
+                            <button
+                              class="btn btn-icon btn-primary btn-sm"
+                              title="Reload Tab"
+                              (click)="reloadWebinterface(v.value.id, webinterface)"
+                              >
+                              <cds-icon shape="refresh"></cds-icon>
+                            </button>
+                            <button
+                              class="btn btn-icon btn-primary btn-sm"
+                              title="Open in a new Tab"
+                      (click)="
+                        openWebinterfaceInNewTab(v.value, webinterface)
+                      "
+                              >
+                              <cds-icon shape="pop-out"></cds-icon>
+                            </button>
+                          </td>
+                        </tr>
+                      </table>
+                      @if (!isGuacamoleTerminal(v.value.protocol)) {
+                        <app-webinterface-window
+                          [vmid]="v.value.id"
+                          [endpoint]="v.value.ws_endpoint"
+                          [port]="webinterface.port"
+                          [path]="webinterface.path"
+                          [disallowIFrame]="webinterface.disallowIFrame"
+                (openWebinterfaceFn)="
+                  openWebinterfaceInNewTab(v.value, webinterface)
+                "
+                          [reloadEvent]="reloadTabObservable"
+                          >
+                        </app-webinterface-window>
+                      }
+                    </clr-tab-content>
+                  </clr-tab>
                 } @else {
-                  <h3 class="guac-terminal">
-                    Admin access to terminals only possible on machines that
-                    support ssh-connections
-                  </h3>
+                  <clr-tab>
+                    <button
+                      clrTabLink
+                      [clrTabLinkInOverflow]="true"
+                      (click)="setTabActive(webinterface, v.key)"
+                      >
+                      {{ v.key }} - {{ webinterface.name }}
+                    </button>
+                  </clr-tab>
                 }
-              </clr-tab-content>
-            </clr-tab>
-          }
-        </clr-tabs>
-      </div>
-    </as-split-area>
+              }
+            }
+          </clr-tabs>
+        </div>
+      </as-split-area>
+    }
   </as-split>
 </div>
 
@@ -138,7 +208,7 @@
           class="btn btn-danger-outline"
           (click)="actuallyFinish(true)"
           *rbac="['sessions.update']"
-        >
+          >
           Force
         </button>
       </div>
@@ -147,7 +217,7 @@
       class="btn btn-danger-outline"
       (click)="actuallyFinish()"
       *rbac="['sessions.update']"
-    >
+      >
       Terminate Session
     </button>
   </div>
@@ -157,7 +227,7 @@
   #sessionExpiredModal
   [(clrModalOpen)]="sessionExpired"
   [clrModalClosable]="false"
->
+  >
   <h3 class="modal-title">Your session has expired!</h3>
   <div class="modal-body">
     <p>Please return back to the home page.</p>

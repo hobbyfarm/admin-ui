@@ -425,7 +425,6 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     event?: ChartEvent;
     active?: {}[];
   }): void {
-    // console.log(event, active);
   }
 
   public chartHovered({
@@ -435,7 +434,6 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     event?: ChartEvent;
     active?: {}[];
   }): void {
-    // console.log(event, active);
   }
 
   private setupScenariosWithSessions(progressData: Progress[]) {

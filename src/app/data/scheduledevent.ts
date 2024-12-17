@@ -1,4 +1,6 @@
 // For freshly created scheduled events, start_time or end_time might be undefined
+import { SharedVirtualMachine } from "./sharedvm";
+
 export class ScheduledEventBase {
   id: string;
   creator: string;
@@ -20,6 +22,7 @@ export class ScheduledEventBase {
   on_demand: boolean;
   printable: boolean;
   activeSessions: number;
+  shared_vms: SharedVirtualMachine[] = [];
 }
 
 // start_time or end_time must be defined for scheduled events returned by our backend

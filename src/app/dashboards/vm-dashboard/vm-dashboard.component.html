@@ -1,7 +1,7 @@
 <div>
   <div class="clr-row">
-    <div class="clr-col-12">
-      <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
+    <div class="clr-col-12">     
+        <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
     </div>
   </div>
   @if (vmSets.length < 1) {
@@ -74,9 +74,11 @@
                       </button></clr-dg-cell
                     >
                     <clr-dg-cell class="dashboardCell">
-                      @if (vm.status === "running") {
+                      @if (!!vm.tainted) {
+                        <span class="badge badge-warning">tainted</span>
+                      } @else if (vm.status === "running") {
                         <span class="badge badge-success">{{ vm.status }}</span>
-                      } @else {
+                      } @else if (vm.status !== 'running'){
                         <span class="badge badge-warning">{{ vm.status }}</span>
                       }
                     </clr-dg-cell>

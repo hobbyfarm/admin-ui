@@ -105,10 +105,17 @@ export const ACTIONS: MDEditorAction[] = [
   },
   {
     name: 'VM-Info',
-    actionBefore: '${vmInfo:<nodeName>:<attribute>}',
+    actionBefore: '${vminfo:<nodeName>:<attribute>}',
     actionAfter: '',
     actionEmpty: '',
     icon: 'host',
+  },
+  {
+    name: 'Shared-VM-Info',
+    actionBefore: '${shared:<nodeName>:<attribute>}',
+    actionAfter: '',
+    actionEmpty: '',
+    icon: 'rack-server',
   },
   {
     name: 'Task',

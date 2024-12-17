@@ -55,6 +55,7 @@ import { ProgressDashboardComponent } from './dashboards/progress-dashboard/prog
 import { DashboardsComponent } from './dashboards/dashboards.component';
 import { VmDashboardComponent } from './dashboards/vm-dashboard/vm-dashboard.component';
 import { UsersDashboardComponent } from './dashboards/users-dashboard/users-dashboard.component';
+import { SharedVmDashboardComponent } from './dashboards/shared-vm-dashboard/shared-vm-dashboard.component';
 import { StepComponent } from './step/step-component/step.component';
 import { CtrService } from './data/ctr.service';
 import { SessionService } from './data/session.service';
@@ -159,6 +160,7 @@ import {
   downloadIcon,
   plusCircleIcon,
   exclamationTriangleIcon,
+  refreshIcon
 } from '@cds/core/icon';
 import { ReadonlyTaskComponent } from './scenario/task/readonly-task/readonly-task.component';
 import { HiddenMdComponent } from './step/hidden-md-component/hidden-md.component';
@@ -172,6 +174,8 @@ import { TooltipComponent } from './tooltip/tooltip.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AuthnService } from './data/authn.service';
 import { SessionProgressService } from './progress/session-progress.service';
+import { TerminalViewComponent } from './step/terminal/terminal-view.component';
+import { WebinterfaceWindowComponent } from './step/terminal/webinterface-window/webinterface-window.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -214,6 +218,7 @@ ClarityIcons.addIcons(
   downloadIcon,
   plusCircleIcon,
   exclamationTriangleIcon,
+  refreshIcon
 );
 
 const appInitializerFn = (appConfig: AppConfigService) => {
@@ -221,6 +226,19 @@ const appInitializerFn = (appConfig: AppConfigService) => {
     return appConfig.loadAppConfig();
   };
 };
+
+
+//TODO: Check if this still works after resolving all merge conflicts considering Angular 17 upgrade!
+export const jwtAllowedDomains = [
+  environment.server.replace(/(^\w+:|^)\/\//, ''),
+];
+
+export function addJwtAllowedDomain(domain: string) {
+  const newDomain = domain.replace(/(^\w+:|^)\/\//, '');
+  if (!jwtAllowedDomains.includes(newDomain)) {
+    jwtAllowedDomains.push(newDomain);
+  }
+}
 
 export function jwtOptionsFactory(): JwtConfig {
   const allowedDomainsRegex = environment.server.match(/.*\:\/\/?([^\/]+)/);
@@ -279,9 +297,11 @@ export function jwtOptionsFactory(): JwtConfig {
     DashboardsComponent,
     VmDashboardComponent,
     UsersDashboardComponent,
+    SharedVmDashboardComponent,
     StepComponent,
     HfMarkdownComponent,
     TerminalComponent,
+    TerminalViewComponent,
     CtrComponent,
     RbacDirective,
     ClarityDisableSelectionDirective,
@@ -318,6 +338,7 @@ export function jwtOptionsFactory(): JwtConfig {
     TaskFormComponent,
     ReadonlyTaskComponent,
     SingleTaskVerificationMarkdownComponent,
+    WebinterfaceWindowComponent,
     GlossaryMdComponent,
     HiddenMdComponent,
     MermaidMdComponent,
