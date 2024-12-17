@@ -5,19 +5,19 @@
   <clr-accordion [clrAccordionMultiPanel]="true">
     @for(set of vmSets; track $index) {
       <div>
-      <clr-accordion-panel
-        [(clrAccordionPanelOpen)]="set.stepOpen"
-        (click)="setStepOpen(set)"
-      >
-        <clr-accordion-title>
-          <b>Environment:</b> {{ set.environment }} &nbsp; <b>Count: </b
-          >{{ set.count }}
-        </clr-accordion-title>
-        <clr-accordion-content *clrIfExpanded>
-          <div class="clr-row">
-            <div class="clr-col">
-              <clr-datagrid>
-                <clr-dg-column
+        <clr-accordion-panel
+          [(clrAccordionPanelOpen)]="set.stepOpen"
+          (click)="setStepOpen(set)"
+          >
+          <clr-accordion-title>
+            <b>Environment:</b> {{ set.environment }} &nbsp; <b>Count: </b
+            >{{ set.count }}
+          </clr-accordion-title>
+          <clr-accordion-content *clrIfExpanded>
+            <div class="clr-row">
+              <div class="clr-col">
+                <clr-datagrid>
+                  <clr-dg-column
                   *rbac="[
                     'sessions.get',
                     'courses.get',
@@ -25,23 +25,23 @@
                     'scenarios.get',
                     'virtualmachineclaims.get'
                   ]"
-                  >Access Terminal</clr-dg-column
-                >
-                <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
-                <clr-dg-column [clrDgField]="'public_ip'">Name</clr-dg-column>
-                <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
-                <clr-dg-column [clrDgField]="'vm_template_id'"
-                  >VM-Template</clr-dg-column
-                >
+                    >Access Terminal</clr-dg-column
+                    >
+                    <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
+                    <clr-dg-column [clrDgField]="'public_ip'">Name</clr-dg-column>
+                    <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
+                    <clr-dg-column [clrDgField]="'vm_template_id'"
+                      >VM-Template</clr-dg-column
+                      >
 
-                <clr-dg-column [clrDgField]="'id'">VM Id</clr-dg-column>
-                <clr-dg-column [clrDgField]="'hostname'"
-                  >Hostname</clr-dg-column
-                >
+                      <clr-dg-column [clrDgField]="'id'">VM Id</clr-dg-column>
+                      <clr-dg-column [clrDgField]="'hostname'"
+                        >Hostname</clr-dg-column
+                        >
 
-                <clr-dg-row *clrDgItems="let vm of set.setVMs!">
-                  <clr-dg-cell
-                    class="dashboardCell"
+                        <clr-dg-row *clrDgItems="let vm of set.setVMs!">
+                          <clr-dg-cell
+                            class="dashboardCell"
                     *rbac="[
                       'sessions.get',
                       'courses.get',
@@ -49,49 +49,52 @@
                       'scenarios.get',
                       'virtualmachineclaims.get'
                     ]"
-                    ><button
-                      [disabled]="!vm.allocated"
-                      class="btn btn-sm btn-primary dashboardCell joinButton"
-                      (click)="openTerminal(vm)"
-                    >
-                      >_
-                    </button></clr-dg-cell
-                  >
-                  <clr-dg-cell class="dashboardCell">
-                    <span
-                      *ngIf="vm.status === 'running' && !vm.tainted"
-                      class="badge badge-success"
-                      >{{ vm.status }}</span
-                    >
-                    <span
-                      *ngIf="vm.status !== 'running' && !vm.tainted"
-                      class="badge badge-warning"
-                      >{{ vm.status }}</span
-                    >
-                    <span
-                      *ngIf="!!vm.tainted"
-                      class="badge badge-warning"
-                      >tainted</span
-                    >
-                  </clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{ vm.name }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.public_ip
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.vm_template_id
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{ vm.id }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell">{{
-                    vm.hostname
-                  }}</clr-dg-cell>
-                </clr-dg-row>
-              </clr-datagrid>
+                            ><button
+                            [disabled]="!vm.allocated"
+                            class="btn btn-sm btn-primary dashboardCell joinButton"
+                            (click)="openTerminal(vm)"
+                            >
+                            >_
+                          </button></clr-dg-cell
+                          >
+                          <clr-dg-cell class="dashboardCell">
+                            @if (vm.status === 'running' && !vm.tainted) {
+                              <span
+                                class="badge badge-success"
+                                >{{ vm.status }}</span
+                                >
+                              }
+                              @if (vm.status !== 'running' && !vm.tainted) {
+                                <span
+                                  class="badge badge-warning"
+                                  >{{ vm.status }}</span
+                                  >
+                                }
+                                @if (!!vm.tainted) {
+                                  <span
+                                    class="badge badge-warning"
+                                    >tainted</span
+                                    >
+                                  }
+                                </clr-dg-cell>
+                                <clr-dg-cell class="dashboardCell">{{ vm.name }}</clr-dg-cell>
+                                <clr-dg-cell class="dashboardCell">{{
+                                  vm.public_ip
+                                }}</clr-dg-cell>
+                                <clr-dg-cell class="dashboardCell">{{
+                                  vm.vm_template_id
+                                }}</clr-dg-cell>
+                                <clr-dg-cell class="dashboardCell">{{ vm.id }}</clr-dg-cell>
+                                <clr-dg-cell class="dashboardCell">{{
+                                  vm.hostname
+                                }}</clr-dg-cell>
+                              </clr-dg-row>
+                            </clr-datagrid>
+                          </div>
+                        </div>
+                      </clr-accordion-content>
+                    </clr-accordion-panel>
+                  </div>
+                }
+              </clr-accordion>
             </div>
-          </div>
-        </clr-accordion-content>
-      </clr-accordion-panel>
-    </div>
-  }
-  </clr-accordion>
-</div>
