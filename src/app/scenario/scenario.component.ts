@@ -88,6 +88,20 @@ export class ScenarioComponent implements OnInit {
     });
   }
 
+  cloneScenario(scenarioId: string) {
+    this.scenarioService.clone(scenarioId).subscribe({
+      next: (_s: ServerResponse) => {
+        const alertMsg = 'Scenario cloned';
+        this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
+        this.refresh();
+      },
+      error: (e: HttpErrorResponse) => {
+        const alertMsg = 'Error cloning scenario: ' + e.error.message;
+        this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
+      },
+    })
+  }
+
   deleteScenario(scenarioId: string) {
     this.scenarioService.delete(scenarioId).subscribe({
       next: (_s: ServerResponse) => {
