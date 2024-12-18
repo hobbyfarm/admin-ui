@@ -110,6 +110,14 @@ export class ScenarioService {
     );
   }
 
+  public clone(scenarioId: string) {
+    return this.gargAdmin.post(`/copy/${scenarioId}`, null).pipe(
+      catchError((e: HttpErrorResponse) => {
+        return throwError(() => e.error);
+      }),
+    )
+  }
+
   public update(s: Scenario) {
     var steps = structuredClone(s.steps);
     // step by step, re-encode to b64
