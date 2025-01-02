@@ -725,8 +725,8 @@
             <tr>
               <td>Restricted Bind</td>
               @if (
-                se.disable_restriction ==
-                uneditedScheduledEvent.disable_restriction
+                !!se.disable_restriction ==
+                !!uneditedScheduledEvent.disable_restriction
               ) {
                 <td>
                   {{ !se.disable_restriction }}
