@@ -52,7 +52,7 @@ export class ScenarioComponent implements OnInit {
           this.selectedscenario = s;
         },
         error: (e: HttpErrorResponse) => {
-          const alertMsg = 'Error retrieving object: ' + e.error.message;
+          const alertMsg = 'Error retrieving object: ' + e.message;
           this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
         },
       });
@@ -67,7 +67,7 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.get(scenario.id).subscribe({
       next: (scenario) => (this.selectedscenario = scenario),
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error deleting object: ' + e.error.message;
+        const alertMsg = 'Error deleting object: ' + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
@@ -82,7 +82,7 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.list(true).subscribe({
       next: (sList: Scenario[]) => (this.filteredScenarios = sList),
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error listing objects: ' + e.error.message;
+        const alertMsg = 'Error listing objects: ' + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
@@ -96,7 +96,7 @@ export class ScenarioComponent implements OnInit {
         this.refresh();
       },
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error cloning scenario: ' + e.error.message;
+        const alertMsg = 'Error cloning scenario: ' + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     })
@@ -110,7 +110,7 @@ export class ScenarioComponent implements OnInit {
         this.refresh();
       },
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error deleting object: ' + e.error.message;
+        const alertMsg = 'Error deleting object: ' + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });

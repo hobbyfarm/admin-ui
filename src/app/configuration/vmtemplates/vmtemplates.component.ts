@@ -85,7 +85,7 @@ export class VmtemplatesComponent implements OnInit {
       },
       error: (e: HttpErrorResponse) => {
         const alertMsg =
-          'Error deleting virtual machine template: ' + e.error.message;
+          'Error deleting virtual machine template: ' + e.message;
         this.alert.danger(alertMsg, false, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
