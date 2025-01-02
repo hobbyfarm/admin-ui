@@ -111,7 +111,7 @@ export class CourseComponent implements OnInit {
         this.selectedCourse = null;
       },
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error deleting object: ' + e.error.message;
+        const alertMsg = 'Error deleting object: ' + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });

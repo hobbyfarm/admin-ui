@@ -202,7 +202,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
         },
         error: (e: HttpErrorResponse) => {
           this.alert.danger(
-            'Error saving VM Template: ' + e.error.message,
+            'Error saving VM Template: ' + e.message,
             false,
             DEFAULT_ALERT_ERROR_DURATION,
           );
@@ -219,7 +219,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
         },
         error: (e: HttpErrorResponse) => {
           this.alert.danger(
-            'Error saving VM Template: ' + e.error.message,
+            'Error saving VM Template: ' + e.message,
             false,
             DEFAULT_ALERT_ERROR_DURATION,
           );

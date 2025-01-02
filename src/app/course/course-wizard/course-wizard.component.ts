@@ -272,7 +272,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
         },
         (e: HttpErrorResponse) => {
           this.alertDanger(
-            'Error listing dynmamic scenarios: ' + e.error.message,
+            'Error listing dynmamic scenarios: ' + e.message,
           );
         },
       );
@@ -348,7 +348,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
         this.coursesRefresher.emit();
       },
       (e: HttpErrorResponse) => {
-        this.alertText = 'Error creating object: ' + e.error.message;
+        this.alertText = 'Error creating object: ' + e.message;
         this.isAlert = true;
       },
     );
@@ -363,7 +363,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
         this.coursesRefresher.emit();
       },
       (e: HttpErrorResponse) => {
-        this.alertText = 'Error creating object: ' + e.error.message;
+        this.alertText = 'Error creating object: ' + e.message;
         this.isAlert = true;
       },
     );
