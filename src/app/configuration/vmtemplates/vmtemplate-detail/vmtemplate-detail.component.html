@@ -16,6 +16,23 @@
           <clr-stack-content>{{ currentVmTemplate.image }}</clr-stack-content>
         </clr-stack-block>
       </clr-stack-block>
+      <clr-stack-block>
+        <clr-stack-label>Cost</clr-stack-label>
+        <clr-stack-block>
+          <clr-stack-label class="stackbox-header">Option</clr-stack-label>
+          <clr-stack-content class="stackbox-header">Value</clr-stack-content>
+        </clr-stack-block>
+        <clr-stack-block>
+          <clr-stack-label>Base Price</clr-stack-label>
+          <clr-stack-content>
+            {{ currentVmTemplate.cost_base_price ? currentVmTemplate.cost_base_price : 'None' }}
+          </clr-stack-content>
+        </clr-stack-block>
+        <clr-stack-block>
+          <clr-stack-label>Time Unit</clr-stack-label>
+          {{ currentVmTemplate.cost_time_unit ? currentVmTemplate.cost_time_unit : 'None' }}
+        </clr-stack-block>
+      </clr-stack-block>
       @if (
         currentVmTemplate.config_map && !isEmpty(currentVmTemplate.config_map)
       ) {

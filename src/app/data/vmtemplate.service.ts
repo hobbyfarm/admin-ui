@@ -45,7 +45,9 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
       .set('id', template.id)
       .set('name', template.name)
       .set('image', template.image)
-      .set('config_map', JSON.stringify(template.config_map));
+      .set('config_map', JSON.stringify(template.config_map))
+      .set('cost_base_price', template.cost_base_price ?? '')
+      .set('cost_time_unit', template.cost_time_unit ?? '');
 
     return this.garg.put(`/${template.id}/update`, params);
   }
@@ -54,7 +56,9 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
     let params = new HttpParams({ encoder: new CustomHttpParamEncoder() })
       .set('name', template.name)
       .set('image', template.image)
-      .set('config_map', JSON.stringify(template.config_map));
+      .set('config_map', JSON.stringify(template.config_map))
+      .set('cost_base_price', template.cost_base_price ?? '')
+      .set('cost_time_unit', template.cost_time_unit ?? '');
 
     return this.garg
       .post('/create', params)
