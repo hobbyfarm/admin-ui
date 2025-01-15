@@ -1,0 +1,99 @@
+<div class="clr-row">
+  <!-- Top Row -->
+  <div class="clr-col">
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">
+          {{ allCost.total | currency: currencySymbol }}
+        </h4>
+        <p class="card-text">All</p>
+      </div>
+    </div>
+  </div>
+  <div class="clr-col">
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">
+          {{ historicalCost.total | currency: currencySymbol }}
+        </h4>
+        <p class="card-text">Historical Resources</p>
+      </div>
+    </div>
+  </div>
+  <div class="clr-col">
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">
+          {{ currentCost.total | currency: currencySymbol }}
+        </h4>
+        <p class="card-text">Active Resources</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Accordion for Overall Cost -->
+<div class="clr-row">
+  <clr-accordion *ngFor="let source of allCost.source">
+    <clr-accordion-panel>
+      <clr-accordion-title>
+        <h4>
+          {{ source.kind }}s: {{ source.cost | currency: currencySymbol }}
+        </h4>
+      </clr-accordion-title>
+      <clr-accordion-content
+        clrIfExpanded
+        (clrIfExpandedChange)="onAccordionToggle($event)"
+      >
+        <div *ngIf="detailedCost">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Price</th>
+                <th>Creation Date</th>
+                <th>Deletion Date</th>
+                <th>Running</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let source of getDetailedCostForKind(source.kind)">
+                <td>{{ source.id }}</td>
+                <td>
+                  {{ source.base_price | currency: currencySymbol }} /
+                  {{ source.time_unit }}
+                </td>
+                <td>
+                  {{ source.creation_unix_timestamp * 1000 | date: "medium" }}
+                </td>
+                <td>
+                  {{
+                    source.deletion_unix_timestamp
+                      ? (source.deletion_unix_timestamp * 1000 | date: "medium")
+                      : "N/A"
+                  }}
+                </td>
+                <td>
+                  {{
+                    calculateRunningTime(
+                      source.creation_unix_timestamp,
+                      source.deletion_unix_timestamp
+                    )
+                  }}
+                </td>
+                <td>
+                  {{ calculateSourceCost(source) | currency: currencySymbol }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="loading">
+          <clr-spinner clrInline aria-label="Loading"></clr-spinner> Loading
+          detailed costs...
+        </div>
+      </clr-accordion-content>
+    </clr-accordion-panel>
+  </clr-accordion>
+</div>

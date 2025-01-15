@@ -172,6 +172,8 @@ import { TooltipComponent } from './tooltip/tooltip.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AuthnService } from './data/authn.service';
 import { SessionProgressService } from './progress/session-progress.service';
+import { CostService } from './data/cost.service';
+import { CostDashboardComponent } from './dashboards/cost-dashboard/cost-dashboard.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -279,6 +281,7 @@ export function jwtOptionsFactory(): JwtConfig {
     DashboardsComponent,
     VmDashboardComponent,
     UsersDashboardComponent,
+    CostDashboardComponent,
     StepComponent,
     HfMarkdownComponent,
     TerminalComponent,
@@ -369,6 +372,7 @@ export function jwtOptionsFactory(): JwtConfig {
     PredefinedServiceService,
     ThemeService,
     TypedSettingsService,
+    CostService,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFn,
