@@ -151,7 +151,7 @@ export class VmDashboardComponent implements OnInit {
   handleDelete(confirm: boolean): void {
     if (confirm) {
       console.log('Delete confirmed!');
-      // delete this.selectedVM
+      // ToDo: delete this.selectedVM
     }
     else{
       this.selectedVM = undefined;
