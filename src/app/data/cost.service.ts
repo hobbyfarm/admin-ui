@@ -13,6 +13,7 @@ import { ServerResponse } from './serverresponse';
 })
 export class CostService extends ResourceClient<Cost> {
   private detailedGarg = this.gcf.scopedClient('/a/cost/detail/');
+  private listGarg = this.gcf.scopedClient('/a/cost');
 
   constructor(private gcf: GargantuaClientFactory) {
     super(gcf.scopedClient('/a/cost'));
@@ -48,6 +49,8 @@ export class CostService extends ResourceClient<Cost> {
 
   // Retreive all costs over all cost groups
   public list() {
-    return this.garg.get('/list').pipe(map(extractResponseContent));
+    return this.listGarg
+      .get<ServerResponse>('/list')
+      .pipe(map(extractResponseContent));
   }
 }

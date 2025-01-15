@@ -19,6 +19,7 @@ import { RolesComponent } from './configuration/roles/roles/roles.component';
 import { SessionStatisticsComponent } from './session-statistics/session-statistics.component';
 import { SettingsComponent } from './configuration/settings/settings.component';
 import { DashboardDetailsComponent } from './dashboards/dashboard-details/dashboard-details.component';
+import { CostStatisticsComponent } from './cost-statistics/cost-dashboard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -31,6 +32,10 @@ const routes: Routes = [
       {
         path: 'statistics/sessions',
         component: SessionStatisticsComponent,
+      },
+      {
+        path: 'statistics/costs',
+        component: CostStatisticsComponent,
       },
     ],
   },

@@ -164,6 +164,10 @@ export class CostDashboardComponent implements OnChanges {
 
   getTotalResourceCount(cost: Cost) {
     let count = 0;
+    if (!cost || !cost.source) {
+      return count;
+    }
+
     cost.source.forEach((r: CostSource) => {
       count += r.count;
     });

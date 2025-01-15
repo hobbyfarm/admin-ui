@@ -174,6 +174,7 @@ import { AuthnService } from './data/authn.service';
 import { SessionProgressService } from './progress/session-progress.service';
 import { CostService } from './data/cost.service';
 import { CostDashboardComponent } from './dashboards/cost-dashboard/cost-dashboard.component';
+import { CostStatisticsComponent } from './cost-statistics/cost-dashboard.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -246,6 +247,7 @@ export function jwtOptionsFactory(): JwtConfig {
     AppComponent,
     HomeComponent,
     SessionStatisticsComponent,
+    CostStatisticsComponent,
     SessionTimeStatisticsComponent,
     HeaderComponent,
     EventComponent,
