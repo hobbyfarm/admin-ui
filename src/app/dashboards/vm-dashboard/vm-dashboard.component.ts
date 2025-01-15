@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { Progress } from 'src/app/data/progress';
@@ -9,6 +9,7 @@ import { VirtualMachine } from 'src/app/data/virtualmachine';
 import { VmService } from 'src/app/data/vm.service';
 import { VmSet } from 'src/app/data/vmset';
 import { VmSetService } from 'src/app/data/vmset.service';
+import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-confirmation.component';
 
 interface dashboardVmSet extends VmSet {
   setVMs?: VirtualMachine[];
@@ -37,8 +38,10 @@ export class VmDashboardComponent implements OnInit {
   public vms: VirtualMachine[] = [];
   public vmSets: dashboardVmSet[] = [];
 
-  public selectedVM: VirtualMachine = new VirtualMachine();
+  public selectedVM: VirtualMachine | undefined;
   public openPanels: Set<String> = new Set();
+
+  @ViewChild('deleteModal') deleteModal: DeleteConfirmationComponent;
 
   ngOnInit(): void {
     this.getVmList();
@@ -140,7 +143,19 @@ export class VmDashboardComponent implements OnInit {
     return envMap;
   }
 
-  deleteVM(vm: VirtualMachine){
+  openDeleteConfirmation(vm: VirtualMachine): void {
+    this.selectedVM = vm;
+    this.deleteModal.open();
+  }
 
+  handleDelete(confirm: boolean): void {
+    if (confirm) {
+      console.log('Delete confirmed!');
+      // delete this.selectedVM
+    }
+    else{
+      this.selectedVM = undefined;
+      console.log('No deletion happend');
+    }
   }
 }

@@ -44,10 +44,7 @@
 
               <clr-dg-row *clrDgItems="let vm of set.setVMs ?? []">
                 <clr-dg-action-overflow>
-                  <button class="action-item" aria-label="delete vm" (click)="deleteVM(vm)">
-                    Delete VM
-                  </button>
-                  <button aria-label="session join" class="action-item" (click)="openUsersTerminal(vm)"
+                  <button class="action-item" aria-label="session join" (click)="openUsersTerminal(vm)"
                     [disabled]="!vm.allocated" *rbac="[
                         'sessions.get',
                         'courses.get',
@@ -56,6 +53,10 @@
                         'virtualmachineclaims.get',
                       ]">
                     Join Session
+                  </button>
+                  <hr>
+                  <button class="action-item" aria-label="delete vm" (click)="openDeleteConfirmation(vm)">
+                    Delete VM
                   </button>
                 </clr-dg-action-overflow>
                 <clr-dg-cell class="dashboardCell">
@@ -94,3 +95,6 @@
   }
 </clr-accordion>
 </div>
+<delete-confirmation #deleteModal [message]="'Are you sure you want to delete this VM?'"
+  (delete)="handleDelete($event)">
+</delete-confirmation>
