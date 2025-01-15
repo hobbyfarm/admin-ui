@@ -23,6 +23,7 @@ export class CostDashboardComponent implements OnChanges {
   public allCost: Cost = new Cost();
   public currentCost: Cost = new Cost();
   public historicalCost: Cost = new Cost();
+  public normalizedCost: number = 0;
 
   public detailedCost?: DetailedCost;
   public loading: boolean = false;
@@ -30,6 +31,7 @@ export class CostDashboardComponent implements OnChanges {
   ngOnChanges(): void {
     if (this.selectedEvent) {
       this.detailedCost = undefined;
+      this.normalizedCost = 0;
 
       this.costService.allCostForGroup(this.selectedEvent.id).subscribe({
         next: (cost: Cost) => {
@@ -60,6 +62,8 @@ export class CostDashboardComponent implements OnChanges {
           this.currentCost.total = 0;
         },
       });
+
+      this.fetchDetailedCost();
     }
   }
 
@@ -129,6 +133,43 @@ export class CostDashboardComponent implements OnChanges {
     return source.base_price * timeUnits;
   }
 
+  calculateNormalizedMonthlyCost(): number {
+    let totalMonthlyCost = 0;
+
+    if (!this.detailedCost) {
+      return 0;
+    }
+
+    this.detailedCost.source.forEach((source) => {
+      if (!source.deletion_unix_timestamp) {
+        // Resource is still running
+        switch (source.time_unit) {
+          case 'seconds':
+            totalMonthlyCost += source.base_price * 60 * 60 * 24 * 30; // Normalize to one month
+            break;
+          case 'minutes':
+            totalMonthlyCost += source.base_price * 60 * 24 * 30; // Normalize to one month
+            break;
+          case 'hours':
+            totalMonthlyCost += source.base_price * 24 * 30; // Normalize to one month
+            break;
+          default:
+            throw new Error(`Unknown time unit: ${source.time_unit}`);
+        }
+      }
+    });
+
+    return totalMonthlyCost;
+  }
+
+  getTotalResourceCount(cost: Cost) {
+    let count = 0;
+    cost.source.forEach((r: CostSource) => {
+      count += r.count;
+    });
+    return count;
+  }
+
   private fetchDetailedCost(): void {
     if (this.detailedCost) {
       return;
@@ -138,6 +179,7 @@ export class CostDashboardComponent implements OnChanges {
     this.costService.detailedCostForGroup(this.selectedEvent.id).subscribe(
       (data: DetailedCost) => {
         this.detailedCost = data;
+        this.normalizedCost = this.calculateNormalizedMonthlyCost();
         this.loading = false;
       },
       (error) => {

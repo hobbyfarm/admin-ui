@@ -6,7 +6,9 @@
         <h4 class="card-title">
           {{ allCost.total | currency: currencySymbol }}
         </h4>
-        <p class="card-text">All</p>
+        <p class="card-text">
+          All {{ getTotalResourceCount(allCost) }} resources
+        </p>
       </div>
     </div>
   </div>
@@ -16,7 +18,9 @@
         <h4 class="card-title">
           {{ historicalCost.total | currency: currencySymbol }}
         </h4>
-        <p class="card-text">Historical Resources</p>
+        <p class="card-text">
+          {{ getTotalResourceCount(historicalCost) }} Historical resources
+        </p>
       </div>
     </div>
   </div>
@@ -24,9 +28,11 @@
     <div class="card">
       <div class="card-block">
         <h4 class="card-title">
-          {{ currentCost.total | currency: currencySymbol }}
+          {{ normalizedCost | currency: currencySymbol }} / Month
         </h4>
-        <p class="card-text">Active Resources</p>
+        <p class="card-text">
+          {{ getTotalResourceCount(currentCost) }} Active resources
+        </p>
       </div>
     </div>
   </div>
@@ -38,7 +44,8 @@
     <clr-accordion-panel>
       <clr-accordion-title>
         <h4>
-          {{ source.kind }}s: {{ source.cost | currency: currencySymbol }}
+          {{ source.count }}x {{ source.kind }}s totaling
+          {{ source.cost | currency: currencySymbol }}
         </h4>
       </clr-accordion-title>
       <clr-accordion-content
