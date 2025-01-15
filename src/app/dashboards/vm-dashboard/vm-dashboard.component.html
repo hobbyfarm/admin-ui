@@ -44,44 +44,20 @@
 
               <clr-dg-row *clrDgItems="let vm of set.setVMs ?? []">
                 <clr-dg-action-overflow>
-                  <button class="action-item" aria-label="session info">
-                    Info
+                  <button class="action-item" aria-label="delete vm" (click)="deleteVM(vm)">
+                    Delete VM
                   </button>
-                  <!-- <button
-                      aria-label="session join"
-                      class="action-item"
-                      (click)="openTerminalWindow(progress)"
-                      [disabled]="progress.finished"
-                      *rbac="[
+                  <button aria-label="session join" class="action-item" (click)="openUsersTerminal(vm)"
+                    [disabled]="!vm.allocated" *rbac="[
                         'sessions.get',
                         'courses.get',
                         'progresses.list',
                         'scenarios.get',
                         'virtualmachineclaims.get',
-                      ]"
-                    >
-                      Join Session
-                    </button>
-                    <button
-                      class="action-item"
-                      aria-label="terminate session"
-                      (click)="terminateSession(progress)"
-                      [disabled]="progress.finished"
-                      *rbac="['sessions.update']"
-                    >
-                      Terminate Session
-                    </button> -->
+                      ]">
+                    Join Session
+                  </button>
                 </clr-dg-action-overflow>
-                <clr-dg-cell class="dashboardCell" *rbac="[
-                        'sessions.get',
-                        'courses.get',
-                        'progresses.list',
-                        'scenarios.get',
-                        'virtualmachineclaims.get',
-                      ]"><button [disabled]="!vm.allocated" class="btn btn-sm btn-primary dashboardCell joinButton"
-                    (click)="openUsersTerminal(vm)">
-                    >_
-                  </button></clr-dg-cell>
                 <clr-dg-cell class="dashboardCell">
                   @if (vm.status === "running") {
                   <span class="badge badge-success">{{ vm.status }}</span>

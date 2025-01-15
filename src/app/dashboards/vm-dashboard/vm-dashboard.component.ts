@@ -139,4 +139,8 @@ export class VmDashboardComponent implements OnInit {
     });
     return envMap;
   }
+
+  deleteVM(vm: VirtualMachine){
+
+  }
 }
