@@ -43,7 +43,7 @@
               <clr-dg-column [clrDgField]="'hostname'">Hostname</clr-dg-column>
 
               <clr-dg-row *clrDgItems="let vm of set.setVMs ?? []">
-                <clr-dg-action-overflow>
+                <clr-dg-action-overflow class="datagrid-row-actions">
                   <button class="action-item" aria-label="session join" (click)="openUsersTerminal(vm)"
                     [disabled]="!vm.allocated" *rbac="[
                         'sessions.get',
