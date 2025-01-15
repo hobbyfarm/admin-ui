@@ -43,7 +43,35 @@
               <clr-dg-column [clrDgField]="'hostname'">Hostname</clr-dg-column>
 
               <clr-dg-row *clrDgItems="let vm of set.setVMs ?? []">
-                <clr-dg-cell class="dashboardCell">...</clr-dg-cell>
+                <clr-dg-action-overflow>
+                  <button class="action-item" aria-label="session info">
+                    Info
+                  </button>
+                  <!-- <button
+                      aria-label="session join"
+                      class="action-item"
+                      (click)="openTerminalWindow(progress)"
+                      [disabled]="progress.finished"
+                      *rbac="[
+                        'sessions.get',
+                        'courses.get',
+                        'progresses.list',
+                        'scenarios.get',
+                        'virtualmachineclaims.get',
+                      ]"
+                    >
+                      Join Session
+                    </button>
+                    <button
+                      class="action-item"
+                      aria-label="terminate session"
+                      (click)="terminateSession(progress)"
+                      [disabled]="progress.finished"
+                      *rbac="['sessions.update']"
+                    >
+                      Terminate Session
+                    </button> -->
+                </clr-dg-action-overflow>
                 <clr-dg-cell class="dashboardCell" *rbac="[
                         'sessions.get',
                         'courses.get',
