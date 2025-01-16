@@ -68,7 +68,11 @@
               <tr *ngFor="let source of getDetailedCostForKind(source.kind)">
                 <td>{{ source.id }}</td>
                 <td>
-                  {{ source.base_price | currency: currencySymbol }} /
+                  {{
+                    source.base_price
+                      | currency: currencySymbol : "symbol" : "1.2-5"
+                  }}
+                  /
                   {{ source.time_unit }}
                 </td>
                 <td>
