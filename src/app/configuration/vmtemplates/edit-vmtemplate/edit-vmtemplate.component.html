@@ -62,6 +62,39 @@
       </clr-input-container>
     </form>
   </clr-wizard-page>
+
+  <clr-wizard-page [clrWizardPageNextDisabled]="!costDetails.valid">
+    <ng-template clrPageTitle>Cost</ng-template>
+
+    <form clrForm [formGroup]="costDetails">
+      <clr-input-container>
+        <label>Base Price</label>
+        <input
+          clrInput
+          type="number"
+          placeholder="base price"
+          name="cost_base_price"
+          formControlName="cost_base_price"
+        />
+        <clr-control-error *clrIfError="'invalidFloat'"
+        >Optional base price needs to be a floating-point number greater or equal zero</clr-control-error
+        >
+      </clr-input-container>
+      <clr-select-container>
+        <label>Time Unit</label>
+        <select title="cost_time_unit" clrSelect formControlName="cost_time_unit">
+          <option value=""></option>
+          <option value="seconds">seconds</option>
+          <option value="minutes">minutes</option>
+          <option value="hours">hours</option>
+        </select>
+      </clr-select-container>
+      <clr-control-error *ngIf="costDetails.errors?.invalidAllOrNone">
+        Either both or none of the fields must be set.
+      </clr-control-error>
+    </form>
+  </clr-wizard-page>
+
   <clr-wizard-page [clrWizardPageNextDisabled]="!configMap.valid">
     <ng-template clrPageTitle>Config Map</ng-template>
 
@@ -192,6 +225,59 @@
           <tr>
             <td>Image</td>
             <td>{{ template.image }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <h4>Cost</h4>
+    <table class="table table-compact">
+      <thead>
+      <tr>
+        <th>Option</th>
+        <th>Value</th>
+      </tr>
+      </thead>
+      <tbody>
+        @if (!!this.editTemplate) {
+          <tr>
+            <td>Base Price</td>
+            @if (template.cost_base_price == uneditedTemplate.cost_base_price) {
+              <td>
+                {{ template.cost_base_price ?? 'None' }}
+              </td>
+            } @else {
+              <td>
+                <span class="del-elem arrow-after">{{
+                    uneditedTemplate.cost_base_price ?? 'None'
+                  }}</span>
+                <span class="add-elem">{{ template.cost_base_price ?? 'None' }}</span>
+              </td>
+            }
+          </tr>
+          <tr>
+            <td>Time Unit</td>
+            @if (template.cost_time_unit == uneditedTemplate.cost_time_unit) {
+              <td>
+                {{ template.cost_time_unit ?? 'None' }}
+              </td>
+            } @else {
+              <td>
+                <span class="del-elem arrow-after">{{
+                    uneditedTemplate.cost_time_unit ?? 'None'
+                  }}</span>
+                <span class="add-elem">{{ template.cost_time_unit ?? 'None' }}</span>
+              </td>
+            }
+          </tr>
+        } @else {
+          <tr>
+            <td>Base Price</td>
+            <td>{{ template.cost_base_price ?? 'None' }}</td>
+          </tr>
+          <tr>
+            <td>Time Unit</td>
+            <td>{{ template.cost_time_unit ?? 'None' }}</td>
           </tr>
         }
       </tbody>

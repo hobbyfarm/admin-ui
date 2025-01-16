@@ -19,6 +19,8 @@ import { ClrWizard } from '@clr/angular';
 import { DEFAULT_ALERT_ERROR_DURATION } from 'src/app/alert/alert';
 import { AlertComponent } from 'src/app/alert/alert.component';
 import { CloudInitConfig } from 'src/app/data/cloud-init-config';
+import { EitherAllOrNoneValidator } from '../../../validators/eitherallornone.validator';
+import { FloatValidator } from '../../../validators/float.validator';
 import { GenericKeyValueGroup } from 'src/app/data/forms';
 import { ServerResponse } from 'src/app/data/serverresponse';
 import { VMTemplateServiceConfiguration } from 'src/app/data/vm-template-service-configuration';
@@ -35,6 +37,10 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public templateDetails: FormGroup<{
     name: FormControl<string>;
     image: FormControl<string>;
+  }>;
+  public costDetails: FormGroup<{
+    cost_base_price: FormControl<string>;
+    cost_time_unit: FormControl<string>;
   }>;
   public configMap: FormGroup<{
     mappings: FormArray<GenericKeyValueGroup<string>>;
@@ -81,6 +87,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   private _build() {
     this.buildConfigMap();
+    this.buildCostDetails()
     this.buildTemplateDetails();
   }
 
@@ -95,6 +102,23 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
         Validators.required,
       ),
     });
+  }
+
+  public buildCostDetails(vmTemplate: VMTemplate | null = null) {
+    this.costDetails = this._fb.group(
+      {
+        cost_base_price: this._fb.control<string>(
+          vmTemplate?.cost_base_price ?? '',
+          FloatValidator(0, Number.MAX_VALUE),
+        ),
+        cost_time_unit: this._fb.control<string>(
+          vmTemplate?.cost_time_unit ?? '',
+        ),
+      },
+      {
+        validators: [EitherAllOrNoneValidator(['cost_base_price', 'cost_time_unit'])],
+      }
+    );
   }
 
   public buildConfigMap() {
@@ -166,6 +190,16 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     this.template.image = this.templateDetails.controls.image.value;
   }
 
+  public copyCostDetails() {
+    this.template.cost_base_price = this.costDetails.controls.cost_base_price.value
+      ? this.costDetails.controls.cost_base_price.value
+      : undefined;
+    this.template.cost_time_unit = this.costDetails.controls.cost_time_unit.value
+      ? this.costDetails.controls.cost_time_unit.value
+      : undefined;
+  }
+
+
   public copyConfigMap() {
     this.template.config_map = {};
     for (let i = 0; i < this.configMap.controls.mappings.length; i++) {
@@ -186,6 +220,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
   public copyTemplate() {
     this.copyConfigMap();
+    this.copyCostDetails()
     this.copyTemplateDetails();
   }
 
@@ -231,6 +266,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   private _prepare(vmTemplate: VMTemplate) {
     this.buildTemplateDetails(vmTemplate);
+    this.buildCostDetails(vmTemplate);
     this.prepareConfigMap(vmTemplate);
   }
 
@@ -242,6 +278,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       this.wizard.pages.first.makeCurrent();
     } else {
       this.buildTemplateDetails();
+      this.buildCostDetails();
       this.buildConfigMap();
     }
     this.uneditedTemplate = structuredClone(this.template);

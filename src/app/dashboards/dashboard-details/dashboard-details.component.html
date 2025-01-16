@@ -8,6 +8,8 @@
       <h3>Users participating in {{ selectedEvent.event_name }}</h3>
     } @else if (statisticsDashboardActive && rbacSuccessSessions) {
       <h3>Statistics for {{ selectedEvent.event_name }}</h3>
+    } @else if (costDashboardActive) {
+      <h3>Costs for {{ selectedEvent.event_name }}</h3>
     }
     <span class="additional-info">
       <ng-container *rbac="['accesscodes.get']">
@@ -75,6 +77,15 @@
           </ng-template>
         </clr-tab>
       }
+        <clr-tab>
+          <button clrTabLink>Costs</button>
+          <ng-template [(clrIfActive)]="costDashboardActive">
+            <clr-tab-content *clrIfActive>
+              <cost-dashboard [selectedEvent]="selectedEvent">
+              </cost-dashboard>
+            </clr-tab-content>
+          </ng-template>
+        </clr-tab>
     </clr-tabs>
   </div>
 }

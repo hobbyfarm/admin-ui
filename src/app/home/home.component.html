@@ -15,6 +15,14 @@
       >
         Session Statistics
       </a>
+      <a
+        clrVerticalNavLink
+        routerLink="./statistics/costs"
+        routerLinkActive="active"
+        *rbac="['scheduledevents.list']; op: 'AND'"
+      >
+        Cost Statistics
+      </a>
     </clr-vertical-nav>
     <div class="content-area">
       <router-outlet></router-outlet>

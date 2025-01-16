@@ -23,6 +23,7 @@ export interface Settings {
   hide_usernames_status: boolean;
   theme: 'dark' | 'light' | 'system';
   progress_view_mode: ProgressViewMode;
+  currency_symbol: string;
 }
 
 /**
@@ -51,6 +52,9 @@ export class SettingsService {
     theme: new FormControl<'dark' | 'light' | 'system'>('system', {
       nonNullable: true,
     }),
+    currency_symbol: new FormControl<string>('$', {
+      nonNullable: true,
+    }), 
   });
 
   fetch() {
@@ -64,6 +68,7 @@ export class SettingsService {
               hide_usernames_status: false,
               theme: 'system',
               progress_view_mode: 'cardView',
+              currency_symbol : '$',
             } as Settings),
       ),
       tap((s: Settings) => {

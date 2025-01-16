@@ -1,0 +1,120 @@
+<div class="clr-row">
+  <!-- Top Row -->
+  <div class="clr-col">
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">
+          {{ allCost.total | currency: currencySymbol }}
+        </h4>
+        <p class="card-text">
+          All {{ getTotalResourceCount(allCost) }} resources
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="clr-col">
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">
+          {{ historicalCost.total | currency: currencySymbol }}
+        </h4>
+        <p class="card-text">
+          {{ getTotalResourceCount(historicalCost) }} Historical resources
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="clr-col">
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">
+          {{ normalizedCost | currency: currencySymbol }} / Month
+        </h4>
+        <p class="card-text">
+          {{ getTotalResourceCount(currentCost) }} Active resources
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="clr-row">
+  <!-- Top Row -->
+  <div class="clr-col-md-4">
+    <monthly-cost-chart [data]="detailedCost"></monthly-cost-chart>
+  </div>
+</div>
+
+<!-- Accordion for Overall Cost -->
+<div class="clr-row">
+  <clr-accordion *ngFor="let source of allCost.source">
+    <clr-accordion-panel>
+      <clr-accordion-title>
+        <h4>
+          {{ source.count }}x {{ source.kind }}s totaling
+          {{ source.cost | currency: currencySymbol }}
+        </h4>
+      </clr-accordion-title>
+      <clr-accordion-content
+        clrIfExpanded
+        (clrIfExpandedChange)="onAccordionToggle($event)"
+      >
+        <div *ngIf="detailedCost">
+          <clr-datagrid>
+            <clr-dg-column [clrDgSortBy]="'id'">ID</clr-dg-column>
+            <clr-dg-column>Price</clr-dg-column>
+            <clr-dg-column
+              [clrDgField]="'creation_unix_timestamp'"
+              [clrDgSortBy]="'creation_unix_timestamp'"
+              >Creation Date</clr-dg-column
+            >
+            <clr-dg-column
+              [clrDgField]="'deletion_unix_timestamp'"
+              [clrDgSortBy]="'deletion_unix_timestamp'"
+              >Deletion Date</clr-dg-column
+            >
+            <clr-dg-column>Running</clr-dg-column>
+            <clr-dg-column>Cost</clr-dg-column>
+            <clr-dg-row
+              *clrDgItems="let source of getDetailedCostForKind(source.kind)"
+            >
+              <clr-dg-cell>{{ source.id }}</clr-dg-cell>
+              <clr-dg-cell>
+                {{
+                  source.base_price
+                    | currency: currencySymbol : "symbol" : "1.2-5"
+                }}
+                / {{ source.time_unit }}
+              </clr-dg-cell>
+              <clr-dg-cell>
+                {{ source.creation_unix_timestamp * 1000 | date: "medium" }}
+              </clr-dg-cell>
+              <clr-dg-cell>
+                {{
+                  source.deletion_unix_timestamp
+                    ? (source.deletion_unix_timestamp * 1000 | date: "medium")
+                    : "N/A"
+                }}
+              </clr-dg-cell>
+              <clr-dg-cell>
+                {{
+                  calculateRunningTime(
+                    source.creation_unix_timestamp,
+                    source.deletion_unix_timestamp
+                  )
+                }}
+              </clr-dg-cell>
+              <clr-dg-cell>
+                {{ calculateSourceCost(source) | currency: currencySymbol }}
+              </clr-dg-cell>
+            </clr-dg-row>
+          </clr-datagrid>
+        </div>
+        <div *ngIf="loading">
+          <clr-spinner clrInline aria-label="Loading"></clr-spinner> Loading
+          detailed costs...
+        </div>
+      </clr-accordion-content>
+    </clr-accordion-panel>
+  </clr-accordion>
+</div>
