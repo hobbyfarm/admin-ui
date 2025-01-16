@@ -175,6 +175,7 @@ import { SessionProgressService } from './progress/session-progress.service';
 import { CostService } from './data/cost.service';
 import { CostDashboardComponent } from './dashboards/cost-dashboard/cost-dashboard.component';
 import { CostStatisticsComponent } from './cost-statistics/cost-dashboard.component';
+import { MonthlyCostChartComponent } from './dashboards/cost-dashboard/monthly-cost-chart/monthly-cost-chart.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -284,6 +285,7 @@ export function jwtOptionsFactory(): JwtConfig {
     VmDashboardComponent,
     UsersDashboardComponent,
     CostDashboardComponent,
+    MonthlyCostChartComponent,
     StepComponent,
     HfMarkdownComponent,
     TerminalComponent,

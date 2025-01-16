@@ -38,6 +38,13 @@
   </div>
 </div>
 
+<div class="clr-row">
+  <!-- Top Row -->
+  <div class="clr-col-md-4">
+    <monthly-cost-chart [data]="detailedCost"></monthly-cost-chart>
+  </div>
+</div>
+
 <!-- Accordion for Overall Cost -->
 <div class="clr-row">
   <clr-accordion *ngFor="let source of allCost.source">
