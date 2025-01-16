@@ -98,29 +98,41 @@
                   >Keep names hidden in screensharings
                 </clr-control-helper>
               </clr-toggle-container>
-                <clr-radio-container id="selectViewToggle" clrInline>
-                  <label class="clr-col-md-4">Select Dashboard View</label>
-                  <clr-radio-wrapper>
-                    <input 
-                      class="clr-col-md-2"
-                      type="radio" 
-                      clrRadio 
-                      value="cardView" 
-                      formControlName="progress_view_mode"
-                    />
-                    <label>Card View</label>
-                  </clr-radio-wrapper>
-                  <clr-radio-wrapper>
-                    <input 
-                      type="radio" 
-                      class="clr-col-md-2"
-                      clrRadio 
-                      value="listView" 
-                      formControlName="progress_view_mode"
-                    />
-                    <label>List View</label>
-                  </clr-radio-wrapper>
-                </clr-radio-container>
+              <clr-radio-container id="selectViewToggle" clrInline>
+                <label class="clr-col-md-4">Select Dashboard View</label>
+                <clr-radio-wrapper>
+                  <input
+                    class="clr-col-md-2"
+                    type="radio"
+                    clrRadio
+                    value="cardView"
+                    formControlName="progress_view_mode"
+                  />
+                  <label>Card View</label>
+                </clr-radio-wrapper>
+                <clr-radio-wrapper>
+                  <input
+                    type="radio"
+                    class="clr-col-md-2"
+                    clrRadio
+                    value="listView"
+                    formControlName="progress_view_mode"
+                  />
+                  <label>List View</label>
+                </clr-radio-wrapper>
+              </clr-radio-container>
+              <clr-input-container>
+                <input
+                  class="clr-col-md-8"
+                  clrInput
+                  type="text"
+                  placeholder="Currency Symbol"
+                  name="currency_symbol"
+                  formControlName="currency_symbol"
+                  required
+                />
+                <label class="clr-col-md-4">Currency Symbol</label>
+              </clr-input-container>
             </clr-tab-content>
             <clr-tab-content> </clr-tab-content>
           </clr-tab>

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { ScheduledEventBase } from 'src/app/data/scheduledevent';
 import { CostService } from 'src/app/data/cost.service';
 import {
@@ -7,17 +7,22 @@ import {
   DetailedCost,
   DetailedCostSource,
 } from 'src/app/data/cost';
+import { Settings, SettingsService } from 'src/app/data/settings.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'cost-dashboard',
   templateUrl: './cost-dashboard.component.html',
   styleUrls: ['./cost-dashboard.component.scss'],
 })
-export class CostDashboardComponent implements OnChanges {
+export class CostDashboardComponent implements OnChanges, OnInit, OnDestroy {
   @Input()
   selectedEvent: ScheduledEventBase;
 
-  constructor(public costService: CostService) {}
+  constructor(
+    public costService: CostService,
+    public settingsService: SettingsService,
+  ) {}
 
   public currencySymbol: string = '$';
   public allCost: Cost = new Cost();
@@ -27,6 +32,20 @@ export class CostDashboardComponent implements OnChanges {
 
   public detailedCost?: DetailedCost;
   public loading: boolean = false;
+
+  private settings_service$ = new Subject<Readonly<Settings>>();
+
+  ngOnInit(): void {
+    this.settingsService.settings$
+      .pipe(takeUntil(this.settings_service$))
+      .subscribe(({ currency_symbol = '$' }) => {
+        this.currencySymbol = currency_symbol;
+      });
+  }
+
+  ngOnDestroy() {
+    this.settings_service$.unsubscribe();
+  }
 
   ngOnChanges(): void {
     if (this.selectedEvent) {

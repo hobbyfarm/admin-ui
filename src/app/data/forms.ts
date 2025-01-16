@@ -73,6 +73,7 @@ export type SettingFormGroup = FormGroup<{
   hide_usernames_status: FormControl<boolean>;
   theme: FormControl<'dark' | 'light' | 'system'>;
   progress_view_mode: FormControl<ProgressViewMode>;
+  currency_symbol: FormControl<string>;
 }>;
 
 // This object type maps VMTemplate names to the number of requested VMs

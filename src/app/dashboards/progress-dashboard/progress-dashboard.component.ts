@@ -1,4 +1,11 @@
-import { Component, OnInit, ViewChild, Input, OnDestroy, OnChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  Input,
+  OnDestroy,
+  OnChanges,
+} from '@angular/core';
 import { ProgressService } from 'src/app/data/progress.service';
 import { Progress } from 'src/app/data/progress';
 import { UserService } from '../../data/user.service';
@@ -18,8 +25,9 @@ import { FormControl, FormGroup } from '@angular/forms';
   templateUrl: './progress-dashboard.component.html',
   styleUrls: ['./progress-dashboard.component.scss'],
 })
-
-export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges {
+export class ProgressDashboardComponent
+  implements OnInit, OnDestroy, OnChanges
+{
   @Input()
   selectedEvent: ScheduledEventBase;
 
@@ -31,7 +39,9 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
   public users: User[] = [];
   public settingsForm: FormGroup;
   public hide_usernames_status: boolean = false;
-  public progressViewModeControl = new FormControl<'cardView' | 'listView'>('cardView');
+  public progressViewModeControl = new FormControl<'cardView' | 'listView'>(
+    'cardView',
+  );
   private settings_service$ = new Subject<Readonly<Settings>>();
 
   public pauseCall: boolean = false; // Stop refreshing if we are looking at a progress
@@ -59,30 +69,34 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
   ) {}
 
   ngOnInit() {
-    this.settingsForm = this.settingsService.getForm()
+    this.settingsForm = this.settingsService.getForm();
     this.settingsService.settings$
       .pipe(takeUntil(this.settings_service$))
       .subscribe(
         ({
           hide_usernames_status = false,
-          progress_view_mode = 'cardView'
+          progress_view_mode = 'cardView',
         }) => {
           this.settingsForm.patchValue({
             hide_usernames_status,
-            progress_view_mode
+            progress_view_mode,
           });
-          this.hide_usernames_status = this.settingsForm.get('hide_usernames_status')?.value
-          this.progressViewModeControl.setValue(this.settingsForm.get('progress_view_mode')?.value)
+          this.hide_usernames_status = this.settingsForm.get(
+            'hide_usernames_status',
+          )?.value;
+          this.progressViewModeControl.setValue(
+            this.settingsForm.get('progress_view_mode')?.value,
+          );
         },
       );
-      this.progressViewModeControl.valueChanges
+    this.progressViewModeControl.valueChanges
       .pipe(distinctUntilChanged())
       .subscribe((value) => {
-          if (value === 'cardView') {
-            this.setCardView();
-          } else if (value === 'listView') {
-            this.setListView();
-          }
+        if (value === 'cardView') {
+          this.setCardView();
+        } else if (value === 'listView') {
+          this.setListView();
+        }
       });
     this.refresh();
   }
@@ -100,7 +114,7 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
       try {
         const pattern = new RegExp(this.userFilter, 'i');
         this.filteredProgress = this.currentProgress.filter((prog) =>
-          pattern.test(prog.username)
+          pattern.test(prog.username),
         );
       } catch (err) {
         if (!(err instanceof SyntaxError)) {
@@ -112,7 +126,7 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
     }
     if (this.scenarioFilterList.size > 0) {
       this.filteredProgress = this.filteredProgress.filter((prog) =>
-        this.scenarioFilterList.has(prog.scenario_name)
+        this.scenarioFilterList.has(prog.scenario_name),
       );
     }
   }
@@ -137,13 +151,12 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
 
   setCardView() {
     //this.progressViewModeService.setCardView();
-    this.saveSettings({ progress_view_mode: 'cardView' })
+    this.saveSettings({ progress_view_mode: 'cardView' });
   }
 
   setListView() {
     //this.progressViewModeService.setListView();
-    this.saveSettings({ progress_view_mode: 'listView' })
-
+    this.saveSettings({ progress_view_mode: 'listView' });
   }
 
   openUserList() {
@@ -185,11 +198,11 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
       this.users = users.filter(
         (user) =>
           user.access_codes?.includes(this.selectedEvent.access_code) ||
-          usersWithProgress.includes(user.id)
+          usersWithProgress.includes(user.id),
       );
 
       this.scenarioList = new Set(
-        this.currentProgress.map((p) => p.scenario_name)
+        this.currentProgress.map((p) => p.scenario_name),
       );
 
       this.filter();
@@ -199,8 +212,7 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
   saveSettings(update: Partial<Settings>) {
     if (this.settingsForm.value) {
       this.settingsService.update(update).subscribe({
-        next: () => {
-        },
+        next: () => {},
         error: (err) => {
           console.error('Error while saving settings:', err);
         },
@@ -233,14 +245,14 @@ export class ProgressDashboardComponent implements OnInit, OnDestroy, OnChanges 
           progress.started +
           ', ' +
           progress.last_update +
-          '\n'
+          '\n',
       );
     });
     const filename = this.selectedEvent.event_name + '_sessions.csv';
     var element = document.createElement('a');
     element.setAttribute(
       'href',
-      'data:text/plain;charset=utf-8,' + encodeURIComponent(progressCSV)
+      'data:text/plain;charset=utf-8,' + encodeURIComponent(progressCSV),
     );
     element.setAttribute('download', filename);
     element.style.display = 'none';

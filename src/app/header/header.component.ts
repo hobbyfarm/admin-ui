@@ -103,20 +103,24 @@ export class HeaderComponent implements OnInit {
           hide_usernames_status = false,
           theme = 'system',
           progress_view_mode = 'cardView',
+          currency_symbol = '$',
         }) => {
           this.settingsForm.setValue({
             terminal_theme,
             hide_usernames_status,
             theme,
-            progress_view_mode
+            progress_view_mode,
+            currency_symbol,
           });
 
           this.fetchingSettings = false;
         },
       );
     this.settingsModal.open();
-    this.hide_usernames_status = this.settingsForm.controls.hide_usernames_status.value;;
-    this.progress_view_mode = this.settingsForm.controls.progress_view_mode.value;
+    this.hide_usernames_status =
+      this.settingsForm.controls.hide_usernames_status.value;
+    this.progress_view_mode =
+      this.settingsForm.controls.progress_view_mode.value;
   }
 
   public doSaveSettings() {
