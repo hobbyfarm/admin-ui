@@ -53,52 +53,55 @@
         (clrIfExpandedChange)="onAccordionToggle($event)"
       >
         <div *ngIf="detailedCost">
-          <table class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Price</th>
-                <th>Creation Date</th>
-                <th>Deletion Date</th>
-                <th>Running</th>
-                <th>Cost</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let source of getDetailedCostForKind(source.kind)">
-                <td>{{ source.id }}</td>
-                <td>
-                  {{
-                    source.base_price
-                      | currency: currencySymbol : "symbol" : "1.2-5"
-                  }}
-                  /
-                  {{ source.time_unit }}
-                </td>
-                <td>
-                  {{ source.creation_unix_timestamp * 1000 | date: "medium" }}
-                </td>
-                <td>
-                  {{
+          <clr-datagrid>
+            <clr-dg-column [clrDgSortBy]="'id'">ID</clr-dg-column>
+            <clr-dg-column>Price</clr-dg-column>
+            <clr-dg-column
+              [clrDgField]="'creation_unix_timestamp'"
+              [clrDgSortBy]="'creation_unix_timestamp'"
+              >Creation Date</clr-dg-column
+            >
+            <clr-dg-column
+              [clrDgField]="'deletion_unix_timestamp'"
+              [clrDgSortBy]="'deletion_unix_timestamp'"
+              >Deletion Date</clr-dg-column
+            >
+            <clr-dg-column>Running</clr-dg-column>
+            <clr-dg-column>Cost</clr-dg-column>
+            <clr-dg-row
+              *clrDgItems="let source of getDetailedCostForKind(source.kind)"
+            >
+              <clr-dg-cell>{{ source.id }}</clr-dg-cell>
+              <clr-dg-cell>
+                {{
+                  source.base_price
+                    | currency: currencySymbol : "symbol" : "1.2-5"
+                }}
+                / {{ source.time_unit }}
+              </clr-dg-cell>
+              <clr-dg-cell>
+                {{ source.creation_unix_timestamp * 1000 | date: "medium" }}
+              </clr-dg-cell>
+              <clr-dg-cell>
+                {{
+                  source.deletion_unix_timestamp
+                    ? (source.deletion_unix_timestamp * 1000 | date: "medium")
+                    : "N/A"
+                }}
+              </clr-dg-cell>
+              <clr-dg-cell>
+                {{
+                  calculateRunningTime(
+                    source.creation_unix_timestamp,
                     source.deletion_unix_timestamp
-                      ? (source.deletion_unix_timestamp * 1000 | date: "medium")
-                      : "N/A"
-                  }}
-                </td>
-                <td>
-                  {{
-                    calculateRunningTime(
-                      source.creation_unix_timestamp,
-                      source.deletion_unix_timestamp
-                    )
-                  }}
-                </td>
-                <td>
-                  {{ calculateSourceCost(source) | currency: currencySymbol }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  )
+                }}
+              </clr-dg-cell>
+              <clr-dg-cell>
+                {{ calculateSourceCost(source) | currency: currencySymbol }}
+              </clr-dg-cell>
+            </clr-dg-row>
+          </clr-datagrid>
         </div>
         <div *ngIf="loading">
           <clr-spinner clrInline aria-label="Loading"></clr-spinner> Loading
