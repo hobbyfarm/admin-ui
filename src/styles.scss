@@ -41,10 +41,12 @@ clr-stack-view.compact {
   filter: alpha(opacity=80);
   pointer-events: none;
 }
+
 /* high-performance display:none; helper */
 .gu-hide {
   left: -9999px !important;
 }
+
 /* added to mirrorContainer (default = body) while dragging */
 .gu-unselectable {
   -webkit-user-select: none !important;
@@ -52,6 +54,7 @@ clr-stack-view.compact {
   -ms-user-select: none !important;
   user-select: none !important;
 }
+
 /* added to the source element while its mirror is dragged */
 .gu-transit {
   opacity: 0.2;
@@ -73,7 +76,7 @@ clr-stack-view.compact {
 //     display: none;
 // }
 
-clr-datagrid.clr_disable_selection div.datagrid-row-master > div:first-child {
+clr-datagrid.clr_disable_selection div.datagrid-row-master>div:first-child {
   display: none;
 }
 
@@ -109,18 +112,18 @@ clr-signpost clr-signpost-content .signpost-content-body {
   overflow-y: visible;
 }
 
-.status-provisioning{
-  --clr-progress-default-color:  var(--clr-color-warning-100, yellow);
+.status-provisioning {
+  --clr-progress-default-color: var(--clr-color-warning-300, yellow);
 }
 
-.status-running{
-  --clr-progress-default-color:  var(--clr-progress-default-color,#54cbf2);
+.status-running {
+  --clr-progress-default-color: var(--clr-color-action-600, #54cbf2);
 }
 
-.status-finished{ 
-  --clr-progress-default-color:  var(--clr-color-danger-100,red);
+.status-finished {
+  --clr-progress-default-color: var(--clr-color-danger-400, red);
 }
 
-.status-success{
-  --clr-progress-default-color:  var(--clr-color-success-100,green);
+.status-success {
+  --clr-progress-default-color: var(--clr-color-success-500, green);
 }
