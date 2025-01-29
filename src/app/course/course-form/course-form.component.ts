@@ -10,6 +10,7 @@ import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { Course } from 'src/app/data/course';
 import { CourseDetailFormGroup } from 'src/app/data/forms';
 import { KeepaliveValidator } from 'src/app/validators/keepalive.validator';
+import { UrlValidator } from 'src/app/validators/url.validator';
 
 @Component({
   selector: 'course-form',
@@ -38,6 +39,25 @@ export class CourseFormComponent implements OnInit, OnChanges {
       }),
       keepalive_unit: new FormControl<string>('m', {
         validators: Validators.required,
+        nonNullable: true,
+      }),
+      is_learnpath: new FormControl<boolean>(false, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
+      is_learnpath_strict: new FormControl<boolean>(false, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
+      in_catalog: new FormControl<boolean>(false, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
+      header_image_path: new FormControl<string>('', {
+        validators: [
+          UrlValidator,
+          Validators.pattern(/\.(jpeg|jpg|gif|png|svg)$/),
+        ],
         nonNullable: true,
       }),
       pauseable: new FormControl<boolean>(true, {
@@ -86,6 +106,22 @@ export class CourseFormComponent implements OnInit, OnChanges {
       });
 
       this.courseDetails.patchValue({
+        is_learnpath: this.course.is_learnpath,
+      });
+
+      this.courseDetails.patchValue({
+        is_learnpath_strict: this.course.is_learnpath_strict,
+      });
+
+      this.courseDetails.patchValue({
+        in_catalog: this.course.in_catalog,
+      });
+
+      this.courseDetails.patchValue({
+        header_image_path: this.course.header_image_path.replaceAll('"', ''),
+      });
+
+      this.courseDetails.patchValue({
         keep_vm: this.course.keep_vm,
       });
 
@@ -114,6 +150,10 @@ export class CourseFormComponent implements OnInit, OnChanges {
       pauseable: true,
       keep_vm: true,
       pause_duration: 1,
+      is_learnpath: false,
+      is_learnpath_strict: false,
+      in_catalog: false,
+      header_image_path: '',
     });
     this.formReady.emit(this.courseDetails);
   }
