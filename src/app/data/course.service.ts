@@ -112,7 +112,11 @@ export class CourseService {
       .set('pauseable', JSON.stringify(c.pauseable))
       .set('keep_vm', JSON.stringify(c.keep_vm))
       .set('virtualmachines', JSON.stringify(c.virtualmachines))
-      .set('scenarios', JSON.stringify(scenarioArray));
+      .set('scenarios', JSON.stringify(scenarioArray))
+      .set('is_learnpath', JSON.stringify(c.is_learnpath))
+      .set('is_learnpath_strict', JSON.stringify(c.is_learnpath_strict))
+      .set('in_catalog', JSON.stringify(c.in_catalog))
+      .set('header_image_path', JSON.stringify(c.header_image_path));
     return this.gargAdmin.post('/new', params);
   }
 
@@ -130,8 +134,11 @@ export class CourseService {
       .set('virtualmachines', JSON.stringify(c.virtualmachines))
       .set('scenarios', JSON.stringify(scenarioArray))
       .set('keep_vm', JSON.stringify(c.keep_vm))
-      .set('categories', JSON.stringify(c.categories));
-
+      .set('categories', JSON.stringify(c.categories))
+      .set('is_learnpath', JSON.stringify(c.is_learnpath))
+      .set('is_learnpath_strict', JSON.stringify(c.is_learnpath_strict))
+      .set('in_catalog', JSON.stringify(c.in_catalog))
+      .set('header_image_path', JSON.stringify(c.header_image_path));
     return this.gargAdmin.put(`/${c.id}`, params);
   }
 
@@ -164,6 +171,10 @@ export class CourseService {
     tempCourse.name = atou(c.name);
     tempCourse.pause_duration = c.pause_duration;
     tempCourse.pauseable = c.pauseable;
+    tempCourse.is_learnpath = c.is_learnpath;
+    tempCourse.is_learnpath_strict = c.is_learnpath_strict;
+    tempCourse.in_catalog = c.in_catalog;
+    tempCourse.header_image_path = c.header_image_path;
 
     tempCourse.virtualmachines = c.virtualmachines.map(
       (v: Object) =>

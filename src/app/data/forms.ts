@@ -24,6 +24,10 @@ export type CourseDetailFormGroup = FormGroup<{
   course_description: FormControl<string>;
   keepalive_amount: FormControl<number>;
   keepalive_unit: FormControl<string>;
+  is_learnpath: FormControl<boolean>;
+  is_learnpath_strict: FormControl<boolean>;
+  in_catalog: FormControl<boolean>;
+  header_image_path: FormControl<string>;
   pauseable: FormControl<boolean>;
   keep_vm: FormControl<boolean>;
   pause_duration: FormControl<number>;

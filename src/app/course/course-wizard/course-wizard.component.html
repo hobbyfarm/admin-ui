@@ -13,7 +13,7 @@
   <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="!form?.valid"
+    [clrWizardPageNextDisabled]="isFormValid"
     (clrWizardPageNext)="saveCourseWizard()"
   >
     <ng-template clrPageTitle>Course Details</ng-template>
@@ -231,134 +231,135 @@
       }
     </clr-wizard-page>
   }
+  @if (showDynamicScenario()) {
+    <clr-wizard-page
+      [clrWizardPageNextDisabled]="
+        dragScenarios.length == 0 && editCategories.length == 0
+      "
+    >
+      <ng-template clrPageTitle>Dynamic Scenario</ng-template>
+      <ng-container>
+        <p>
+          Scenarios that match at least one of the queries provided are
+          dynamically included in this course,<br />
+          together with all scenarios selected in the scenarios-tab which are
+          always included.<br />
+          There is no need to update the course (or any scheduled event that
+          includes this course) if categories of a scenario are changed.<br />
+        </p>
 
-  <clr-wizard-page
-    [clrWizardPageNextDisabled]="
-      dragScenarios.length == 0 && editCategories.length == 0
-    "
-  >
-    <ng-template clrPageTitle>Dynamic Scenario</ng-template>
-    <ng-container>
-      <p>
-        Scenarios that match at least one of the queries provided are
-        dynamically included in this course,<br />
-        together with all scenarios selected in the scenarios-tab which are
-        always included.<br />
-        There is no need to update the course (or any scheduled event that
-        includes this course) if categories of a scenario are changed.<br />
-      </p>
-
-      <button
-        class="btn btn-success-outline btn-sm"
-        (click)="newCategory = true"
-        *rbac="['courses.update']"
-      >
-        <cds-icon shape="plus"></cds-icon> Add Query
-      </button>
-      <button
-        class="btn btn-success-outline btn-sm"
-        (click)="seeExamples = !seeExamples"
-        *rbac="['courses.update']"
-      >
-        <cds-icon shape="plus"></cds-icon> Example Queries
-      </button>
-      @if (seeExamples) {
+        <button
+          class="btn btn-success-outline btn-sm"
+          (click)="newCategory = true"
+          *rbac="['courses.update']"
+        >
+          <cds-icon shape="plus"></cds-icon> Add Query
+        </button>
+        <button
+          class="btn btn-success-outline btn-sm"
+          (click)="seeExamples = !seeExamples"
+          *rbac="['courses.update']"
+        >
+          <cds-icon shape="plus"></cds-icon> Example Queries
+        </button>
+        @if (seeExamples) {
+          <clr-datagrid class="datagrid-compact">
+            <clr-dg-column>Query</clr-dg-column>
+            <clr-dg-column>Explanation</clr-dg-column>
+            <clr-dg-row>
+              <clr-dg-cell>kubernetes</clr-dg-cell>
+              <clr-dg-cell
+                >All Scenarios that are in the kubernetes category</clr-dg-cell
+              >
+            </clr-dg-row>
+            <clr-dg-row>
+              <clr-dg-cell>!kubernetes</clr-dg-cell>
+              <clr-dg-cell
+                >All Scenarios that are not in the kubernetes
+                category</clr-dg-cell
+              >
+            </clr-dg-row>
+            <clr-dg-row>
+              <clr-dg-cell>kubernetes&basic</clr-dg-cell>
+              <clr-dg-cell
+                >All Scenarios that are in the kubernetes AND in the basic
+                category</clr-dg-cell
+              >
+            </clr-dg-row>
+            <clr-dg-row>
+              <clr-dg-cell>kubernetes&k3s&basic</clr-dg-cell>
+              <clr-dg-cell
+                >Queries also work with more than two categories</clr-dg-cell
+              >
+            </clr-dg-row>
+            <clr-dg-row>
+              <clr-dg-cell>kubernetes&!basic</clr-dg-cell>
+              <clr-dg-cell
+                >All Scenarios that are in the kubernetes category, but not in
+                the basic category</clr-dg-cell
+              >
+            </clr-dg-row>
+            <clr-dg-row>
+              <clr-dg-cell>example&!example</clr-dg-cell>
+              <clr-dg-cell>No Scenarios will ever match this</clr-dg-cell>
+            </clr-dg-row>
+          </clr-datagrid>
+          <p>
+            Logical OR can be achieved by adding two queries. Each queries
+            matched scenarios will be uniquely merged<br />
+            Adding one query `kubernetes` and one query `docker` will select all
+            categories that are part of either one.
+          </p>
+        }
+        @if (newCategory) {
+          <p>
+            You can provide multiple queries by passing them as a
+            Comma-separated List
+          </p>
+          <form clrForm [formGroup]="newCategoryForm">
+            <clr-input-container>
+              <label class="clr-col-md-4">Query</label>
+              <input
+                class="clr-col-md-6"
+                clrInput
+                type="text"
+                name="category"
+                formControlName="category"
+                required
+              />
+              <clr-control-error *clrIfError="'required'"
+                >Query required.</clr-control-error
+              >
+              <clr-control-error *clrIfError="'pattern'"
+                >Query shouldn't be empty or have non-latin
+                letter</clr-control-error
+              >
+            </clr-input-container>
+            <div class="col-md-2">
+              <button
+                class="btn btn-success btn-sm"
+                [disabled]="!newCategoryForm.valid"
+                (click)="addCategory()"
+              >
+                Add
+              </button>
+            </div>
+          </form>
+        }
         <clr-datagrid class="datagrid-compact">
           <clr-dg-column>Query</clr-dg-column>
-          <clr-dg-column>Explanation</clr-dg-column>
-          <clr-dg-row>
-            <clr-dg-cell>kubernetes</clr-dg-cell>
-            <clr-dg-cell
-              >All Scenarios that are in the kubernetes category</clr-dg-cell
-            >
-          </clr-dg-row>
-          <clr-dg-row>
-            <clr-dg-cell>!kubernetes</clr-dg-cell>
-            <clr-dg-cell
-              >All Scenarios that are not in the kubernetes
-              category</clr-dg-cell
-            >
-          </clr-dg-row>
-          <clr-dg-row>
-            <clr-dg-cell>kubernetes&basic</clr-dg-cell>
-            <clr-dg-cell
-              >All Scenarios that are in the kubernetes AND in the basic
-              category</clr-dg-cell
-            >
-          </clr-dg-row>
-          <clr-dg-row>
-            <clr-dg-cell>kubernetes&k3s&basic</clr-dg-cell>
-            <clr-dg-cell
-              >Queries also work with more than two categories</clr-dg-cell
-            >
-          </clr-dg-row>
-          <clr-dg-row>
-            <clr-dg-cell>kubernetes&!basic</clr-dg-cell>
-            <clr-dg-cell
-              >All Scenarios that are in the kubernetes category, but not in the
-              basic category</clr-dg-cell
-            >
-          </clr-dg-row>
-          <clr-dg-row>
-            <clr-dg-cell>example&!example</clr-dg-cell>
-            <clr-dg-cell>No Scenarios will ever match this</clr-dg-cell>
+          <clr-dg-row *clrDgItems="let a of editCategories" [clrDgItem]="a">
+            <clr-dg-action-overflow>
+              <button class="action-item" (click)="deleteCategory(a)">
+                Delete
+              </button>
+            </clr-dg-action-overflow>
+            <clr-dg-cell>{{ a }}</clr-dg-cell>
           </clr-dg-row>
         </clr-datagrid>
-        <p>
-          Logical OR can be achieved by adding two queries. Each queries matched
-          scenarios will be uniquely merged<br />
-          Adding one query `kubernetes` and one query `docker` will select all
-          categories that are part of either one.
-        </p>
-      }
-      @if (newCategory) {
-        <p>
-          You can provide multiple queries by passing them as a Comma-separated
-          List
-        </p>
-        <form clrForm [formGroup]="newCategoryForm">
-          <clr-input-container>
-            <label class="clr-col-md-4">Query</label>
-            <input
-              class="clr-col-md-6"
-              clrInput
-              type="text"
-              name="category"
-              formControlName="category"
-              required
-            />
-            <clr-control-error *clrIfError="'required'"
-              >Query required.</clr-control-error
-            >
-            <clr-control-error *clrIfError="'pattern'"
-              >Query shouldn't be empty or have non-latin
-              letter</clr-control-error
-            >
-          </clr-input-container>
-          <div class="col-md-2">
-            <button
-              class="btn btn-success btn-sm"
-              [disabled]="!newCategoryForm.valid"
-              (click)="addCategory()"
-            >
-              Add
-            </button>
-          </div>
-        </form>
-      }
-      <clr-datagrid class="datagrid-compact">
-        <clr-dg-column>Query</clr-dg-column>
-        <clr-dg-row *clrDgItems="let a of editCategories" [clrDgItem]="a">
-          <clr-dg-action-overflow>
-            <button class="action-item" (click)="deleteCategory(a)">
-              Delete
-            </button>
-          </clr-dg-action-overflow>
-          <clr-dg-cell>{{ a }}</clr-dg-cell>
-        </clr-dg-row>
-      </clr-datagrid>
-    </ng-container>
-  </clr-wizard-page>
+      </ng-container>
+    </clr-wizard-page>
+  }
   <clr-wizard-page (clrWizardPageOnLoad)="updateFinalPageWizard()">
     <ng-template clrPageTitle>Finalize</ng-template>
     <p>Confirm the following details before finishing</p>
@@ -481,6 +482,54 @@
             }
           </tr>
           <tr>
+            <td>Learnpath</td>
+            @if (wizardCourse == "create") {
+              <td>{{ course.is_learnpath ? "yes" : "no" }}</td>
+            } @else if (wizardCourse == "edit") {
+              @if (
+                selectedCourse.is_learnpath == editSelectedCourse.is_learnpath
+              ) {
+                <td>
+                  {{ selectedCourse.is_learnpath ? "yes" : "no" }}
+                </td>
+              } @else {
+                <td>
+                  <span class="del-elem">{{
+                    selectedCourse.is_learnpath ? "yes" : "no"
+                  }}</span>
+                  <cds-icon shape="arrow" direction="right"></cds-icon>
+                  <span class="add-elem">{{
+                    editSelectedCourse.is_learnpath ? "yes" : "no"
+                  }}</span>
+                </td>
+              }
+            }
+          </tr>
+
+          <tr>
+            <td>Shown in Catalog</td>
+            @if (wizardCourse == "create") {
+              <td>{{ course.in_catalog ? "yes" : "no" }}</td>
+            } @else if (wizardCourse == "edit") {
+              @if (selectedCourse.in_catalog == editSelectedCourse.in_catalog) {
+                <td>
+                  {{ selectedCourse.in_catalog ? "yes" : "no" }}
+                </td>
+              } @else {
+                <td>
+                  <span class="del-elem">{{
+                    selectedCourse.in_catalog ? "yes" : "no"
+                  }}</span>
+                  <cds-icon shape="arrow" direction="right"></cds-icon>
+                  <span class="add-elem">{{
+                    editSelectedCourse.in_catalog ? "yes" : "no"
+                  }}</span>
+                </td>
+              }
+            }
+          </tr>
+
+          <tr>
             <td>Scenario</td>
             <td>
               @for (s of selectedCourse.scenarios; track s) {
@@ -505,12 +554,15 @@
             <td>Dynamic Scenario</td>
             <td>
               @if (wizardCourse == "create") {
-                @for (categorie of course.categories; track categorie) {
+                @for (categorie of selectedCourse.categories; track categorie) {
                   <span class="label">{{ categorie }} </span>
                 }
               } @else if (wizardCourse == "edit") {
-                @for (categorie of selectedCourse.categories; track categorie) {
-                  <span class="label">{{ categorie }} </span>
+                @for (
+                  category of editSelectedCourse.categories;
+                  track category
+                ) {
+                  <span class="label">{{ category }} </span>
                 }
               }
             </td>
