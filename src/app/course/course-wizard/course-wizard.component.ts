@@ -136,6 +136,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     } else {
       this.scenarios = [];
     }
+    this.isFormValid = !!this.form?.valid;
     this.coursesRefresher.emit();
   }
 
@@ -201,6 +202,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   saveCourseWizard() {
+    this.updateDynamicScenarios();
     if (this.wizardCourse == 'create') this.newCourseWizard();
   }
 
@@ -220,7 +222,13 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     course.keep_vm = this.form.controls.keep_vm.value;
     course.virtualmachines = this.editVirtualMachines;
     course.scenarios = cloneDeep(this.dragScenarios);
-    course.categories = this.editCategories;
+    course.categories = this.form.controls.is_learnpath.value
+      ? []
+      : this.editCategories;
+    course.is_learnpath = this.form.controls.is_learnpath.value;
+    course.is_learnpath_strict = this.form.controls.is_learnpath_strict.value;
+    course.in_catalog = this.form.controls.in_catalog.value;
+    course.header_image_path = this.form.controls.header_image_path.value ?? '';
   }
   newCourseWizard() {
     this.setCourseValues(this.course);
@@ -261,7 +269,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   updateDynamicScenarios() {
     this.dynamicAddedScenarios = [];
-    if (this.listScenarios) {
+    if (this.canAddDynamicScenarios()) {
       this.courseService.listDynamicScenarios(this.editCategories).subscribe(
         (dynamicScenarios: String[]) => {
           this.scenarios.forEach((scenario) => {
@@ -271,11 +279,20 @@ export class CourseWizardComponent implements OnChanges, OnInit {
           });
         },
         (e: HttpErrorResponse) => {
-          this.alertDanger(
-            'Error listing dynmamic scenarios: ' + e.message,
-          );
+          this.alertDanger('Error listing dynmamic scenarios: ' + e.message);
         },
       );
+    }
+  }
+
+  canAddDynamicScenarios(): boolean {
+    if (!this.listScenarios) return false;
+    switch (this.wizardCourse) {
+      case 'create':
+        return !this.course.is_learnpath;
+      case 'edit':
+        if (this.modified) return !this.editSelectedCourse.is_learnpath;
+        return !this.selectedCourse.is_learnpath;
     }
   }
 
@@ -407,5 +424,9 @@ export class CourseWizardComponent implements OnChanges, OnInit {
       this.getEditSelectedCourseVM(index, vmname) != templateName;
     // this.getSelectedCourseVM(index, vmname) != templateName && this.getSelectedCourseVM(index, vmname) != 0
     return isEdited || deletedAndCreatedWithSameName;
+  }
+
+  showDynamicScenario(): boolean {
+    return !this.form?.controls.is_learnpath.value;
   }
 }

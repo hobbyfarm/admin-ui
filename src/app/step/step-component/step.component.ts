@@ -81,7 +81,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     private vmService: VMService,
     private shellService: ShellService,
     private userService: UserService,
-    private courseService: CourseService
+    private courseService: CourseService,
   ) {}
 
   handleStepContentClick(e: MouseEvent) {
@@ -145,7 +145,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
             .get(v.vm_id)
             .pipe(map((vm) => [k, vm] as const));
         }),
-        toArray()
+        toArray(),
       )
       .subscribe({
         next: (entries: (readonly [string, VM])[]) => {
@@ -196,7 +196,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   goNext() {
     this.stepnumber += 1;
     this.router.navigateByUrl(
-      '/session/' + this.session.id + '/steps/' + this.stepnumber
+      '/session/' + this.session.id + '/steps/' + this.stepnumber,
     );
     this._loadStep();
     this.contentDiv.nativeElement.scrollTop = 0;
@@ -230,7 +230,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   goPrevious() {
     this.stepnumber -= 1;
     this.router.navigateByUrl(
-      '/session/' + this.session.id + '/steps/' + this.stepnumber
+      '/session/' + this.session.id + '/steps/' + this.stepnumber,
     );
     this._loadStep();
     this.contentDiv.nativeElement.scrollTop = 0;

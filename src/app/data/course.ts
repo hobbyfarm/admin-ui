@@ -11,6 +11,10 @@ export class Course {
     pause_duration?: string;
     pauseable: boolean;
     keep_vm: boolean;
+    is_learnpath: boolean = false;
+    is_learnpath_strict: boolean = false;
+    in_catalog: boolean = false;
+    header_image_path: string = '';
 }
 
 export class CourseApi {
@@ -24,4 +28,8 @@ export class CourseApi {
     pause_duration?: string;
     pauseable: boolean;
     keep_vm: boolean;
+    is_learnpath: boolean;
+    is_learnpath_strict: boolean;
+    in_catalog: boolean;
+    header_image_path: string;
 }
