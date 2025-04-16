@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import {
-  HttpErrorResponse,
-  HttpParams,
-} from '@angular/common/http';
-import { DashboardScheduledEvent, ScheduledEvent, ScheduledEventBase } from './scheduledevent';
+  DashboardScheduledEvent,
+  ScheduledEvent,
+  ScheduledEventBase,
+} from './scheduledevent';
 import { ServerResponse } from './serverresponse';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { BehaviorSubject, from, of, throwError } from 'rxjs';
@@ -22,9 +23,7 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
     Map<string, DashboardScheduledEvent>
   > = new BehaviorSubject(new Map());
 
-  constructor(
-    gcf: GargantuaClientFactory,
-  ) {
+  constructor(gcf: GargantuaClientFactory) {
     super(gcf.scopedClient('/a/scheduledevent'));
   }
 
@@ -118,7 +117,7 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
   }
 
   public delete(se: ScheduledEventBase) {
-    return this.garg.delete(`/${se.id}`).pipe(
+    return this.garg.delete(`/delete/${se.id}`).pipe(
       switchMap((s: ServerResponse) => {
         return from(s.message);
       }),
