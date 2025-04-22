@@ -29,4 +29,9 @@ export class DeleteConfirmationComponent {
     this.delete.emit(true);
     this.modal.close();
   }
+
+  doCancel(): void {
+    this.delete.emit(false); 
+    this.modal.close();
+  }
 }

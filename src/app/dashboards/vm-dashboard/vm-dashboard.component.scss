@@ -1,5 +1,5 @@
 .dashboardCell {
-    display: flex; 
+    display: flex;
     align-items: center;
 }
 
@@ -7,6 +7,13 @@
     justify-content: center;
 }
 
-.badge{
+.badge {
     padding: 10px;
+}
+
+.datagrid-row-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center;
+    height: 100%;
 }

@@ -2,11 +2,11 @@
     <h3 class="modal-title">Delete Confirmation</h3>
     <div class="modal-body">
         {{message}}
-        <br/>
-        This action is not recoverable. 
+        <br />
+        This action is not recoverable.
     </div>
     <div class="modal-footer">
-        <button class="btn btn-success-outline" (click)="modalOpen = false">Cancel</button>
+        <button class="btn btn-success-outline" (click)="doCancel()">Cancel</button>
         <button class="btn btn-danger" (click)="doDelete()">Delete</button>
     </div>
 </clr-modal>
