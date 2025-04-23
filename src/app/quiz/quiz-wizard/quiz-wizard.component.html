@@ -1,0 +1,225 @@
+<clr-wizard #wizard (clrWizardOnFinish)="save()" [clrWizardSize]="'xl'">
+  <clr-wizard-title>
+    @if (!editMode) {
+      Create Quiz
+    } @else {
+      Edit Quiz
+    }
+  </clr-wizard-title>
+
+  <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
+  <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
+  <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
+  <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+
+  <form [formGroup]="quizForm">
+    <clr-wizard-page
+      [clrWizardPageNextDisabled]="!quizForm.controls.title.valid"
+    >
+      <ng-template clrPageTitle>Quiz Details</ng-template>
+      <clr-input-container>
+        <label>Title</label>
+        <input clrInput type="text" formControlName="title" required />
+        <clr-control-error *clrIfError="'required'"
+          >Quiz title is required</clr-control-error
+        >
+        <clr-control-error *clrIfError="'minlength'"
+          >Quiz title must be at least 4 characters long
+        </clr-control-error>
+        <!-- @TODO ... this clarity pattern error is never triggered yet?! -->
+        <clr-control-error *clrIfError="'pattern'">
+          Non latin letters are forbidden
+        </clr-control-error>
+      </clr-input-container>
+      <clr-checkbox-container>
+        <clr-checkbox-wrapper>
+          <label>Shuffle Quiz Questions</label>
+          <input clrCheckbox formControlName="shuffle" type="checkbox" />
+        </clr-checkbox-wrapper>
+      </clr-checkbox-container>
+      <clr-input-container>
+        <label>Pool Size</label>
+        <input clrInput type="number" formControlName="poolSize" />
+        <clr-control-error *clrIfError="'required'"
+          >Quiz pool size is required</clr-control-error
+        >
+        <clr-control-error *clrIfError="'min'"
+          >Quiz pool size must be greater than 0
+        </clr-control-error>
+      </clr-input-container>
+      <clr-input-container>
+        <label>Max Attempts</label>
+        <input clrInput type="number" formControlName="maxAttempts" />
+        <clr-control-error *clrIfError="'required'"
+          >Specifying max attempts for quiz is required</clr-control-error
+        >
+        <clr-control-error *clrIfError="'min'"
+          >Number of max attempts must be greater than 0
+        </clr-control-error>
+      </clr-input-container>
+      <clr-input-container>
+        <label>Success Threshold</label>
+        <input clrInput type="number" formControlName="successThreshold" />
+        <clr-control-error *clrIfError="'required'"
+          >Specifying quiz success threshold is required</clr-control-error
+        >
+        <clr-control-error *clrIfError="'min'"
+          >Success threshold should not be lower than 0
+        </clr-control-error>
+      </clr-input-container>
+      <clr-select-container>
+        <label>Validation Type</label>
+        <select
+          clrSelect
+          name="validation type"
+          formControlName="validationType"
+        >
+          <option value="none">none</option>
+          <option value="standard">standard</option>
+          <option value="detailed">detailed</option>
+        </select>
+      </clr-select-container>
+    </clr-wizard-page>
+    <clr-wizard-page
+      [clrWizardPageNextDisabled]="!quizForm.controls.title.valid"
+    >
+      <ng-template clrPageTitle>Questions</ng-template>
+      <!-- Questions array -->
+      <div class="questions-container">
+        <button class="btn btn-sm btn-outline" (click)="addQuestion()">
+          Add Question
+        </button>
+        @for (
+          question of questionsArr.controls;
+          track question;
+          let i = $index
+        ) {
+          <form clrForm [formGroupName]="i" class="question-entry">
+            <hr />
+            <clr-input-container>
+              <label>Title</label>
+              <input clrInput type="text" formControlName="title" required />
+              <clr-control-error *clrIfError="'required'"
+                >Question title is required</clr-control-error
+              >
+              <clr-control-error *clrIfError="'minlength'"
+                >Question title must be at least 4 characters long
+              </clr-control-error>
+              <!-- @TODO ... this clarity pattern error is never triggered yet?! -->
+              <clr-control-error *clrIfError="'pattern'">
+                Non latin letters are forbidden
+              </clr-control-error>
+            </clr-input-container>
+            <clr-input-container>
+              <label>Description</label>
+              <input
+                clrInput
+                type="text"
+                formControlName="description"
+                required
+              />
+            </clr-input-container>
+            <clr-select-container>
+              <label>Question Type</label>
+              <select clrSelect name="question type" formControlName="type">
+                <option value="radio">radio</option>
+                <option value="checkbox">checkbox</option>
+              </select>
+            </clr-select-container>
+            <clr-checkbox-container>
+              <clr-checkbox-wrapper>
+                <label>Shuffle Quiz Question Answers</label>
+                <input clrCheckbox formControlName="shuffle" type="checkbox" />
+              </clr-checkbox-wrapper>
+            </clr-checkbox-container>
+            <clr-input-container>
+              <label>Failure Message</label>
+              <input
+                clrInput
+                type="text"
+                formControlName="failureMessage"
+                required
+              />
+            </clr-input-container>
+            <clr-input-container>
+              <label>Success Message</label>
+              <input
+                clrInput
+                type="text"
+                formControlName="successMessage"
+                required
+              />
+            </clr-input-container>
+            <clr-input-container>
+              <label>Weight</label>
+              <input clrInput type="number" formControlName="weight" />
+              <clr-control-error *clrIfError="'required'"
+                >Specifying weight for question is required</clr-control-error
+              >
+              <clr-control-error *clrIfError="'min'"
+                >Weight must be greater than 0
+              </clr-control-error>
+            </clr-input-container>
+            <div class="answers-container">
+              <h6>Answers</h6>
+              <button class="btn btn-sm btn-outline" (click)="addAnswer(i)">
+                Add Answer
+              </button>
+              @for (
+                ans of question.controls.answers.controls;
+                track ans;
+                let j = $index
+              ) {
+                <form clrForm [formGroupName]="j" class="answer-entry">
+                  <hr />
+                  <clr-input-container>
+                    <label>Title</label>
+                    <input
+                      clrInput
+                      type="text"
+                      formControlName="title"
+                      required
+                    />
+                    <clr-control-error *clrIfError="'required'"
+                      >Answer title is required</clr-control-error
+                    >
+                    <clr-control-error *clrIfError="'minlength'"
+                      >Answer title must be at least 4 characters long
+                    </clr-control-error>
+                    <!-- @TODO ... this clarity pattern error is never triggered yet?! -->
+                    <clr-control-error *clrIfError="'pattern'">
+                      Non latin letters are forbidden
+                    </clr-control-error>
+                  </clr-input-container>
+                  <clr-checkbox-container>
+                    <clr-checkbox-wrapper>
+                      <label>Correct</label>
+                      <input
+                        clrCheckbox
+                        formControlName="correct"
+                        type="checkbox"
+                      />
+                    </clr-checkbox-wrapper>
+                  </clr-checkbox-container>
+                  <button
+                    class="btn btn-sm btn-danger-outline"
+                    type="button"
+                    (click)="removeAnswer(i, j)"
+                  >
+                    Remove Answer
+                  </button>
+                </form>
+              }
+            </div>
+            <button
+              class="btn btn-sm btn-danger-outline"
+              (click)="removeQuestion(i)"
+            >
+              Remove Question
+            </button>
+          </form>
+        }
+      </div>
+    </clr-wizard-page>
+  </form>
+</clr-wizard>

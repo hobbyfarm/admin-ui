@@ -25,6 +25,7 @@ export const resources: Resource[] = [
   'rolebindings',
   'scopes',
   'settings',
+  'quizes',
 ];
 
 export type Resource =
@@ -45,6 +46,7 @@ export type Resource =
   | 'rolebindings'
   | 'scopes'
   | 'settings'
+  | 'quizes'
   | '*';
 export const isResource = (x: any): x is Resource =>
   [...resources, '*'].includes(x);

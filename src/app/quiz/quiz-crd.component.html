@@ -1,0 +1,68 @@
+<alert #alert></alert>
+
+<h3>Quizzes</h3>
+<div class="clr-row">
+  <div class="clr-col">
+    <button class="btn btn-success" (click)="openNewQuizWizard()" *rbac="['quizes.create']">
+      <cds-icon shape="plus"></cds-icon> New Quiz
+    </button>
+  </div>
+</div>
+
+<div class="clr-row">
+  <div class="clr-col">
+    <clr-datagrid [clrDisableSelection]="!selectRbac">
+      <clr-dg-column [clrDgField]="'id'">ID</clr-dg-column>
+      <clr-dg-column [clrDgField]="'title'" [clrDgSortOrder]="ascSort">Title</clr-dg-column>
+      <clr-dg-column [clrDgField]="'type'">Type</clr-dg-column>
+      <clr-dg-column [clrDgField]="'shuffle'">Shuffle</clr-dg-column>
+      <clr-dg-column [clrDgField]="'pool_size'">Pool Size</clr-dg-column>
+      <clr-dg-column [clrDgField]="'success_threshold'">Threshold</clr-dg-column>
+
+      <clr-dg-row
+        *clrDgItems="let quiz of quizzes"
+        [clrDgItem]="quiz"
+        [clrDgSelectable]="false"
+      >
+        <!-- Overflow menu actions -->
+        @if (showActionOverflow) {
+          <clr-dg-action-overflow>
+            @if (updateRbac) {
+              <button class="action-item" (click)="openEditQuizWizard(quiz)">
+                Edit
+              </button>
+            }
+            <button class="action-item" (click)="confirmDelete(quiz)" *rbac="['quizes.delete']">
+              Delete
+            </button>
+          </clr-dg-action-overflow>
+        }
+        <clr-dg-cell>{{ quiz.id }}</clr-dg-cell>
+        <clr-dg-cell>{{ quiz.title }}</clr-dg-cell>
+        <clr-dg-cell>{{ quiz.type }}</clr-dg-cell>
+        <clr-dg-cell>{{ quiz.shuffle ? 'true' : 'false' }}</clr-dg-cell>
+        <clr-dg-cell>{{ quiz.pool_size }}</clr-dg-cell>
+        <clr-dg-cell>{{ quiz.success_threshold }}%</clr-dg-cell>
+        <!-- @TODO: expanded row details -->
+        <!-- e.g. <clr-dg-row-detail *clrIfExpanded> ... </clr-dg-row-detail> -->
+      </clr-dg-row>
+    </clr-datagrid>
+  </div>
+</div>
+
+<!-- wizard for new quiz -->
+<app-quiz-wizard
+  #addNewQuiz
+  (refreshQuizzes)="refresh()"
+></app-quiz-wizard>
+
+<!-- wizard for editing quiz -->
+<app-quiz-wizard
+  #editQuiz
+  (refreshQuizzes)="refresh()"
+></app-quiz-wizard>
+
+<delete-confirmation
+  #deleteConfirmation
+  (delete)="deleteSelectedQuiz()"
+></delete-confirmation>

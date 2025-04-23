@@ -16,6 +16,14 @@
         *rbac="['courses.list']"
         >Courses</a
       >
+      <a
+        clrVerticalNavLink
+        routerLink="./quizzes"
+        routerLinkActive="active"
+        *rbac="['quizes.list']"
+      >
+        Quizzes
+      </a>
     </clr-vertical-nav>
     <div class="content-area">
       <router-outlet></router-outlet>
