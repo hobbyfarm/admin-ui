@@ -27,8 +27,11 @@ export class QuizCrdComponent implements OnInit {
 
   @ViewChild('alert') alert: AlertComponent;
   @ViewChild('deleteConfirmation') deleteConfirmation: DeleteConfirmationComponent;
-  @ViewChild('addNewQuiz') addNewQuiz: QuizWizardComponent;
-  @ViewChild('editQuiz') editQuizWizard: QuizWizardComponent;
+  @ViewChild('addNewQuiz', { static: false, read: QuizWizardComponent })
+  addNewQuiz!: QuizWizardComponent;
+
+  @ViewChild('editQuiz', { static: false, read: QuizWizardComponent })
+  editQuizWizard!: QuizWizardComponent;
 
   constructor(
     private quizService: QuizService,
@@ -67,6 +70,10 @@ export class QuizCrdComponent implements OnInit {
 
   openNewQuizWizard() {
     this.addNewQuiz.openForCreate();
+  }
+
+  onQuizSaved(_: { id: string; quiz: Quiz }) {
+    this.refresh();
   }
 
   openEditQuizWizard(quiz: Quiz) {

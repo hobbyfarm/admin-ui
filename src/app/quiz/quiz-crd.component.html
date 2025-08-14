@@ -53,13 +53,15 @@
 <!-- wizard for new quiz -->
 <app-quiz-wizard
   #addNewQuiz
-  (refreshQuizzes)="refresh()"
+  [mode]="'create'"
+  (saved)="onQuizSaved($event)"
 ></app-quiz-wizard>
 
 <!-- wizard for editing quiz -->
 <app-quiz-wizard
   #editQuiz
-  (refreshQuizzes)="refresh()"
+  [mode]="'edit'"
+  (saved)="onQuizSaved($event)"
 ></app-quiz-wizard>
 
 <delete-confirmation

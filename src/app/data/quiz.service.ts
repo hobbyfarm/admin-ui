@@ -13,14 +13,14 @@ import { QuestionType } from '../quiz/QuestionType';
 export interface QuizAnswer {
   id?: string;
   title: string;
-  correct?: boolean; // or *bool per your backend
+  correct?: boolean;
 }
 
 export interface QuizQuestion {
   id?: string;
   title: string;
   description: string;
-  type: QuestionType; // e.g. "radio" or "checkbox" – or your naming
+  type: QuestionType;
   shuffle: boolean;
   failure_message: string;
   success_message: string;

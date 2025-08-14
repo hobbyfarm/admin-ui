@@ -1,225 +1,290 @@
-<clr-wizard #wizard (clrWizardOnFinish)="save()" [clrWizardSize]="'xl'">
-  <clr-wizard-title>
-    @if (!editMode) {
-      Create Quiz
-    } @else {
-      Edit Quiz
-    }
-  </clr-wizard-title>
+<clr-wizard #wiz [(clrWizardOpen)]="isOpen" [clrWizardSize]="'xl'">
+  <clr-wizard-title>{{ mode === 'create' ? 'Create Quiz' : 'Edit Quiz' }}</clr-wizard-title>
 
-  <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
-  <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
-  <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-  <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Metadata</ng-template>
 
-  <form [formGroup]="quizForm">
-    <clr-wizard-page
-      [clrWizardPageNextDisabled]="!quizForm.controls.title.valid"
-    >
-      <ng-template clrPageTitle>Quiz Details</ng-template>
-      <clr-input-container>
-        <label>Title</label>
-        <input clrInput type="text" formControlName="title" required />
-        <clr-control-error *clrIfError="'required'"
-          >Quiz title is required</clr-control-error
+    <form [formGroup]="form" clrForm novalidate class="w-100">
+      <!-- Title -->
+      <div class="clr-row">
+        <div class="clr-col-12">
+          <clr-input-container>
+            <label>Title</label>
+            <input clrInput formControlName="title" />
+            <clr-control-error *ngIf="form.get('title')?.invalid">Required</clr-control-error>
+          </clr-input-container>
+        </div>
+      </div>
+
+      <!-- Validation -->
+      <div class="clr-row">
+        <div class="clr-col-12">
+          <clr-select-container>
+            <label>Validation</label>
+            <select clrSelect formControlName="validation_type">
+              <option value="standard">Standard</option>
+              <option value="none">None</option>
+              <option value="detailed">Detailed</option>
+            </select>
+          </clr-select-container>
+        </div>
+      </div>
+
+      <!-- Max attempts -->
+      <div class="clr-row">
+        <div class="clr-col-12">
+          <clr-input-container>
+            <label>Max attempts</label>
+            <input clrInput type="number" formControlName="max_attempts" />
+          </clr-input-container>
+        </div>
+      </div>
+
+      <!-- Success threshold -->
+      <div class="clr-row">
+        <div class="clr-col-12">
+          <clr-input-container>
+            <label>Success threshold (%)</label>
+            <input clrInput type="number" formControlName="success_threshold" />
+          </clr-input-container>
+        </div>
+      </div>
+
+      <!-- Pool size -->
+      <div class="clr-row">
+        <div class="clr-col-12">
+          <clr-input-container>
+            <label>Pool size</label>
+            <input clrInput type="number" formControlName="pool_size" />
+          </clr-input-container>
+        </div>
+      </div>
+
+      <!-- Shuffle -->
+      <div class="clr-row">
+        <div class="clr-col-12">
+          <clr-toggle-container>
+            <label>Shuffle questions</label>
+            <clr-toggle-wrapper>
+              <input type="checkbox" clrToggle formControlName="shuffle" />
+            </clr-toggle-wrapper>
+          </clr-toggle-container>
+        </div>
+      </div>
+    </form>
+
+    <ng-template clrPageButtons>
+      <div class="clr-wizard-footer">
+        <button type="button" class="btn btn-outline" (click)="close()">Cancel</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="!form.get('title') || form.get('title')?.invalid"
+          (click)="wiz.next()"
         >
-        <clr-control-error *clrIfError="'minlength'"
-          >Quiz title must be at least 4 characters long
-        </clr-control-error>
-        <!-- @TODO ... this clarity pattern error is never triggered yet?! -->
-        <clr-control-error *clrIfError="'pattern'">
-          Non latin letters are forbidden
-        </clr-control-error>
-      </clr-input-container>
-      <clr-checkbox-container>
-        <clr-checkbox-wrapper>
-          <label>Shuffle Quiz Questions</label>
-          <input clrCheckbox formControlName="shuffle" type="checkbox" />
-        </clr-checkbox-wrapper>
-      </clr-checkbox-container>
-      <clr-input-container>
-        <label>Pool Size</label>
-        <input clrInput type="number" formControlName="poolSize" />
-        <clr-control-error *clrIfError="'required'"
-          >Quiz pool size is required</clr-control-error
-        >
-        <clr-control-error *clrIfError="'min'"
-          >Quiz pool size must be greater than 0
-        </clr-control-error>
-      </clr-input-container>
-      <clr-input-container>
-        <label>Max Attempts</label>
-        <input clrInput type="number" formControlName="maxAttempts" />
-        <clr-control-error *clrIfError="'required'"
-          >Specifying max attempts for quiz is required</clr-control-error
-        >
-        <clr-control-error *clrIfError="'min'"
-          >Number of max attempts must be greater than 0
-        </clr-control-error>
-      </clr-input-container>
-      <clr-input-container>
-        <label>Success Threshold</label>
-        <input clrInput type="number" formControlName="successThreshold" />
-        <clr-control-error *clrIfError="'required'"
-          >Specifying quiz success threshold is required</clr-control-error
-        >
-        <clr-control-error *clrIfError="'min'"
-          >Success threshold should not be lower than 0
-        </clr-control-error>
-      </clr-input-container>
-      <clr-select-container>
-        <label>Validation Type</label>
-        <select
-          clrSelect
-          name="validation type"
-          formControlName="validationType"
-        >
-          <option value="none">none</option>
-          <option value="standard">standard</option>
-          <option value="detailed">detailed</option>
-        </select>
-      </clr-select-container>
-    </clr-wizard-page>
-    <clr-wizard-page
-      [clrWizardPageNextDisabled]="!quizForm.controls.title.valid"
-    >
-      <ng-template clrPageTitle>Questions</ng-template>
-      <!-- Questions array -->
-      <div class="questions-container">
-        <button class="btn btn-sm btn-outline" (click)="addQuestion()">
-          Add Question
+          Next
         </button>
-        @for (
-          question of questionsArr.controls;
-          track question;
-          let i = $index
-        ) {
-          <form clrForm [formGroupName]="i" class="question-entry">
-            <hr />
-            <clr-input-container>
-              <label>Title</label>
-              <input clrInput type="text" formControlName="title" required />
-              <clr-control-error *clrIfError="'required'"
-                >Question title is required</clr-control-error
-              >
-              <clr-control-error *clrIfError="'minlength'"
-                >Question title must be at least 4 characters long
-              </clr-control-error>
-              <!-- @TODO ... this clarity pattern error is never triggered yet?! -->
-              <clr-control-error *clrIfError="'pattern'">
-                Non latin letters are forbidden
-              </clr-control-error>
-            </clr-input-container>
-            <clr-input-container>
-              <label>Description</label>
-              <input
-                clrInput
-                type="text"
-                formControlName="description"
-                required
-              />
-            </clr-input-container>
+      </div>
+    </ng-template>
+  </clr-wizard-page>
+
+  <clr-wizard-page>
+    <ng-template clrPageTitle>Questions</ng-template>
+
+    <form [formGroup]="form" clrForm novalidate class="w-100">
+      <div class="actions mb-2">
+        <button class="btn btn-sm btn-primary" type="button" (click)="addQuestion()">Add question</button>
+      </div>
+
+      <ng-container formArrayName="questions">
+        <table class="table table-compact">
+          <thead>
+            <tr>
+              <th style="width:48px;">Move</th>
+              <th style="width:64px;">#</th>
+              <th style="width:92px;">Weight</th>
+              <th style="width:140px;">Type</th>
+              <th style="width:120px;" class="text-center"># Answers</th>
+              <th style="width:180px;">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody
+            class="container"
+            [dragula]="QUESTIONS_BAG"
+            [(dragulaModel)]="quizQuestions"
+          >
+            <tr
+              *ngFor="let _quizQuestion of quizQuestions; index as i; trackBy: trackByIndex"
+              [title]="questionsFA.at(i)?.get('title')?.value || ''"
+            >
+              <td>
+                <cds-icon class="handle" shape="drag-handle" size="24"></cds-icon>
+              </td>
+
+              <!-- Index -->
+              <td>{{ i + 1 }}</td>
+
+              <!-- Weight (synced read-only) -->
+              <td>
+                <span class="badge">{{ questionsFA.at(i)?.get('weight')?.value }}</span>
+              </td>
+
+              <!-- Type (synced read-only) -->
+              <td>
+                {{
+                  (questionsFA.at(i)?.get('type')?.value === 'radio')
+                    ? 'Single'
+                    : 'Multiple'
+                }}
+              </td>
+
+              <!-- Answers count -->
+              <td class="text-center">
+                {{ answersFA(i)?.length }}
+              </td>
+
+              <!-- Actions (Edit / Delete) -->
+              <td class="dg-actions">
+                <button class="btn btn-sm btn-outline" type="button" (click)="openQuestionModal(i)">Edit</button>
+                <button class="btn btn-sm btn-danger" type="button" (click)="removeQuestion(i)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="mt-1">{{ questionsFA.length }} question(s)</p>
+      </ng-container>
+    </form>
+
+    <!-- Edit Question modal -->
+    <clr-modal [(clrModalOpen)]="questionModalOpen" [clrModalClosable]="true" *ngIf="editIdx !== null">
+      <h3 class="modal-title">Edit Question {{ editIdx + 1 }}</h3>
+
+      <div class="modal-body" [formGroup]="questionsFA.at(editIdx!)">
+        <clr-input-container>
+          <label>Title</label>
+          <input clrInput formControlName="title" />
+        </clr-input-container>
+
+        <clr-textarea-container>
+          <label>Description (Markdown/HTML)</label>
+          <textarea clrTextarea rows="3" formControlName="description"></textarea>
+        </clr-textarea-container>
+
+        <div class="clr-row">
+          <div class="clr-col-6">
             <clr-select-container>
-              <label>Question Type</label>
-              <select clrSelect name="question type" formControlName="type">
-                <option value="radio">radio</option>
-                <option value="checkbox">checkbox</option>
+              <label>Type</label>
+              <select clrSelect formControlName="type">
+                <option value="checkbox">Multiple</option>
+                <option value="radio">Single</option>
               </select>
             </clr-select-container>
-            <clr-checkbox-container>
-              <clr-checkbox-wrapper>
-                <label>Shuffle Quiz Question Answers</label>
-                <input clrCheckbox formControlName="shuffle" type="checkbox" />
-              </clr-checkbox-wrapper>
-            </clr-checkbox-container>
-            <clr-input-container>
-              <label>Failure Message</label>
-              <input
-                clrInput
-                type="text"
-                formControlName="failureMessage"
-                required
-              />
-            </clr-input-container>
-            <clr-input-container>
-              <label>Success Message</label>
-              <input
-                clrInput
-                type="text"
-                formControlName="successMessage"
-                required
-              />
-            </clr-input-container>
+          </div>
+          <div class="clr-col-6">
             <clr-input-container>
               <label>Weight</label>
-              <input clrInput type="number" formControlName="weight" />
-              <clr-control-error *clrIfError="'required'"
-                >Specifying weight for question is required</clr-control-error
-              >
-              <clr-control-error *clrIfError="'min'"
-                >Weight must be greater than 0
-              </clr-control-error>
+              <input clrInput type="number" formControlName="weight" min="1" max="1000" />
             </clr-input-container>
-            <div class="answers-container">
-              <h6>Answers</h6>
-              <button class="btn btn-sm btn-outline" (click)="addAnswer(i)">
-                Add Answer
-              </button>
-              @for (
-                ans of question.controls.answers.controls;
-                track ans;
-                let j = $index
-              ) {
-                <form clrForm [formGroupName]="j" class="answer-entry">
-                  <hr />
-                  <clr-input-container>
-                    <label>Title</label>
-                    <input
-                      clrInput
-                      type="text"
-                      formControlName="title"
-                      required
-                    />
-                    <clr-control-error *clrIfError="'required'"
-                      >Answer title is required</clr-control-error
-                    >
-                    <clr-control-error *clrIfError="'minlength'"
-                      >Answer title must be at least 4 characters long
-                    </clr-control-error>
-                    <!-- @TODO ... this clarity pattern error is never triggered yet?! -->
-                    <clr-control-error *clrIfError="'pattern'">
-                      Non latin letters are forbidden
-                    </clr-control-error>
-                  </clr-input-container>
-                  <clr-checkbox-container>
-                    <clr-checkbox-wrapper>
-                      <label>Correct</label>
-                      <input
-                        clrCheckbox
-                        formControlName="correct"
-                        type="checkbox"
-                      />
-                    </clr-checkbox-wrapper>
-                  </clr-checkbox-container>
-                  <button
-                    class="btn btn-sm btn-danger-outline"
-                    type="button"
-                    (click)="removeAnswer(i, j)"
+          </div>
+        </div>
+
+        <div class="clr-row">
+          <div class="clr-col-6">
+            <clr-input-container>
+              <label>Failure message</label>
+              <input clrInput formControlName="failure_message" />
+            </clr-input-container>
+          </div>
+          <div class="clr-col-6">
+            <clr-input-container>
+              <label>Success message</label>
+              <input clrInput formControlName="success_message" />
+            </clr-input-container>
+          </div>
+        </div>
+
+        <!-- Shuffle answers -->
+        <div class="clr-row">
+          <div class="clr-col-12">
+            <clr-toggle-container>
+              <label>Shuffle answers</label>
+              <clr-toggle-wrapper>
+                <input clrToggle type="checkbox" formControlName="shuffle" />
+              </clr-toggle-wrapper>
+            </clr-toggle-container>
+          </div>
+        </div>
+
+        <!-- Answers (Dragula) -->
+        <div class="mt-2">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <h5 class="m-0">Answers</h5>
+            <button class="btn btn-sm btn-outline" type="button" (click)="addAnswer(editIdx!)">Add answer</button>
+          </div>
+
+          <ng-container [formGroup]="questionsFA.at(editIdx!)">
+            <div formArrayName="answers">
+              <table class="table table-compact">
+                <thead>
+                  <tr>
+                    <th style="width:48px;">Move</th>
+                    <th>Answer</th>
+                    <th style="width:140px;" class="text-center">Correct</th>
+                    <th style="width:120px;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody
+                  class="container"
+                  [dragula]="ANSWERS_BAG"
+                  [(dragulaModel)]="questionAnswers"
+                >
+                  <tr
+                    *ngFor="let _questionAnswer of questionAnswers; index as j; trackBy: trackByIndex"
+                    [formGroupName]="j"
                   >
-                    Remove Answer
-                  </button>
-                </form>
-              }
+                    <td>
+                      <cds-icon class="handle" shape="drag-handle" size="24"></cds-icon>
+                    </td>
+                    <td>
+                      <clr-input-container class="m-0">
+                        <input clrInput formControlName="title" />
+                      </clr-input-container>
+                    </td>
+                    <td class="text-center">
+                      <input type="checkbox" clrToggle formControlName="correct" />
+                    </td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-sm btn-danger" (click)="removeAnswer(editIdx!, j)">Delete</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <button
-              class="btn btn-sm btn-danger-outline"
-              (click)="removeQuestion(i)"
-            >
-              Remove Question
-            </button>
-          </form>
-        }
+          </ng-container>
+        </div>
       </div>
-    </clr-wizard-page>
-  </form>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="closeQuestionModal()">Close</button>
+      </div>
+    </clr-modal>
+
+    <!-- Footer for Questions step -->
+    <ng-template clrPageButtons>
+      <div class="clr-wizard-footer">
+        <button type="button" class="btn btn-outline" (click)="wiz.previous()">Back</button>
+        <button
+          type="button"
+          class="btn btn-success"
+          [disabled]="form.invalid || saving()"
+          (click)="save()"
+        >
+          {{ mode === 'create' ? 'Create' : 'Save' }}
+        </button>
+        <button type="button" class="btn btn-outline" (click)="close()">Cancel</button>
+      </div>
+    </ng-template>
+  </clr-wizard-page>
 </clr-wizard>
