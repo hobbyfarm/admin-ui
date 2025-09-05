@@ -81,7 +81,7 @@ export class QuizService {
   }
 
   update(id: string, quiz: Quiz): Observable<any> {
-    return this.gargAdmin.post(`/${id}/update`, quiz);
+    return this.gargAdmin.put(`/${id}/update`, quiz);
   }
 
   delete(id: string): Observable<any> {
