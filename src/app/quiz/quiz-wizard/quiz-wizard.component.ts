@@ -11,17 +11,24 @@ import {
   OnDestroy,
 } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormControl,
   FormGroup,
   NonNullableFormBuilder,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { ClrDatagridSortOrder, ClrWizard } from '@clr/angular';
 import { finalize, Subscription } from 'rxjs';
 import { DragulaService } from 'ng2-dragula';
 
-import { QuizService, Quiz, QuizQuestion, QuizAnswer } from '../../data/quiz.service';
+import {
+  QuizService,
+  Quiz,
+  QuizQuestion,
+  QuizAnswer,
+} from '../../data/quiz.service';
 import { Validation } from '../Validation';
 import { QuestionType } from '../QuestionType';
 
@@ -43,7 +50,8 @@ type QuestionFG = FormGroup<{
 
 type QuizFG = FormGroup<{
   title: FormControl<string>;
-  type: FormControl<string>;
+  issue_certificates: FormControl<boolean>;
+  issuer: FormControl<string>;
   shuffle: FormControl<boolean>;
   pool_size: FormControl<number>;
   max_attempts: FormControl<number>;
@@ -80,6 +88,9 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   quizQuestions: { key: string; ctrl: QuestionFG }[] = [];
   questionAnswers: { key: string }[] = [];
 
+  issuerSub?: Subscription;
+  issuerCache = "";
+
   /** Dragula bag names */
   QUESTIONS_BAG = 'quiz-questions';
   ANSWERS_BAG = 'quiz-answers';
@@ -89,13 +100,14 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private fb: NonNullableFormBuilder,
     private qs: QuizService,
-    private dragula: DragulaService
+    private dragula: DragulaService,
   ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
       title: this.fb.control('', { validators: [Validators.required] }),
-      type: this.fb.control('default'),
+      issue_certificates: this.fb.control(false),
+      issuer: this.fb.control('', { validators: [this.validateIssuer()] }),
       shuffle: this.fb.control(false),
       pool_size: this.fb.control(1, { validators: [Validators.min(1)] }),
       max_attempts: this.fb.control(1, { validators: [Validators.min(1)] }),
@@ -104,6 +116,16 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
       }),
       validation_type: this.fb.control<Validation>('standard'),
       questions: this.fb.array<QuestionFG>([]),
+    });
+
+    this.issuerSub = this.form.controls.issue_certificates.valueChanges.subscribe((val) => {
+      if (!val) {
+        this.issuerCache = this.form.controls.issuer.value;
+        this.form.controls.issuer.patchValue('', { emitEvent: false });
+      } else {
+        this.form.controls.issuer.patchValue(this.issuerCache, { emitEvent: false });
+        this.issuerCache = "";
+      }
     });
 
     this.addQuestion(); // per default ... creating a question to prevent empty quiz
@@ -124,7 +146,7 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
     this.subs.add(
       this.dragula.drop(this.QUESTIONS_BAG).subscribe(() => {
         this.applyQuizQuestionsOrderToFormArray();
-      })
+      }),
     );
 
     // Reorder answers for the current question after a drop
@@ -132,12 +154,13 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
       this.dragula.drop(this.ANSWERS_BAG).subscribe(() => {
         if (this.editIdx === null) return;
         this.applyQuestionAnswersOrderToFormArray(this.editIdx);
-      })
+      }),
     );
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+    this.issuerSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -147,6 +170,19 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
     if (changes['editTrigger'] && !changes['editTrigger'].firstChange) {
       if (this.quizToEdit) this.openForEdit(this.quizToEdit);
     }
+  }
+
+  private validateIssuer(): ValidatorFn {
+    return (issuerControl: AbstractControl) => {
+      const quizForm = issuerControl.parent as QuizFG | null;
+      if (!quizForm) return null;
+      if (quizForm.controls.issue_certificates.value && !issuerControl.value) {
+        return {
+          required: true,
+        };
+      }
+      return null;
+    };
   }
 
   openForCreate(): void {
@@ -196,9 +232,13 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
       shuffle: this.fb.control(false),
       failure_message: this.fb.control(''),
       success_message: this.fb.control(''),
-      // enforcing 1 to 1000 here 
+      // enforcing 1 to 1000 here
       weight: this.fb.control(1, {
-        validators: [Validators.required, Validators.min(1), Validators.max(1000)],
+        validators: [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(1000),
+        ],
       }),
       answers: this.fb.array<AnswerFG>([this.newAnswer(), this.newAnswer()]),
     });
@@ -207,9 +247,9 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   private resetFormForCreate(): void {
     this.form.reset({
       title: '',
-      type: 'default',
+      issuer: '',
       shuffle: false,
-      pool_size: 0,
+      pool_size: 1,
       max_attempts: 1,
       success_threshold: 80,
       validation_type: 'standard' as Validation,
@@ -223,7 +263,8 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   private patchFormForEdit(q: Quiz): void {
     this.form.patchValue({
       title: q.title ?? '',
-      type: q.type ?? 'default',
+      issue_certificates: !!q.issuer,
+      issuer: q.issuer ?? '',
       shuffle: !!q.shuffle,
       pool_size: q.pool_size ?? 1,
       max_attempts: q.max_attempts ?? 1,
@@ -251,8 +292,8 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
           this.fb.group({
             title: this.fb.control(a.title ?? ''),
             correct: this.fb.control(!!a.correct),
-          })
-        )
+          }),
+        ),
       );
       this.questionsFA.push(fg);
     });
@@ -278,9 +319,10 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
 
   /** Rebuild questions FormArray in the order reflected by quizQuestions */
   private applyQuizQuestionsOrderToFormArray(): void {
-    const orderedCtrls = this.quizQuestions.map(v => v.ctrl);
+    const orderedCtrls = this.quizQuestions.map((v) => v.ctrl);
     this.questionsFA.clear({ emitEvent: false });
-    for (const c of orderedCtrls) this.questionsFA.push(c, { emitEvent: false });
+    for (const c of orderedCtrls)
+      this.questionsFA.push(c, { emitEvent: false });
   }
 
   private applyQuestionAnswersOrderToFormArray(qIdx: number): void {
@@ -330,12 +372,15 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
 
   // ---------- save ----------
   async save(): Promise<void> {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.saving.set(true);
 
     const payload: Quiz = {
       title: this.form.value.title!,
-      type: this.form.value.type!,
+      issuer: this.form.value.issuer!,
       shuffle: this.form.value.shuffle!,
       pool_size: this.form.value.pool_size!,
       max_attempts: this.form.value.max_attempts!,
@@ -357,7 +402,8 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
     };
 
     if (this.mode === 'create') {
-      this.qs.create(payload as any)
+      this.qs
+        .create(payload as any)
         .pipe(finalize(() => this.saving.set(false)))
         .subscribe((id: string) => {
           this.saved.emit({ id, quiz: payload });
@@ -368,7 +414,8 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
         (this.quizToEdit as any)?.id ||
         (this.quizToEdit as any)?.metadata?.name ||
         (this.quizToEdit as any)?.name;
-      this.qs.update(id, payload as any)
+      this.qs
+        .update(id, payload as any)
         .pipe(finalize(() => this.saving.set(false)))
         .subscribe(() => {
           this.saved.emit({ id, quiz: payload });

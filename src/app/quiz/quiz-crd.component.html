@@ -14,7 +14,7 @@
     <clr-datagrid [clrDisableSelection]="!selectRbac">
       <clr-dg-column [clrDgField]="'id'">ID</clr-dg-column>
       <clr-dg-column [clrDgField]="'title'" [clrDgSortOrder]="ascSort">Title</clr-dg-column>
-      <clr-dg-column [clrDgField]="'type'">Type</clr-dg-column>
+      <clr-dg-column [clrDgField]="'issuer'">Issuer</clr-dg-column>
       <clr-dg-column [clrDgField]="'shuffle'">Shuffle</clr-dg-column>
       <clr-dg-column [clrDgField]="'pool_size'">Pool Size</clr-dg-column>
       <clr-dg-column [clrDgField]="'success_threshold'">Threshold</clr-dg-column>
@@ -39,7 +39,7 @@
         }
         <clr-dg-cell>{{ quiz.id }}</clr-dg-cell>
         <clr-dg-cell>{{ quiz.title }}</clr-dg-cell>
-        <clr-dg-cell>{{ quiz.type }}</clr-dg-cell>
+        <clr-dg-cell>{{ quiz.issuer }}</clr-dg-cell>
         <clr-dg-cell>{{ quiz.shuffle ? 'true' : 'false' }}</clr-dg-cell>
         <clr-dg-cell>{{ quiz.pool_size }}</clr-dg-cell>
         <clr-dg-cell>{{ quiz.success_threshold }}%</clr-dg-cell>
