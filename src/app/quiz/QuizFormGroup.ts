@@ -1,5 +1,6 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Validation } from './Validation';
+import { QuestionType } from './QuestionType';
 
 export type QuizCheckboxFormGroup = FormGroup<{
   quiz: FormArray<FormControl<boolean>>;
@@ -9,29 +10,30 @@ export type QuizRadioFormGroup = FormGroup<{
   quiz: FormControl<number | null>;
 }>;
 
-export type QuizAnswerFormGroup = FormGroup<{
+export type AnswerFG = FormGroup<{
   title: FormControl<string>;
   correct: FormControl<boolean>;
 }>
 
-export type QuizQuestionFormGroup = FormGroup<{
+export type QuestionFG = FormGroup<{
   title: FormControl<string>;
   description: FormControl<string>;
-  type: FormControl<'checkbox' | 'radio'>;
+  type: FormControl<QuestionType>;
   shuffle: FormControl<boolean>;
-  failureMessage: FormControl<string>;
-  successMessage: FormControl<string>;
+  failure_message: FormControl<string>;
+  success_message: FormControl<string>;
   weight: FormControl<number>;
-  answers: FormArray<QuizAnswerFormGroup>;
+  answers: FormArray<AnswerFG>;
 }>
 
-export type QuizFormGroup = FormGroup<{
+export type QuizFG = FormGroup<{
   title: FormControl<string>;
-  // type: FormControl<string>;
+  issue_certificates: FormControl<boolean>;
+  issuer: FormControl<string>;
   shuffle: FormControl<boolean>;
-  poolSize: FormControl<number>;
-  maxAttempts: FormControl<number>;
-  successThreshold: FormControl<number>;
-  validationType: FormControl<Validation>;
-  questions: FormArray<QuizQuestionFormGroup>
+  pool_size: FormControl<number>;
+  max_attempts: FormControl<number>;
+  success_threshold: FormControl<number>;
+  validation_type: FormControl<Validation>;
+  questions: FormArray<QuestionFG>;
 }>;
