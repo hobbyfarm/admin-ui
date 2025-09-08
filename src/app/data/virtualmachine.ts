@@ -1,7 +1,7 @@
 export class VirtualMachine {
     id: string = "";
     vm_template_id: string = "";
-    keypair_name: string = "";
+    keypair_name: string = ""; 
     vm_claim_id: string = "";
     user: string = "";
     status: string = "";
@@ -15,4 +15,5 @@ export class VirtualMachine {
     ws_endpoint: string = "";
     vm_set_id: string = "";
     protocol: string = "";
+    creation_timestamp: string = "";
 }

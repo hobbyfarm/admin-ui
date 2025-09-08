@@ -12,9 +12,14 @@
       Non latin letters is forbidden
     </clr-control-error>
   </clr-input-container>
-  <clr-input-container>
+  <clr-textarea-container>
     <label>Description</label>
-    <input clrInput type="text" formControlName="course_description" required />
+    <textarea
+      clrTextarea
+      formControlName="course_description"
+      name="course_description"
+      required
+    ></textarea>
     <clr-control-error *clrIfError="'required'"
       >Course description is required</clr-control-error
     >
@@ -24,7 +29,26 @@
     <clr-control-error *clrIfError="'pattern'">
       Non latin letters is forbidden
     </clr-control-error>
+  </clr-textarea-container>
+
+  <clr-input-container>
+    <label>Image Path</label>
+    <input
+      clrInput
+      placeholder="https://..."
+      type="url"
+      formControlName="header_image_path"
+    />
+    <clr-control-error *clrIfError="'invalidUrl'"
+      >Must be either a valid URL pointing to an image (.jpeg | .jpg | .gif |
+      .png | .svg) or empty</clr-control-error
+    >
+    <clr-control-error *clrIfError="'pattern'"
+      >Must be either a valid URL pointing to an image (.jpeg | .jpg | .gif |
+      .png | .svg) or empty</clr-control-error
+    >
   </clr-input-container>
+
   <div class="clr-form-control clr-row">
     <label for="keepalive_amount" class="clr-control-label"
       >Keepalive Duration</label
@@ -68,6 +92,75 @@
       }
     </div>
   </div>
+  <clr-toggle-container>
+    <clr-toggle-wrapper>
+      <input
+        type="checkbox"
+        clrToggle
+        name="is_learnpath"
+        formControlName="is_learnpath"
+      />
+      <label>Learning Path</label>
+    </clr-toggle-wrapper>
+    <clr-control-helper>
+      Whether course is presented as a learning Path.
+      <clr-signpost>
+        <clr-signpost-content *clrIfOpen>
+          <h3>Learning Path</h3>
+          <p>
+            A Learning Path assumes, the Scenarios in this course are supposed
+            to be taken in order, which will be represented in the users UI.
+            This prevents the usage of Dynamic Scnearios.
+          </p>
+        </clr-signpost-content>
+      </clr-signpost>
+    </clr-control-helper>
+  </clr-toggle-container>
+  @if (courseDetails.value.is_learnpath) {
+    <clr-toggle-container>
+      <clr-toggle-wrapper>
+        <input
+          type="checkbox"
+          clrToggle
+          name="is_learnpath_strict"
+          formControlName="is_learnpath_strict"
+        />
+        <label>Unskippable Scenarios</label>
+      </clr-toggle-wrapper>
+      <clr-control-helper
+        >Whether the user can skip Scenarios in the Learning
+        Path.</clr-control-helper
+      >
+    </clr-toggle-container>
+  }
+
+  <clr-toggle-container>
+    <clr-toggle-wrapper>
+      <input
+        type="checkbox"
+        clrToggle
+        name="in_catalog"
+        formControlName="in_catalog"
+      />
+      <label>View in Catalog</label>
+    </clr-toggle-wrapper>
+    <clr-control-helper
+      >Whether the course is shown in the collection of 'explore other courses'.
+      <clr-signpost>
+        <clr-signpost-content *clrIfOpen>
+          <h3>Explore other courses</h3>
+          <p>
+            The explore other courses section shows the user additional courses,
+            that are not part of the current scheduled Event. The user can see
+            the scenarios and course description, but can not start any of the
+            scenarios. It is meant to be a good way to advertise for further
+            content that is available on the platform.
+          </p>
+        </clr-signpost-content>
+      </clr-signpost>
+    </clr-control-helper>
+  </clr-toggle-container>
+
   <clr-toggle-container>
     <clr-toggle-wrapper>
       <input
