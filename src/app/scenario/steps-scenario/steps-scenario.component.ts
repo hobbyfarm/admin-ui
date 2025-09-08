@@ -96,8 +96,8 @@ export class StepsScenarioComponent implements OnInit {
     this.editingStep = this.editingSteps[i];
 
     // Ensure quiz property exists (string id, or '')
-    if (this.editingStep && (this.editingStep as any).quiz == null) {
-      (this.editingStep as any).quiz = '';
+    if (this.editingStep && !this.editingStep.quiz) {
+      this.editingStep.quiz = '';
     }
 
     this.editModal.open();

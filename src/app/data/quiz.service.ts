@@ -80,11 +80,11 @@ export class QuizService {
     return this.gargAdmin.post('/create', quiz, { responseType: 'text' });
   }
 
-  update(id: string, quiz: Quiz): Observable<any> {
+  update(id: string, quiz: Quiz) {
     return this.gargAdmin.put(`/${id}/update`, quiz);
   }
 
-  delete(id: string): Observable<any> {
+  delete(id: string) {
     return this.gargAdmin.delete(`/${id}/delete`);
   }
 
