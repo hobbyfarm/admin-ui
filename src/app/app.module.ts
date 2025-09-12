@@ -176,6 +176,13 @@ import { CostService } from './data/cost.service';
 import { CostDashboardComponent } from './dashboards/cost-dashboard/cost-dashboard.component';
 import { CostStatisticsComponent } from './cost-statistics/cost-dashboard.component';
 import { MonthlyCostChartComponent } from './dashboards/cost-dashboard/monthly-cost-chart/monthly-cost-chart.component';
+import { QuizCheckboxComponent } from './quiz/quiz-checkbox.component';
+import { QuizRadioComponent } from './quiz/quiz-radio.component';
+import { QuizBodyComponent } from './quiz/quiz-body.component';
+import { QuizComponent } from './quiz/quiz.component';
+import { QuizLabelComponent } from './quiz/quiz-label.component';
+import { QuizCrdComponent } from './quiz/quiz-crd.component';
+import { QuizWizardComponent } from './quiz/quiz-wizard/quiz-wizard.component';
 
 ClarityIcons.addIcons(
   plusIcon,
@@ -332,6 +339,13 @@ export function jwtOptionsFactory(): JwtConfig {
     SafeSvgPipe,
     TooltipDirective,
     TooltipComponent,
+    QuizCheckboxComponent,
+    QuizRadioComponent,
+    QuizBodyComponent,
+    QuizComponent,
+    QuizLabelComponent,
+    QuizCrdComponent,
+    QuizWizardComponent,
   ],
   imports: [
     BrowserModule,
@@ -394,6 +408,7 @@ export function jwtOptionsFactory(): JwtConfig {
           component: SingleTaskVerificationMarkdownComponent,
           unescapeStrings: false,
         },
+        { component: QuizComponent, unescapeStrings: false },
       ],
       options: {
         sanitize: false,

@@ -1,0 +1,5 @@
+.answers { display: grid; gap: .5rem; }
+.answers-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .25rem; }
+.answer-row { display: flex; align-items: center; gap: .5rem; }
+.dg-actions { display: flex; gap: .25rem; justify-content: center; }
+.review { background: rgba(0,0,0,.05); padding: .75rem; border-radius: .5rem; }

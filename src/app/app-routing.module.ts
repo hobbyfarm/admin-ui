@@ -20,6 +20,7 @@ import { SessionStatisticsComponent } from './session-statistics/session-statist
 import { SettingsComponent } from './configuration/settings/settings.component';
 import { DashboardDetailsComponent } from './dashboards/dashboard-details/dashboard-details.component';
 import { CostStatisticsComponent } from './cost-statistics/cost-dashboard.component';
+import { QuizCrdComponent } from './quiz/quiz-crd.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -68,6 +69,7 @@ const routes: Routes = [
         path: 'courses',
         component: CourseComponent,
       },
+      { path: 'quizzes', component: QuizCrdComponent },
     ],
   },
   {
