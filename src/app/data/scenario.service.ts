@@ -44,7 +44,10 @@ export class ScenarioService {
   );
   private gargAdmin = this.gcf.scopedClient('/a/scenario');
 
-  constructor(private gcf: GargantuaClientFactory, private http: HttpClient) {}
+  constructor(
+    private gcf: GargantuaClientFactory,
+    private http: HttpClient,
+  ) {}
 
   public watch() {
     return this.bh.asObservable();
@@ -115,7 +118,7 @@ export class ScenarioService {
       catchError((e: HttpErrorResponse) => {
         return throwError(() => e.error);
       }),
-    )
+    );
   }
 
   public update(s: Scenario) {
@@ -126,6 +129,29 @@ export class ScenarioService {
       st.content = utoa(st.content);
     });
 
+    const normalizedVmTasks = (s.vm_tasks ?? []).map((vmTaskGroup) => ({
+      ...vmTaskGroup,
+      tasks: (vmTaskGroup.tasks ?? []).map((task) => {
+        const rawExpectedReturnCode = (task as any).expected_return_code;
+        let expectedReturnCode: number | null | undefined = undefined;
+        if (
+          rawExpectedReturnCode === '' ||
+          rawExpectedReturnCode === undefined ||
+          rawExpectedReturnCode === null
+        ) {
+          expectedReturnCode = null;
+        } else if (typeof rawExpectedReturnCode === 'number') {
+          expectedReturnCode = rawExpectedReturnCode;
+        } else {
+          const parsedReturnCode = parseInt(String(rawExpectedReturnCode), 10);
+          expectedReturnCode = Number.isNaN(parsedReturnCode)
+            ? null
+            : parsedReturnCode;
+        }
+        return { ...task, expected_return_code: expectedReturnCode };
+      }),
+    }));
+
     const params = new HttpParams({ encoder: new CustomEncoder() })
       .set('name', utoa(s.name))
       .set('description', utoa(s.description))
@@ -135,7 +161,7 @@ export class ScenarioService {
       .set('virtualmachines', JSON.stringify(s.virtualmachines))
       .set('pause_duration', s.pause_duration)
       .set('keepalive_duration', s.keepalive_duration)
-      .set('vm_tasks', JSON.stringify(s.vm_tasks));
+      .set('vm_tasks', JSON.stringify(normalizedVmTasks));
 
     return this.gargAdmin.put(`/${s.id}`, params).pipe(
       tap(() => {
@@ -191,7 +217,9 @@ export class ScenarioService {
   }
 
   public printable(id: string) {
-    return this.http.get(`${environment.server}/a/scenario/${id}/printable`, { responseType: 'text' });
+    return this.http.get(`${environment.server}/a/scenario/${id}/printable`, {
+      responseType: 'text',
+    });
   }
 
   public delete(id: string) {
