@@ -22,6 +22,7 @@
     overflow-x: auto;
     background-color: var(--clr-card-bg-color, #f8f8f8);
     margin-bottom: 0px;
+
     .filename,
     .language {
       float: right;
@@ -34,6 +35,7 @@
     }
 
     &:hover {
+
       .filename,
       .language {
         color: rgb(51, 51, 51);
@@ -47,8 +49,103 @@
     height: auto;
   }
 
-  :not(pre) > code[class*="language-"],
+  :not(pre)>code[class*="language-"],
   pre[class*="language-"] {
     background: #f8f8f8 !important;
   }
+
+ table {
+  color: #333;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: left;
+  table-layout: fixed;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead th {
+  background-color: var(--clr-thead-bgcolor, #006400);
+  color: var(--clr-table-font-color, #ffffff);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+thead th:first-child {
+  border-top-left-radius: 8px;
+}
+thead th:last-child {
+  border-top-right-radius: 8px;
+}
+
+th,
+td {
+  padding: 8px 12px;
+  border: 1px solid #dddddd;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+
+th:nth-child(1) {
+  background-color:var(--clr-table-bgcolor, #d6f0eb);
+  width: 200px;
+}
+
+th:nth-child(2) {
+  background-color:var(--clr-table-bgcolor, #f9f9f9);
+  width: 250px;
+}
+
+/* 👇 Abstand 2. → 3. Spalte verkleinert */
+td:nth-child(3),
+th:nth-child(3) {
+  padding-left: 6px;
+  padding-right: 6px;
+  width: 150px;
+}
+
+tbody tr:nth-child(even) {
+  background-color:var(--clr-table-bgcolor, #f2f7f6);
+}
+
+tbody tr {
+  transition: background-color 0.3s ease-in-out;
+}
+
+tbody tr:hover {
+  background-color:#cdece4;
+  cursor: pointer;
+}
+
+tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+
+tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  table {
+    font-size: 0.9rem;
+  }
+
+  th:nth-child(1),
+  th:nth-child(2) {
+    width: auto;
+  }
+
+  th,
+  td {
+    white-space: normal;
+    padding: 10px 8px;
+  }
+}
 }
