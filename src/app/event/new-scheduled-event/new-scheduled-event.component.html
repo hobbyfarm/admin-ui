@@ -162,7 +162,7 @@
       <div class="clr-row">
         <div class="clr-col">
           Start Time:
-          {{ se.start_time ? (se.start_time | date: "long") : "" }} <br />
+          {{ se.start_time ? (se.start_time | date: 'long') : '' }} <br />
           <clr-signpost>
             <button class="btn btn-link" clrSignpostTrigger>
               Set Start Time
@@ -186,7 +186,7 @@
       </div>
       <div class="clr-row">
         <div class="clr-col">
-          End Time: {{ se.end_time ? (se.end_time | date: "long") : "" }}
+          End Time: {{ se.end_time ? (se.end_time | date: 'long') : '' }}
           <br />
           <clr-signpost>
             <button class="btn btn-link" clrSignpostTrigger>
@@ -453,7 +453,7 @@
             </thead>
             <tbody [formGroup]="simpleModeVmCounts">
               @for (
-                fc of simpleModeVmCounts["controls"].envs["controls"].slice(
+                fc of simpleModeVmCounts['controls'].envs['controls'].slice(
                   0,
                   selectedEnvironments.length
                 );
@@ -537,7 +537,7 @@
               </tr>
             </thead>
             <tbody [formGroup]="vmCounts">
-              @for (groupName of controls(""); track groupName) {
+              @for (groupName of controls(''); track groupName) {
                 <ng-container [formGroupName]="groupName">
                   @for (controlName of controls(groupName); track controlName) {
                     <tr>
@@ -605,11 +605,11 @@
             </tr>
             <tr>
               <td>Start Time</td>
-              <td>{{ se.start_time | date: "long" }}</td>
+              <td>{{ se.start_time | date: 'long' }}</td>
             </tr>
             <tr>
               <td>End Time</td>
-              <td>{{ se.end_time | date: "long" }}</td>
+              <td>{{ se.end_time | date: 'long' }}</td>
             </tr>
             <tr>
               <td>Courses</td>
@@ -759,15 +759,15 @@
               <td>Start Time</td>
               @if (!isStartDateAsEditedCheck()) {
                 <td>
-                  {{ se.start_time | date: "long" }}
+                  {{ se.start_time | date: 'long' }}
                 </td>
               } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
-                    uneditedScheduledEvent.start_time | date: "long"
+                    uneditedScheduledEvent.start_time | date: 'long'
                   }}</span>
                   <span class="add-elem">{{
-                    se.start_time | date: "long"
+                    se.start_time | date: 'long'
                   }}</span>
                 </td>
               }
@@ -776,14 +776,14 @@
               <td>End Time</td>
               @if (!isEndDateAsEditedCheck()) {
                 <td>
-                  {{ se.end_time | date: "long" }}
+                  {{ se.end_time | date: 'long' }}
                 </td>
               } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
-                    uneditedScheduledEvent.end_time | date: "long"
+                    uneditedScheduledEvent.end_time | date: 'long'
                   }}</span>
-                  <span class="add-elem">{{ se.end_time | date: "long" }}</span>
+                  <span class="add-elem">{{ se.end_time | date: 'long' }}</span>
                 </td>
               }
             </tr>

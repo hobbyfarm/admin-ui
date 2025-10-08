@@ -106,7 +106,7 @@
       </thead>
       <tbody formArrayName="params">
         @for (
-          p of environmentSpecifics["controls"].params["controls"];
+          p of environmentSpecifics['controls'].params['controls'];
           track p;
           let i = $index
         ) {
@@ -149,7 +149,7 @@
         }
       </tbody>
     </table>
-    @if (environmentSpecifics["controls"].params["controls"].length != 0) {
+    @if (environmentSpecifics['controls'].params['controls'].length != 0) {
       <span class="clr-subtext"
         >Parameters require both 'key' and 'value' fields to be set. Remove any
         parameters that do not meet this criteria.</span
@@ -192,13 +192,13 @@
     <ng-container [formGroup]="templateMappings">
       <clr-stack-view formArrayName="templates">
         @for (
-          t of templateMappings["controls"].templates["controls"];
+          t of templateMappings['controls'].templates['controls'];
           track t;
           let it = $index
         ) {
           <clr-stack-block formGroupName="{{ it }}">
             <clr-stack-label>
-              {{ getVirtualMachineTemplateName(t["controls"].template.value) }}
+              {{ getVirtualMachineTemplateName(t['controls'].template.value) }}
             </clr-stack-label>
             <clr-stack-content>
               <button
@@ -230,7 +230,7 @@
               </clr-stack-content>
             </clr-stack-block>
             @for (
-              p of t["controls"].params["controls"];
+              p of t['controls'].params['controls'];
               track p;
               let ip = $index
             ) {
@@ -284,7 +284,7 @@
       </thead>
       <tbody formArrayName="mappings">
         @for (
-          im of ipMapping["controls"].mappings["controls"];
+          im of ipMapping['controls'].mappings['controls'];
           track im;
           let i = $index
         ) {
@@ -327,7 +327,7 @@
         }
       </tbody>
     </table>
-    @if (ipMapping["controls"].mappings["controls"].length != 0) {
+    @if (ipMapping['controls'].mappings['controls'].length != 0) {
       <span class="clr-subtext"
         >IP mappings require both 'from' and 'to' fields to be set. Remove any
         mappings that do not meet this criteria.</span

@@ -20,7 +20,7 @@ export class ProgressInfoComponent {
 
   public timeSince = timeSince;
 
-  @ViewChild("infoModal") infoModal: ClrModal;
+  @ViewChild('infoModal') infoModal: ClrModal;
 
   public openModal(): void {
     this.infoModal.open();
@@ -30,12 +30,11 @@ export class ProgressInfoComponent {
   get open() {
     return this.infoOpen;
   }
-  
+
   set open(value: boolean) {
     this.infoOpen = value;
     if (!this.infoOpen) {
       this.pause(false);
     }
   }
-
 }

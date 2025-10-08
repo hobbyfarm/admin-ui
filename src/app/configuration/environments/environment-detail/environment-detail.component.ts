@@ -23,7 +23,7 @@ export class EnvironmentDetailComponent implements OnInit {
   constructor(
     public environmentService: EnvironmentService,
     public rbacService: RbacService,
-    public vmTemplateService: VmtemplateService
+    public vmTemplateService: VmtemplateService,
   ) {
     this.rbacService
       .Grants('virtualmachinetemplates', 'list')
@@ -35,8 +35,8 @@ export class EnvironmentDetailComponent implements OnInit {
           .list()
           .subscribe((list: VMTemplate[]) =>
             list.forEach((v) =>
-              this.virtualMachineTemplateList.set(v.id, v.name)
-            )
+              this.virtualMachineTemplateList.set(v.id, v.name),
+            ),
           );
       });
   }
@@ -47,7 +47,7 @@ export class EnvironmentDetailComponent implements OnInit {
     this.environmentService.get(this.id).subscribe((e: Environment) => {
       // initialize two-way binding variables for stack block state
       const templateMappingsCount: number = Object.keys(
-        e.template_mapping
+        e.template_mapping,
       ).length;
       for (let i = 0; i < templateMappingsCount; ++i) {
         this.stackBoxExpanded.push(false);

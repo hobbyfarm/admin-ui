@@ -1,7 +1,11 @@
 <form clrForm [formGroup]="categoryFilterForm">
   <clr-combobox-container>
     <label>Category</label>
-    <clr-combobox formControlName="categoryControl" name="categories" clrMulti="true">
+    <clr-combobox
+      formControlName="categoryControl"
+      name="categories"
+      clrMulti="true"
+    >
       <ng-container *clrOptionSelected="let selectedCategories">
         {{ selectedCategories }}
       </ng-container>
@@ -16,7 +20,9 @@
     <clr-control-helper>
       <div class="clr-row">
         <div class="clr-col">
-          <a href="javascript://" (click)="clearCategoryFilter()">Clear categories</a>
+          <a href="javascript://" (click)="clearCategoryFilter()"
+            >Clear categories</a
+          >
         </div>
       </div>
     </clr-control-helper>

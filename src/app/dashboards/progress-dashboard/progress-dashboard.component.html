@@ -132,7 +132,7 @@
       <interval-timer (intervalElapsed)="refresh()"></interval-timer>
     </div>
   </div>
-  @if (progressViewModeControl.value === "cardView") {
+  @if (progressViewModeControl.value === 'cardView') {
     <div class="clr-row">
       @if (currentProgress && currentProgress.length > 0) {
         @for (p of filteredProgress; track p) {
@@ -152,7 +152,7 @@
       }
     </div>
   }
-  @if (progressViewModeControl.value === "listView") {
+  @if (progressViewModeControl.value === 'listView') {
     <div class="clr-row">
       <ng-container>
         @if (currentProgress && currentProgress.length > 0) {

@@ -40,7 +40,10 @@ class BaseClient<U extends 'get' | 'list', T> {
   inFlightRequests = new Map<string, Observable<U extends 'get' ? T : T[]>>();
   constructor(protected garg: GargantuaClient) {}
 
-  get(id: string, force: boolean = false): Observable<U extends 'get' ? T : T[]> {
+  get(
+    id: string,
+    force: boolean = false,
+  ): Observable<U extends 'get' ? T : T[]> {
     // Return the cached value if available
     const cachedResult = this.cache.get(id);
     if (!force && cachedResult !== undefined)
@@ -78,12 +81,12 @@ class BaseClient<U extends 'get' | 'list', T> {
   }
 }
 
-export class ResourceClient<T> extends BaseClient<'get', T>{ }
+export class ResourceClient<T> extends BaseClient<'get', T> {}
 
 export class ListableResourceClient<
-  T extends { id: string }
+  T extends { id: string },
 > extends ResourceClient<T> {
-  listClient: BaseClient<'list', T> = new BaseClient<'list', T>(this.garg)
+  listClient: BaseClient<'list', T> = new BaseClient<'list', T>(this.garg);
 
   deleteAndNotify(id: string) {
     const cacheKey = '/list';

@@ -28,18 +28,18 @@
         }
       </clr-dg-cell>
       <clr-dg-cell>
-        {{ user.started | date: "MMMM d, y, HH:mm:ss z" }}
+        {{ user.started | date: 'MMMM d, y, HH:mm:ss z' }}
       </clr-dg-cell>
       <clr-dg-cell>
         {{ user.progresses?.length ?? 0 }}
       </clr-dg-cell>
       <clr-dg-cell>{{ user.uniqueScenarios }}</clr-dg-cell>
       <clr-dg-cell>
-        @if (user.status == "completed") {
+        @if (user.status == 'completed') {
           <span class="badge badge-success">COMPLETED</span>
-        } @else if (user.status == "in-progress") {
+        } @else if (user.status == 'in-progress') {
           <span class="badge badge-info">IN PROGRESS</span>
-        } @else if (user.status == "out-of-time") {
+        } @else if (user.status == 'out-of-time') {
           <span class="badge badge-danger">OUT OF TIME</span>
         }
       </clr-dg-cell>

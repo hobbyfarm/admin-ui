@@ -5,7 +5,7 @@
 >
   @if (open) {
     <h3 class="modal-title">
-      OTACs for {{ currentScheduledEvent?.event_name ?? "?" }}
+      OTACs for {{ currentScheduledEvent?.event_name ?? '?' }}
     </h3>
   }
   <div class="modal-body">
@@ -75,11 +75,11 @@
 
           <clr-dg-row *clrDgItems="let otac of otacs">
             <clr-dg-cell>
-              @if (otac.status == "free") {
+              @if (otac.status == 'free') {
                 <span class="badge badge-success">free</span>
-              } @else if (otac.status == "taken") {
+              } @else if (otac.status == 'taken') {
                 <span class="badge badge-info">taken</span>
-              } @else if (otac.status == "out-of-time") {
+              } @else if (otac.status == 'out-of-time') {
                 <span class="badge badge-danger">out-of-time</span>
               }
             </clr-dg-cell>

@@ -62,7 +62,7 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   questionAnswers: { key: string }[] = [];
 
   issuerSub?: Subscription;
-  issuerCache = "";
+  issuerCache = '';
 
   /** Dragula bag names */
   QUESTIONS_BAG = 'quiz-questions';
@@ -91,15 +91,18 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
       questions: this.fb.array<QuestionFG>([]),
     });
 
-    this.issuerSub = this.form.controls.issue_certificates.valueChanges.subscribe((val) => {
-      if (!val) {
-        this.issuerCache = this.form.controls.issuer.value;
-        this.form.controls.issuer.patchValue('', { emitEvent: false });
-      } else {
-        this.form.controls.issuer.patchValue(this.issuerCache, { emitEvent: false });
-        this.issuerCache = "";
-      }
-    });
+    this.issuerSub =
+      this.form.controls.issue_certificates.valueChanges.subscribe((val) => {
+        if (!val) {
+          this.issuerCache = this.form.controls.issuer.value;
+          this.form.controls.issuer.patchValue('', { emitEvent: false });
+        } else {
+          this.form.controls.issuer.patchValue(this.issuerCache, {
+            emitEvent: false,
+          });
+          this.issuerCache = '';
+        }
+      });
 
     this.addQuestion(); // per default ... creating a question to prevent empty quiz
     this.rebuildQuestions();

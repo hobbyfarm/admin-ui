@@ -1,5 +1,11 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Chart, ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
+import {
+  Chart,
+  ChartConfiguration,
+  ChartData,
+  ChartEvent,
+  ChartType,
+} from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
 import { Progress } from '../../data/progress';
@@ -46,7 +52,11 @@ export class SessionTimeStatisticsComponent implements OnInit {
     labels: [],
     datasets: [],
   };
-  public barChartOptions: ChartConfiguration<'bar', number[], string>['options'] = {
+  public barChartOptions: ChartConfiguration<
+    'bar',
+    number[],
+    string
+  >['options'] = {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
     scales: {
@@ -58,11 +68,11 @@ export class SessionTimeStatisticsComponent implements OnInit {
           stepSize: 60,
           maxTicksLimit: 10,
           callback: function (value) {
-            if(typeof value === 'string') {
+            if (typeof value === 'string') {
               value = parseInt(value);
             }
-            if(isNaN(value) || value < 0) {
-              throw new Error("Error parsing value: Invalid duration")
+            if (isNaN(value) || value < 0) {
+              throw new Error('Error parsing value: Invalid duration');
             }
             // Format y-axis labels to time string
             return durationFormatter(value);
@@ -111,7 +121,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
 
   constructor(
     public progressService: ProgressService,
-    private _fb: NonNullableFormBuilder
+    private _fb: NonNullableFormBuilder,
   ) {}
 
   ngOnInit(): void {
@@ -134,7 +144,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
         });
         this.selectedScenario = scenario;
         this.updateData();
-      }
+      },
     );
   }
 
@@ -147,7 +157,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
   private updateData() {
     // Filter progresses based on the selected scenario
     const evaluatedProgressData = this.progresses.filter(
-      (progress) => this.selectedScenario === progress.scenario
+      (progress) => this.selectedScenario === progress.scenario,
     );
 
     // Initialize step time and counts
@@ -195,7 +205,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
 
     // Sort all step times to prepare for median or other statistical analysis
     stepTimes = stepTimes.map((times) =>
-      times ? times.sort((a, b) => a - b) : []
+      times ? times.sort((a, b) => a - b) : [],
     );
 
     // Assign processed data to the object's properties
@@ -205,11 +215,11 @@ export class SessionTimeStatisticsComponent implements OnInit {
 
     // Calculate average durations and total duration
     this.avgDuration = this.stepDurations.map((duration, i) =>
-      Math.round(duration / this.stepCounts[i] / 1000)
+      Math.round(duration / this.stepCounts[i] / 1000),
     );
     this.totalDuration = this.avgDuration.reduce(
       (acc, duration) => acc + duration,
-      0
+      0,
     );
 
     // Calculate the median duration for each step and sum them
@@ -223,7 +233,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
     // Summing the median durations for the total
     totalMedianDuration = medianDurationPerStep.reduce(
       (acc, median) => acc + median,
-      0
+      0,
     );
 
     // Convert to seconds
@@ -231,7 +241,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
 
     // Store median durations per step in seconds for any further needs
     this.medianDurationPerStep = medianDurationPerStep.map(
-      (median) => median / 1000
+      (median) => median / 1000,
     );
 
     // Final processing step

@@ -77,12 +77,17 @@
           formControlName="cost_base_price"
         />
         <clr-control-error *clrIfError="'invalidFloat'"
-        >Optional base price needs to be a floating-point number greater or equal zero</clr-control-error
+          >Optional base price needs to be a floating-point number greater or
+          equal zero</clr-control-error
         >
       </clr-input-container>
       <clr-select-container>
         <label>Time Unit</label>
-        <select title="cost_time_unit" clrSelect formControlName="cost_time_unit">
+        <select
+          title="cost_time_unit"
+          clrSelect
+          formControlName="cost_time_unit"
+        >
           <option value=""></option>
           <option value="seconds">seconds</option>
           <option value="minutes">minutes</option>
@@ -111,7 +116,7 @@
       </thead>
       <tbody formArrayName="mappings">
         @for (
-          m of configMap["controls"].mappings["controls"];
+          m of configMap['controls'].mappings['controls'];
           track m;
           let i = $index
         ) {
@@ -233,10 +238,10 @@
     <h4>Cost</h4>
     <table class="table table-compact">
       <thead>
-      <tr>
-        <th>Option</th>
-        <th>Value</th>
-      </tr>
+        <tr>
+          <th>Option</th>
+          <th>Value</th>
+        </tr>
       </thead>
       <tbody>
         @if (!!this.editTemplate) {
@@ -249,9 +254,11 @@
             } @else {
               <td>
                 <span class="del-elem arrow-after">{{
-                    uneditedTemplate.cost_base_price ?? 'None'
-                  }}</span>
-                <span class="add-elem">{{ template.cost_base_price ?? 'None' }}</span>
+                  uneditedTemplate.cost_base_price ?? 'None'
+                }}</span>
+                <span class="add-elem">{{
+                  template.cost_base_price ?? 'None'
+                }}</span>
               </td>
             }
           </tr>
@@ -264,9 +271,11 @@
             } @else {
               <td>
                 <span class="del-elem arrow-after">{{
-                    uneditedTemplate.cost_time_unit ?? 'None'
-                  }}</span>
-                <span class="add-elem">{{ template.cost_time_unit ?? 'None' }}</span>
+                  uneditedTemplate.cost_time_unit ?? 'None'
+                }}</span>
+                <span class="add-elem">{{
+                  template.cost_time_unit ?? 'None'
+                }}</span>
               </td>
             }
           </tr>
@@ -334,14 +343,14 @@
                           {{
                             interface.value.hasWebinterface
                               ? interface.value.port
-                              : "-"
+                              : '-'
                           }}
                         </td>
                         <td>
                           {{
                             interface.value.hasOwnTab
                               ? interface.value.hasOwnTab
-                              : "-"
+                              : '-'
                           }}
                         </td>
                       </tr>

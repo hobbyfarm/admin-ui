@@ -32,7 +32,7 @@ export class FilterScenariosComponent implements OnInit {
   constructor(
     public scenarioService: ScenarioService,
     public rbacService: RbacService,
-    public vmTemplateService: VmtemplateService
+    public vmTemplateService: VmtemplateService,
   ) {}
 
   emitScenarios(values: Scenario[]) {
@@ -43,7 +43,7 @@ export class FilterScenariosComponent implements OnInit {
     this.categoryFilterForm.reset({ categoryControl: [] });
   }
 
-  reloadScenarios(){
+  reloadScenarios() {
     this.scenarioService.list(true).subscribe((s: Scenario[]) => {
       this.scenarios = s;
       this.clearCategoryFilter();
@@ -70,7 +70,7 @@ export class FilterScenariosComponent implements OnInit {
 
     this.scenarios.forEach((s) => {
       let matches = s.categories.filter((element) =>
-        this.selectedCategories.includes(element)
+        this.selectedCategories.includes(element),
       );
       if (matches.length > 0) {
         sc.push(s);

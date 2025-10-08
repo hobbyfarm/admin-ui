@@ -34,7 +34,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private rbacService: RbacService,
     private progressService: ProgressService,
     private vmService: VmService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -93,7 +93,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     if (this.activeEvents.length > 0) {
       if (this.router.url === '/dashboards') {
         this.router.navigateByUrl(
-          `/dashboards/event/${this.activeEvents[0].id}`
+          `/dashboards/event/${this.activeEvents[0].id}`,
         );
       }
     }

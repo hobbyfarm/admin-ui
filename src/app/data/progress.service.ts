@@ -15,14 +15,14 @@ import { Scenario } from './scenario';
 export class ProgressService {
   constructor(
     private gcf: GargantuaClientFactory,
-    public scenarioService: ScenarioService
+    public scenarioService: ScenarioService,
   ) {}
   private garg = this.gcf.scopedClient('/progress');
   private gargAdmin = this.gcf.scopedClient('/a/progress');
 
   private cachedProgressList: Progress[] = [];
   private bh: BehaviorSubject<Progress[]> = new BehaviorSubject(
-    this.cachedProgressList
+    this.cachedProgressList,
   );
   private fetchedList = false;
 
@@ -41,7 +41,7 @@ export class ProgressService {
         }),
         tap((p: Progress[]) => {
           this.set(p);
-        })
+        }),
       );
     }
   }
@@ -51,22 +51,27 @@ export class ProgressService {
       from,
       'E LLL dd HH:mm:ss UTC yyyy',
       'en-US',
-      'UTC'
+      'UTC',
     );
     const toDateString: string = formatDate(
       to,
       'E LLL dd HH:mm:ss UTC yyyy',
       'en-US',
-      'UTC'
+      'UTC',
     );
     const params = new HttpParams()
       .set(
         'from',
-        formatDate(fromDateString, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC')
+        formatDate(
+          fromDateString,
+          'E LLL dd HH:mm:ss UTC yyyy',
+          'en-US',
+          'UTC',
+        ),
       )
       .set(
         'to',
-        formatDate(toDateString, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC')
+        formatDate(toDateString, 'E LLL dd HH:mm:ss UTC yyyy', 'en-US', 'UTC'),
       );
     return this.gargAdmin
       .get('/range', {
@@ -85,7 +90,7 @@ export class ProgressService {
           scenarios.forEach((s) => (scenarioMap[s.id] = s.name));
           progress.forEach((p) => (p.scenario_name = scenarioMap[p.scenario]));
           return progress;
-        })
+        }),
       );
   }
 
@@ -105,7 +110,7 @@ export class ProgressService {
           scenarios.forEach((s) => (scenarioMap[s.id] = s.name));
           progress.forEach((p) => (p.scenario_name = scenarioMap[p.scenario]));
           return progress;
-        })
+        }),
       );
   }
 

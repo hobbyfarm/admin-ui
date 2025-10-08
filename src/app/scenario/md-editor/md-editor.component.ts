@@ -60,12 +60,12 @@ export class MDEditorComponent implements OnChanges, AfterViewInit {
     let selectionEnd: number = this.mdEditor.nativeElement.selectionEnd;
     let textBefore = this.mdEditor.nativeElement.value.substring(
       0,
-      cursorPosition
+      cursorPosition,
     );
     let textAfter = this.mdEditor.nativeElement.value.substring(selectionEnd);
     let textSelection = this.mdEditor.nativeElement.value.substring(
       cursorPosition,
-      selectionEnd
+      selectionEnd,
     );
     if (cursorPosition == selectionEnd) {
       // No text was selected, only cursor position is set

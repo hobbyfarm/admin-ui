@@ -95,7 +95,7 @@ export class TypedSettingsService {
               return typedInput.id === setting;
             }) ?? ({} as TypedInput)
           );
-        })
+        }),
       );
     }
   }
@@ -108,7 +108,7 @@ export class TypedSettingsService {
           return [];
         }
         return this.buildTypedInputList(pList);
-      })
+      }),
     );
   }
 
@@ -122,7 +122,7 @@ export class TypedSettingsService {
       map(extractResponseContent),
       map((pList: PreparedScope[]) => {
         return pList ?? [];
-      })
+      }),
     );
   }
 
@@ -132,7 +132,7 @@ export class TypedSettingsService {
     pList.forEach((preparedSetting: PreparedSettings) => {
       const typedInputRepresentationIndex =
         this.typedInputRepresentationStringList.indexOf(
-          preparedSetting.valueType
+          preparedSetting.valueType,
         );
       const representation: TypedInputRepresentation =
         this.typedInputRepresentationList[
@@ -142,7 +142,7 @@ export class TypedSettingsService {
         ];
 
       const typedInputTypeIndex = this.typedInputDataTypeStringList.indexOf(
-        preparedSetting.dataType
+        preparedSetting.dataType,
       );
       const inputType: TypedInputType =
         this.typedInputDataTypeList[

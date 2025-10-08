@@ -1,15 +1,15 @@
-.del-elem {    
-    color:red; 
-    font-weight: bold;        
+.del-elem {
+  color: red;
+  font-weight: bold;
 }
 
-.arrow-after::after {   
-    color:black;    
-    content: ' \1F862 ';     
-    vertical-align: middle;   
+.arrow-after::after {
+  color: black;
+  content: ' \1F862 ';
+  vertical-align: middle;
 }
 
-.add-elem {    
-    color:green; 
-    font-weight: bold;
+.add-elem {
+  color: green;
+  font-weight: bold;
 }

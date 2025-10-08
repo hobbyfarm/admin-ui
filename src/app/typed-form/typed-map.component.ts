@@ -4,7 +4,7 @@ import { TypedInput } from './TypedInput';
 import { FormArray, FormControl } from '@angular/forms';
 
 @Component({
-  template: ''
+  template: '',
 })
 export class TypedMapComponent<T extends string | number | boolean> {
   @Input() map: FormArray<GenericKeyValueGroup<T>>;
@@ -22,7 +22,7 @@ export class TypedMapComponent<T extends string | number | boolean> {
 
   getMapFormControl<T extends string | number | boolean>(
     ctrl: GenericKeyValueGroup<T>,
-    controlName: 'key' | 'value'
+    controlName: 'key' | 'value',
   ): FormControl<T> | FormControl<string> {
     return ctrl.controls[controlName];
   }

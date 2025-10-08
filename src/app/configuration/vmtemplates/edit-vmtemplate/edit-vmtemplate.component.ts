@@ -87,7 +87,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   private _build() {
     this.buildConfigMap();
-    this.buildCostDetails()
+    this.buildCostDetails();
     this.buildTemplateDetails();
   }
 
@@ -116,8 +116,10 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
         ),
       },
       {
-        validators: [EitherAllOrNoneValidator(['cost_base_price', 'cost_time_unit'])],
-      }
+        validators: [
+          EitherAllOrNoneValidator(['cost_base_price', 'cost_time_unit']),
+        ],
+      },
     );
   }
 
@@ -191,14 +193,15 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
 
   public copyCostDetails() {
-    this.template.cost_base_price = this.costDetails.controls.cost_base_price.value
+    this.template.cost_base_price = this.costDetails.controls.cost_base_price
+      .value
       ? this.costDetails.controls.cost_base_price.value
       : undefined;
-    this.template.cost_time_unit = this.costDetails.controls.cost_time_unit.value
+    this.template.cost_time_unit = this.costDetails.controls.cost_time_unit
+      .value
       ? this.costDetails.controls.cost_time_unit.value
       : undefined;
   }
-
 
   public copyConfigMap() {
     this.template.config_map = {};
@@ -220,7 +223,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
   public copyTemplate() {
     this.copyConfigMap();
-    this.copyCostDetails()
+    this.copyCostDetails();
     this.copyTemplateDetails();
   }
 

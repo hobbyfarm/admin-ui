@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  HttpClient,
-  HttpErrorResponse,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { AppConfigService } from '../app-config.service';
 import { AuthnService } from '../data/authn.service';
 

@@ -5,7 +5,7 @@ import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 @Component({
   selector: 'vmtemplate-detail',
   templateUrl: './vmtemplate-detail.component.html',
-  styleUrls: ['./vmtemplate-detail.component.scss']
+  styleUrls: ['./vmtemplate-detail.component.scss'],
 })
 export class VmTemplateDetailComponent implements OnInit {
   @Input() id: string;
@@ -25,19 +25,20 @@ export class VmTemplateDetailComponent implements OnInit {
     this.vmTemplateService.get(this.id).subscribe((t: VMTemplate) => {
       this.currentVmTemplate = t;
       // Manage services/webinterfaces and cloud-config Fields
-      this.cloudConfigData = this.currentVmTemplate.config_map['cloud-config'] ? this.currentVmTemplate.config_map['cloud-config'] : 'No Cloud Config defined'
-      this.webinterfaces = this.currentVmTemplate.config_map['webinterfaces'] ? JSON.parse(this.currentVmTemplate.config_map['webinterfaces']) : {}
-      delete this.currentVmTemplate.config_map['webinterfaces']
-      delete this.currentVmTemplate.config_map['cloud-config']
-      this.configMap = this.currentVmTemplate.config_map
+      this.cloudConfigData = this.currentVmTemplate.config_map['cloud-config']
+        ? this.currentVmTemplate.config_map['cloud-config']
+        : 'No Cloud Config defined';
+      this.webinterfaces = this.currentVmTemplate.config_map['webinterfaces']
+        ? JSON.parse(this.currentVmTemplate.config_map['webinterfaces'])
+        : {};
+      delete this.currentVmTemplate.config_map['webinterfaces'];
+      delete this.currentVmTemplate.config_map['cloud-config'];
+      this.configMap = this.currentVmTemplate.config_map;
       this.loading = false;
     });
-    
   }
 
   isEmpty(object: Object) {
     return Object.keys(object).length == 0;
   }
-
-
 }

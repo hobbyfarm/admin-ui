@@ -1,11 +1,18 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  OnInit,
+} from '@angular/core';
 import { RbacService } from '../data/rbac.service';
 import { NewVmComponent } from './new-vm/new-vm.component';
 
 @Component({
   selector: 'vmset',
   templateUrl: './vmset.component.html',
-  styleUrls: ['./vmset.component.scss']
+  styleUrls: ['./vmset.component.scss'],
 })
 export class VmsetComponent implements OnInit {
   @Input()
@@ -15,7 +22,7 @@ export class VmsetComponent implements OnInit {
   public vmsChange: EventEmitter<{}[]> = new EventEmitter<{}[]>();
 
   @Input()
-  public updateRbac : boolean;
+  public updateRbac: boolean;
 
   public addingIndex: number;
 
@@ -24,15 +31,18 @@ export class VmsetComponent implements OnInit {
   private newVmModal: NewVmComponent;
 
   @ViewChild('newvm', { static: false }) set content(content: NewVmComponent) {
-     if(content) {
-          this.newVmModal = content;
-     }
+    if (content) {
+      this.newVmModal = content;
+    }
   }
 
   constructor(public rbacService: RbacService) {}
 
   ngOnInit(): void {
-    this.allowedAddVm = this.rbacService.Grants("virtualmachinetemplates", "list");
+    this.allowedAddVm = this.rbacService.Grants(
+      'virtualmachinetemplates',
+      'list',
+    );
   }
 
   openAddVm(i: number) {
@@ -60,7 +70,7 @@ export class VmsetComponent implements OnInit {
     this.vmsChange.emit(this.vms);
   }
 
-  resetVmSet(){
+  resetVmSet() {
     this.vms = [];
     this.vmsChange.emit(this.vms);
   }

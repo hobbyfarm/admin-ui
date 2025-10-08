@@ -16,7 +16,8 @@ import 'prismjs/components/prism-regex';
 
 declare var Prism: any;
 
-export enum supportedLanguages { //To allow for more Languages the prism Components have to be imported also. For a list of all Supported Languages see: https://prismjs.com/#supported-languages
+export enum supportedLanguages {
+  //To allow for more Languages the prism Components have to be imported also. For a list of all Supported Languages see: https://prismjs.com/#supported-languages
   YAML = 'language-yaml',
   BASH = 'language-bash',
   REGEX = 'language-regex',
@@ -32,14 +33,14 @@ export class CodeWithSyntaxHighlightingComponent
 {
   @Input('textValue') set textValue(value: string) {
     this._textValue = value;
-    this.count++
+    this.count++;
     if (!this.resizeable) {
       this.previousScrollHeight = 0;
       this.setStyleValues();
     }
   }
 
-  count: number = 0
+  count: number = 0;
 
   _textValue: string = '';
 
@@ -85,7 +86,7 @@ export class CodeWithSyntaxHighlightingComponent
   private initialized: boolean = false; // Prevent Errors when Parent sets the text before initialization, i.e. in a clarity accordeon element.
 
   ngAfterViewInit() {
-    this.initialized = true
+    this.initialized = true;
     this.setStyleValues();
     this.lang = this.language.split('-')[1];
     this.setHighlightedText(this._textValue);
@@ -110,7 +111,7 @@ export class CodeWithSyntaxHighlightingComponent
     this.highlightedText = Prism.highlight(
       textValue,
       Prism.languages[this.lang],
-      this.lang
+      this.lang,
     );
   }
 
@@ -122,7 +123,7 @@ export class CodeWithSyntaxHighlightingComponent
   }
 
   onValueChange(event) {
-    this.count++
+    this.count++;
     let newText: string = event.target.value;
     this.textChanged.emit(newText);
   }

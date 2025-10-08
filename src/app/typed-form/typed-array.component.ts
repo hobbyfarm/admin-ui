@@ -3,7 +3,7 @@ import { TypedInput } from './TypedInput';
 import { FormArray, FormControl } from '@angular/forms';
 
 @Component({
-  template: ''
+  template: '',
 })
 export class TypedArrayComponent<T extends string | number | boolean> {
   @Input() array: FormArray<FormControl<T>>;

@@ -5,11 +5,11 @@ interface Date {
 }
 
 Date.prototype.getNextMonday = function () {
-    const nextMonday = new Date (this.getTime());
-    const days =[1, 7, 6, 5, 4, 3, 2];
-    nextMonday.setDate(nextMonday.getDate() + days[nextMonday.getDay()]);
-    return nextMonday;
-}
+  const nextMonday = new Date(this.getTime());
+  const days = [1, 7, 6, 5, 4, 3, 2];
+  nextMonday.setDate(nextMonday.getDate() + days[nextMonday.getDay()]);
+  return nextMonday;
+};
 
 // Returns the ISO week of the date.
 Date.prototype.getWeek = function () {
@@ -26,7 +26,7 @@ Date.prototype.getWeek = function () {
       ((date.getTime() - week1.getTime()) / 86400000 -
         3 +
         ((week1.getDay() + 6) % 7)) /
-        7
+        7,
     )
   );
 };

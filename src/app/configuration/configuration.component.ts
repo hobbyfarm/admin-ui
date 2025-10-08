@@ -23,7 +23,7 @@ export class ConfigurationComponent implements OnInit {
   constructor(
     private rbacService: RbacService,
     private router: Router,
-    private typedSettingsService: TypedSettingsService
+    private typedSettingsService: TypedSettingsService,
   ) {}
 
   ngOnInit() {
@@ -45,7 +45,7 @@ export class ConfigurationComponent implements OnInit {
         if (this.showSettings) {
           this.getScopes();
         }
-      }
+      },
     );
   }
 

@@ -15,7 +15,7 @@ pre {
     padding: 0;
     background: transparent !important;
     border: none;
-    pre[class*="language-"] {
+    pre[class*='language-'] {
       margin-bottom: 0px;
     }
   }
@@ -29,7 +29,7 @@ b {
   color: #282828;
 }
 
-pre[executed="true"] {
+pre[executed='true'] {
   background: #5a5a5a;
   &:hover {
     background: #292b2e;

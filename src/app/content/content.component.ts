@@ -10,7 +10,7 @@ export class ContentComponent implements OnInit {
   constructor(
     public rbacService: RbacService,
     private route: Router,
-    private activateRoute: ActivatedRoute
+    private activateRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {

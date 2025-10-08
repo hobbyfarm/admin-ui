@@ -63,10 +63,10 @@
               }
               <clr-dg-cell>{{ se.event_name }}</clr-dg-cell>
               <clr-dg-cell *rbac="['users.list']">{{
-                se.creatorEmail ? se.creatorEmail : "...loading"
+                se.creatorEmail ? se.creatorEmail : '...loading'
               }}</clr-dg-cell>
-              <clr-dg-cell>{{ se.start_time | date: "long" }}</clr-dg-cell>
-              <clr-dg-cell>{{ se.end_time | date: "long" }}</clr-dg-cell>
+              <clr-dg-cell>{{ se.start_time | date: 'long' }}</clr-dg-cell>
+              <clr-dg-cell>{{ se.end_time | date: 'long' }}</clr-dg-cell>
               <clr-dg-cell *rbac="['courses.list']">
                 @if (se.courses && !se.courseNames) {
                   ...loading

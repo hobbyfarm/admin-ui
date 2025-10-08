@@ -51,19 +51,19 @@
         <tr>
           <td>Preperation</td>
           <td>
-            {{ progress.steps[0].timestamp | date: "MMMM d, y, HH:mm:ss z" }}
+            {{ progress.steps[0].timestamp | date: 'MMMM d, y, HH:mm:ss z' }}
           </td>
         </tr>
         @for (item of progress.steps.slice(1); track item) {
           <tr>
             <td>{{ item.step }}</td>
-            <td>{{ item.timestamp | date: "MMMM d, y, HH:mm:ss z" }}</td>
+            <td>{{ item.timestamp | date: 'MMMM d, y, HH:mm:ss z' }}</td>
           </tr>
         }
         @if (progress.finished) {
           <tr>
             <td>Finished</td>
-            <td>{{ progress.last_update | date: "MMMM d, y, HH:mm:ss z" }}</td>
+            <td>{{ progress.last_update | date: 'MMMM d, y, HH:mm:ss z' }}</td>
           </tr>
         }
       </tbody>

@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpErrorResponse,
-  HttpParams,
-} from '@angular/common/http';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 import { of, throwError } from 'rxjs';
 import {
@@ -37,7 +34,7 @@ export class UserService extends ListableResourceClient<User> {
     return this.garg.put('', params).pipe(
       catchError((e: HttpErrorResponse) => {
         return of(e.error);
-      })
+      }),
     );
   }
 
@@ -48,7 +45,7 @@ export class UserService extends ListableResourceClient<User> {
       }),
       catchError((e: HttpErrorResponse) => {
         return throwError(() => e.error);
-      })
+      }),
     );
   }
 }

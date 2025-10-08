@@ -178,15 +178,13 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
           templateKeys[i],
           Validators.required,
         ),
-        count: this._fb.control<number>(
-          env.count_capacity[templateKeys[i]],
-          [Validators.required, Validators.pattern(/-?\d+/)],
-        ),
+        count: this._fb.control<number>(env.count_capacity[templateKeys[i]], [
+          Validators.required,
+          Validators.pattern(/-?\d+/),
+        ]),
         params: this._fb.array<GenericKeyValueGroup<string>>([]),
       });
-      const paramKeys = Object.keys(
-        env.template_mapping[templateKeys[i]],
-      );
+      const paramKeys = Object.keys(env.template_mapping[templateKeys[i]]);
       for (let j = 0; j < paramKeys.length; j++) {
         const newParam: GenericKeyValueGroup<string> = this._fb.group({
           key: this._fb.control<string>(paramKeys[j], Validators.required),
@@ -209,10 +207,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       mappings: this._fb.array<FromToGroup>([]),
     });
     for (let i = 0; i < ipKeys.length; i++) {
-      this.newIpMapping(
-        ipKeys[i],
-        env.ip_translation_map[ipKeys[i]],
-      );
+      this.newIpMapping(ipKeys[i], env.ip_translation_map[ipKeys[i]]);
     }
   }
 

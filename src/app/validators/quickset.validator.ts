@@ -1,9 +1,7 @@
 import { AbstractControl } from '@angular/forms';
 import { isQuickSetEndTimeFormGroup } from '../data/forms';
 
-export function QuicksetValidator(
-  fg: AbstractControl,
-): {
+export function QuicksetValidator(fg: AbstractControl): {
   controlTypeMismatch?: string;
   invalidQuicksetAmount?: boolean;
   invalidNumber?: boolean;

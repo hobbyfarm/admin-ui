@@ -60,13 +60,11 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
       .set('cost_base_price', template.cost_base_price ?? '')
       .set('cost_time_unit', template.cost_time_unit ?? '');
 
-    return this.garg
-      .post('/create', params)
-      .pipe(
-        tap(() => {
-          this.list('', true);
-        }),
-      );
+    return this.garg.post('/create', params).pipe(
+      tap(() => {
+        this.list('', true);
+      }),
+    );
   }
 
   public get(id: string) {
@@ -78,12 +76,10 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
   }
 
   public delete(id: string) {
-    return this.garg
-      .delete(`/${id}/delete`)
-      .pipe(
-        tap(() => {
-          this.deleteAndNotify(id);
-        }),
-      );
+    return this.garg.delete(`/${id}/delete`).pipe(
+      tap(() => {
+        this.deleteAndNotify(id);
+      }),
+    );
   }
 }

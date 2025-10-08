@@ -70,7 +70,7 @@ export class TypedInputComponent {
 
   getMapSize(typedInput: TypedInput) {
     const control = this.formGroup.get(
-      typedInput.id
+      typedInput.id,
     ) as GenericKeyValueMapArray;
     return control.length;
   }
@@ -103,7 +103,7 @@ export class TypedInputComponent {
 
   addMapElement(typedInput: TypedInput): void {
     const control = this.formGroup.get(
-      typedInput.id
+      typedInput.id,
     ) as GenericKeyValueMapArray;
 
     let parsedVal: string | number | boolean | undefined;
@@ -131,7 +131,7 @@ export class TypedInputComponent {
 
   private addControlToArray<T extends string | number | boolean>(
     fa: FormArray<FormControl<T>>,
-    fc: FormControl<T>
+    fc: FormControl<T>,
   ) {
     fa.push(fc);
     fc.updateValueAndValidity();
@@ -145,7 +145,7 @@ export class TypedInputComponent {
 
   private addControlToMap<T extends string | number | boolean>(
     fa: FormArray<GenericKeyValueGroup<T>>,
-    vControl: FormControl<T>
+    vControl: FormControl<T>,
   ) {
     let kControl = new FormControl('', {
       validators: [Validators.required, UniqueKeyValidator],
@@ -155,7 +155,7 @@ export class TypedInputComponent {
       new FormGroup({
         key: kControl,
         value: vControl,
-      })
+      }),
     );
 
     setTimeout(() => {

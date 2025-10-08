@@ -28,7 +28,7 @@ export class UserComponent implements OnInit {
 
   constructor(
     public userService: UserService,
-    public rbacService: RbacService
+    public rbacService: RbacService,
   ) {}
 
   public emailFilter: UserEmailFilter = new UserEmailFilter();

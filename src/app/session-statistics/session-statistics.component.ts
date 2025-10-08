@@ -1,10 +1,5 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
-import {
-  Chart,
-  ChartConfiguration,
-  ChartEvent,
-  ChartType,
-} from 'chart.js';
+import { Chart, ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
 import { Progress } from '../data/progress';
@@ -54,7 +49,11 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     labels: [],
     datasets: [],
   };
-  public barChartOptions: ChartConfiguration<'bar', number[], string>['options'] = {
+  public barChartOptions: ChartConfiguration<
+    'bar',
+    number[],
+    string
+  >['options'] = {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
     scales: {

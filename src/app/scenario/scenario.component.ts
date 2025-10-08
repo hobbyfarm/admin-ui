@@ -99,7 +99,7 @@ export class ScenarioComponent implements OnInit {
         const alertMsg = 'Error cloning scenario: ' + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
-    })
+    });
   }
 
   deleteScenario(scenarioId: string) {
