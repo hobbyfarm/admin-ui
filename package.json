@@ -14,6 +14,8 @@
     "start:local:docker": "npm run setup:local && ng serve --configuration=local --host=0.0.0.0",
     "build": "ng build",
     "build:prod": "ng build --configuration production --aot",
+    "prettier:check": "prettier --ignore-path .gitignore --check .",
+    "prettier:format": "prettier --ignore-path .gitignore --write .",
     "test": "ng test",
     "lint": "ng lint",
     "prettify": "lint-staged --allow-empty"
