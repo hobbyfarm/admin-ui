@@ -13,7 +13,7 @@ export class PrintableComponent implements OnInit {
 
   constructor(
     public route: ActivatedRoute,
-    public scenarioService: ScenarioService
+    public scenarioService: ScenarioService,
   ) {}
 
   ngOnInit(): void {
@@ -25,9 +25,9 @@ export class PrintableComponent implements OnInit {
           if (scenarioId) {
             return this.scenarioService.printable(scenarioId);
           } else {
-            throw new Error('Error: Scenario id not defined!')
+            throw new Error('Error: Scenario id not defined!');
           }
-        })
+        }),
       )
       .subscribe({
         next: (content: string) => {

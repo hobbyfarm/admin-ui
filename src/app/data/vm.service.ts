@@ -21,7 +21,7 @@ export class VmService {
       }),
     );
   }
-  public listByScheduledEvent(id: String) {
+  public listByScheduledEvent(id: string) {
     return this.gargAdmin.get(`/scheduledevent/${id}`).pipe(
       switchMap((s: ServerResponse) => {
         return of(JSON.parse(atou(s.content)));

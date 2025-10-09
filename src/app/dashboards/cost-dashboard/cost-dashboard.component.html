@@ -82,18 +82,18 @@
               <clr-dg-cell>
                 {{
                   source.base_price
-                    | currency: currencySymbol : "symbol" : "1.2-5"
+                    | currency: currencySymbol : 'symbol' : '1.2-5'
                 }}
                 / {{ source.time_unit }}
               </clr-dg-cell>
               <clr-dg-cell>
-                {{ source.creation_unix_timestamp * 1000 | date: "medium" }}
+                {{ source.creation_unix_timestamp * 1000 | date: 'medium' }}
               </clr-dg-cell>
               <clr-dg-cell>
                 {{
                   source.deletion_unix_timestamp
-                    ? (source.deletion_unix_timestamp * 1000 | date: "medium")
-                    : "N/A"
+                    ? (source.deletion_unix_timestamp * 1000 | date: 'medium')
+                    : 'N/A'
                 }}
               </clr-dg-cell>
               <clr-dg-cell>

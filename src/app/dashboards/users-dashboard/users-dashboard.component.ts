@@ -1,25 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
-import {
-  combineLatest,
-  filter,
-  finalize,
-  forkJoin,
-  of,
-  retry,
-  switchMap,
-  take,
-  throwError,
-} from 'rxjs';
-import { Course } from 'src/app/data/course';
-import { CourseService } from 'src/app/data/course.service';
-import { OTAC } from 'src/app/data/otac.type';
-import { Progress } from 'src/app/data/progress';
-import { ProgressService } from 'src/app/data/progress.service';
-import { ScheduledEventBase } from 'src/app/data/scheduledevent';
-import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
-import { User } from 'src/app/data/user';
-import { UserService } from 'src/app/data/user.service';
-import parse from 'parse-duration';
+import { Component, Input, OnInit, OnChanges } from "@angular/core";
+import { combineLatest, forkJoin, of, retry, switchMap, take } from "rxjs";
+import { CourseService } from "src/app/data/course.service";
+import { OTAC } from "src/app/data/otac.type";
+import { Progress } from "src/app/data/progress";
+import { ProgressService } from "src/app/data/progress.service";
+import { ScheduledEventBase } from "src/app/data/scheduledevent";
+import { ScheduledeventService } from "src/app/data/scheduledevent.service";
+import { User } from "src/app/data/user";
+import { UserService } from "src/app/data/user.service";
+import parse from "parse-duration";
 
 interface dashboardUsers extends User {
   progresses?: Progress[];
@@ -30,11 +19,11 @@ interface dashboardUsers extends User {
 }
 
 @Component({
-  selector: 'users-dashboard',
-  templateUrl: './users-dashboard.component.html',
-  styleUrls: ['./users-dashboard.component.scss'],
+  selector: "users-dashboard",
+  templateUrl: "./users-dashboard.component.html",
+  styleUrls: ["./users-dashboard.component.scss"],
 })
-export class UsersDashboardComponent implements OnInit {
+export class UsersDashboardComponent implements OnInit, OnChanges {
   @Input()
   selectedEvent: ScheduledEventBase;
 
@@ -57,26 +46,26 @@ export class UsersDashboardComponent implements OnInit {
   }
 
   downloadCSV(): void {
-    let userCSV = 'id,email,otac,started,sessionCount,uniqueScenarios,status\n'; // Add a header row
+    let userCSV = "id,email,otac,started,sessionCount,uniqueScenarios,status\n"; // Add a header row
     this.dashboardUsers.forEach((userData) => {
       userCSV = userCSV.concat(
-        `${userData.id || ''},` + // ID column
-          `${userData.email || ''},` + // Email column
-          `${userData.otac?.name || ''},` + // OTAC name column
-          `${userData.started || ''},` + // Started column
+        `${userData.id || ""},` + // ID column
+          `${userData.email || ""},` + // Email column
+          `${userData.otac?.name || ""},` + // OTAC name column
+          `${userData.started || ""},` + // Started column
           `${userData.progresses?.length || 0},` + // Progress count column
           `${userData.uniqueScenarios || 0},` + // Unique scenarios column
-          `${userData.status || ''}\n`, // Status column and newline
+          `${userData.status || ""}\n`, // Status column and newline
       );
     });
-    const filename = this.selectedEvent.event_name + '_users.csv';
-    var element = document.createElement('a');
+    const filename = this.selectedEvent.event_name + "_users.csv";
+    const element = document.createElement("a");
     element.setAttribute(
-      'href',
-      'data:text/plain;charset=utf-8,' + encodeURIComponent(userCSV),
+      "href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(userCSV),
     );
-    element.setAttribute('download', filename);
-    element.style.display = 'none';
+    element.setAttribute("download", filename);
+    element.style.display = "none";
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -165,7 +154,7 @@ export class UsersDashboardComponent implements OnInit {
               let started = firstProgressStarted?.started;
               if (otacMap.get(user.id)) {
                 started = new Date(
-                  otacMap.get(user.id)?.redeemed_timestamp ?? '',
+                  otacMap.get(user.id)?.redeemed_timestamp ?? "",
                 );
               }
 
@@ -210,11 +199,11 @@ export class UsersDashboardComponent implements OnInit {
 
     // Determine user status based on progress and time
     if (allScenariosCompleted) {
-      return 'completed';
+      return "completed";
     } else if (otac && !this.otacHasTimeLeft(otac)) {
-      return 'out-of-time';
+      return "out-of-time";
     } else {
-      return 'in-progress';
+      return "in-progress";
     }
   }
 

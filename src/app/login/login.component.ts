@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  HttpClient,
-  HttpErrorResponse,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { AppConfigService } from '../app-config.service';
 import { AuthnService } from '../data/authn.service';
 
@@ -32,7 +29,7 @@ export class LoginComponent {
       this.background = 'url(' + this.config.login.background + ')';
     }
     if (this.config.favicon) {
-      let fi = <HTMLLinkElement>document.querySelector('#favicon');
+      const fi = <HTMLLinkElement>document.querySelector('#favicon');
       fi.href = this.config.favicon;
     }
   }

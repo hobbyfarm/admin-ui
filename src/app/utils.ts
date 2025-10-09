@@ -1,18 +1,18 @@
 export function timeSince(
   date: Date,
   end: Date = new Date(),
-  series: number = 2
+  series: number = 2,
 ) {
-  var seconds: number = Math.floor((end.getTime() - date.getTime()) / 1000);
-  var intervals = [31536000, 2592000, 86400, 3600, 60, 1];
-  var intervalCounts = [0, 0, 0, 0, 0, 0];
-  var intervalStrings = ['year', 'month', 'day', 'hour', 'minute', 'second'];
-  var text = '';
+  let seconds: number = Math.floor((end.getTime() - date.getTime()) / 1000);
+  const intervals = [31536000, 2592000, 86400, 3600, 60, 1];
+  const intervalCounts = [0, 0, 0, 0, 0, 0];
+  const intervalStrings = ['year', 'month', 'day', 'hour', 'minute', 'second'];
+  let text = '';
 
   for (let i = 0; i < intervals.length; i++) {
-    let interval = seconds / intervals[i];
+    const interval = seconds / intervals[i];
     if (interval > 1) {
-      let count = Math.floor(interval);
+      const count = Math.floor(interval);
       intervalCounts[i] = count;
       seconds -= count * intervals[i];
       continue;
@@ -70,9 +70,6 @@ export function uniqueString(n: number) {
 export function shuffleStringArray(arr: string[]) {
   for (let i = arr.length - 1; i >= 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [
-      arr[j],
-      arr[i],
-    ];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
 }

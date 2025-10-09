@@ -1,23 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Scenario } from '../data/scenario';
-import { ScenarioService } from '../data/scenario.service';
-import { ClrDatagridSortOrder, ClrModal } from '@clr/angular';
-import { ServerResponse } from '../data/serverresponse';
-import { FilterScenariosComponent } from '../filter-scenarios/filter-scenarios.component';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ScenarioWizardComponent } from './scenario-wizard/scenario-wizard.component';
-import { RbacService } from '../data/rbac.service';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { Scenario } from "../data/scenario";
+import { ScenarioService } from "../data/scenario.service";
+import { ClrDatagridSortOrder, ClrModal } from "@clr/angular";
+import { FilterScenariosComponent } from "../filter-scenarios/filter-scenarios.component";
+import { HttpErrorResponse } from "@angular/common/http";
+import { ScenarioWizardComponent } from "./scenario-wizard/scenario-wizard.component";
+import { RbacService } from "../data/rbac.service";
 import {
   AlertDetails,
   DEFAULT_ALERT_ERROR_DURATION,
   DEFAULT_ALERT_SUCCESS_DURATION,
-} from '../alert/alert';
-import { AlertComponent } from '../alert/alert.component';
+} from "../alert/alert";
+import { AlertComponent } from "../alert/alert.component";
 
 @Component({
-  selector: 'app-scenario',
-  templateUrl: './scenario.component.html',
-  styleUrls: ['./scenario.component.scss'],
+  selector: "app-scenario",
+  templateUrl: "./scenario.component.html",
+  styleUrls: ["./scenario.component.scss"],
 })
 export class ScenarioComponent implements OnInit {
   public filteredScenarios: Scenario[] = [];
@@ -35,14 +34,14 @@ export class ScenarioComponent implements OnInit {
     public rbacService: RbacService,
   ) {}
 
-  @ViewChild('deletescenariomodal', { static: true })
+  @ViewChild("deletescenariomodal", { static: true })
   deleteScenarioModal: ClrModal;
 
-  @ViewChild('scenarioFilter', { static: true })
+  @ViewChild("scenarioFilter", { static: true })
   scenarioFilter: FilterScenariosComponent;
-  @ViewChild('scenariowizard', { static: true })
+  @ViewChild("scenariowizard", { static: true })
   scenarioWizard: ScenarioWizardComponent;
-  @ViewChild('alert') alert: AlertComponent;
+  @ViewChild("alert") alert: AlertComponent;
 
   editScenario(s: Scenario) {
     if (s != undefined) {
@@ -52,14 +51,14 @@ export class ScenarioComponent implements OnInit {
           this.selectedscenario = s;
         },
         error: (e: HttpErrorResponse) => {
-          const alertMsg = 'Error retrieving object: ' + e.message;
+          const alertMsg = "Error retrieving object: " + e.message;
           this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
         },
       });
     }
   }
 
-  openScenarioWizard(wizardMode: 'create' | 'edit', scenario?: Scenario) {
+  openScenarioWizard(wizardMode: "create" | "edit", scenario?: Scenario) {
     this.scenarioWizard.open(wizardMode, scenario);
   }
 
@@ -67,7 +66,7 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.get(scenario.id).subscribe({
       next: (scenario) => (this.selectedscenario = scenario),
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error deleting object: ' + e.message;
+        const alertMsg = "Error deleting object: " + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
@@ -82,7 +81,7 @@ export class ScenarioComponent implements OnInit {
     this.scenarioService.list(true).subscribe({
       next: (sList: Scenario[]) => (this.filteredScenarios = sList),
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error listing objects: ' + e.message;
+        const alertMsg = "Error listing objects: " + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
@@ -90,27 +89,27 @@ export class ScenarioComponent implements OnInit {
 
   cloneScenario(scenarioId: string) {
     this.scenarioService.clone(scenarioId).subscribe({
-      next: (_s: ServerResponse) => {
-        const alertMsg = 'Scenario cloned';
+      next: () => {
+        const alertMsg = "Scenario cloned";
         this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();
       },
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error cloning scenario: ' + e.message;
+        const alertMsg = "Error cloning scenario: " + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
-    })
+    });
   }
 
   deleteScenario(scenarioId: string) {
     this.scenarioService.delete(scenarioId).subscribe({
-      next: (_s: ServerResponse) => {
-        const alertMsg = 'Scenario deleted';
+      next: () => {
+        const alertMsg = "Scenario deleted";
         this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();
       },
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error deleting object: ' + e.message;
+        const alertMsg = "Error deleting object: " + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
@@ -135,19 +134,19 @@ export class ScenarioComponent implements OnInit {
 
   ngOnInit() {
     this.selectedscenario = new Scenario();
-    this.selectedscenario.name = '';
+    this.selectedscenario.name = "";
     this.selectedscenario.virtualmachines = [];
     this.selectedscenario.steps = [];
     this.selectedscenario.virtualmachines[0] = {};
     // "Get" Permission on scenarios is required to load step content
-    this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
+    this.rbacService.Grants("scenarios", "get").then((allowed: boolean) => {
       this.selectRbac = allowed;
     });
 
     const authorizationRequests = Promise.all([
-      this.rbacService.Grants('scenarios', 'get'),
-      this.rbacService.Grants('scenarios', 'update'),
-      this.rbacService.Grants('scenarios', 'delete'),
+      this.rbacService.Grants("scenarios", "get"),
+      this.rbacService.Grants("scenarios", "update"),
+      this.rbacService.Grants("scenarios", "delete"),
     ]);
     authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
       const allowGet: boolean = permissions[0];

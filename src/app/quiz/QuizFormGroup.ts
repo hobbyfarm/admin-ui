@@ -13,7 +13,7 @@ export type QuizRadioFormGroup = FormGroup<{
 export type AnswerFG = FormGroup<{
   title: FormControl<string>;
   correct: FormControl<boolean>;
-}>
+}>;
 
 export type QuestionFG = FormGroup<{
   title: FormControl<string>;
@@ -24,7 +24,7 @@ export type QuestionFG = FormGroup<{
   success_message: FormControl<string>;
   weight: FormControl<number>;
   answers: FormArray<AnswerFG>;
-}>
+}>;
 
 export type QuizFG = FormGroup<{
   title: FormControl<string>;

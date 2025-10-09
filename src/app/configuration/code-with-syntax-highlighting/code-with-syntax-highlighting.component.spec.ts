@@ -8,9 +8,8 @@ describe('CodeWithSyntaxHighlightingComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CodeWithSyntaxHighlightingComponent ]
-    })
-    .compileComponents();
+      declarations: [CodeWithSyntaxHighlightingComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

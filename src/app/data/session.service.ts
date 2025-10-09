@@ -24,7 +24,7 @@ export class SessionService extends ResourceClient<Session> {
       map(extractResponseContent),
       tap((s: Session) => {
         this.cache.set(s.id, new BehaviorSubject(s));
-      })
+      }),
     );
   }
 

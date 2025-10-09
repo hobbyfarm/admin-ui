@@ -42,7 +42,9 @@ export class RbacService {
     this.userAccess = lastValueFrom(
       this.garg.get('/access').pipe(
         map((s: ServerResponse) => {
-          const accessSet: AccessSet = JSON.parse(atou(s.content).toLowerCase()); // toLowerCase() needed. See https://github.com/hobbyfarm/hobbyfarm/issues/477
+          const accessSet: AccessSet = JSON.parse(
+            atou(s.content).toLowerCase(),
+          ); // toLowerCase() needed. See https://github.com/hobbyfarm/hobbyfarm/issues/477
           return accessSet;
         }),
       ),

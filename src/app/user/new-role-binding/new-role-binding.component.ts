@@ -43,7 +43,7 @@ export class NewRoleBindingComponent implements OnInit {
 
   constructor(
     private roleService: RoleService,
-    private roleBindingService: RolebindingService
+    private roleBindingService: RolebindingService,
   ) {}
 
   @ViewChild('modal') modal: ClrModal;

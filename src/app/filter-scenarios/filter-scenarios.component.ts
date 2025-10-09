@@ -1,17 +1,17 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { ClrDatagridSortOrder } from '@clr/angular';
-import { RbacService } from '../data/rbac.service';
-import { Scenario } from '../data/scenario';
-import { ScenarioService } from '../data/scenario.service';
-import { ScheduledEventBase } from '../data/scheduledevent';
-import { VMTemplate } from '../data/vmtemplate';
-import { VmtemplateService } from '../data/vmtemplate.service';
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { FormControl, FormGroup } from "@angular/forms";
+import { ClrDatagridSortOrder } from "@clr/angular";
+import { RbacService } from "../data/rbac.service";
+import { Scenario } from "../data/scenario";
+import { ScenarioService } from "../data/scenario.service";
+import { ScheduledEventBase } from "../data/scheduledevent";
+import { VMTemplate } from "../data/vmtemplate";
+import { VmtemplateService } from "../data/vmtemplate.service";
 
 @Component({
-  selector: 'filter-scenarios',
-  templateUrl: './filter-scenarios.component.html',
-  styleUrls: ['./filter-scenarios.component.scss'],
+  selector: "filter-scenarios",
+  templateUrl: "./filter-scenarios.component.html",
+  styleUrls: ["./filter-scenarios.component.scss"],
 })
 export class FilterScenariosComponent implements OnInit {
   public categories: string[] = [];
@@ -27,12 +27,11 @@ export class FilterScenariosComponent implements OnInit {
   public categoryFilterForm = new FormGroup({
     categoryControl: new FormControl<string[] | null>([]),
   });
-  event: any;
 
   constructor(
     public scenarioService: ScenarioService,
     public rbacService: RbacService,
-    public vmTemplateService: VmtemplateService
+    public vmTemplateService: VmtemplateService,
   ) {}
 
   emitScenarios(values: Scenario[]) {
@@ -43,7 +42,7 @@ export class FilterScenariosComponent implements OnInit {
     this.categoryFilterForm.reset({ categoryControl: [] });
   }
 
-  reloadScenarios(){
+  reloadScenarios() {
     this.scenarioService.list(true).subscribe((s: Scenario[]) => {
       this.scenarios = s;
       this.clearCategoryFilter();
@@ -57,9 +56,9 @@ export class FilterScenariosComponent implements OnInit {
       return;
     }
 
-    let sc: Scenario[] = [];
+    const sc: Scenario[] = [];
 
-    if (this.selectedCategories.includes('__none__')) {
+    if (this.selectedCategories.includes("__none__")) {
       this.scenarios.forEach((s) => {
         if (s.categories.length === 0) {
           sc.push(s);
@@ -69,8 +68,8 @@ export class FilterScenariosComponent implements OnInit {
     }
 
     this.scenarios.forEach((s) => {
-      let matches = s.categories.filter((element) =>
-        this.selectedCategories.includes(element)
+      const matches = s.categories.filter((element) =>
+        this.selectedCategories.includes(element),
       );
       if (matches.length > 0) {
         sc.push(s);
@@ -80,7 +79,7 @@ export class FilterScenariosComponent implements OnInit {
     this.filteredScenarios = sc;
   }
   calculateCategories() {
-    let c = new Set<string>();
+    const c = new Set<string>();
     this.scenarios.forEach((s) => {
       s.categories.forEach((category) => c.add(category));
     });
@@ -90,7 +89,7 @@ export class FilterScenariosComponent implements OnInit {
 
   ngOnInit() {
     // "Get" Permission on scenarios is required to load step content
-    this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
+    this.rbacService.Grants("scenarios", "get").then((allowed: boolean) => {
       this.selectRbac = allowed;
     });
 
@@ -103,7 +102,7 @@ export class FilterScenariosComponent implements OnInit {
     });
 
     this.rbacService
-      .Grants('virtualmachinesets', 'list')
+      .Grants("virtualmachinesets", "list")
       .then((listVmSets: boolean) => {
         if (listVmSets) {
           this.vmTemplateService.list().subscribe((v: VMTemplate[]) => {

@@ -19,7 +19,7 @@ export class TaskComponent {
 
     this.vmTasks.forEach((vmTask) => {
       vmTask.tasks.forEach((task: Task) => {
-        let editTask = {
+        const editTask = {
           vmName: vmTask.vm_name,
           id: this.getRandomId(),
           ...task,
@@ -43,9 +43,9 @@ export class TaskComponent {
   @Output() tasksChanged = new EventEmitter<VMTasks[]>();
 
   buildEditedVMTasks() {
-    let updatedVMTasks: VMTasks[] = [];
+    const updatedVMTasks: VMTasks[] = [];
     this.changedTasks.forEach((editTask) => {
-      let vmTask = updatedVMTasks.find((vmTask) => {
+      const vmTask = updatedVMTasks.find((vmTask) => {
         return vmTask.vm_name == editTask.vmName;
       });
       if (vmTask) {
@@ -73,7 +73,7 @@ export class TaskComponent {
   }
 
   updateTask(changedTask: EditTask) {
-    let idExists = this.changedTasks
+    const idExists = this.changedTasks
       .map((task) => task.id)
       .includes(changedTask.id);
     if (!idExists) {
@@ -87,7 +87,7 @@ export class TaskComponent {
   }
 
   addTask() {
-    let newTask = {
+    const newTask = {
       vmName: this.vmNames[0] ?? '',
       id: this.getRandomId(),
       ...this.buildTask(),

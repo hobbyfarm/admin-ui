@@ -125,7 +125,11 @@
   </div>
 </clr-modal>
 
-<clr-modal #deletestepmodal [(clrModalOpen)]="deleteStepOpen" [clrModalSize]="'xl'">
+<clr-modal
+  #deletestepmodal
+  [(clrModalOpen)]="deleteStepOpen"
+  [clrModalSize]="'xl'"
+>
   <h3 class="modal-title">Delete Step</h3>
   <div class="modal-body">
     <p>Are you sure you want to delete this step?</p>
@@ -134,7 +138,11 @@
     <button class="btn btn-success-outline" (click)="deleteStepOpen = false">
       Cancel
     </button>
-    <button class="btn btn-danger" (click)="doDeleteStep()" *rbac="['scenarios.update']">
+    <button
+      class="btn btn-danger"
+      (click)="doDeleteStep()"
+      *rbac="['scenarios.update']"
+    >
       Delete
     </button>
   </div>

@@ -31,9 +31,9 @@
         </td>
         <td>{{ interface.name }}</td>
         <td>
-          {{ interface.hasWebinterface ? interface.port : "-" }}
+          {{ interface.hasWebinterface ? interface.port : '-' }}
         </td>
-        <td>{{ interface.hasOwnTab ? interface.hasOwnTab : "-" }}</td>
+        <td>{{ interface.hasOwnTab ? interface.hasOwnTab : '-' }}</td>
         <td>
           <button
             class="btn btn-table btn-link"
@@ -88,8 +88,8 @@
     <h3 class="modal-title">
       {{
         editVMService?.name
-          ? "Edit Service: " + editVMService?.name
-          : "Create a new Sevice"
+          ? 'Edit Service: ' + editVMService?.name
+          : 'Create a new Sevice'
       }}
     </h3>
     <div class="modal-body">
@@ -117,7 +117,7 @@
             <label>Has a Webinterface</label>
           </clr-checkbox-wrapper>
         </clr-checkbox-container>
-        @if (newVMServiceFormGroup.value["hasWebinterface"]) {
+        @if (newVMServiceFormGroup.value['hasWebinterface']) {
           <clr-checkbox-container>
             <clr-checkbox-wrapper>
               <input

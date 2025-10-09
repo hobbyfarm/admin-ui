@@ -1,36 +1,33 @@
-
-
 .progress {
-    margin-top: 4px;
+  margin-top: 4px;
 }
 
 clr-datagrid {
+  clr-dg-cell {
+    display: flex;
+    align-items: center;
+  }
 
-    clr-dg-cell {
-        display: flex;
-        align-items: center; 
-      }
+  progress {
+    width: 60px;
+    vertical-align: middle;
+  }
 
-    progress {
-        width: 60px;
-        vertical-align: middle;
-    }
+  .pointer {
+    cursor: pointer;
+  }
 
-    .pointer {
-        cursor: pointer;
-    }
+  .color {
+    width: 60px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 
-    .color{
-        width: 60px;
-        padding-left: 12px;
-        padding-right: 12px;
-    }
+  .end {
+    justify-content: flex-end;
+  }
 
-    .end{
-        justify-content: flex-end;
-    }
-
-    .step{
-        width: 85px;
-    }
+  .step {
+    width: 85px;
+  }
 }

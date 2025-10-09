@@ -9,37 +9,35 @@ import {
   SimpleChanges,
   ViewChild,
   OnDestroy,
-} from '@angular/core';
+} from "@angular/core";
 import {
   AbstractControl,
   FormArray,
-  FormControl,
-  FormGroup,
   NonNullableFormBuilder,
   ValidatorFn,
   Validators,
-} from '@angular/forms';
-import { ClrDatagridSortOrder, ClrWizard } from '@clr/angular';
-import { finalize, Subscription } from 'rxjs';
-import { DragulaService } from 'ng2-dragula';
+} from "@angular/forms";
+import { ClrDatagridSortOrder, ClrWizard } from "@clr/angular";
+import { finalize, Subscription } from "rxjs";
+import { DragulaService } from "ng2-dragula";
 
 import {
   QuizService,
   Quiz,
   QuizQuestion,
   QuizAnswer,
-} from '../../data/quiz.service';
-import { Validation } from '../Validation';
-import { QuestionType } from '../QuestionType';
-import { AnswerFG, QuestionFG, QuizFG } from '../QuizFormGroup';
+} from "../../data/quiz.service";
+import { Validation } from "../Validation";
+import { QuestionType } from "../QuestionType";
+import { AnswerFG, QuestionFG, QuizFG } from "../QuizFormGroup";
 
 @Component({
-  selector: 'app-quiz-wizard',
-  templateUrl: './quiz-wizard.component.html',
-  styleUrls: ['./quiz-wizard.component.scss'],
+  selector: "app-quiz-wizard",
+  templateUrl: "./quiz-wizard.component.html",
+  styleUrls: ["./quiz-wizard.component.scss"],
 })
 export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
-  @ViewChild('wiz', { static: false }) wiz!: ClrWizard;
+  @ViewChild("wiz", { static: false }) wiz!: ClrWizard;
 
   @Input() createTrigger = 0;
   @Input() editTrigger = 0;
@@ -47,7 +45,7 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
 
   @Output() saved = new EventEmitter<{ id: string; quiz: Quiz }>();
 
-  mode: 'create' | 'edit' = 'create';
+  mode: "create" | "edit" = "create";
   isOpen = false;
 
   form!: QuizFG;
@@ -65,8 +63,8 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   issuerCache = "";
 
   /** Dragula bag names */
-  QUESTIONS_BAG = 'quiz-questions';
-  ANSWERS_BAG = 'quiz-answers';
+  QUESTIONS_BAG = "quiz-questions";
+  ANSWERS_BAG = "quiz-answers";
 
   private subs = new Subscription();
 
@@ -78,28 +76,31 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      title: this.fb.control('', { validators: [Validators.required] }),
+      title: this.fb.control("", { validators: [Validators.required] }),
       issue_certificates: this.fb.control(false),
-      issuer: this.fb.control('', { validators: [this.validateIssuer()] }),
+      issuer: this.fb.control("", { validators: [this.validateIssuer()] }),
       shuffle: this.fb.control(false),
       pool_size: this.fb.control(1, { validators: [Validators.min(1)] }),
       max_attempts: this.fb.control(1, { validators: [Validators.min(1)] }),
       success_threshold: this.fb.control(80, {
         validators: [Validators.min(0), Validators.max(100)],
       }),
-      validation_type: this.fb.control<Validation>('standard'),
+      validation_type: this.fb.control<Validation>("standard"),
       questions: this.fb.array<QuestionFG>([]),
     });
 
-    this.issuerSub = this.form.controls.issue_certificates.valueChanges.subscribe((val) => {
-      if (!val) {
-        this.issuerCache = this.form.controls.issuer.value;
-        this.form.controls.issuer.patchValue('', { emitEvent: false });
-      } else {
-        this.form.controls.issuer.patchValue(this.issuerCache, { emitEvent: false });
-        this.issuerCache = "";
-      }
-    });
+    this.issuerSub =
+      this.form.controls.issue_certificates.valueChanges.subscribe((val) => {
+        if (!val) {
+          this.issuerCache = this.form.controls.issuer.value;
+          this.form.controls.issuer.patchValue("", { emitEvent: false });
+        } else {
+          this.form.controls.issuer.patchValue(this.issuerCache, {
+            emitEvent: false,
+          });
+          this.issuerCache = "";
+        }
+      });
 
     this.addQuestion(); // per default ... creating a question to prevent empty quiz
     this.rebuildQuestions();
@@ -107,12 +108,12 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
     // --- Dragula group setup ---
     this.createOrResetGroup(this.QUESTIONS_BAG, {
       moves: (_el: Element, _cont: Element, handle?: Element) =>
-        !!handle && handle.classList.contains('handle'),
+        !!handle && handle.classList.contains("handle"),
     });
 
     this.createOrResetGroup(this.ANSWERS_BAG, {
       moves: (_el: Element, _cont: Element, handle?: Element) =>
-        !!handle && handle.classList.contains('handle'),
+        !!handle && handle.classList.contains("handle"),
     });
 
     // Reorder FormArray after a drop for questions
@@ -137,10 +138,10 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['createTrigger'] && !changes['createTrigger'].firstChange) {
+    if (changes["createTrigger"] && !changes["createTrigger"].firstChange) {
       this.openForCreate();
     }
-    if (changes['editTrigger'] && !changes['editTrigger'].firstChange) {
+    if (changes["editTrigger"] && !changes["editTrigger"].firstChange) {
       if (this.quizToEdit) this.openForEdit(this.quizToEdit);
     }
   }
@@ -159,7 +160,7 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   openForCreate(): void {
-    this.mode = 'create';
+    this.mode = "create";
     this.quizToEdit = null;
     this.resetFormForCreate();
     this.isOpen = true;
@@ -167,7 +168,7 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   openForEdit(quiz: Quiz): void {
-    this.mode = 'edit';
+    this.mode = "edit";
     this.quizToEdit = quiz;
     this.patchFormForEdit(quiz);
     this.isOpen = true;
@@ -183,28 +184,28 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
 
   // ---------- accessors ----------
   get questionsFA(): FormArray<QuestionFG> {
-    return this.form.get('questions') as FormArray<QuestionFG>;
+    return this.form.get("questions") as FormArray<QuestionFG>;
   }
   answersFA(qIdx: number): FormArray<AnswerFG> {
-    return this.questionsFA.at(qIdx).get('answers') as FormArray<AnswerFG>;
+    return this.questionsFA.at(qIdx).get("answers") as FormArray<AnswerFG>;
   }
   trackByIndex = (i: number) => i;
 
   // ---------- builders ----------
   private newAnswer(): AnswerFG {
     return this.fb.group({
-      title: this.fb.control('', { validators: [Validators.required] }),
+      title: this.fb.control("", { validators: [Validators.required] }),
       correct: this.fb.control(false),
     });
   }
   private newQuestion(): QuestionFG {
     return this.fb.group({
-      title: this.fb.control('', { validators: [Validators.required] }),
-      description: this.fb.control(''),
-      type: this.fb.control<QuestionType>('checkbox'),
+      title: this.fb.control("", { validators: [Validators.required] }),
+      description: this.fb.control(""),
+      type: this.fb.control<QuestionType>("checkbox"),
       shuffle: this.fb.control(false),
-      failure_message: this.fb.control(''),
-      success_message: this.fb.control(''),
+      failure_message: this.fb.control(""),
+      success_message: this.fb.control(""),
       // enforcing 1 to 1000 here
       weight: this.fb.control(1, {
         validators: [
@@ -219,13 +220,13 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
 
   private resetFormForCreate(): void {
     this.form.reset({
-      title: '',
-      issuer: '',
+      title: "",
+      issuer: "",
       shuffle: false,
       pool_size: 1,
       max_attempts: 1,
       success_threshold: 80,
-      validation_type: 'standard' as Validation,
+      validation_type: "standard" as Validation,
     });
 
     while (this.questionsFA.length) this.questionsFA.removeAt(0);
@@ -235,14 +236,14 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
 
   private patchFormForEdit(q: Quiz): void {
     this.form.patchValue({
-      title: q.title ?? '',
+      title: q.title ?? "",
       issue_certificates: !!q.issuer,
-      issuer: q.issuer ?? '',
+      issuer: q.issuer ?? "",
       shuffle: !!q.shuffle,
       pool_size: q.pool_size ?? 1,
       max_attempts: q.max_attempts ?? 1,
       success_threshold: q.success_threshold ?? 80,
-      validation_type: q.validation_type ?? 'standard',
+      validation_type: q.validation_type ?? "standard",
     });
 
     while (this.questionsFA.length) this.questionsFA.removeAt(0);
@@ -250,20 +251,20 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
     (q.questions || []).forEach((qq: QuizQuestion) => {
       const fg = this.newQuestion();
       fg.patchValue({
-        title: qq.title ?? '',
-        description: qq.description ?? '',
-        type: qq.type ?? 'checkbox',
+        title: qq.title ?? "",
+        description: qq.description ?? "",
+        type: qq.type ?? "checkbox",
         shuffle: !!qq.shuffle,
-        failure_message: qq.failure_message ?? '',
-        success_message: qq.success_message ?? '',
+        failure_message: qq.failure_message ?? "",
+        success_message: qq.success_message ?? "",
         weight: Math.max(1, Math.min(1000, Number(qq.weight ?? 1))),
       });
-      const answersFA = fg.get('answers') as FormArray<AnswerFG>;
+      const answersFA = fg.get("answers") as FormArray<AnswerFG>;
       while (answersFA.length) answersFA.removeAt(0);
       (qq.answers || []).forEach((a: QuizAnswer) =>
         answersFA.push(
           this.fb.group({
-            title: this.fb.control(a.title ?? ''),
+            title: this.fb.control(a.title ?? ""),
             correct: this.fb.control(!!a.correct),
           }),
         ),
@@ -305,7 +306,10 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
     for (const c of ctrls) fa.push(c, { emitEvent: false });
   }
 
-  private createOrResetGroup(name: string, options: any): void {
+  private createOrResetGroup(
+    name: string,
+    options: Readonly<Record<string, unknown>>,
+  ): void {
     const existing = this.dragula.find(name);
     if (existing) this.dragula.destroy(name);
     this.dragula.createGroup(name, options);
@@ -344,6 +348,17 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   // ---------- save ----------
+  private extractId(src: unknown): string | null {
+    if (src && typeof src === "object") {
+      const obj = src as Record<string, unknown>;
+      if (typeof obj["id"] === "string") return obj["id"];
+      const meta = obj["metadata"] as Record<string, unknown> | undefined;
+      if (meta && typeof meta["name"] === "string") return meta["name"];
+      if (typeof obj["name"] === "string") return obj["name"];
+    }
+    return null;
+  }
+
   async save(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -374,21 +389,22 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
       })),
     };
 
-    if (this.mode === 'create') {
+    if (this.mode === "create") {
       this.qs
-        .create(payload as any)
+        .create(payload)
         .pipe(finalize(() => this.saving.set(false)))
         .subscribe((id: string) => {
           this.saved.emit({ id, quiz: payload });
           this.close();
         });
     } else {
-      const id =
-        (this.quizToEdit as any)?.id ||
-        (this.quizToEdit as any)?.metadata?.name ||
-        (this.quizToEdit as any)?.name;
+      const id = this.extractId(this.quizToEdit);
+      if (!id) {
+        this.saving.set(false);
+        return;
+      }
       this.qs
-        .update(id, payload as any)
+        .update(id, payload)
         .pipe(finalize(() => this.saving.set(false)))
         .subscribe(() => {
           this.saved.emit({ id, quiz: payload });

@@ -10,26 +10,26 @@ import {
   QueryList,
   AfterViewInit,
   OnDestroy,
-} from '@angular/core';
+} from "@angular/core";
 import {
   ClrWizard,
   ClrSignpostContent,
   ClrDatagridSortOrder,
   ClrWizardPage,
-} from '@clr/angular';
+} from "@clr/angular";
 import {
   ScheduledEvent,
   ScheduledEventBase,
-} from 'src/app/data/scheduledevent';
-import { Scenario } from 'src/app/data/scenario';
-import { ScenarioService } from 'src/app/data/scenario.service';
-import { Course } from 'src/app/data/course';
-import { CourseService } from 'src/app/data/course.service';
-import { EnvironmentService } from 'src/app/data/environment.service';
-import { concatMap, filter, defaultIfEmpty, toArray } from 'rxjs/operators';
-import { Environment } from 'src/app/data/environment';
-import { EnvironmentAvailability } from 'src/app/data/environmentavailability';
-import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
+} from "src/app/data/scheduledevent";
+import { Scenario } from "src/app/data/scenario";
+import { ScenarioService } from "src/app/data/scenario.service";
+import { Course } from "src/app/data/course";
+import { CourseService } from "src/app/data/course.service";
+import { EnvironmentService } from "src/app/data/environment.service";
+import { concatMap, filter, defaultIfEmpty, toArray } from "rxjs/operators";
+import { Environment } from "src/app/data/environment";
+import { EnvironmentAvailability } from "src/app/data/environmentavailability";
+import { ScheduledeventService } from "src/app/data/scheduledevent.service";
 import {
   Validators,
   FormGroup,
@@ -37,11 +37,11 @@ import {
   NonNullableFormBuilder,
   FormArray,
   AbstractControl,
-} from '@angular/forms';
-import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
-import { QuicksetValidator } from 'src/app/validators/quickset.validator';
-import { RbacService } from 'src/app/data/rbac.service';
-import { EMPTY, Subscription, iif, of } from 'rxjs';
+} from "@angular/forms";
+import { DlDateTimePickerChange } from "angular-bootstrap-datetimepicker";
+import { QuicksetValidator } from "src/app/validators/quickset.validator";
+import { RbacService } from "src/app/data/rbac.service";
+import { EMPTY, Subscription } from "rxjs";
 import {
   EnvToVmTemplatesMappings,
   isFormArrayOfNumbers,
@@ -50,14 +50,14 @@ import {
   VmCountFormGroup,
   VmTemplateMappings,
   VmTemplatesFormGroup,
-} from 'src/app/data/forms';
-import { VMTemplate } from 'src/app/data/vmtemplate';
-import { VmtemplateService } from 'src/app/data/vmtemplate.service';
+} from "src/app/data/forms";
+import { VMTemplate } from "src/app/data/vmtemplate";
+import { VmtemplateService } from "src/app/data/vmtemplate.service";
 
 @Component({
-  selector: 'new-scheduled-event',
-  templateUrl: './new-scheduled-event.component.html',
-  styleUrls: ['./new-scheduled-event.component.scss'],
+  selector: "new-scheduled-event",
+  templateUrl: "./new-scheduled-event.component.html",
+  styleUrls: ["./new-scheduled-event.component.scss"],
 })
 export class NewScheduledEventComponent
   implements OnInit, OnChanges, AfterViewInit, OnDestroy
@@ -127,7 +127,7 @@ export class NewScheduledEventComponent
     public vmTemplateService: VmtemplateService,
   ) {
     this.rbacService
-      .Grants('virtualmachinetemplates', 'list')
+      .Grants("virtualmachinetemplates", "list")
       .then((allowVMTemplateList: boolean) => {
         if (!allowVMTemplateList) {
           return;
@@ -169,7 +169,7 @@ export class NewScheduledEventComponent
     on_demand: FormControl<boolean>;
     printable: FormControl<boolean>;
   }> = this._fb.group({
-    event_name: new FormControl<string>('', {
+    event_name: new FormControl<string>("", {
       validators: [
         Validators.required,
         Validators.minLength(4),
@@ -177,11 +177,11 @@ export class NewScheduledEventComponent
       ],
       nonNullable: true,
     }),
-    description: new FormControl<string>('', {
+    description: new FormControl<string>("", {
       validators: [Validators.required, Validators.minLength(4)],
       nonNullable: true,
     }),
-    access_code: new FormControl<string>('', {
+    access_code: new FormControl<string>("", {
       validators: [
         Validators.required,
         Validators.minLength(5),
@@ -244,7 +244,7 @@ export class NewScheduledEventComponent
   ): { controlTypeMismatch?: string; allEnvironmentsZero?: boolean } | null {
     if (!isFormArrayOfNumbers(formArray)) {
       return {
-        controlTypeMismatch: 'Expected FormArray<FormControl<number>>',
+        controlTypeMismatch: "Expected FormArray<FormControl<number>>",
       };
     }
     const allEnvironmentsZero = !formArray.controls.some(
@@ -309,13 +309,13 @@ export class NewScheduledEventComponent
     return null;
   }
 
-  @ViewChild('wizard', { static: true }) wizard: ClrWizard;
+  @ViewChild("wizard", { static: true }) wizard: ClrWizard;
   @ViewChildren(ClrWizardPage) wizardPages: QueryList<ClrWizardPage>;
-  @ViewChild('startTimeSignpost') startTimeSignpost: ClrSignpostContent;
-  @ViewChild('endTimeSignpost') endTimeSignpost: ClrSignpostContent;
+  @ViewChild("startTimeSignpost") startTimeSignpost: ClrSignpostContent;
+  @ViewChild("endTimeSignpost") endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
-    let selected: Scenario[] = [];
+    const selected: Scenario[] = [];
     this.se.scenarios = [];
 
     this.selectedscenarios.forEach((element) => {
@@ -383,12 +383,12 @@ export class NewScheduledEventComponent
   } | null {
     if (!isVmCountFormGroup(vmCountFormGroup)) {
       return {
-        controlTypeMismatch: 'Expected VmCountFormGroup',
+        controlTypeMismatch: "Expected VmCountFormGroup",
       };
     }
     const environmentFormGroups = Object.values(vmCountFormGroup.controls);
     let requiredVmCountSatisfied = true;
-    for (let template in this.requiredVmCounts) {
+    for (const template in this.requiredVmCounts) {
       const requiredVmCount: number = this.requiredVmCounts[template];
       let currentVmCount = 0;
       environmentFormGroups.forEach(
@@ -413,8 +413,8 @@ export class NewScheduledEventComponent
   public setupAdvancedVMPage(ea: EnvironmentAvailability) {
     const vmTemplateMappings: VmTemplatesFormGroup =
       new FormGroup<VmTemplateMappings>({});
-    let templates = this.getTemplates(ea.environment);
-    for (let template in this.requiredVmCounts) {
+    const templates = this.getTemplates(ea.environment);
+    for (const template in this.requiredVmCounts) {
       if (!templates.includes(template)) {
         //this environment does not support this template
         continue;
@@ -435,8 +435,8 @@ export class NewScheduledEventComponent
   }
 
   public checkIfSimplePageCanBeDone() {
-    let simpleUserCounts: Record<string, number> = {};
-    for (let env in this.uneditedScheduledEvent.required_vms) {
+    const simpleUserCounts: Record<string, number> = {};
+    for (const env in this.uneditedScheduledEvent.required_vms) {
       const entries = Object.entries(this.se.required_vms[env]);
       const lastEntry = entries.pop();
 
@@ -585,7 +585,7 @@ export class NewScheduledEventComponent
         });
       });
       // 2. Set the required VM count to the maximum count of VMs needed in one scenario.
-      for (let template in vmCountPerTemplate) {
+      for (const template in vmCountPerTemplate) {
         if (this.requiredVmCounts[template]) {
           this.requiredVmCounts[template] = Math.max(
             vmCountPerTemplate[template],
@@ -613,7 +613,7 @@ export class NewScheduledEventComponent
       });
 
       // 2. Set the required VM count to the maximum count of VMs needed
-      for (let template in vmCountPerTemplate) {
+      for (const template in vmCountPerTemplate) {
         if (this.requiredVmCounts[template]) {
           this.requiredVmCounts[template] = Math.max(
             vmCountPerTemplate[template],
@@ -628,7 +628,7 @@ export class NewScheduledEventComponent
 
   controls(path: string): string[] {
     let group: VmCountFormGroup | VmTemplatesFormGroup;
-    if (path == '') {
+    if (path == "") {
       group = this.vmCounts;
     } else {
       group = this.vmCounts.controls[path];
@@ -665,7 +665,7 @@ export class NewScheduledEventComponent
       }
 
       this.rbacService
-        .Grants('environments', 'list')
+        .Grants("environments", "list")
         .then((allowListEnvironments: boolean) => {
           if (allowListEnvironments) {
             this.checkEnvironments();
@@ -695,8 +695,8 @@ export class NewScheduledEventComponent
 
   ngOnInit() {
     const authorizationRequests = Promise.all([
-      this.rbacService.Grants('scenarios', 'list'),
-      this.rbacService.Grants('courses', 'list'),
+      this.rbacService.Grants("scenarios", "list"),
+      this.rbacService.Grants("courses", "list"),
     ]);
 
     authorizationRequests.then((permissions: [boolean, boolean]) => {
@@ -730,33 +730,33 @@ export class NewScheduledEventComponent
 
     // setup the times
     [
-      '00',
-      '01',
-      '02',
-      '03',
-      '04',
-      '05',
-      '06',
-      '07',
-      '08',
-      '09',
-      '10',
-      '11',
-      '12',
-      '13',
-      '14',
-      '15',
-      '16',
-      '17',
-      '18',
-      '19',
-      '20',
-      '21',
-      '22',
-      '23',
+      "00",
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
     ].forEach((hr: string) => {
-      ['00', '30'].forEach((min: string) => {
-        this.times.push(hr + ':' + min);
+      ["00", "30"].forEach((min: string) => {
+        this.times.push(hr + ":" + min);
       });
     });
   }
@@ -915,7 +915,7 @@ export class NewScheduledEventComponent
   public quicksetEndtimeForm: QuickSetEndTimeFormGroup = this._fb.group(
     {
       quickset_endtime: this._fb.control(1, [Validators.required]),
-      quickset_unit: this._fb.control<'h' | 'd' | 'w' | 'm'>('w', [
+      quickset_unit: this._fb.control<"h" | "d" | "w" | "m">("w", [
         Validators.required,
       ]),
     },
@@ -949,23 +949,23 @@ export class NewScheduledEventComponent
   }
 
   public quickEndTime() {
-    const durationType: 'h' | 'd' | 'w' | 'm' =
+    const durationType: "h" | "d" | "w" | "m" =
       this.quicksetEndtimeForm.controls.quickset_unit.value;
     const duration: number =
       this.quicksetEndtimeForm.controls.quickset_endtime.value;
     switch (durationType) {
-      case 'h':
+      case "h":
         this.se.end_time = new Date(Date.now() + 3600 * 1000 * duration);
         break;
-      case 'd':
+      case "d":
         this.se.end_time = new Date(Date.now() + 24 * 3600 * 1000 * duration);
         break;
-      case 'w':
+      case "w":
         this.se.end_time = new Date(
           Date.now() + 7 * 24 * 3600 * 1000 * duration,
         );
         break;
-      case 'm':
+      case "m":
         let days: number = 0;
         const today = new Date();
         for (let i = 0; i < duration; i++) {
@@ -1005,7 +1005,7 @@ export class NewScheduledEventComponent
     this.selectedEnvironments = [];
     this.selectedscenarios = [];
     this.selectedcourses = [];
-    this.startDate = this.startTime = this.endDate = this.endTime = '';
+    this.startDate = this.startTime = this.endDate = this.endTime = "";
     this.wizard.reset();
     this.wizard.open();
     this.vmCounts = new FormGroup<EnvToVmTemplatesMappings>(
@@ -1077,7 +1077,7 @@ export class NewScheduledEventComponent
     this.saving = true;
     let se: ScheduledEvent;
     if (!this.se.start_time || !this.se.end_time) {
-      console.error('start_time or end_time not defined');
+      console.error("start_time or end_time not defined");
       return;
     } else {
       // make sure start_time and end_time are defined
@@ -1092,7 +1092,7 @@ export class NewScheduledEventComponent
         next: () => {
           this.updated.next(true);
         },
-        error: (_err: any) => {
+        error: () => {
           this.updated.next(true);
         },
       });
@@ -1101,7 +1101,7 @@ export class NewScheduledEventComponent
         next: () => {
           this.updated.next(true);
         },
-        error: (_err: any) => {
+        error: () => {
           this.updated.next(true);
         },
       });

@@ -60,7 +60,7 @@ export class ScenarioService {
       this.startedFetchedList = true;
       return this.gargAdmin.get('/list').pipe(
         map((s: ServerResponse) => {
-          let obj: Scenario[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
+          const obj: Scenario[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
           // so now we need to go vmset-by-vmset and build maps
           obj.forEach((s: Scenario) => {
             s.virtualmachines.forEach((v: Object) => {
@@ -122,7 +122,7 @@ export class ScenarioService {
   }
 
   public update(s: Scenario) {
-    var steps = structuredClone(s.steps);
+    const steps = structuredClone(s.steps);
     // step by step, re-encode to b64
     steps.forEach((st: Step) => {
       st.title = utoa(st.title);

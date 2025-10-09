@@ -6,7 +6,12 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup, Validators, FormControlStatus } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormControlStatus,
+} from '@angular/forms';
 import { ClrCombobox } from '@clr/angular';
 import { FormControlStatus as FormControlStatusEnum } from 'src/app/data/formstatus';
 import {
@@ -105,10 +110,10 @@ export class RuleFormComponent implements OnInit {
       if (r == 'roles' || r == 'rolebindings') {
         if (
           this.apiGroupControl.value.find(
-            (ag: ApiGroup) => ag == rbacApiGroup
+            (ag: ApiGroup) => ag == rbacApiGroup,
           ) == undefined
         ) {
-          let groups = this.apiGroupControl.value;
+          const groups = this.apiGroupControl.value;
           groups.push(rbacApiGroup);
           this.apiGroupControl.setValue(groups, {
             emitEvent: false,
@@ -117,10 +122,10 @@ export class RuleFormComponent implements OnInit {
       } else {
         if (
           this.apiGroupControl.value.find(
-            (ag: ApiGroup) => ag == hobbyfarmApiGroup
+            (ag: ApiGroup) => ag == hobbyfarmApiGroup,
           ) == undefined
         ) {
-          let groups = this.apiGroupControl.value;
+          const groups = this.apiGroupControl.value;
           groups.push(hobbyfarmApiGroup);
           this.apiGroupControl.setValue(groups, {
             emitEvent: false,

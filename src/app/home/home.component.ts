@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private router: Router,
     private rbacService: RbacService,
-    private typedSettingsService: TypedSettingsService
+    private typedSettingsService: TypedSettingsService,
   ) {}
 
   ngOnInit(): void {
@@ -35,7 +35,8 @@ export class HomeComponent implements OnInit {
     this.typedSettingsService
       .get('admin-ui', 'motd-admin-ui')
       .subscribe((typedInput: TypedInput) => {
-        this.motd = typeof typedInput?.value == 'string' ? typedInput?.value : '';
+        this.motd =
+          typeof typedInput?.value == 'string' ? typedInput?.value : '';
       });
   }
 }

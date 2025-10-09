@@ -13,16 +13,17 @@ export interface EditTask extends Task {
   styleUrls: ['./readonly-task.component.scss'],
 })
 export class ReadonlyTaskComponent {
-
   @Input() editTask: EditTask;
 
   supportedLanguages = supportedLanguages;
 
   translateReturnType(rtype: string) {
-    return ReturnType[rtype]
+    return ReturnType[rtype];
   }
 
   isOfReturnType(returnTypes: string[]): boolean {
-    return returnTypes.includes(this.translateReturnType(this.editTask.return_type));
+    return returnTypes.includes(
+      this.translateReturnType(this.editTask.return_type),
+    );
   }
 }

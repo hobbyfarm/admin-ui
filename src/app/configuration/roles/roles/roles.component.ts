@@ -9,9 +9,8 @@ import { NewRoleComponent } from '../new-role/new-role.component';
 @Component({
   selector: 'app-roles',
   templateUrl: './roles.component.html',
-  styleUrls: ['./roles.component.scss']
+  styleUrls: ['./roles.component.scss'],
 })
-
 export class RolesComponent implements OnInit {
   public roles: Role[] = [];
 
@@ -26,23 +25,20 @@ export class RolesComponent implements OnInit {
 
   constructor(
     private roleService: RoleService,
-    private rbacService: RbacService
-  ) { }
+    private rbacService: RbacService,
+  ) {}
 
   ngOnInit(): void {
     this.refresh();
   }
 
   public refresh(): void {
-    this.roleService.list()
-    .subscribe(
-      (r: Role[]) => this.roles = r,
-    )
+    this.roleService.list().subscribe((r: Role[]) => (this.roles = r));
   }
 
-  @ViewChild("editRuleModal") editModal: EditRuleComponent;
-  @ViewChild("deleteModal") deleteModal: ClrModal;
-  @ViewChild("newRoleModal") newRoleModal: NewRoleComponent;
+  @ViewChild('editRuleModal') editModal: EditRuleComponent;
+  @ViewChild('deleteModal') deleteModal: ClrModal;
+  @ViewChild('newRoleModal') newRoleModal: NewRoleComponent;
 
   public openEdit(): void {
     this.editModal.open();
@@ -52,7 +48,7 @@ export class RolesComponent implements OnInit {
     this.editingRoleIndex = roleIndex;
     this.editingRuleIndex = ruleIndex;
 
-    this.editingRule = Object.create(this.roles[roleIndex].rules[ruleIndex])
+    this.editingRule = Object.create(this.roles[roleIndex].rules[ruleIndex]);
 
     this.editModal.open(true);
   }
@@ -72,14 +68,12 @@ export class RolesComponent implements OnInit {
   }
 
   public saveRule() {
-    this.roles[this.editingRoleIndex].rules[this.editingRuleIndex] = this.editingRule;
-    
-    this.roleService.update(this.roles[this.editingRoleIndex])
-    .subscribe(
-      (a: any) => {
-        
-      }
-    )
+    this.roles[this.editingRoleIndex].rules[this.editingRuleIndex] =
+      this.editingRule;
+
+    this.roleService
+      .update(this.roles[this.editingRoleIndex])
+      .subscribe((a: any) => {});
   }
 
   /**
@@ -88,8 +82,12 @@ export class RolesComponent implements OnInit {
    * @param roleIndex Index of current role
    * @param ruleIndex Index of the rule to be deleted
    */
-  public deleteRule(deletingObject: 'rule' | 'role', roleIndex: number, ruleIndex: number): void {
-    this.editingRuleIndex = ruleIndex; 
+  public deleteRule(
+    deletingObject: 'rule' | 'role',
+    roleIndex: number,
+    ruleIndex: number,
+  ): void {
+    this.editingRuleIndex = ruleIndex;
     this.delete(deletingObject, roleIndex);
   }
 
@@ -108,24 +106,24 @@ export class RolesComponent implements OnInit {
   public doDelete(): void {
     switch (this.deletingObject) {
       case 'rule':
-        this.roles[this.editingRoleIndex].rules.splice(this.editingRuleIndex, 1);
-        this.roleService.update(this.roles[this.editingRoleIndex])
-        .subscribe(
-          (a: any) => {
+        this.roles[this.editingRoleIndex].rules.splice(
+          this.editingRuleIndex,
+          1,
+        );
+        this.roleService
+          .update(this.roles[this.editingRoleIndex])
+          .subscribe((a: any) => {
             this.deleteModal.close();
-          }
-        )
+          });
         break;
       case 'role':
-        this.roleService.delete(this.roles[this.editingRoleIndex].name)
-        .subscribe(
-          (a: any) => {
+        this.roleService
+          .delete(this.roles[this.editingRoleIndex].name)
+          .subscribe((a: any) => {
             this.roles.splice(this.editingRoleIndex, 1);
             this.deleteModal.close();
-          }
-        )
+          });
         break;
     }
   }
-
 }

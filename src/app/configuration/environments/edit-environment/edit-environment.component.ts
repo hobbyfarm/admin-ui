@@ -6,22 +6,22 @@ import {
   OnChanges,
   Output,
   EventEmitter,
-} from '@angular/core';
-import { ClrWizard } from '@clr/angular';
+} from "@angular/core";
+import { ClrWizard } from "@clr/angular";
 import {
   Validators,
   FormGroup,
   FormControl,
   FormArray,
   NonNullableFormBuilder,
-} from '@angular/forms';
-import { Environment } from 'src/app/data/environment';
-import { VMTemplate } from 'src/app/data/vmtemplate';
-import { EnvironmentService } from 'src/app/data/environment.service';
-import { VmtemplateService } from 'src/app/data/vmtemplate.service';
-import { ServerResponse } from 'src/app/data/serverresponse';
-import { RbacService } from 'src/app/data/rbac.service';
-import { GenericKeyValueGroup } from 'src/app/data/forms';
+} from "@angular/forms";
+import { Environment } from "src/app/data/environment";
+import { VMTemplate } from "src/app/data/vmtemplate";
+import { EnvironmentService } from "src/app/data/environment.service";
+import { VmtemplateService } from "src/app/data/vmtemplate.service";
+import { ServerResponse } from "src/app/data/serverresponse";
+import { RbacService } from "src/app/data/rbac.service";
+import { GenericKeyValueGroup } from "src/app/data/forms";
 
 type TemplateMapping = FormGroup<{
   template: FormControl<string>;
@@ -35,9 +35,9 @@ type FromToGroup = FormGroup<{
 }>;
 
 @Component({
-  selector: 'edit-environment-wizard',
-  templateUrl: './edit-environment.component.html',
-  styleUrls: ['./edit-environment.component.scss'],
+  selector: "edit-environment-wizard",
+  templateUrl: "./edit-environment.component.html",
+  styleUrls: ["./edit-environment.component.scss"],
 })
 export class EditEnvironmentComponent implements OnInit, OnChanges {
   public environmentDetails: FormGroup<{
@@ -78,7 +78,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     private rbacService: RbacService,
   ) {
     this.rbacService
-      .Grants('virtualmachinetemplates', 'list')
+      .Grants("virtualmachinetemplates", "list")
       .then((allowVMTemplateList: boolean) => {
         if (!allowVMTemplateList) {
           return;
@@ -93,20 +93,20 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       });
   }
 
-  @ViewChild('wizard', { static: true }) wizard: ClrWizard;
+  @ViewChild("wizard", { static: true }) wizard: ClrWizard;
 
   public buildEnvironmentDetails(env: Environment | null = null) {
     this.environmentDetails = this._fb.group({
-      display_name: this._fb.control<string>(env ? env.display_name : '', [
+      display_name: this._fb.control<string>(env ? env.display_name : "", [
         Validators.required,
         Validators.minLength(4),
       ]),
-      dnssuffix: this._fb.control<string>(env ? env.dnssuffix : ''),
-      provider: this._fb.control<string>(env ? env.provider : '', [
+      dnssuffix: this._fb.control<string>(env ? env.dnssuffix : ""),
+      provider: this._fb.control<string>(env ? env.provider : "", [
         Validators.required,
         Validators.minLength(2),
       ]),
-      ws_endpoint: this._fb.control<string>(env ? env.ws_endpoint : '', [
+      ws_endpoint: this._fb.control<string>(env ? env.ws_endpoint : "", [
         Validators.required,
         Validators.pattern(
           /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/,
@@ -119,8 +119,8 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this.environmentSpecifics = this._fb.group({
       params: this._fb.array([
         this._fb.group({
-          key: this._fb.control<string>('', Validators.required),
-          value: this._fb.control<string>('', Validators.required),
+          key: this._fb.control<string>("", Validators.required),
+          value: this._fb.control<string>("", Validators.required),
         }),
       ]),
     });
@@ -128,7 +128,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   public buildVMTSelection() {
     this.templateSelection = this._fb.group({
-      vmt_select: this._fb.control<string>('', Validators.required),
+      vmt_select: this._fb.control<string>("", Validators.required),
     });
   }
 
@@ -136,8 +136,8 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this.ipMapping = this._fb.group({
       mappings: this._fb.array<FromToGroup>([
         this._fb.group({
-          from: this._fb.control<string>('', Validators.required),
-          to: this._fb.control<string>('', Validators.required),
+          from: this._fb.control<string>("", Validators.required),
+          to: this._fb.control<string>("", Validators.required),
         }),
       ]),
     });
@@ -178,15 +178,13 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
           templateKeys[i],
           Validators.required,
         ),
-        count: this._fb.control<number>(
-          env.count_capacity[templateKeys[i]],
-          [Validators.required, Validators.pattern(/-?\d+/)],
-        ),
+        count: this._fb.control<number>(env.count_capacity[templateKeys[i]], [
+          Validators.required,
+          Validators.pattern(/-?\d+/),
+        ]),
         params: this._fb.array<GenericKeyValueGroup<string>>([]),
       });
-      const paramKeys = Object.keys(
-        env.template_mapping[templateKeys[i]],
-      );
+      const paramKeys = Object.keys(env.template_mapping[templateKeys[i]]);
       for (let j = 0; j < paramKeys.length; j++) {
         const newParam: GenericKeyValueGroup<string> = this._fb.group({
           key: this._fb.control<string>(paramKeys[j], Validators.required),
@@ -209,10 +207,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       mappings: this._fb.array<FromToGroup>([]),
     });
     for (let i = 0; i < ipKeys.length; i++) {
-      this.newIpMapping(
-        ipKeys[i],
-        env.ip_translation_map[ipKeys[i]],
-      );
+      this.newIpMapping(ipKeys[i], env.ip_translation_map[ipKeys[i]]);
     }
   }
 
@@ -239,7 +234,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   ngOnInit() {
     this._build();
     this.rbacService
-      .Grants('virtualmachinetemplates', 'list')
+      .Grants("virtualmachinetemplates", "list")
       .then((listVmTemplates: boolean) => {
         if (listVmTemplates) {
           this.refreshVMTemplates();
@@ -255,7 +250,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   public getValidVMTemplates() {
     let vmtList = this.VMTemplates;
-    let selectedVMTs: string[] = [];
+    const selectedVMTs: string[] = [];
     for (let i = 0; i < this.templateMappings.controls.templates.length; i++) {
       // i = index of template
       selectedVMTs.push(
@@ -320,7 +315,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     this.env.ws_endpoint = this.environmentDetails.controls.ws_endpoint.value;
   }
 
-  public newIpMapping(from: string = '', to: string = '') {
+  public newIpMapping(from: string = "", to: string = "") {
     const newGroup: FromToGroup = this._fb.group({
       from: this._fb.control<string>(from, Validators.required),
       to: this._fb.control<string>(to, Validators.required),
@@ -341,7 +336,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     }
   }
 
-  public newEnvironmentSpecific(key: string = '', value: string = '') {
+  public newEnvironmentSpecific(key: string = "", value: string = "") {
     const newGroup: GenericKeyValueGroup<string> = this._fb.group({
       key: this._fb.control<string>(key, Validators.required),
       value: this._fb.control<string>(value, Validators.required),
@@ -366,7 +361,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   }
 
   public hasTemplateSelection() {
-    return this.templateSelection.controls.vmt_select.value != '';
+    return this.templateSelection.controls.vmt_select.value != "";
   }
 
   public newTemplateMapping() {
@@ -435,8 +430,8 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   public newTemplateParameter(templateIndex: number) {
     const newParam: GenericKeyValueGroup<string> = this._fb.group({
-      key: this._fb.control<string>('', Validators.required),
-      value: this._fb.control<string>('', Validators.required),
+      key: this._fb.control<string>("", Validators.required),
+      value: this._fb.control<string>("", Validators.required),
     });
     this.templateMappings.controls.templates
       .at(templateIndex)
@@ -455,11 +450,11 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   public saveEnvironment() {
     if (this.updateEnv) {
       this.env.name = this.updateEnv.name;
-      this.envService.update(this.env).subscribe((s: ServerResponse) => {
+      this.envService.update(this.env).subscribe(() => {
         this.event.next(true);
       });
     } else {
-      this.envService.add(this.env).subscribe((s: ServerResponse) => {
+      this.envService.add(this.env).subscribe(() => {
         this.event.next(true);
       });
       this.env = new Environment();

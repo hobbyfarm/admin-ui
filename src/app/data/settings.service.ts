@@ -54,7 +54,7 @@ export class SettingsService {
     }),
     currency_symbol: new FormControl<string>('$', {
       nonNullable: true,
-    }), 
+    }),
   });
 
   fetch() {
@@ -68,7 +68,7 @@ export class SettingsService {
               hide_usernames_status: false,
               theme: 'system',
               progress_view_mode: 'cardView',
-              currency_symbol : '$',
+              currency_symbol: '$',
             } as Settings),
       ),
       tap((s: Settings) => {

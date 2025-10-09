@@ -1,12 +1,7 @@
 import { FormGroup } from '@angular/forms';
 import { ClrForm } from '@clr/angular';
 import { Validation } from './Validation';
-import {
-  Component,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { shuffleStringArray } from '../utils';
 
 @Component({

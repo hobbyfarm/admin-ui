@@ -15,17 +15,18 @@ export class EnvironmentsComponent implements OnInit {
 
   constructor(
     public environmentService: EnvironmentService,
-    public rbacService: RbacService
-  ) { }
+    public rbacService: RbacService,
+  ) {}
 
-  @ViewChild("editEnvironmentWizard", {static: true}) editWizard: EditEnvironmentComponent;
+  @ViewChild('editEnvironmentWizard', { static: true })
+  editWizard: EditEnvironmentComponent;
 
   ngOnInit() {
     const authorizationRequests = Promise.all([
-      this.rbacService.Grants("environments", "get"),
-      this.rbacService.Grants("environments", "update"),
-      this.rbacService.Grants("environments", "delete")
-    ])
+      this.rbacService.Grants('environments', 'get'),
+      this.rbacService.Grants('environments', 'update'),
+      this.rbacService.Grants('environments', 'delete'),
+    ]);
 
     authorizationRequests.then((permissions: [boolean, boolean, boolean]) => {
       const allowGet: boolean = permissions[0];
@@ -36,12 +37,10 @@ export class EnvironmentsComponent implements OnInit {
     this.refresh();
   }
 
-
   public refresh() {
-    this.environmentService.list()
-    .subscribe(
-      (e: Environment[]) => this.environments = e
-    )
+    this.environmentService
+      .list()
+      .subscribe((e: Environment[]) => (this.environments = e));
   }
 
   public openNew() {
@@ -51,9 +50,11 @@ export class EnvironmentsComponent implements OnInit {
 
   public openUpdate(index: number) {
     // "this.environments[index]"" is only a partial environment, we need to get the full
-    this.environmentService.get(this.environments[index].name).subscribe((e: Environment) => {
-      this.updateEnv = e;
-      this.editWizard.open();
-    });
+    this.environmentService
+      .get(this.environments[index].name)
+      .subscribe((e: Environment) => {
+        this.updateEnv = e;
+        this.editWizard.open();
+      });
   }
 }

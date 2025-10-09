@@ -51,7 +51,7 @@
       <p>{{ translateReturnType(editTask.return_type) }}</p>
     </div>
   </div>
-  @if (isOfReturnType(["Return Text", "Return Code and Text"])) {
+  @if (isOfReturnType(['Return Text', 'Return Code and Text'])) {
     <div class="clr-row">
       <div class="clr-col-5">
         <h6><b>Expected Output</b></h6>
@@ -60,7 +60,7 @@
         <p>{{ editTask.expected_output_value }}</p>
       </div>
     </div>
-  } @else if (isOfReturnType(["Match Regex"])) {
+  } @else if (isOfReturnType(['Match Regex'])) {
     <div class="clr-row">
       <div class="clr-col-5">
         <h6><b>Regex to match</b></h6>
@@ -78,7 +78,7 @@
       </div>
     </div>
   }
-  @if (isOfReturnType(["Return Code", "Return Code and Text"])) {
+  @if (isOfReturnType(['Return Code', 'Return Code and Text'])) {
     <div class="clr-row">
       <div class="clr-col-5">
         <h6><b>Return Code</b></h6>

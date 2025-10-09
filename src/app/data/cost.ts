@@ -11,15 +11,15 @@ export class CostSource {
 }
 
 export class DetailedCost {
-    cost_group: string
-    source: Array<DetailedCostSource>
+  cost_group: string;
+  source: Array<DetailedCostSource>;
 }
 
 export class DetailedCostSource {
-    kind: string;
-    base_price: number;
-    time_unit: string;
-    id: string;
-    creation_unix_timestamp: number;
-    deletion_unix_timestamp?: number;
+  kind: string;
+  base_price: number;
+  time_unit: string;
+  id: string;
+  creation_unix_timestamp: number;
+  deletion_unix_timestamp?: number;
 }

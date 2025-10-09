@@ -1,8 +1,4 @@
-import {
-  AbstractControl,
-  ValidationErrors,
-  ValidatorFn
-} from "@angular/forms";
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export function EitherAllOrNoneValidator(fieldNames: string[]): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {

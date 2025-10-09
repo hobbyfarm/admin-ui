@@ -50,7 +50,7 @@ export class QuizService {
     this.cachedQuizList,
   );
   private gargAdmin = this.gcf.scopedClient('/a/quiz');
-//   private garg = this.gcf.scopedClient('/quiz');
+  //   private garg = this.gcf.scopedClient('/quiz');
 
   constructor(
     private gcf: GargantuaClientFactory,

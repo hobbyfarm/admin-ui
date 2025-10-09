@@ -271,7 +271,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     this.dynamicAddedScenarios = [];
     if (this.canAddDynamicScenarios()) {
       this.courseService.listDynamicScenarios(this.editCategories).subscribe(
-        (dynamicScenarios: String[]) => {
+        (dynamicScenarios: string[]) => {
           this.scenarios.forEach((scenario) => {
             if (dynamicScenarios && dynamicScenarios.includes(scenario.id)) {
               this.dynamicAddedScenarios.push(scenario);
@@ -302,7 +302,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   }
 
   addCategory() {
-    let categories = this.newCategoryForm.controls.category.value;
+    const categories = this.newCategoryForm.controls.category.value;
     const categoryArray = categories?.split(',') ?? [];
     categoryArray.forEach((category) => {
       category = category.replace(/\s/g, ''); //remove all whitespaces

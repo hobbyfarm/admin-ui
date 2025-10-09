@@ -8,9 +8,8 @@ describe('VMTemplateServiceFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VMTemplateServiceFormComponent ]
-    })
-    .compileComponents();
+      declarations: [VMTemplateServiceFormComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

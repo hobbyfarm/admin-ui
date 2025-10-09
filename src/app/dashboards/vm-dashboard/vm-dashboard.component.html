@@ -4,93 +4,119 @@
       <interval-timer (intervalElapsed)="getVmList()"></interval-timer>
     </div>
   </div>
-  @if (vmSets.length < 1) { <div>No active VMs
-</div>
-}
-<clr-accordion [clrAccordionMultiPanel]="true">
-  @for (set of vmSets; track set) {
-  <div>
-    <clr-accordion-panel [clrAccordionPanelOpen]="set.stepOpen ?? false"
-      (clrAccordionPanelOpenChange)="set.stepOpen = $event" (click)="setStepOpen(set)">
-      <clr-accordion-title>
-        @if (!set.dynamic) {
-        <b>VMSet:</b> {{ set.base_name }} &nbsp; <b>Available:</b>
-        {{ set.available }}/{{ set.count }}&nbsp;
-        } @else {
-        <b>Dynamic:</b> {{ set.base_name }} &nbsp; <b>Count: </b>{{ set.count }} &nbsp;
-        }
-        <b>Environment:</b> {{ set.environment }}
-      </clr-accordion-title>
-      <clr-accordion-content *clrIfExpanded>
-        <div class="clr-row">
-          <div class="clr-col">
-            <clr-datagrid>
-              <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
-              <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
-              <clr-dg-column [clrDgField]="'vm_template_id'">VM-Template</clr-dg-column>
-              <clr-dg-column [clrDgField]="'user'">User</clr-dg-column>
-              <clr-dg-column [clrDgField]="'allocated'">Allocated</clr-dg-column>
-              <clr-dg-column [clrDgField]="'tainted'">Tainted</clr-dg-column>
-              <clr-dg-column [clrDgField]="'id'">VM Id</clr-dg-column>
-              <clr-dg-column [clrDgField]="'hostname'">Hostname</clr-dg-column>
-              <clr-dg-column [clrDgField]="'age'">Age</clr-dg-column>
-
-              <clr-dg-row *clrDgItems="let vm of set.setVMs ?? []">
-                <clr-dg-action-overflow class="datagrid-row-actions">
-                  <button class="action-item" aria-label="session join" (click)="openUsersTerminal(vm)"
-                    [disabled]="!vm.allocated" *rbac="[
-                        'sessions.get',
-                        'courses.get',
-                        'progresses.list',
-                        'scenarios.get',
-                        'virtualmachineclaims.get',
-                      ]">
-                    Join Session
-                  </button>
-                  <hr>
-                  <button class="action-item" aria-label="delete vm" (click)="openDeleteConfirmation(vm)">
-                    Delete VM
-                  </button>
-                </clr-dg-action-overflow>
-                <clr-dg-cell class="dashboardCell">
-                  @if (vm.status === "running") {
-                  <span class="badge badge-success">{{ vm.status }}</span>
-                  } @else {
-                  <span class="badge badge-warning">{{ vm.status }}</span>
-                  }
-                </clr-dg-cell>
-                <clr-dg-cell class="dashboardCell">{{
-                  vm.public_ip
-                  }}</clr-dg-cell>
-                <clr-dg-cell class="dashboardCell">{{
-                  vm.vm_template_id
-                  }}</clr-dg-cell>
-                <clr-dg-cell class="dashboardCell">{{
-                  vm.user
-                  }}</clr-dg-cell>
-                <clr-dg-cell class="dashboardCell">{{
-                  vm.allocated
-                  }}</clr-dg-cell>
-                <clr-dg-cell class="dashboardCell">{{
-                  vm.tainted
-                  }}</clr-dg-cell>
-                <clr-dg-cell class="dashboardCell">{{ vm.id }}</clr-dg-cell>
-                <clr-dg-cell class="dashboardCell">{{
-                  vm.hostname
-                  }}</clr-dg-cell>
-                  <clr-dg-cell class="dashboardCell" [attr.title]="vm.creation_timestamp">{{
-                  getVmAge(vm) 
-                  }}</clr-dg-cell>
-              </clr-dg-row>
-            </clr-datagrid>
-          </div>
-        </div>
-      </clr-accordion-content>
-    </clr-accordion-panel>
-  </div>
+  @if (vmSets.length < 1) {
+    <div>No active VMs</div>
   }
-</clr-accordion>
+  <clr-accordion [clrAccordionMultiPanel]="true">
+    @for (set of vmSets; track set) {
+      <div>
+        <clr-accordion-panel
+          [clrAccordionPanelOpen]="set.stepOpen ?? false"
+          (clrAccordionPanelOpenChange)="set.stepOpen = $event"
+          (click)="setStepOpen(set)"
+        >
+          <clr-accordion-title>
+            @if (!set.dynamic) {
+              <b>VMSet:</b> {{ set.base_name }} &nbsp; <b>Available:</b>
+              {{ set.available }}/{{ set.count }}&nbsp;
+            } @else {
+              <b>Dynamic:</b> {{ set.base_name }} &nbsp; <b>Count: </b
+              >{{ set.count }} &nbsp;
+            }
+            <b>Environment:</b> {{ set.environment }}
+          </clr-accordion-title>
+          <clr-accordion-content *clrIfExpanded>
+            <div class="clr-row">
+              <div class="clr-col">
+                <clr-datagrid>
+                  <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
+                  <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
+                  <clr-dg-column [clrDgField]="'vm_template_id'"
+                    >VM-Template</clr-dg-column
+                  >
+                  <clr-dg-column [clrDgField]="'user'">User</clr-dg-column>
+                  <clr-dg-column [clrDgField]="'allocated'"
+                    >Allocated</clr-dg-column
+                  >
+                  <clr-dg-column [clrDgField]="'tainted'"
+                    >Tainted</clr-dg-column
+                  >
+                  <clr-dg-column [clrDgField]="'id'">VM Id</clr-dg-column>
+                  <clr-dg-column [clrDgField]="'hostname'"
+                    >Hostname</clr-dg-column
+                  >
+                  <clr-dg-column [clrDgField]="'age'">Age</clr-dg-column>
+
+                  <clr-dg-row *clrDgItems="let vm of set.setVMs ?? []">
+                    <clr-dg-action-overflow class="datagrid-row-actions">
+                      <button
+                        class="action-item"
+                        aria-label="session join"
+                        (click)="openUsersTerminal(vm)"
+                        [disabled]="!vm.allocated"
+                        *rbac="[
+                          'sessions.get',
+                          'courses.get',
+                          'progresses.list',
+                          'scenarios.get',
+                          'virtualmachineclaims.get',
+                        ]"
+                      >
+                        Join Session
+                      </button>
+                      <hr />
+                      <button
+                        class="action-item"
+                        aria-label="delete vm"
+                        (click)="openDeleteConfirmation(vm)"
+                      >
+                        Delete VM
+                      </button>
+                    </clr-dg-action-overflow>
+                    <clr-dg-cell class="dashboardCell">
+                      @if (vm.status === 'running') {
+                        <span class="badge badge-success">{{ vm.status }}</span>
+                      } @else {
+                        <span class="badge badge-warning">{{ vm.status }}</span>
+                      }
+                    </clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.public_ip
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.vm_template_id
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.user
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.allocated
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.tainted
+                    }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{ vm.id }}</clr-dg-cell>
+                    <clr-dg-cell class="dashboardCell">{{
+                      vm.hostname
+                    }}</clr-dg-cell>
+                    <clr-dg-cell
+                      class="dashboardCell"
+                      [attr.title]="vm.creation_timestamp"
+                      >{{ getVmAge(vm) }}</clr-dg-cell
+                    >
+                  </clr-dg-row>
+                </clr-datagrid>
+              </div>
+            </div>
+          </clr-accordion-content>
+        </clr-accordion-panel>
+      </div>
+    }
+  </clr-accordion>
 </div>
-<delete-confirmation #deleteModal [message]="'Are you sure you want to delete this VM?'"
-  (delete)="handleDelete($event)">
+<delete-confirmation
+  #deleteModal
+  [message]="'Are you sure you want to delete this VM?'"
+  (delete)="handleDelete($event)"
+>
 </delete-confirmation>

@@ -8,39 +8,44 @@ import { ClrAlertType } from '../clr-alert-type';
 })
 export class AlertComponent {
   public isClosed: boolean = true;
-  public text: string = "";
+  public text: string = '';
 
-  @ViewChild("clrAlert") alert: ClrAlert;
+  @ViewChild('clrAlert') alert: ClrAlert;
 
   public close() {
     this._close();
   }
 
   public danger(text: string, closable: boolean = true, timeout: number = 0) {
-    this.doAlert(text, ClrAlertType.Danger, closable, timeout)
+    this.doAlert(text, ClrAlertType.Danger, closable, timeout);
   }
 
   public info(text: string, closable: boolean = true, timeout: number = 0) {
-    this.doAlert(text, ClrAlertType.Info, closable, timeout)
+    this.doAlert(text, ClrAlertType.Info, closable, timeout);
   }
 
   public success(text: string, closable: boolean = true, timeout: number = 0) {
-    this.doAlert(text, ClrAlertType.Success, closable, timeout)
+    this.doAlert(text, ClrAlertType.Success, closable, timeout);
   }
 
   public warning(text: string, closable: boolean = true, timeout: number = 0) {
-    this.doAlert(text, ClrAlertType.Warning, closable, timeout)
+    this.doAlert(text, ClrAlertType.Warning, closable, timeout);
   }
 
-  public doAlert(text: string, type: ClrAlertType = ClrAlertType.Info, closable: boolean = true, timeout: number = 0) {
+  public doAlert(
+    text: string,
+    type: ClrAlertType = ClrAlertType.Info,
+    closable: boolean = true,
+    timeout: number = 0,
+  ) {
     this.alert.alertType = type;
     this.text = text;
     this.alert.closable = closable;
 
     this._open();
-    
+
     if (timeout > 0) {
-      setTimeout(() => this._close(), timeout)
+      setTimeout(() => this._close(), timeout);
     }
   }
 
