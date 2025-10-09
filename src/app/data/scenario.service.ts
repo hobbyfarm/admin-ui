@@ -63,12 +63,16 @@ export class ScenarioService {
           const obj: Scenario[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
           // so now we need to go vmset-by-vmset and build maps
           obj.forEach((s: Scenario) => {
-            s.virtualmachines.forEach((v: Object) => {
-              v = new Map(Object.entries(v));
-            });
+            s.virtualmachines = s.virtualmachines.map(
+              (v) =>
+                new Map<string, string>(
+                  Object.entries(v as Record<string, string>),
+                ),
+            ) as unknown as typeof s.virtualmachines;
           });
           return obj;
         }),
+
         map((sList: Scenario[]) => {
           sList.forEach((s: Scenario) => {
             s.name = atou(s.name);
@@ -132,7 +136,9 @@ export class ScenarioService {
     const normalizedVmTasks = (s.vm_tasks ?? []).map((vmTaskGroup) => ({
       ...vmTaskGroup,
       tasks: (vmTaskGroup.tasks ?? []).map((task) => {
-        const rawExpectedReturnCode = (task as any).expected_return_code;
+        const rawExpectedReturnCode = (
+          task as { expected_return_code?: unknown }
+        ).expected_return_code;
         let expectedReturnCode: number | null | undefined = undefined;
         if (
           rawExpectedReturnCode === '' ||

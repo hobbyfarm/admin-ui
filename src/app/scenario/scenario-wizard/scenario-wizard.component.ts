@@ -31,8 +31,7 @@ interface ValidationError {
 })
 export class ScenarioWizardComponent implements OnInit {
   @Output()
-  onWizardFinished: EventEmitter<AlertDetails> =
-    new EventEmitter<AlertDetails>();
+  wizardFinished: EventEmitter<AlertDetails> = new EventEmitter<AlertDetails>();
 
   public wizardMode: 'create' | 'edit' = 'create';
   public wizardTitle: 'Create new Scenario' | 'Edit Scenario' =
@@ -258,7 +257,7 @@ export class ScenarioWizardComponent implements OnInit {
   saveCreatedScenario() {
     this.scenarioService.create(this.selectedscenario).subscribe({
       next: (s: Scenario) => {
-        this.onWizardFinished.emit({
+        this.wizardFinished.emit({
           type: ClrAlertType.Success,
           message: `Scenario ${s.name} created`,
           closable: true,
@@ -267,7 +266,7 @@ export class ScenarioWizardComponent implements OnInit {
       },
       error: (e: HttpErrorResponse) => {
         const errorMessage: string = e.message;
-        this.onWizardFinished.emit({
+        this.wizardFinished.emit({
           type: ClrAlertType.Danger,
           message: errorMessage,
           closable: true,
@@ -299,7 +298,7 @@ export class ScenarioWizardComponent implements OnInit {
       .update(this.selectedscenario)
       .subscribe((s: ServerResponse) => {
         if (s.type == 'updated') {
-          this.onWizardFinished.emit({
+          this.wizardFinished.emit({
             type: ClrAlertType.Success,
             message: `Scenario updated`,
             closable: true,
@@ -307,7 +306,7 @@ export class ScenarioWizardComponent implements OnInit {
           });
         } else {
           const errorMsg = 'Unable to update scenario: ' + s.message;
-          this.onWizardFinished.emit({
+          this.wizardFinished.emit({
             type: ClrAlertType.Success,
             message: errorMsg,
             closable: true,
@@ -374,7 +373,7 @@ export class ScenarioWizardComponent implements OnInit {
   selectedScenarioHasVM(): boolean {
     if (this.selectedscenario.virtualmachines.length > 0) {
       const validVMSet = this.selectedscenario.virtualmachines.filter(
-        (virtualmachine, i) => {
+        (virtualmachine) => {
           if (Object.keys(virtualmachine).length > 0) {
             return true;
           }
@@ -427,7 +426,7 @@ export class ScenarioWizardComponent implements OnInit {
   private _editScenarioWizardfunction(scenario?: Scenario) {
     if (!scenario) {
       // somehow scenario is undefined -> display an error alert
-      this.onWizardFinished.emit({
+      this.wizardFinished.emit({
         type: ClrAlertType.Danger,
         message:
           'Could not edit scenario. The provided scenario is not defined.',
@@ -468,7 +467,7 @@ export class ScenarioWizardComponent implements OnInit {
           this.wizard.open();
         },
         error: () => {
-          this.onWizardFinished.emit({
+          this.wizardFinished.emit({
             type: ClrAlertType.Danger,
             message: 'error editing scenario',
             closable: true,

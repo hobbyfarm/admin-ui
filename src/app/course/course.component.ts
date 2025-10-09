@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CourseService } from '../data/course.service';
 import { Course } from '../data/course';
 import { ScenarioService } from '../data/scenario.service';
-import { ServerResponse } from '../data/serverresponse';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
 import { RbacService } from '../data/rbac.service';
@@ -104,7 +103,7 @@ export class CourseComponent implements OnInit {
       return;
     }
     this.courseService.delete(this.selectedCourse).subscribe({
-      next: (_s: ServerResponse) => {
+      next: () => {
         const alertMsg = 'Course deleted!';
         this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();

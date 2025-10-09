@@ -23,7 +23,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   private listProgress: boolean = false;
   private listVMs: boolean = false;
-  private updateInterval: any;
+  private updateInterval: ReturnType<typeof setInterval> | null = null;
 
   public expandActiveEvents = true;
 
@@ -142,7 +142,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     return tooltipTitle;
   }
 
-  ngOnDestroy(): void {
-    clearInterval(this.updateInterval);
+  ngOnDestroy() {
+    if (this.updateInterval !== null) {
+      clearInterval(this.updateInterval);
+      this.updateInterval = null;
+    }
   }
 }

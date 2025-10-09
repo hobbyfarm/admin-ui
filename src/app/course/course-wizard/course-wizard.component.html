@@ -83,7 +83,7 @@
     <clr-wizard-page
       (clrWizardPageNext)="saveCourseWizard()"
       [clrWizardPageNextDisabled]="
-        dragScenarios.length == 0 && editCategories.length == 0
+        dragScenarios.length === 0 && editCategories.length === 0
       "
     >
       <ng-template clrPageTitle>Scenarios</ng-template>
@@ -234,7 +234,7 @@
   @if (showDynamicScenario()) {
     <clr-wizard-page
       [clrWizardPageNextDisabled]="
-        dragScenarios.length == 0 && editCategories.length == 0
+        dragScenarios.length === 0 && editCategories.length === 0
       "
     >
       <ng-template clrPageTitle>Dynamic Scenario</ng-template>
@@ -396,7 +396,7 @@
             @if (wizardCourse === 'create') {
               <td>{{ course.name }}</td>
             } @else if (wizardCourse === 'edit') {
-              @if (selectedCourse.name == editSelectedCourse.name) {
+              @if (selectedCourse.name === editSelectedCourse.name) {
                 <td>
                   {{ selectedCourse.name }}
                 </td>
@@ -415,7 +415,7 @@
               <td>{{ course.description }}</td>
             } @else if (wizardCourse === 'edit') {
               @if (
-                selectedCourse.description == editSelectedCourse.description
+                selectedCourse.description === editSelectedCourse.description
               ) {
                 <td>
                   {{ selectedCourse.description }}
@@ -437,7 +437,7 @@
               <td>{{ course.keepalive_duration }}</td>
             } @else if (wizardCourse === 'edit') {
               @if (
-                selectedCourse.keepalive_duration ==
+                selectedCourse.keepalive_duration ===
                 editSelectedCourse.keepalive_duration
               ) {
                 <td>
@@ -462,7 +462,7 @@
               <td>{{ course.pause_duration }}</td>
             } @else if (wizardCourse === 'edit') {
               @if (
-                selectedCourse.pause_duration ==
+                selectedCourse.pause_duration ===
                 editSelectedCourse.pause_duration
               ) {
                 <td>
@@ -487,7 +487,7 @@
               <td>{{ course.is_learnpath ? 'yes' : 'no' }}</td>
             } @else if (wizardCourse === 'edit') {
               @if (
-                selectedCourse.is_learnpath == editSelectedCourse.is_learnpath
+                selectedCourse.is_learnpath === editSelectedCourse.is_learnpath
               ) {
                 <td>
                   {{ selectedCourse.is_learnpath ? 'yes' : 'no' }}
@@ -511,7 +511,9 @@
             @if (wizardCourse === 'create') {
               <td>{{ course.in_catalog ? 'yes' : 'no' }}</td>
             } @else if (wizardCourse === 'edit') {
-              @if (selectedCourse.in_catalog == editSelectedCourse.in_catalog) {
+              @if (
+                selectedCourse.in_catalog === editSelectedCourse.in_catalog
+              ) {
                 <td>
                   {{ selectedCourse.in_catalog ? 'yes' : 'no' }}
                 </td>
@@ -584,10 +586,10 @@
             @for (q of showVM(i.value) | keyvalue; track q) {
               <tr>
                 <!-- view of unedit value -->
-                @if (getSelectedCourseVM(i.key, q.key) != 0) {
+                @if (getSelectedCourseVM(i.key, q.key) !== 0) {
                   <td>{{ q.key }}</td>
                 }
-                @if (getSelectedCourseVM(i.key, q.key) == q.value) {
+                @if (getSelectedCourseVM(i.key, q.key) === q.value) {
                   <td>{{ q.value }}</td>
                 }
                 <!-- view of new key -->
@@ -606,7 +608,7 @@
           @for (i of selectedCourse.virtualmachines | keyvalue; track i) {
             @for (q of showVM(i.value) | keyvalue; track q) {
               <tr>
-                @if (getEditSelectedCourseVM(i.key, q.key) != q.value) {
+                @if (getEditSelectedCourseVM(i.key, q.key) !== q.value) {
                   <td class="del-elem">{{ q.key }}</td>
                   <td class="del-elem">{{ q.value }}</td>
                 }

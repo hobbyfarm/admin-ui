@@ -54,7 +54,7 @@ export class AuthnService {
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   readonly isLoggedIn$ = this.isLoggedInSubject.asObservable();
   private tokenSubject = new BehaviorSubject<string>('');
-  private timeoutId: any;
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   login(email: string, password: string) {
     const body = new HttpParams().set('email', email).set('password', password);

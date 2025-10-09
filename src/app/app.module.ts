@@ -50,7 +50,7 @@ import { ProgressCardComponent } from './progress/progress-card/progress-card.co
 import { ProgressListComponent } from './progress/progress-list/progress-list.component';
 import { ProgressInfoComponent } from './progress/progress-info/progress-info.component';
 import { EventUserListComponent } from './dashboards/progress-dashboard/event-user-list/event-user-list.component';
-import { IntervalTimer } from './IntervalTimer/interval-timer.component';
+import { IntervalTimerComponent } from './IntervalTimer/interval-timer.component';
 import { ProgressDashboardComponent } from './dashboards/progress-dashboard/progress-dashboard.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
 import { VmDashboardComponent } from './dashboards/vm-dashboard/vm-dashboard.component';
@@ -234,7 +234,7 @@ const appInitializerFn = (appConfig: AppConfigService) => {
 };
 
 export function jwtOptionsFactory(): JwtConfig {
-  const allowedDomainsRegex = environment.server.match(/.*\:\/\/?([^\/]+)/);
+  const allowedDomainsRegex = environment.server.match(/.*:\/\/?([^/]+)/);
   let allowedDomains: string[] | undefined;
   let disallowedRoutes: string[] | undefined;
   if (allowedDomainsRegex && allowedDomainsRegex.length > 1) {
@@ -286,7 +286,7 @@ export function jwtOptionsFactory(): JwtConfig {
     ProgressCardComponent,
     ProgressListComponent,
     EventUserListComponent,
-    IntervalTimer,
+    IntervalTimerComponent,
     ProgressDashboardComponent,
     DashboardsComponent,
     VmDashboardComponent,

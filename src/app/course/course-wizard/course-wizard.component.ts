@@ -18,7 +18,6 @@ import { ScenarioService } from 'src/app/data/scenario.service';
 import { CourseFormComponent } from '../course-form/course-form.component';
 import { VmsetComponent } from 'src/app/vmset/vmset.component';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ServerResponse } from 'src/app/data/serverresponse';
 import { AddScenarioComponent } from '../add-scenario/add-scenario.component';
 import { cloneDeep } from 'lodash-es';
 import { CategoryFormGroup, CourseDetailFormGroup } from 'src/app/data/forms';
@@ -76,7 +75,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
   public selectRbac: boolean = false;
   public allowUpdate: boolean = false;
 
-  public editVirtualMachines: {}[] = [];
+  public editVirtualMachines: Record<string, string>[] = [];
   public scenarios: Scenario[] = [];
   public courses: Course[] = [];
   public dynamicAddedScenarios: Scenario[] = [];
@@ -160,14 +159,12 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   courseHasValidVMCConfiguration(): boolean {
     if (this.editVirtualMachines.length > 0) {
-      const validVMSets = this.editVirtualMachines.filter(
-        (virtualmachine, i) => {
-          if (Object.keys(virtualmachine).length > 0) {
-            return true;
-          }
-          return false;
-        },
-      );
+      const validVMSets = this.editVirtualMachines.filter((virtualmachine) => {
+        if (Object.keys(virtualmachine).length > 0) {
+          return true;
+        }
+        return false;
+      });
       if (validVMSets.length == this.editVirtualMachines.length) {
         return true;
       }
@@ -220,7 +217,12 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     course.pause_duration = this.form.controls.pause_duration.value + 'h';
     course.pauseable = this.form.controls.pauseable.value;
     course.keep_vm = this.form.controls.keep_vm.value;
-    course.virtualmachines = this.editVirtualMachines;
+    course.virtualmachines = this.editVirtualMachines.map((vm) =>
+      Object.fromEntries(
+        Object.entries(vm).map(([k, v]) => [k, String(v ?? '')]),
+      ),
+    ) as Record<string, string>[];
+
     course.scenarios = cloneDeep(this.dragScenarios);
     course.categories = this.form.controls.is_learnpath.value
       ? []
@@ -242,10 +244,11 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     }
   }
 
-  setVM(vms: {}[]) {
+  setVM(vms: Record<string, string>[]) {
     this.editVirtualMachines = vms;
     this.setModified();
   }
+
   setModified() {
     this.alertText =
       'Course has been modified, please save your changes or discard';
@@ -358,7 +361,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   createCourse() {
     this.courseService.create(this.course).subscribe(
-      (s: ServerResponse) => {
+      () => {
         this.alertText = 'Course created';
         this.isAlert = true;
         this.alertType = ClrAlertType.Success;
@@ -373,7 +376,7 @@ export class CourseWizardComponent implements OnChanges, OnInit {
 
   updateCourse() {
     this.courseService.update(this.selectedCourse).subscribe(
-      (s: ServerResponse) => {
+      () => {
         this.alertText = 'Course updated';
         this.isAlert = true;
         this.alertType = ClrAlertType.Success;
@@ -386,42 +389,50 @@ export class CourseWizardComponent implements OnChanges, OnInit {
     );
   }
 
-  getSelectedCourseVM(index: any, vmname: any) {
+  getSelectedCourseVM(index: number | string, vmname: string) {
+    const i = typeof index === 'number' ? index : Number(index);
     const selectedCourseVMs = this.showVM(
-      this.selectedCourse.virtualmachines[index],
+      this.selectedCourse.virtualmachines[i],
     );
-    return selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname) : 0;
+    return selectedCourseVMs.has(vmname) ? selectedCourseVMs.get(vmname)! : 0;
   }
 
-  getEditSelectedCourseVM(index: any, vmname: any) {
+  getEditSelectedCourseVM(index: number | string, vmname: string) {
+    const i = typeof index === 'number' ? index : Number(index);
     const editSelectedCourseVMs = this.showVM(
-      this.editSelectedCourse.virtualmachines[index],
+      this.editSelectedCourse.virtualmachines[i],
     );
     return editSelectedCourseVMs.has(vmname)
-      ? editSelectedCourseVMs.get(vmname)
+      ? editSelectedCourseVMs.get(vmname)!
       : 0;
   }
 
-  showVM(vms: any) {
-    if (!vms) {
-      return new Map();
+  showVM(vms: unknown) {
+    if (!vms || typeof vms !== 'object' || Array.isArray(vms)) {
+      return new Map<string, string>();
     }
-    return new Map(Object.entries(structuredClone(vms)));
+    const obj = vms as Record<string, string>;
+    return new Map<string, string>(Object.entries(structuredClone(obj)));
   }
 
   isScenarioInList(scenario: Scenario, list?: Scenario[]): boolean {
     return list?.some((item) => item.name === scenario.name) ?? false;
   }
 
-  isEditedVM(index: any, vmname: string, templateName: any): boolean {
+  isEditedVM(
+    index: number | string,
+    vmname: string,
+    templateName: string | number,
+  ): boolean {
     // This function determines if the currently selected VM is either beeing edited throug the following condition:
+    const idx = typeof index === 'number' ? index : Number(index);
     const isEdited =
-      this.getSelectedCourseVM(index, vmname) != templateName &&
-      this.getSelectedCourseVM(index, vmname) != 0;
+      this.getSelectedCourseVM(idx, vmname) != templateName &&
+      this.getSelectedCourseVM(idx, vmname) != 0;
     // ... or if it was deleted and created again with the same vm name through the following condition:
     const deletedAndCreatedWithSameName =
-      this.getSelectedCourseVM(index, vmname) === 0 &&
-      this.getEditSelectedCourseVM(index, vmname) != templateName;
+      this.getSelectedCourseVM(idx, vmname) === 0 &&
+      this.getEditSelectedCourseVM(idx, vmname) != templateName;
     // this.getSelectedCourseVM(index, vmname) != templateName && this.getSelectedCourseVM(index, vmname) != 0
     return isEdited || deletedAndCreatedWithSameName;
   }

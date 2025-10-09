@@ -13,8 +13,6 @@ import {
 import {
   AbstractControl,
   FormArray,
-  FormControl,
-  FormGroup,
   NonNullableFormBuilder,
   ValidatorFn,
   Validators,
@@ -308,7 +306,10 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
     for (const c of ctrls) fa.push(c, { emitEvent: false });
   }
 
-  private createOrResetGroup(name: string, options: any): void {
+  private createOrResetGroup(
+    name: string,
+    options: Readonly<Record<string, unknown>>,
+  ): void {
     const existing = this.dragula.find(name);
     if (existing) this.dragula.destroy(name);
     this.dragula.createGroup(name, options);
@@ -347,6 +348,17 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   // ---------- save ----------
+  private extractId(src: unknown): string | null {
+    if (src && typeof src === 'object') {
+      const obj = src as Record<string, unknown>;
+      if (typeof obj['id'] === 'string') return obj['id'];
+      const meta = obj['metadata'] as Record<string, unknown> | undefined;
+      if (meta && typeof meta['name'] === 'string') return meta['name'];
+      if (typeof obj['name'] === 'string') return obj['name'];
+    }
+    return null;
+  }
+
   async save(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -379,19 +391,20 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
 
     if (this.mode === 'create') {
       this.qs
-        .create(payload as any)
+        .create(payload)
         .pipe(finalize(() => this.saving.set(false)))
         .subscribe((id: string) => {
           this.saved.emit({ id, quiz: payload });
           this.close();
         });
     } else {
-      const id =
-        (this.quizToEdit as any)?.id ||
-        (this.quizToEdit as any)?.metadata?.name ||
-        (this.quizToEdit as any)?.name;
+      const id = this.extractId(this.quizToEdit);
+      if (!id) {
+        this.saving.set(false);
+        return;
+      }
       this.qs
-        .update(id, payload as any)
+        .update(id, payload)
         .pipe(finalize(() => this.saving.set(false)))
         .subscribe(() => {
           this.saved.emit({ id, quiz: payload });

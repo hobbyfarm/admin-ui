@@ -12,7 +12,7 @@ import {
   templateUrl: './interval-timer.component.html',
   styleUrls: ['./interval-timer.component.scss'],
 })
-export class IntervalTimer implements OnInit, OnDestroy {
+export class IntervalTimerComponent implements OnInit, OnDestroy {
   // Output to emit an Event everytime the Timer reaches 0
   @Output()
   intervalElapsed: EventEmitter<void> = new EventEmitter();
@@ -25,7 +25,7 @@ export class IntervalTimer implements OnInit, OnDestroy {
   @Input()
   label: string = 'Refresh Rate';
 
-  public callInterval: any;
+  public callInterval: ReturnType<typeof setInterval> | null = null;
   public currentCallDelay: number;
   public circleVisible: boolean = true;
   public delayOptions: Generator;
@@ -47,8 +47,10 @@ export class IntervalTimer implements OnInit, OnDestroy {
     //Set next value of the interval array as call delay
     this.currentCallDelay = this.delayOptions.next().value;
 
-    clearInterval(this.callInterval);
-
+    if (this.callInterval !== null) {
+      clearInterval(this.callInterval);
+      this.callInterval = null;
+    }
     this.callInterval = setInterval(() => {
       this.intervalElapsed.emit();
     }, this.currentCallDelay * 1000);
@@ -61,6 +63,9 @@ export class IntervalTimer implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.callInterval);
+    if (this.callInterval !== null) {
+      clearInterval(this.callInterval);
+      this.callInterval = null;
+    }
   }
 }

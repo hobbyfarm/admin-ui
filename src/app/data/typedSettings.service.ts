@@ -9,9 +9,11 @@ import { TypedInputRepresentation } from '../typed-form/TypedInput';
 import { TypedInputType } from '../typed-form/TypedInput';
 import { of } from 'rxjs';
 
+type SettingsValueType = TypedInput['value'];
+
 export class PreparedSettings {
   name: string;
-  value: any;
+  value: SettingsValueType;
   scope: string;
   weight: number;
   group: string;
@@ -149,6 +151,8 @@ export class TypedSettingsService {
           typedInputTypeIndex == -1 ? 0 : typedInputTypeIndex
         ];
 
+      const value = preparedSetting.value as SettingsValueType;
+
       const setting = new TypedInput({
         id: preparedSetting.name,
         name:
@@ -170,7 +174,7 @@ export class TypedSettingsService {
           default: preparedSetting.default,
           uniqueItems: preparedSetting.uniqueItems,
         } as InputValidation,
-        value: preparedSetting.value,
+        value,
         weight: preparedSetting.weight,
       });
 
@@ -184,13 +188,21 @@ export class TypedSettingsService {
     inputs.forEach((input: TypedInput) => {
       // Maps will not be converted correctly with JSON.stringify, we have to convert them to an Object.
       if (input.isMap(input.value)) {
-        const jsonObject = {};
-        for (const key in input.value) {
-          if (input.value.hasOwnProperty(key)) {
-            jsonObject[key] = input.value[key];
-          }
+        const v = input.value as unknown;
+        let jsonObject: Record<string, unknown>;
+        if (v instanceof Map) {
+          jsonObject = Object.fromEntries(v as Map<string, unknown>);
+        } else {
+          const obj = v as Record<string, unknown>;
+          jsonObject = Object.keys(obj).reduce<Record<string, unknown>>(
+            (acc, k) => {
+              acc[k] = obj[k];
+              return acc;
+            },
+            {},
+          );
         }
-        input.value = jsonObject;
+        input.value = jsonObject as SettingsValueType;
       }
 
       const setting = {

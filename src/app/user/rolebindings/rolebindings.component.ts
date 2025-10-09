@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { RoleBinding } from 'src/app/data/rolebinding';
 import { RolebindingService } from 'src/app/data/rolebinding.service';
 import { User } from 'src/app/data/user';
@@ -10,7 +10,7 @@ import { NewRoleBindingComponent } from '../new-role-binding/new-role-binding.co
   templateUrl: './rolebindings.component.html',
   styleUrls: ['./rolebindings.component.scss'],
 })
-export class RolebindingsComponent implements OnInit {
+export class RolebindingsComponent {
   private _user: User;
   public rolebindings: RoleBinding[];
 
@@ -32,8 +32,6 @@ export class RolebindingsComponent implements OnInit {
   @ViewChild('deleteconfirmation')
   deleteConfirmation: DeleteConfirmationComponent;
   @ViewChild('newrolebinding') newModal: NewRoleBindingComponent;
-
-  ngOnInit(): void {}
 
   delete(index: number): void {
     this.deletingIndex = index;

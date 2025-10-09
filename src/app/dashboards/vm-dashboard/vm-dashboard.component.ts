@@ -3,10 +3,11 @@ import {
   Component,
   Input,
   OnInit,
-  ViewChild, OnChanges,
+  ViewChild,
+  OnChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { combineLatest, Observable, of, switchMap, tap } from 'rxjs';
+import { combineLatest, of, switchMap } from 'rxjs';
 import { Progress } from 'src/app/data/progress';
 import { ProgressService } from 'src/app/data/progress.service';
 import { ScheduledEventBase } from 'src/app/data/scheduledevent';
@@ -90,9 +91,8 @@ export class VmDashboardComponent implements OnInit, OnChanges {
       }));
       // dynamic machines have no associated vmSet
       if (this.vms.filter((vm) => vm.vm_set_id == '').length > 0) {
-        const groupedVms: Map<string, VirtualMachine[]> = this.groupByEnvironment(
-          this.vms.filter((vm) => vm.vm_set_id == ''),
-        );
+        const groupedVms: Map<string, VirtualMachine[]> =
+          this.groupByEnvironment(this.vms.filter((vm) => vm.vm_set_id == ''));
         groupedVms.forEach((element, environment) => {
           const vmSet: dashboardVmSet = {
             ...new VmSet(),

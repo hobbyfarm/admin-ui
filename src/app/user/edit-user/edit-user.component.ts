@@ -8,7 +8,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import {
   DEFAULT_ALERT_ERROR_DURATION,
   DEFAULT_ALERT_SUCCESS_DURATION,
@@ -39,7 +39,7 @@ export class EditUserComponent implements OnInit, OnChanges {
   constructor(public userService: UserService) {}
 
   ngOnInit(): void {
-    this.userDetailsForm.valueChanges.subscribe((_event) => {
+    this.userDetailsForm.valueChanges.subscribe(() => {
       if (!this.userDetailsForm.dirty) {
         this.userDetails.nativeElement.animate(
           [
@@ -80,7 +80,7 @@ export class EditUserComponent implements OnInit, OnChanges {
     this.userService
       .saveUser(this.user.id, this.user.email, password)
       .subscribe({
-        next: (_s: ServerResponse) => {
+        next: () => {
           const alertText = 'User updated';
           this.alert.success(alertText, false, DEFAULT_ALERT_SUCCESS_DURATION);
           this.saving = false;
@@ -99,7 +99,7 @@ export class EditUserComponent implements OnInit, OnChanges {
 
   doDelete() {
     this.userService.deleteUser(this.user.id).subscribe({
-      next: (_s: ServerResponse) => {
+      next: () => {
         this.deleted.next(true);
       },
       error: (s: ServerResponse) => {

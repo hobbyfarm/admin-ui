@@ -74,8 +74,8 @@ export class EnvironmentDetailComponent implements OnInit {
     }
   }
 
-  isEmpty(object: Object) {
-    return Object.keys(object).length == 0;
+  isEmpty(object: Record<string, unknown>): boolean {
+    return Object.keys(object).length === 0;
   }
 
   getLimit(vmt: string) {
@@ -85,7 +85,8 @@ export class EnvironmentDetailComponent implements OnInit {
     return this.currentEnvironment.count_capacity[vmt] ?? 0;
   }
 
-  getVirtualMachineTemplateName(template: any) {
-    return this.virtualMachineTemplateList.get(template as string) ?? template;
+  getVirtualMachineTemplateName(template: unknown): string {
+    const key = String(template ?? '');
+    return this.virtualMachineTemplateList.get(key) ?? key;
   }
 }

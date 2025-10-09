@@ -149,7 +149,7 @@
         }
       </tbody>
     </table>
-    @if (environmentSpecifics['controls'].params['controls'].length != 0) {
+    @if (environmentSpecifics['controls'].params['controls'].length !== 0) {
       <span class="clr-subtext"
         >Parameters require both 'key' and 'value' fields to be set. Remove any
         parameters that do not meet this criteria.</span
@@ -327,7 +327,7 @@
         }
       </tbody>
     </table>
-    @if (ipMapping['controls'].mappings['controls'].length != 0) {
+    @if (ipMapping['controls'].mappings['controls'].length !== 0) {
       <span class="clr-subtext"
         >IP mappings require both 'from' and 'to' fields to be set. Remove any
         mappings that do not meet this criteria.</span
@@ -351,7 +351,7 @@
         @if (!!updateEnv) {
           <tr>
             <td>Display Name</td>
-            @if (env.display_name == uneditedEnv.display_name) {
+            @if (env.display_name === uneditedEnv.display_name) {
               <td>
                 {{ env.display_name }}
               </td>
@@ -366,7 +366,7 @@
           </tr>
           <tr>
             <td>DNS Suffix</td>
-            @if (env.dnssuffix == uneditedEnv.dnssuffix) {
+            @if (env.dnssuffix === uneditedEnv.dnssuffix) {
               <td>
                 {{ env.dnssuffix }}
               </td>
@@ -381,7 +381,7 @@
           </tr>
           <tr>
             <td>Provider</td>
-            @if (env.provider == uneditedEnv.provider) {
+            @if (env.provider === uneditedEnv.provider) {
               <td>
                 {{ env.provider }}
               </td>
@@ -396,7 +396,7 @@
           </tr>
           <tr>
             <td>Websocket Endpoint</td>
-            @if (env.ws_endpoint == uneditedEnv.ws_endpoint) {
+            @if (env.ws_endpoint === uneditedEnv.ws_endpoint) {
               <td>
                 {{ env.ws_endpoint }}
               </td>
@@ -448,7 +448,7 @@
                   {{ item.key }}
                 </td>
               }
-              @if (item.value == uneditedEnv.environment_specifics[item.key]) {
+              @if (item.value === uneditedEnv.environment_specifics[item.key]) {
                 <td>
                   {{ item.value }}
                 </td>
@@ -463,7 +463,7 @@
               <!-- view of edit value -->
               @if (
                 uneditedEnv.environment_specifics.hasOwnProperty(item.key) &&
-                item.value != uneditedEnv.environment_specifics[item.key]
+                item.value !== uneditedEnv.environment_specifics[item.key]
               ) {
                 <td>
                   <span class="del-elem arrow-after">{{
@@ -518,7 +518,7 @@
               } @else {
                 <td>{{ getVirtualMachineTemplateName(template.key) }}</td>
                 @if (
-                  getTemplateCount(template.key) ==
+                  getTemplateCount(template.key) ===
                   getTemplateUnEditEnvCount(template.key)
                 ) {
                   <td>
@@ -565,7 +565,7 @@
                             </td>
                           }
                           @if (
-                            item.value ==
+                            item.value ===
                             uneditedEnv.template_mapping[template.key][item.key]
                           ) {
                             <td>
@@ -586,7 +586,7 @@
                             uneditedEnv.template_mapping[
                               template.key
                             ].hasOwnProperty(item.key) &&
-                            item.value !=
+                            item.value !==
                               uneditedEnv.template_mapping[template.key][
                                 item.key
                               ]
@@ -672,7 +672,7 @@
                   {{ item.key }}
                 </td>
               }
-              @if (item.value == uneditedEnv.ip_translation_map[item.key]) {
+              @if (item.value === uneditedEnv.ip_translation_map[item.key]) {
                 <td>
                   {{ item.value }}
                 </td>
@@ -685,7 +685,7 @@
               <!-- view of edit value -->
               @if (
                 uneditedEnv.ip_translation_map.hasOwnProperty(item.key) &&
-                item.value != uneditedEnv.ip_translation_map[item.key]
+                item.value !== uneditedEnv.ip_translation_map[item.key]
               ) {
                 <td>
                   <span class="del-elem arrow-after">{{

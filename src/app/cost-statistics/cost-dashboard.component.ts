@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CostService } from 'src/app/data/cost.service';
 import { Cost } from 'src/app/data/cost';
 

@@ -3,22 +3,26 @@ import {
   EventEmitter,
   HostListener,
   Output,
-  Renderer2, OnDestroy,
+  Renderer2,
+  OnDestroy,
 } from '@angular/core';
 
 @Directive({
   selector: 'textarea[resize]',
 })
 export class ResizableTextAreaDirective implements OnDestroy {
-  @Output() resize = new EventEmitter();
+  @Output() dimensionsChange = new EventEmitter<{
+    width: number;
+    height: number;
+  }>();
 
-  width: number;
-  height: number;
+  width: number = 0;
+  height: number = 0;
 
-  mouseMoveListener: Function;
+  mouseMoveListener?: () => void;
 
   @HostListener('mousedown', ['$event.target'])
-  onMouseDown(el) {
+  onMouseDown(el: HTMLTextAreaElement) {
     this.width = el.offsetWidth;
     this.height = el.offsetHeight;
     this.mouseMoveListener = this.renderer.listen(
@@ -26,7 +30,10 @@ export class ResizableTextAreaDirective implements OnDestroy {
       'mousemove',
       () => {
         if (this.width !== el.offsetWidth || this.height !== el.offsetHeight) {
-          this.resize.emit({ width: el.offsetWidth, height: el.offsetHeight });
+          this.dimensionsChange.emit({
+            width: el.offsetWidth,
+            height: el.offsetHeight,
+          });
         }
       },
     );
@@ -40,8 +47,6 @@ export class ResizableTextAreaDirective implements OnDestroy {
   constructor(private renderer: Renderer2) {}
 
   ngOnDestroy() {
-    if (this.mouseMoveListener) {
-      this.mouseMoveListener();
-    }
+    this.mouseMoveListener?.();
   }
 }

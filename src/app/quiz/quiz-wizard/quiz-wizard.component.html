@@ -181,7 +181,7 @@
                 index as i;
                 trackBy: trackByIndex
               "
-              [title]="questionsFA.at(i)?.get('title')?.value || ''"
+              [title]="questionsFA.at(i).get('title')?.value || ''"
             >
               <td>
                 <cds-icon
@@ -197,14 +197,14 @@
               <!-- Weight (synced read-only) -->
               <td>
                 <span class="badge">{{
-                  questionsFA.at(i)?.get('weight')?.value
+                  questionsFA.at(i).get('weight')?.value
                 }}</span>
               </td>
 
               <!-- Type (synced read-only) -->
               <td>
                 {{
-                  questionsFA.at(i)?.get('type')?.value === 'radio'
+                  questionsFA.at(i).get('type')?.value === 'radio'
                     ? 'Single'
                     : 'Multiple'
                 }}
@@ -212,7 +212,7 @@
 
               <!-- Answers count -->
               <td class="text-center">
-                {{ answersFA(i)?.length }}
+                {{ answersFA(i).length }}
               </td>
 
               <!-- Actions (Edit / Delete) -->

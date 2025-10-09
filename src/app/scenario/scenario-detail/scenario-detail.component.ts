@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, Input, OnInit } from '@angular/core';
 import { Scenario } from 'src/app/data/scenario';
 import { ScenarioService } from 'src/app/data/scenario.service';
 
@@ -14,10 +13,9 @@ export class ScenarioDetailComponent implements OnInit {
   scenario: Scenario;
 
   constructor(public scenarioService: ScenarioService) {}
+
   ngOnInit(): void {
-    let scenarioObservable: Observable<Scenario>;
-    scenarioObservable = this.scenarioService.get(this.scenario.id);
-    scenarioObservable.subscribe({
+    this.scenarioService.get(this.scenario.id).subscribe({
       next: (S: Scenario) => {
         this.scenario = S;
       },

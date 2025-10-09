@@ -7,14 +7,18 @@ import {
   OnDestroy,
   Output,
   SimpleChanges,
-  ViewChild, OnChanges,
+  ViewChild,
+  OnChanges,
 } from '@angular/core';
 import 'prismjs';
 import 'prismjs/components/prism-yaml';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-regex';
 
-declare let Prism: any;
+declare const Prism: {
+  highlight(code: string, grammar: unknown, language: string): string;
+  languages: Record<string, unknown>;
+};
 
 export enum supportedLanguages {
   //To allow for more Languages the prism Components have to be imported also. For a list of all Supported Languages see: https://prismjs.com/#supported-languages

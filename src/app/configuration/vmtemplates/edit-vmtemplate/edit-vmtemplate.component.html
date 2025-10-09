@@ -194,7 +194,7 @@
         @if (!!this.editTemplate) {
           <tr>
             <td>Name</td>
-            @if (template.name == uneditedTemplate.name) {
+            @if (template.name === uneditedTemplate.name) {
               <td>
                 {{ template.name }}
               </td>
@@ -209,7 +209,7 @@
           </tr>
           <tr>
             <td>Image</td>
-            @if (template.image == uneditedTemplate.image) {
+            @if (template.image === uneditedTemplate.image) {
               <td>
                 {{ template.image }}
               </td>
@@ -247,7 +247,9 @@
         @if (!!this.editTemplate) {
           <tr>
             <td>Base Price</td>
-            @if (template.cost_base_price == uneditedTemplate.cost_base_price) {
+            @if (
+              template.cost_base_price === uneditedTemplate.cost_base_price
+            ) {
               <td>
                 {{ template.cost_base_price ?? 'None' }}
               </td>
@@ -264,7 +266,7 @@
           </tr>
           <tr>
             <td>Time Unit</td>
-            @if (template.cost_time_unit == uneditedTemplate.cost_time_unit) {
+            @if (template.cost_time_unit === uneditedTemplate.cost_time_unit) {
               <td>
                 {{ template.cost_time_unit ?? 'None' }}
               </td>
@@ -367,7 +369,7 @@
                     {{ item.key }}
                   </td>
                 }
-                @if (item.value == uneditedTemplate.config_map[item.key]) {
+                @if (item.value === uneditedTemplate.config_map[item.key]) {
                   <td>
                     {{ item.value }}
                   </td>
@@ -380,7 +382,7 @@
                 <!-- view of edit value -->
                 @if (
                   uneditedTemplate.config_map.hasOwnProperty(item.key) &&
-                  item.value != uneditedTemplate.config_map[item.key]
+                  item.value !== uneditedTemplate.config_map[item.key]
                 ) {
                   <td>
                     <span class="del-elem arrow-after">{{

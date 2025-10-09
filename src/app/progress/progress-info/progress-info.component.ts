@@ -16,7 +16,7 @@ export class ProgressInfoComponent {
   public progress: Progress = new Progress();
 
   @Input()
-  public pause: Function;
+  pause?: (pause: boolean) => void;
 
   public timeSince = timeSince;
 
@@ -24,7 +24,7 @@ export class ProgressInfoComponent {
 
   public openModal(): void {
     this.infoModal.open();
-    this.pause(true);
+    this.pause?.(true);
   }
 
   get open() {
@@ -34,7 +34,7 @@ export class ProgressInfoComponent {
   set open(value: boolean) {
     this.infoOpen = value;
     if (!this.infoOpen) {
-      this.pause(false);
+      this.pause?.(false);
     }
   }
 }

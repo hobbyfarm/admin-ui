@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { finalize, first, map, shareReplay, take, tap } from 'rxjs/operators';
 import { atou } from '../unicode';
 import { environment } from 'src/environments/environment';
 import { ServerResponse } from './serverresponse';
 
 type GargantuaClientDefaults = {
-  get<T = ServerResponse>(path: string, body?: any): Observable<T>;
-  post<T = ServerResponse>(path: string, body: any): Observable<T>;
-  put<T = ServerResponse>(path: string, body: any): Observable<T>;
+  get<T = ServerResponse>(path: string, body?: unknown): Observable<T>;
+  post<T = ServerResponse>(path: string, body: unknown): Observable<T>;
+  put<T = ServerResponse>(path: string, body: unknown): Observable<T>;
   delete<T = ServerResponse>(path: string): Observable<T>;
 };
 
@@ -23,12 +23,16 @@ export class GargantuaClientFactory {
   scopedClient(prefix: string): GargantuaClient {
     const baseUrl = environment.server + prefix;
 
-    return new Proxy(this.http, {
-      get(target, key) {
-        const prop = (target as any)[key];
+    return new Proxy(this.http as unknown as GargantuaClient, {
+      get(target, key, receiver) {
+        const prop = Reflect.get(target, key, receiver) as unknown;
         return typeof prop === 'function'
-          ? (path: string, ...args: any[]) =>
-              prop.call(target, baseUrl + path, ...args)
+          ? (path: string, ...args: unknown[]) =>
+              (prop as (...a: unknown[]) => unknown).call(
+                target,
+                baseUrl + path,
+                ...args,
+              )
           : prop;
       },
     });

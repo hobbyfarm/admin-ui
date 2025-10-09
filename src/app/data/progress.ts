@@ -22,5 +22,5 @@ export class ProgressStep {
 }
 
 export class ProgressCount {
-  count_map: {};
+  count_map: Record<string, number>;
 }

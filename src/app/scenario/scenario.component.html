@@ -65,7 +65,7 @@
 
 <scenario-wizard
   #scenariowizard
-  (onWizardFinished)="refreshAndDisplayAlert($event)"
+  (wizardFinished)="refreshAndDisplayAlert($event)"
 ></scenario-wizard>
 <clr-modal #deletescenariomodal [(clrModalOpen)]="deleteScenarioSetOpen">
   <h3 class="modal-title">Delete Scenario</h3>

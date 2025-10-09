@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServerResponse } from './serverresponse';
 import { map, switchMap, tap, combineLatestAll } from 'rxjs/operators';
-import { BehaviorSubject, from, of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { atou } from '../unicode';
 import { VMTemplateServiceConfiguration } from './vm-template-service-configuration';
 import { Protocol } from './protocol';

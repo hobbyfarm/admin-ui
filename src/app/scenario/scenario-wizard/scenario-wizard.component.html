@@ -256,7 +256,7 @@
   </clr-wizard-page>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="selectedscenario.steps.length == 0"
+    [clrWizardPageNextDisabled]="selectedscenario.steps.length === 0"
     *rbac="['scenarios.update']"
   >
     <ng-template clrPageTitle>Steps</ng-template>

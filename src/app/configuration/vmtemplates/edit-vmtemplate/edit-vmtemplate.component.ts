@@ -22,7 +22,6 @@ import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { EitherAllOrNoneValidator } from '../../../validators/eitherallornone.validator';
 import { FloatValidator } from '../../../validators/float.validator';
 import { GenericKeyValueGroup } from 'src/app/data/forms';
-import { ServerResponse } from 'src/app/data/serverresponse';
 import { VMTemplateServiceConfiguration } from 'src/app/data/vm-template-service-configuration';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
@@ -232,7 +231,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     if (this.editTemplate) {
       this.template.id = this.editTemplate.id;
       this.vmTemplateService.update(this.template).subscribe({
-        next: (_s: ServerResponse) => {
+        next: () => {
           const alertMsg = 'VM Template saved';
           this.alert.success(alertMsg, false, 1000);
           this.event.next(true);
@@ -249,7 +248,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       });
     } else {
       this.vmTemplateService.create(this.template).subscribe({
-        next: (_s: ServerResponse) => {
+        next: () => {
           const alertMsg = 'VM Template saved';
           this.alert.success(alertMsg, false, 1000);
           this.event.next(true);

@@ -34,7 +34,7 @@ export class ProgressDashboardComponent
   public includeFinished: boolean = false;
   public currentProgress: Progress[] = [];
   public filteredProgress: Progress[] = [];
-  public callInterval: any;
+  public callInterval: ReturnType<typeof setInterval> | null = null;
   public circleVisible: boolean = true;
   public users: User[] = [];
   public settingsForm: FormGroup;

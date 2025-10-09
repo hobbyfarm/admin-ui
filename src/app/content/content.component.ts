@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import { RbacService } from '../data/rbac.service';
 import { ActivatedRoute, Router } from '@angular/router';
 

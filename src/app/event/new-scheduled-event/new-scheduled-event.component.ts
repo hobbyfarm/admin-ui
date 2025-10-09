@@ -41,7 +41,7 @@ import {
 import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
 import { QuicksetValidator } from 'src/app/validators/quickset.validator';
 import { RbacService } from 'src/app/data/rbac.service';
-import { EMPTY, Subscription, iif, of } from 'rxjs';
+import { EMPTY, Subscription } from 'rxjs';
 import {
   EnvToVmTemplatesMappings,
   isFormArrayOfNumbers,
@@ -113,7 +113,7 @@ export class NewScheduledEventComponent
   public virtualMachineTemplateList: Map<string, string> = new Map();
   public isEditMode = false;
 
-  private onCloseFn: Function;
+  private onCloseFn?: () => void;
 
   private wizardSubscription: Subscription;
 
@@ -810,8 +810,6 @@ export class NewScheduledEventComponent
           Object.keys(e.template_mapping).forEach((s: string) => {
             if (templates.has(s)) {
               pass = true;
-            } else {
-              pass = pass;
             }
           });
           return pass;
@@ -965,14 +963,15 @@ export class NewScheduledEventComponent
           Date.now() + 7 * 24 * 3600 * 1000 * duration,
         );
         break;
-      case 'm':
-        let days: number = 0;
+      case 'm': {
+        let days = 0;
         const today = new Date();
         for (let i = 0; i < duration; i++) {
           days += this.daysPerMonth(i, today);
         }
         this.se.end_time = new Date(Date.now() + 24 * 3600 * 1000 * days);
         break;
+      }
     }
   }
 
@@ -1020,12 +1019,10 @@ export class NewScheduledEventComponent
     } else {
       this.saving = false;
     }
-    if (this.onCloseFn) {
-      this.onCloseFn();
-    }
+    this.onCloseFn?.();
   }
 
-  public setOnCloseFn(fn: Function) {
+  public setOnCloseFn(fn: () => void) {
     this.onCloseFn = fn;
   }
 
@@ -1092,7 +1089,7 @@ export class NewScheduledEventComponent
         next: () => {
           this.updated.next(true);
         },
-        error: (_err: any) => {
+        error: () => {
           this.updated.next(true);
         },
       });
@@ -1101,7 +1098,7 @@ export class NewScheduledEventComponent
         next: () => {
           this.updated.next(true);
         },
-        error: (_err: any) => {
+        error: () => {
           this.updated.next(true);
         },
       });
@@ -1112,16 +1109,13 @@ export class NewScheduledEventComponent
     this.filteredScenarios = values;
   }
 
-  getVirtualMachineTemplateName(template: any) {
-    return this.virtualMachineTemplateList.get(template as string) ?? template;
+  getVirtualMachineTemplateName(template: string): string {
+    return this.virtualMachineTemplateList.get(template) ?? template;
   }
 
-  getEnvironmentName(environment: any) {
-    const envList: Environment[] = this.environments.filter(
-      (env) => env.name == environment,
-    );
-    if (envList.length == 0) return environment;
-    return envList.pop()?.display_name ?? environment;
+  getEnvironmentName(environment: string): string {
+    const env = this.environments.find((e) => e.name === environment);
+    return env?.display_name ?? environment;
   }
 
   updateFormValues() {

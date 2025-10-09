@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import {
   Component,
   EventEmitter,
@@ -6,9 +5,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { Progress } from '../../data/progress';
-import { ServerResponse } from '../../data/serverresponse';
 import { ProgressInfoComponent } from '../progress-info/progress-info.component';
 import { timeSince } from '../../utils';
 import { Router } from '@angular/router';
@@ -27,7 +24,8 @@ export class ProgressCardComponent {
   public hideUsername: boolean;
 
   @Input()
-  public pause: Function;
+  @Input()
+  pause?: (pause: boolean) => void;
 
   @Output() nameClickedEvent = new EventEmitter<string>();
 
@@ -45,7 +43,7 @@ export class ProgressCardComponent {
   public terminateSession() {
     this.gargSessionScopedClient
       .put(`/${this.progress.session}/finished`, {})
-      .subscribe((_s: ServerResponse) => {
+      .subscribe(() => {
         this.progress.finished = true;
       });
   }

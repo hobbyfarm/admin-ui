@@ -60,7 +60,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   public username: string = '';
   public courseName: string = '';
 
-  public checkInterval: any;
+  public checkInterval: number | null = null;
 
   @ViewChildren('term') private terms: QueryList<TerminalComponent> =
     new QueryList();
@@ -83,6 +83,13 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private courseService: CourseService,
   ) {}
+
+  private clearCheckInterval(): void {
+    if (this.checkInterval !== null) {
+      clearInterval(this.checkInterval);
+      this.checkInterval = null;
+    }
+  }
 
   handleStepContentClick(e: MouseEvent) {
     // Open all links in a new window
@@ -109,11 +116,11 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     const sessionId = paramMap.get('session')!;
     this.stepnumber = Number(paramMap.get('step') ?? 0);
 
-    this.checkInterval = setInterval(() => {
+    this.checkInterval = window.setInterval(() => {
       this.ssService.getStatus(sessionId).subscribe({
         error: () => {
           this.sessionExpired = true;
-          clearInterval(this.checkInterval);
+          this.clearCheckInterval();
         },
       });
     }, 60000);
@@ -134,9 +141,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(() => {
           return from(this.session.vm_claim);
         }),
-        concatMap((v: string) => {
-          return this.vmClaimService.get(v);
-        }),
+        concatMap((id: string) => this.vmClaimService.getVMClaim(id)),
+
         concatMap((v: VMClaim) => {
           return from(v.vm);
         }),
@@ -159,7 +165,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         error: () => {
           this.sessionExpired = true;
-          clearInterval(this.checkInterval);
+          this.clearCheckInterval();
         },
       });
 
@@ -190,7 +196,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     this.terms.forEach((term) => {
       term.mutationObserver.disconnect();
     });
-    clearInterval(this.checkInterval);
+    this.clearCheckInterval();
   }
 
   goNext() {

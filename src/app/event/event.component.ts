@@ -90,9 +90,9 @@ export class EventComponent implements OnInit {
   public doDelete() {
     this.deleteopen = false;
     this.seService.delete(this.deletingevent).subscribe({
-      next: (_reply: string) => {
+      next: () => {
         this.refresh();
-        const alertMsg = `Deleted scheduled event \"${this.deletingevent.event_name}\" successfully!`;
+        const alertMsg = `Deleted scheduled event "${this.deletingevent.event_name}" successfully!`;
         this.alert.success(alertMsg, false, DEFAULT_ALERT_SUCCESS_DURATION);
       },
       error: (reply: string) => {

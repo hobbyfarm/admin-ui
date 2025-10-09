@@ -50,7 +50,7 @@ export class RolesComponent implements OnInit {
 
     this.editingRule = Object.create(this.roles[roleIndex].rules[ruleIndex]);
 
-    this.editModal.open(true);
+    this.editModal.open();
   }
 
   public new(roleIndex: number): void {
@@ -59,7 +59,7 @@ export class RolesComponent implements OnInit {
 
     this.editingRule = new Rule();
 
-    this.editModal.open(false);
+    this.editModal.open();
   }
 
   public openNewRole(): void {
@@ -73,7 +73,7 @@ export class RolesComponent implements OnInit {
 
     this.roleService
       .update(this.roles[this.editingRoleIndex])
-      .subscribe((a: any) => {});
+      .subscribe(() => {});
   }
 
   /**
@@ -112,14 +112,14 @@ export class RolesComponent implements OnInit {
         );
         this.roleService
           .update(this.roles[this.editingRoleIndex])
-          .subscribe((a: any) => {
+          .subscribe(() => {
             this.deleteModal.close();
           });
         break;
       case 'role':
         this.roleService
           .delete(this.roles[this.editingRoleIndex].name)
-          .subscribe((a: any) => {
+          .subscribe(() => {
             this.roles.splice(this.editingRoleIndex, 1);
             this.deleteModal.close();
           });

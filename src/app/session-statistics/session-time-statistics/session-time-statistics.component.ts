@@ -1,11 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import {
-  Chart,
-  ChartConfiguration,
-  ChartData,
-  ChartEvent,
-  ChartType,
-} from 'chart.js';
+import { Chart, ChartConfiguration, ChartEvent } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
 import { Progress } from '../../data/progress';
@@ -92,7 +86,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
         },
         anchor: 'end',
         align: 'end',
-        formatter: function (duration: number, context) {
+        formatter: function (duration: number) {
           return durationFormatter(duration);
         },
       },
@@ -255,24 +249,18 @@ export class SessionTimeStatisticsComponent implements OnInit {
   }
 
   // events
-  public chartClicked({
-    event,
-    active,
-  }: {
+  public chartClicked(_payload: {
     event?: ChartEvent;
-    active?: {}[];
+    active?: unknown[];
   }): void {
-    // console.log(event, active);
+    void _payload;
   }
 
-  public chartHovered({
-    event,
-    active,
-  }: {
+  public chartHovered(_payload: {
     event?: ChartEvent;
-    active?: {}[];
+    active?: unknown[];
   }): void {
-    // console.log(event, active);
+    void _payload;
   }
 
   private prepareBarchartDatasets() {

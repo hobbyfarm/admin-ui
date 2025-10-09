@@ -9,10 +9,10 @@ import { FormArray, FormControl } from '@angular/forms';
 export class TypedMapComponent<T extends string | number | boolean> {
   @Input() map: FormArray<GenericKeyValueGroup<T>>;
   @Input() input: TypedInput;
-  @Output() change: EventEmitter<boolean> = new EventEmitter();
+  @Output() mapChange: EventEmitter<boolean> = new EventEmitter();
 
   inputChanged() {
-    this.change.emit(true);
+    this.mapChange.emit(true);
   }
 
   removeArrayElement(index: number) {

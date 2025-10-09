@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
-import { Chart, ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
+import { Chart, ChartConfiguration, ChartEvent } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
 import { Progress } from '../data/progress';
@@ -415,16 +415,16 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       this.endDateSignpost.close();
     }
   }
-
   // events
   public chartClicked({
     event,
     active,
   }: {
     event?: ChartEvent;
-    active?: {}[];
+    active?: unknown[];
   }): void {
-    // console.log(event, active);
+    void event;
+    void active;
   }
 
   public chartHovered({
@@ -432,9 +432,10 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     active,
   }: {
     event?: ChartEvent;
-    active?: {}[];
+    active?: unknown[];
   }): void {
-    // console.log(event, active);
+    void event;
+    void active;
   }
 
   private setupScenariosWithSessions(progressData: Progress[]) {

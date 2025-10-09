@@ -21,12 +21,12 @@ export class TypedInputComponent {
       | GenericFormArray
       | GenericKeyValueMapArray;
   }>;
-  @Output() change: EventEmitter<boolean> = new EventEmitter();
+  @Output() mapChange: EventEmitter<boolean> = new EventEmitter();
   readonly TypedInputType = TypedInputType; // Reference to TypedInputTypes enum for template use
   constructor() {}
 
   inputChanged() {
-    this.change.emit(true);
+    this.mapChange.emit(true);
   }
 
   getMapControlsString(inputId: string) {

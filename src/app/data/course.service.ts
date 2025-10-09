@@ -147,7 +147,10 @@ export class CourseService {
   }
 
   public listDynamicScenarios(categories: string[]) {
-    const params = new HttpParams().set('categories', JSON.stringify(categories));
+    const params = new HttpParams().set(
+      'categories',
+      JSON.stringify(categories),
+    );
     return this.gargAdmin.post('/previewDynamicScenarios', params).pipe(
       map((s: ServerResponse) => {
         const obj: string[] = JSON.parse(atou(s.content));
@@ -177,8 +180,10 @@ export class CourseService {
     tempCourse.header_image_path = c.header_image_path;
 
     tempCourse.virtualmachines = c.virtualmachines.map(
-      (v: Object) =>
-        Object.fromEntries(Object.entries(v)) as Record<string, string>,
+      (v: Record<string, unknown>) =>
+        Object.fromEntries(
+          Object.entries(v).map(([k, val]) => [k, String(val ?? '')]),
+        ) as Record<string, string>,
     );
 
     if (scenarios.length > 0) {

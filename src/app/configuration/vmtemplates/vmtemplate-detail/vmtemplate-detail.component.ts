@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { VMTemplateServiceConfiguration } from 'src/app/data/vm-template-service-configuration';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 
@@ -14,23 +15,26 @@ export class VmTemplateDetailComponent implements OnInit {
   public currentVmTemplate: VMTemplate;
   public cloudConfigData: string = '';
 
-  configMap: any;
-  webinterfaces: any;
+  configMap: Record<string, string> = {};
+  webinterfaces: VMTemplateServiceConfiguration[] = [];
 
   constructor(public vmTemplateService: VmtemplateService) {}
 
   ngOnInit() {
     this.loading = true;
-    // Make the server call
     this.vmTemplateService.get(this.id).subscribe((t: VMTemplate) => {
       this.currentVmTemplate = t;
-      // Manage services/webinterfaces and cloud-config Fields
       this.cloudConfigData = this.currentVmTemplate.config_map['cloud-config']
         ? this.currentVmTemplate.config_map['cloud-config']
         : 'No Cloud Config defined';
-      this.webinterfaces = this.currentVmTemplate.config_map['webinterfaces']
-        ? JSON.parse(this.currentVmTemplate.config_map['webinterfaces'])
-        : {};
+      const raw = this.currentVmTemplate.config_map['webinterfaces']
+        ? (JSON.parse(this.currentVmTemplate.config_map['webinterfaces']) as
+            | VMTemplateServiceConfiguration[]
+            | Record<string, VMTemplateServiceConfiguration>)
+        : [];
+
+      this.webinterfaces = Array.isArray(raw) ? raw : Object.values(raw);
+
       delete this.currentVmTemplate.config_map['webinterfaces'];
       delete this.currentVmTemplate.config_map['cloud-config'];
       this.configMap = this.currentVmTemplate.config_map;
@@ -38,7 +42,7 @@ export class VmTemplateDetailComponent implements OnInit {
     });
   }
 
-  isEmpty(object: Object) {
-    return Object.keys(object).length == 0;
+  isEmpty(object: Record<string, unknown>): boolean {
+    return Object.keys(object).length === 0;
   }
 }

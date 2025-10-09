@@ -16,10 +16,10 @@ export class RbacDirective implements OnInit {
   private permissions: string[] = [];
   private logcalOp = 'AND';
 
-  private elseRef: TemplateRef<any>;
+  private elseRef: TemplateRef<unknown>;
 
   constructor(
-    private templateRef: TemplateRef<any>,
+    private templateRef: TemplateRef<unknown>,
     private viewContainer: ViewContainerRef,
     private rbacService: RbacService,
   ) {}
@@ -41,7 +41,7 @@ export class RbacDirective implements OnInit {
   }
 
   @Input()
-  set rbacElse(val: TemplateRef<any>) {
+  set rbacElse(val: TemplateRef<unknown>) {
     this.elseRef = val;
   }
 

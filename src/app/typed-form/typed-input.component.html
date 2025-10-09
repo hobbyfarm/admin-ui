@@ -66,7 +66,7 @@
         </clr-alert-item>
       </clr-alert>
     </div>
-  } @else if (input.isRequired() && getMapSize(input) == 0) {
+  } @else if (input.isRequired() && getMapSize(input) === 0) {
     <div>
       <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
         <clr-alert-item>
@@ -138,7 +138,7 @@
           </clr-alert-item>
         </clr-alert>
       </div>
-    } @else if (input.isRequired() && getArrayLength(input) == 0) {
+    } @else if (input.isRequired() && getArrayLength(input) === 0) {
       <div>
         <clr-alert [clrAlertType]="'danger'" [clrAlertClosable]="false">
           <clr-alert-item>

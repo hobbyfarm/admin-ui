@@ -1,16 +1,5 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import {
-  combineLatest,
-  filter,
-  finalize,
-  forkJoin,
-  of,
-  retry,
-  switchMap,
-  take,
-  throwError,
-} from 'rxjs';
-import { Course } from 'src/app/data/course';
+import { combineLatest, forkJoin, of, retry, switchMap, take } from 'rxjs';
 import { CourseService } from 'src/app/data/course.service';
 import { OTAC } from 'src/app/data/otac.type';
 import { Progress } from 'src/app/data/progress';

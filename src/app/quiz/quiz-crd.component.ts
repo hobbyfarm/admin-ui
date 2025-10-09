@@ -73,7 +73,8 @@ export class QuizCrdComponent implements OnInit {
     this.addNewQuiz.openForCreate();
   }
 
-  onQuizSaved(_: { id: string; quiz: Quiz }) {
+  onQuizSaved(_event: { id: string; quiz: Quiz }) {
+    void _event;
     this.refresh();
   }
 

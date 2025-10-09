@@ -39,8 +39,7 @@ export class ProgressListComponent {
   @Input()
   public hideUsername: boolean;
 
-  @Input()
-  public pause: Function;
+  @Input() pause?: (pause: boolean) => void;
 
   @Output() nameClickedEvent = new EventEmitter<string>();
 

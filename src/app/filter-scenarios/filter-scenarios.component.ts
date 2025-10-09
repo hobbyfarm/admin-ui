@@ -27,7 +27,6 @@ export class FilterScenariosComponent implements OnInit {
   public categoryFilterForm = new FormGroup({
     categoryControl: new FormControl<string[] | null>([]),
   });
-  event: any;
 
   constructor(
     public scenarioService: ScenarioService,

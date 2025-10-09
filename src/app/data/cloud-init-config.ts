@@ -6,14 +6,17 @@ export class CloudInitConfig {
   cloudConfigYaml: string = '';
   public vmServices: Map<string, VMTemplateServiceConfiguration> = new Map();
 
-  addContent(key: string, value: any) {
-    const content = this.contentMap.get(key);
-    if (!content) {
-      this.contentMap.set(key, value);
-    } else if (Array.isArray(value)) {
-      value.forEach((element) => content.push(element));
+  addContent(key: string, value: unknown): void {
+    const toStrings = (v: unknown): string[] =>
+      Array.isArray(v) ? v.map((e) => String(e ?? '')) : [String(v ?? '')];
+
+    const incoming = toStrings(value);
+    const existing = this.contentMap.get(key);
+
+    if (!existing) {
+      this.contentMap.set(key, incoming);
     } else {
-      content.push(value);
+      existing.push(...incoming);
     }
   }
 
@@ -27,11 +30,14 @@ export class CloudInitConfig {
     this.buildNewYAMLFile();
   }
 
-  buildMapFromString(text: string): Record<string, any> {
+  buildMapFromString(text: string): Record<string, unknown> {
     if (!text) {
       return {};
     }
-    return YAML.parse(text);
+    const parsed = YAML.parse(text) as unknown;
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
   }
 
   getConfigAsString() {
@@ -43,7 +49,7 @@ export class CloudInitConfig {
 
   buildNewYAMLFile() {
     this.contentMap = new Map();
-    for (const [_, vmService] of this.vmServices) {
+    for (const [, vmService] of this.vmServices) {
       if (!vmService.cloudConfigMap) {
         continue;
       }
