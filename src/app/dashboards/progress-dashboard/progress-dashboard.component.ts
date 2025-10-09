@@ -176,7 +176,7 @@ export class ProgressDashboardComponent
       this.scenarioService.list(),
       this.courseService.list(),
     ]).subscribe(([progressList, users, scenarios, courses]) => {
-      const usersWithProgress: String[] = progressList.map((prog) => prog.user);
+      const usersWithProgress: string[] = progressList.map((prog) => prog.user);
 
       if (!includeFinished) {
         progressList = progressList.filter((prog) => !prog.finished);
@@ -249,7 +249,7 @@ export class ProgressDashboardComponent
       );
     });
     const filename = this.selectedEvent.event_name + '_sessions.csv';
-    var element = document.createElement('a');
+    const element = document.createElement('a');
     element.setAttribute(
       'href',
       'data:text/plain;charset=utf-8,' + encodeURIComponent(progressCSV),

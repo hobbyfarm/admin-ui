@@ -41,7 +41,7 @@ export class EditAccessCodesComponent implements OnChanges {
   }
 
   deleteAccessCode(a: string) {
-    var acIndex = this.user.access_codes.findIndex((v: string) => {
+    const acIndex = this.user.access_codes.findIndex((v: string) => {
       return v == a;
     });
 

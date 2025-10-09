@@ -113,7 +113,7 @@ export class RuleFormComponent implements OnInit {
             (ag: ApiGroup) => ag == rbacApiGroup,
           ) == undefined
         ) {
-          let groups = this.apiGroupControl.value;
+          const groups = this.apiGroupControl.value;
           groups.push(rbacApiGroup);
           this.apiGroupControl.setValue(groups, {
             emitEvent: false,
@@ -125,7 +125,7 @@ export class RuleFormComponent implements OnInit {
             (ag: ApiGroup) => ag == hobbyfarmApiGroup,
           ) == undefined
         ) {
-          let groups = this.apiGroupControl.value;
+          const groups = this.apiGroupControl.value;
           groups.push(hobbyfarmApiGroup);
           this.apiGroupControl.setValue(groups, {
             emitEvent: false,

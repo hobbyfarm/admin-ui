@@ -136,8 +136,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   private buildVMServices(configMapData?: string) {
     if (configMapData) {
-      let temp = JSON.parse(configMapData);
-      let resultMap = new Map();
+      const temp = JSON.parse(configMapData);
+      const resultMap = new Map();
       temp.forEach((entry) => {
         entry.cloudConfigMap = new Map(Object.entries(entry['cloudConfigMap'])); // Convert Object to map
         entry['id'] = entry['id'] ?? uuid.v4(); //Catch old entries, that do not have an ID
@@ -150,7 +150,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public prepareConfigMap(vmTemplate: VMTemplate) {
     // differs from buildConfigMap() in that we are copying existing values
     // into the form
-    let configKeys = Object.keys(vmTemplate.config_map).filter(
+    const configKeys = Object.keys(vmTemplate.config_map).filter(
       (elem) => elem !== this.cloudConfigKey && elem != this.vmServiceKey,
     );
     this.cloudConfig.vmServices = this.buildVMServices(
@@ -212,13 +212,13 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     }
     this.template.config_map[this.cloudConfigKey] =
       this.cloudConfig.cloudConfigYaml;
-    let tempArray: VMTemplateServiceConfiguration[] = [];
+    const tempArray: VMTemplateServiceConfiguration[] = [];
     this.cloudConfig.vmServices.forEach(
       (vmService: VMTemplateServiceConfiguration) => {
         tempArray.push(vmService);
       },
     );
-    let jsonString = JSON.stringify(tempArray);
+    const jsonString = JSON.stringify(tempArray);
     this.template.config_map[this.vmServiceKey] = jsonString;
   }
   public copyTemplate() {

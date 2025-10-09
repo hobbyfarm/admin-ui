@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import {
   combineLatest,
   filter,
@@ -34,7 +34,7 @@ interface dashboardUsers extends User {
   templateUrl: './users-dashboard.component.html',
   styleUrls: ['./users-dashboard.component.scss'],
 })
-export class UsersDashboardComponent implements OnInit {
+export class UsersDashboardComponent implements OnInit, OnChanges {
   @Input()
   selectedEvent: ScheduledEventBase;
 
@@ -70,7 +70,7 @@ export class UsersDashboardComponent implements OnInit {
       );
     });
     const filename = this.selectedEvent.event_name + '_users.csv';
-    var element = document.createElement('a');
+    const element = document.createElement('a');
     element.setAttribute(
       'href',
       'data:text/plain;charset=utf-8,' + encodeURIComponent(userCSV),

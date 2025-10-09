@@ -74,7 +74,7 @@ export class TypedSettingsService {
 
   public get(scope: string, setting: string) {
     if (this.cachedTypedInputList && this.cachedTypedInputList.has(scope)) {
-      let scopedSettings = this.cachedTypedInputList.get(scope)!;
+      const scopedSettings = this.cachedTypedInputList.get(scope)!;
       if (scopedSettings.has(setting)) {
         return of(scopedSettings.get(setting) ?? ({} as TypedInput));
       } else {
@@ -83,7 +83,7 @@ export class TypedSettingsService {
     } else {
       return this.list(scope).pipe(
         tap((typedInputs: TypedInput[]) => {
-          let m: Map<string, TypedInput> = new Map();
+          const m: Map<string, TypedInput> = new Map();
           typedInputs.forEach((typedSetting) => {
             m.set(typedSetting.id, typedSetting);
           });
@@ -127,7 +127,7 @@ export class TypedSettingsService {
   }
 
   private buildTypedInputList(pList: PreparedSettings[]) {
-    let settings: TypedInput[] = [];
+    const settings: TypedInput[] = [];
 
     pList.forEach((preparedSetting: PreparedSettings) => {
       const typedInputRepresentationIndex =
@@ -180,11 +180,11 @@ export class TypedSettingsService {
   }
 
   private buildPreparedSettingsList(inputs: TypedInput[]) {
-    let preparedSettings: Partial<PreparedSettings>[] = [];
+    const preparedSettings: Partial<PreparedSettings>[] = [];
     inputs.forEach((input: TypedInput) => {
       // Maps will not be converted correctly with JSON.stringify, we have to convert them to an Object.
       if (input.isMap(input.value)) {
-        let jsonObject = {};
+        const jsonObject = {};
         for (const key in input.value) {
           if (input.value.hasOwnProperty(key)) {
             jsonObject[key] = input.value[key];

@@ -80,8 +80,8 @@ export class DashboardDetailsComponent implements OnInit, OnDestroy {
    */
   async setRbacCheck(resources: Resource[], verbs: Verb[]) {
     let rbacCheck = true;
-    outerForLoop: for (let resource of resources) {
-      for (let verb of verbs) {
+    outerForLoop: for (const resource of resources) {
+      for (const verb of verbs) {
         const allowed: boolean = await this.rbacService.Grants(resource, verb);
         if (!allowed) {
           rbacCheck = false;

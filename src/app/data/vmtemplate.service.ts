@@ -41,7 +41,7 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
   }
 
   public update(template: VMTemplate) {
-    let params = new HttpParams({ encoder: new CustomHttpParamEncoder() })
+    const params = new HttpParams({ encoder: new CustomHttpParamEncoder() })
       .set('id', template.id)
       .set('name', template.name)
       .set('image', template.image)
@@ -53,7 +53,7 @@ export class VmtemplateService extends ListableResourceClient<VMTemplate> {
   }
 
   public create(template: VMTemplate) {
-    let params = new HttpParams({ encoder: new CustomHttpParamEncoder() })
+    const params = new HttpParams({ encoder: new CustomHttpParamEncoder() })
       .set('name', template.name)
       .set('image', template.image)
       .set('config_map', JSON.stringify(template.config_map))

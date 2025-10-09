@@ -3,13 +3,13 @@ import {
   EventEmitter,
   HostListener,
   Output,
-  Renderer2,
+  Renderer2, OnDestroy,
 } from '@angular/core';
 
 @Directive({
   selector: 'textarea[resize]',
 })
-export class ResizableTextAreaDirective {
+export class ResizableTextAreaDirective implements OnDestroy {
   @Output() resize = new EventEmitter();
 
   width: number;

@@ -161,7 +161,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
     );
 
     // Initialize step time and counts
-    let stepTime: number[] = [];
+    const stepTime: number[] = [];
     let stepTimes: number[][] = [];
     const stepProgressCount: number[] = [];
 
@@ -172,7 +172,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
       }
 
       // Initialize temporary array to keep track of step times for this progress
-      let stepTimeForThisProgress: number[] = [];
+      const stepTimeForThisProgress: number[] = [];
 
       // Iterate through each step in the progress
       for (let i = 1; i < progress.steps.length; i++) {
@@ -224,7 +224,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
 
     // Calculate the median duration for each step and sum them
     let totalMedianDuration = 0;
-    let medianDurationPerStep = stepTimes.map((times) => {
+    const medianDurationPerStep = stepTimes.map((times) => {
       if (times.length === 0) return 0;
       const mid = Math.floor(times.length / 2);
       return times[mid];

@@ -7,14 +7,14 @@ import {
   OnDestroy,
   Output,
   SimpleChanges,
-  ViewChild,
+  ViewChild, OnChanges,
 } from '@angular/core';
 import 'prismjs';
 import 'prismjs/components/prism-yaml';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-regex';
 
-declare var Prism: any;
+declare let Prism: any;
 
 export enum supportedLanguages {
   //To allow for more Languages the prism Components have to be imported also. For a list of all Supported Languages see: https://prismjs.com/#supported-languages
@@ -29,9 +29,9 @@ export enum supportedLanguages {
   styleUrls: ['./code-with-syntax-highlighting.component.scss'],
 })
 export class CodeWithSyntaxHighlightingComponent
-  implements AfterViewInit, OnDestroy
+  implements AfterViewInit, OnDestroy, OnChanges
 {
-  @Input('textValue') set textValue(value: string) {
+  @Input() set textValue(value: string) {
     this._textValue = value;
     this.count++;
     if (!this.resizeable) {
@@ -94,7 +94,7 @@ export class CodeWithSyntaxHighlightingComponent
   }
 
   setStyleValues() {
-    if (!!this.initialized) {
+    if (this.initialized) {
       this.codeEditor.nativeElement.style.outline = this.outline;
       this.codeEditor.nativeElement.style.height = this.height;
       this.codeEditor.nativeElement.style.width = this.width;
@@ -116,7 +116,7 @@ export class CodeWithSyntaxHighlightingComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (!!changes.textValue) {
+    if (changes.textValue) {
       this._textValue = changes.textValue.currentValue;
       this.setHighlightedText(changes.textValue.currentValue);
     }
@@ -124,7 +124,7 @@ export class CodeWithSyntaxHighlightingComponent
 
   onValueChange(event) {
     this.count++;
-    let newText: string = event.target.value;
+    const newText: string = event.target.value;
     this.textChanged.emit(newText);
   }
 
@@ -136,7 +136,7 @@ export class CodeWithSyntaxHighlightingComponent
   }
 
   resizeEvent(event) {
-    let newHeight = event.height + 'px';
+    const newHeight = event.height + 'px';
     this.codeEditor.nativeElement.style.height = newHeight;
     this.codeBlock.nativeElement.style.height = newHeight;
     this.textarea.nativeElement.style.height = newHeight;

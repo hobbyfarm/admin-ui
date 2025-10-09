@@ -57,7 +57,7 @@ export class AuthnService {
   private timeoutId: any;
 
   login(email: string, password: string) {
-    let body = new HttpParams().set('email', email).set('password', password);
+    const body = new HttpParams().set('email', email).set('password', password);
     return this.garg.post('/authenticate', body).pipe(
       tap((s: ServerResponse) => {
         // should have a token here

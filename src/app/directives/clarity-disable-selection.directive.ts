@@ -16,7 +16,7 @@ export class ClarityDisableSelectionDirective implements OnChanges {
   constructor(private elementRef: ElementRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    let nativeRef = this.elementRef.nativeElement;
+    const nativeRef = this.elementRef.nativeElement;
     if (this.disabled) {
       nativeRef.classList.add('clr_disable_selection');
     } else {

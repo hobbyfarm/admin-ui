@@ -48,8 +48,8 @@ export class CloudInitConfig {
         continue;
       }
       for (const [key, value] of Object.entries(vmService.cloudConfigMap)) {
-        let valCopy = structuredClone(value);
-        let keyCopy = structuredClone(key);
+        const valCopy = structuredClone(value);
+        const keyCopy = structuredClone(key);
         this.addContent(keyCopy, valCopy);
       }
     }

@@ -22,7 +22,7 @@ export class UserService extends ListableResourceClient<User> {
     password: string = '',
     accesscodes?: string[],
   ) {
-    var params = new HttpParams()
+    let params = new HttpParams()
       .set('id', id)
       .set('email', email)
       .set('password', password);

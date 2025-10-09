@@ -57,8 +57,8 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public pauseLastUpdated: Date = new Date();
   public pauseRemainingString = '';
-  public username: String = '';
-  public courseName: String = '';
+  public username: string = '';
+  public courseName: string = '';
 
   public checkInterval: any;
 

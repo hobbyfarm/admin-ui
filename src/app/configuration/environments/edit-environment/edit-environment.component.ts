@@ -250,7 +250,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   public getValidVMTemplates() {
     let vmtList = this.VMTemplates;
-    let selectedVMTs: string[] = [];
+    const selectedVMTs: string[] = [];
     for (let i = 0; i < this.templateMappings.controls.templates.length; i++) {
       // i = index of template
       selectedVMTs.push(

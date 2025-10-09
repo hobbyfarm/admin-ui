@@ -299,10 +299,10 @@ export class TypedInput {
   getTypedInputRawMap<T extends string | number | boolean>(
     fa: FormArray<GenericKeyValueGroup<T>>,
   ) {
-    let result: { [key: string]: T } = {};
+    const result: { [key: string]: T } = {};
     fa.controls.forEach((group: GenericKeyValueGroup<T>) => {
-      let key = group.controls['key'].value;
-      let value: T = this.getTypedInputScalarValue(
+      const key = group.controls['key'].value;
+      const value: T = this.getTypedInputScalarValue(
         group.controls['value'].value,
       ) as T;
       result[key] = value;

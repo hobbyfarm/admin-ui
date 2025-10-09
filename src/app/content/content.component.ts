@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   selector: 'app-content',
   templateUrl: './content.component.html',
 })
-export class ContentComponent implements OnInit {
+export class ContentComponent implements OnInit, OnChanges {
   constructor(
     public rbacService: RbacService,
     private route: Router,

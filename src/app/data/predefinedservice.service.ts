@@ -49,7 +49,7 @@ export class PredefinedServiceService {
           return of(templateServiceConfig);
         }),
         map((resp: IVMTemplateServiceConfiguration) => {
-          let parsedVmtsc = new VMTemplateServiceConfiguration(
+          const parsedVmtsc = new VMTemplateServiceConfiguration(
             resp.name,
             resp.has_webinterface,
             resp.port,

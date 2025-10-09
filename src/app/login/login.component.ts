@@ -29,7 +29,7 @@ export class LoginComponent {
       this.background = 'url(' + this.config.login.background + ')';
     }
     if (this.config.favicon) {
-      let fi = <HTMLLinkElement>document.querySelector('#favicon');
+      const fi = <HTMLLinkElement>document.querySelector('#favicon');
       fi.href = this.config.favicon;
     }
   }

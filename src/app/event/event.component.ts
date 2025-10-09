@@ -15,9 +15,9 @@ import {
 } from '../alert/alert';
 
 interface ExtendedScheduledEvent extends ScheduledEventBase {
-  creatorEmail?: String;
-  courseNames?: String[];
-  scenarioNames?: String[];
+  creatorEmail?: string;
+  courseNames?: string[];
+  scenarioNames?: string[];
 }
 
 @Component({

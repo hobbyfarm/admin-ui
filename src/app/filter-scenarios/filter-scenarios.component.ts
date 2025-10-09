@@ -57,7 +57,7 @@ export class FilterScenariosComponent implements OnInit {
       return;
     }
 
-    let sc: Scenario[] = [];
+    const sc: Scenario[] = [];
 
     if (this.selectedCategories.includes('__none__')) {
       this.scenarios.forEach((s) => {
@@ -69,7 +69,7 @@ export class FilterScenariosComponent implements OnInit {
     }
 
     this.scenarios.forEach((s) => {
-      let matches = s.categories.filter((element) =>
+      const matches = s.categories.filter((element) =>
         this.selectedCategories.includes(element),
       );
       if (matches.length > 0) {
@@ -80,7 +80,7 @@ export class FilterScenariosComponent implements OnInit {
     this.filteredScenarios = sc;
   }
   calculateCategories() {
-    let c = new Set<string>();
+    const c = new Set<string>();
     this.scenarios.forEach((s) => {
       s.categories.forEach((category) => c.add(category));
     });

@@ -71,7 +71,7 @@ export class EditUserComponent implements OnInit, OnChanges {
 
   saveDetails() {
     this.saving = true;
-    var password = this.userDetailsForm.controls.password.value;
+    let password = this.userDetailsForm.controls.password.value;
 
     if (password == null) {
       password = '';

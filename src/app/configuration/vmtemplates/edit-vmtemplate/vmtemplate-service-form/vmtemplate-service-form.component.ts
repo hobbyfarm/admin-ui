@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, DoCheck } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { DEFAULT_ALERT_WARNING_DURATION } from 'src/app/alert/alert';
 import { AlertComponent } from 'src/app/alert/alert.component';
@@ -16,7 +16,7 @@ import * as uuid from 'uuid';
   templateUrl: './vmtemplate-service-form.component.html',
   styleUrls: ['./vmtemplate-service-form.component.scss'],
 })
-export class VMTemplateServiceFormComponent implements OnInit {
+export class VMTemplateServiceFormComponent implements OnInit, DoCheck {
   predefinedInterfaces: VMTemplateServiceConfiguration[];
 
   @Input()
@@ -142,7 +142,7 @@ export class VMTemplateServiceFormComponent implements OnInit {
   }
 
   newVMServiceClose() {
-    let newVMService: VMTemplateServiceConfiguration =
+    const newVMService: VMTemplateServiceConfiguration =
       new VMTemplateServiceConfiguration();
     newVMService.id = this.editVMService?.id ?? uuid.v4();
     newVMService.name = this.newVMServiceFormGroup.controls.name.value;

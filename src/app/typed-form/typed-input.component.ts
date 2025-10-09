@@ -84,18 +84,18 @@ export class TypedInputComponent {
     }
     if (typedInput.isFormArrayString(control)) {
       const defaultVal = typeof parsedVal == 'string' ? parsedVal : '';
-      let c: FormControl<string> =
+      const c: FormControl<string> =
         typedInput.getTypedInputFormControl(defaultVal);
       this.addControlToArray(control, c);
     } else if (typedInput.isFormArrayNumber(control)) {
       const defaultVal = typeof parsedVal == 'number' ? parsedVal : 0;
-      let c: FormControl<number> =
+      const c: FormControl<number> =
         typedInput.getTypedInputFormControl(defaultVal);
       this.addControlToArray(control, c);
     } else {
       // if (typedInput.isFormArrayBoolean(control))
       const defaultVal = typeof parsedVal == 'boolean' ? parsedVal : false;
-      let c: FormControl<boolean> =
+      const c: FormControl<boolean> =
         typedInput.getTypedInputFormControl(defaultVal);
       this.addControlToArray(control, c);
     }
@@ -112,18 +112,18 @@ export class TypedInputComponent {
     }
     if (typedInput.isKeyValueMapArrayString(control)) {
       const defaultVal = typeof parsedVal == 'string' ? parsedVal : '';
-      let c: FormControl<string> =
+      const c: FormControl<string> =
         typedInput.getTypedInputFormControl(defaultVal);
       this.addControlToMap(control, c);
     } else if (typedInput.isKeyValueMapArrayNumber(control)) {
       const defaultVal = typeof parsedVal == 'number' ? parsedVal : 0;
-      let c: FormControl<number> =
+      const c: FormControl<number> =
         typedInput.getTypedInputFormControl(defaultVal);
       this.addControlToMap(control, c);
     } else {
       // if (typedInput.isKeyValueMapArrayBoolean(control))
       const defaultVal = typeof parsedVal == 'boolean' ? parsedVal : false;
-      let c: FormControl<boolean> =
+      const c: FormControl<boolean> =
         typedInput.getTypedInputFormControl(defaultVal);
       this.addControlToMap(control, c);
     }
@@ -147,7 +147,7 @@ export class TypedInputComponent {
     fa: FormArray<GenericKeyValueGroup<T>>,
     vControl: FormControl<T>,
   ) {
-    let kControl = new FormControl('', {
+    const kControl = new FormControl('', {
       validators: [Validators.required, UniqueKeyValidator],
       nonNullable: true,
     });

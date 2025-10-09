@@ -90,7 +90,7 @@ export class ListableResourceClient<
 
   deleteAndNotify(id: string) {
     const cacheKey = '/list';
-    let subject = this.listClient.cache.get(cacheKey);
+    const subject = this.listClient.cache.get(cacheKey);
     if (!subject) {
       return;
     } else {
@@ -101,7 +101,7 @@ export class ListableResourceClient<
 
   addAndNotify(t: T) {
     const cacheKey = '/list';
-    let subject = this.listClient.cache.get(cacheKey);
+    const subject = this.listClient.cache.get(cacheKey);
     if (!subject) {
       return;
     } else {

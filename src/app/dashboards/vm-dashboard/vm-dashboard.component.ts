@@ -3,7 +3,7 @@ import {
   Component,
   Input,
   OnInit,
-  ViewChild,
+  ViewChild, OnChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { combineLatest, Observable, of, switchMap, tap } from 'rxjs';
@@ -32,7 +32,7 @@ interface dashboardVmSet extends VmSet {
   templateUrl: './vm-dashboard.component.html',
   styleUrls: ['./vm-dashboard.component.scss'],
 })
-export class VmDashboardComponent implements OnInit {
+export class VmDashboardComponent implements OnInit, OnChanges {
   @Input()
   selectedEvent: ScheduledEventBase;
 
@@ -50,7 +50,7 @@ export class VmDashboardComponent implements OnInit {
   public vmSets: dashboardVmSet[] = [];
 
   public selectedVM: VirtualMachine | undefined;
-  public openPanels: Set<String> = new Set();
+  public openPanels: Set<string> = new Set();
 
   @ViewChild('deleteModal') deleteModal: DeleteConfirmationComponent;
 
@@ -90,11 +90,11 @@ export class VmDashboardComponent implements OnInit {
       }));
       // dynamic machines have no associated vmSet
       if (this.vms.filter((vm) => vm.vm_set_id == '').length > 0) {
-        let groupedVms: Map<string, VirtualMachine[]> = this.groupByEnvironment(
+        const groupedVms: Map<string, VirtualMachine[]> = this.groupByEnvironment(
           this.vms.filter((vm) => vm.vm_set_id == ''),
         );
         groupedVms.forEach((element, environment) => {
-          let vmSet: dashboardVmSet = {
+          const vmSet: dashboardVmSet = {
             ...new VmSet(),
             base_name: environment,
             stepOpen: this.openPanels.has(environment),
@@ -124,7 +124,7 @@ export class VmDashboardComponent implements OnInit {
       userId = users.filter((user) => user.email === vm.user)[0]?.id;
     });
     if (!userId) return;
-    var progress: Progress; //If there is a valid User ID, get all active Progresses of that user.
+    let progress: Progress; //If there is a valid User ID, get all active Progresses of that user.
     this.progressService
       .listByScheduledEvent(this.selectedEvent.id, false)
       .subscribe((progressList) => {
@@ -143,14 +143,14 @@ export class VmDashboardComponent implements OnInit {
   }
 
   groupByEnvironment(vms: VirtualMachine[]) {
-    let envMap = new Map<string, VirtualMachine[]>();
+    const envMap = new Map<string, VirtualMachine[]>();
     vms.forEach((element) => {
       const envVms = envMap.get(element.environment_id);
       if (envVms) {
         envVms.push(element);
         envMap.set(element.environment_id, envVms);
       } else {
-        let envVms: VirtualMachine[] = [element];
+        const envVms: VirtualMachine[] = [element];
         envMap.set(element.environment_id, envVms);
       }
     });

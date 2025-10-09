@@ -47,7 +47,7 @@ export class EventUserListComponent {
   }
 
   getUsersActiveProgressName(user) {
-    let scenarioName = this.progress.filter(
+    const scenarioName = this.progress.filter(
       (p) => p.user === user.id && p.finished === false,
     )[0]?.scenario_name;
     return scenarioName ?? '';

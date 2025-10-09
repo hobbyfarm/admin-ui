@@ -315,7 +315,7 @@ export class NewScheduledEventComponent
   @ViewChild('endTimeSignpost') endTimeSignpost: ClrSignpostContent;
 
   public scenariosSelected(s: Scenario[]) {
-    let selected: Scenario[] = [];
+    const selected: Scenario[] = [];
     this.se.scenarios = [];
 
     this.selectedscenarios.forEach((element) => {
@@ -388,7 +388,7 @@ export class NewScheduledEventComponent
     }
     const environmentFormGroups = Object.values(vmCountFormGroup.controls);
     let requiredVmCountSatisfied = true;
-    for (let template in this.requiredVmCounts) {
+    for (const template in this.requiredVmCounts) {
       const requiredVmCount: number = this.requiredVmCounts[template];
       let currentVmCount = 0;
       environmentFormGroups.forEach(
@@ -413,8 +413,8 @@ export class NewScheduledEventComponent
   public setupAdvancedVMPage(ea: EnvironmentAvailability) {
     const vmTemplateMappings: VmTemplatesFormGroup =
       new FormGroup<VmTemplateMappings>({});
-    let templates = this.getTemplates(ea.environment);
-    for (let template in this.requiredVmCounts) {
+    const templates = this.getTemplates(ea.environment);
+    for (const template in this.requiredVmCounts) {
       if (!templates.includes(template)) {
         //this environment does not support this template
         continue;
@@ -435,8 +435,8 @@ export class NewScheduledEventComponent
   }
 
   public checkIfSimplePageCanBeDone() {
-    let simpleUserCounts: Record<string, number> = {};
-    for (let env in this.uneditedScheduledEvent.required_vms) {
+    const simpleUserCounts: Record<string, number> = {};
+    for (const env in this.uneditedScheduledEvent.required_vms) {
       const entries = Object.entries(this.se.required_vms[env]);
       const lastEntry = entries.pop();
 
@@ -585,7 +585,7 @@ export class NewScheduledEventComponent
         });
       });
       // 2. Set the required VM count to the maximum count of VMs needed in one scenario.
-      for (let template in vmCountPerTemplate) {
+      for (const template in vmCountPerTemplate) {
         if (this.requiredVmCounts[template]) {
           this.requiredVmCounts[template] = Math.max(
             vmCountPerTemplate[template],
@@ -613,7 +613,7 @@ export class NewScheduledEventComponent
       });
 
       // 2. Set the required VM count to the maximum count of VMs needed
-      for (let template in vmCountPerTemplate) {
+      for (const template in vmCountPerTemplate) {
         if (this.requiredVmCounts[template]) {
           this.requiredVmCounts[template] = Math.max(
             vmCountPerTemplate[template],

@@ -12,14 +12,14 @@ import { ClrModal } from '@clr/angular';
   selector: 'delete-confirmation',
   templateUrl: './delete-confirmation.component.html',
 })
-export class DeleteConfirmationComponent {
+export class DeleteConfirmationComponent implements OnInit {
   public modalOpen: boolean = false;
 
   @Output()
   public delete: EventEmitter<boolean> = new EventEmitter();
 
   @Input()
-  public message: String = 'Are you sure you wish to delete this object?';
+  public message: string = 'Are you sure you wish to delete this object?';
 
   constructor() {}
 
