@@ -1,32 +1,26 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import {
-  Chart,
-  ChartConfiguration,
-  ChartData,
-  ChartEvent,
-  ChartType,
-} from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
-import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
-import { Progress } from '../../data/progress';
-import { ProgressService } from '../../data/progress.service';
-import { durationFormatter } from '../../utils';
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Chart, ChartConfiguration, ChartEvent } from "chart.js";
+import { BaseChartDirective } from "ng2-charts";
+import DataLabelsPlugin, { Context } from "chartjs-plugin-datalabels";
+import { Progress } from "../../data/progress";
+import { ProgressService } from "../../data/progress.service";
+import { durationFormatter } from "../../utils";
 import {
   FormControl,
   FormGroup,
   NonNullableFormBuilder,
   Validators,
-} from '@angular/forms';
-import { BarChartData } from 'src/app/data/barchartdata';
+} from "@angular/forms";
+import { BarChartData } from "src/app/data/barchartdata";
 
 type ChartDetailsFormGroup = FormGroup<{
   scenario: FormControl<string>;
 }>;
 
 @Component({
-  selector: 'app-session-time-statistics',
-  templateUrl: './session-time-statistics.component.html',
-  styleUrls: ['./session-time-statistics.component.scss'],
+  selector: "app-session-time-statistics",
+  templateUrl: "./session-time-statistics.component.html",
+  styleUrls: ["./session-time-statistics.component.scss"],
 })
 export class SessionTimeStatisticsComponent implements OnInit {
   // If no scheduledEvent is given, we display statistics about all progresses for a given time range
@@ -53,10 +47,10 @@ export class SessionTimeStatisticsComponent implements OnInit {
     datasets: [],
   };
   public barChartOptions: ChartConfiguration<
-    'bar',
+    "bar",
     number[],
     string
-  >['options'] = {
+  >["options"] = {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
     scales: {
@@ -68,11 +62,11 @@ export class SessionTimeStatisticsComponent implements OnInit {
           stepSize: 60,
           maxTicksLimit: 10,
           callback: function (value) {
-            if (typeof value === 'string') {
+            if (typeof value === "string") {
               value = parseInt(value);
             }
             if (isNaN(value) || value < 0) {
-              throw new Error('Error parsing value: Invalid duration');
+              throw new Error("Error parsing value: Invalid duration");
             }
             // Format y-axis labels to time string
             return durationFormatter(value);
@@ -83,16 +77,16 @@ export class SessionTimeStatisticsComponent implements OnInit {
     plugins: {
       legend: {
         display: true,
-        position: 'top',
+        position: "top",
       },
       datalabels: {
         // only display datalabels if != 0
         display: (context: Context) => {
           return context.dataset.data[context.dataIndex] != 0;
         },
-        anchor: 'end',
-        align: 'end',
-        formatter: function (duration: number, context) {
+        anchor: "end",
+        align: "end",
+        formatter: function (duration: number) {
           return durationFormatter(duration);
         },
       },
@@ -101,8 +95,8 @@ export class SessionTimeStatisticsComponent implements OnInit {
   public barChartPlugins = [
     DataLabelsPlugin,
     {
-      id: 'legendMargin',
-      beforeInit: function (chart: Chart<'bar', number[], string>) {
+      id: "legendMargin",
+      beforeInit: function (chart: Chart<"bar", number[], string>) {
         if (chart.legend) {
           // Get the reference to the original fit function
           const originalFit = chart.legend.fit;
@@ -126,7 +120,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
 
   ngOnInit(): void {
     const firstScenario =
-      this.scenariosWithSessionMap?.keys().next().value ?? '';
+      this.scenariosWithSessionMap?.keys().next().value ?? "";
     this.chartDetails = this._fb.group({
       scenario: this._fb.control<string>(firstScenario, [
         Validators.required,
@@ -255,24 +249,18 @@ export class SessionTimeStatisticsComponent implements OnInit {
   }
 
   // events
-  public chartClicked({
-    event,
-    active,
-  }: {
+  public chartClicked(_payload: {
     event?: ChartEvent;
-    active?: {}[];
+    active?: unknown[];
   }): void {
-    // console.log(event, active);
+    void _payload;
   }
 
-  public chartHovered({
-    event,
-    active,
-  }: {
+  public chartHovered(_payload: {
     event?: ChartEvent;
-    active?: {}[];
+    active?: unknown[];
   }): void {
-    // console.log(event, active);
+    void _payload;
   }
 
   private prepareBarchartDatasets() {
@@ -281,15 +269,15 @@ export class SessionTimeStatisticsComponent implements OnInit {
       data: Array.from<number>({
         length: this.barChartData.labels.length,
       }).fill(0),
-      label: 'Average',
-      stack: 'a',
+      label: "Average",
+      stack: "a",
     });
     this.barChartData.datasets.push({
       data: Array.from<number>({
         length: this.barChartData.labels.length,
       }).fill(0),
-      label: 'Median',
-      stack: 'b',
+      label: "Median",
+      stack: "b",
     });
   }
 
@@ -310,7 +298,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
     // We need to keep the same reference for our label array, otherwise label data is not updated correctly -> hence set length to 0
     this.barChartData.labels.length = 0;
     for (let i = 0; i < this.avgDuration.length; i++) {
-      this.barChartData.labels.push('Step ' + (i + 1));
+      this.barChartData.labels.push("Step " + (i + 1));
     }
   }
 
@@ -319,7 +307,7 @@ export class SessionTimeStatisticsComponent implements OnInit {
   }
 
   public getNumberOfSessionsForStep(stepIndex: number) {
-    return this.stepCounts[stepIndex] ?? '-';
+    return this.stepCounts[stepIndex] ?? "-";
   }
 
   public getFormattedMedianOfStep(stepIndex: number) {

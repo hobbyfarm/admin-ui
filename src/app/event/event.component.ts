@@ -1,18 +1,18 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ScheduledEventBase } from 'src/app/data/scheduledevent';
-import { ScheduledeventService } from 'src/app/data/scheduledevent.service';
-import { NewScheduledEventComponent } from './new-scheduled-event/new-scheduled-event.component';
-import { ClrModal, ClrDatagridSortOrder } from '@clr/angular';
-import { CourseService } from '../data/course.service';
-import { ScenarioService } from '../data/scenario.service';
-import { UserService } from '../data/user.service';
-import { RbacService } from '../data/rbac.service';
-import { Subject } from 'rxjs';
-import { AlertComponent } from '../alert/alert.component';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { ScheduledEventBase } from "src/app/data/scheduledevent";
+import { ScheduledeventService } from "src/app/data/scheduledevent.service";
+import { NewScheduledEventComponent } from "./new-scheduled-event/new-scheduled-event.component";
+import { ClrModal, ClrDatagridSortOrder } from "@clr/angular";
+import { CourseService } from "../data/course.service";
+import { ScenarioService } from "../data/scenario.service";
+import { UserService } from "../data/user.service";
+import { RbacService } from "../data/rbac.service";
+import { Subject } from "rxjs";
+import { AlertComponent } from "../alert/alert.component";
 import {
   DEFAULT_ALERT_ERROR_DURATION,
   DEFAULT_ALERT_SUCCESS_DURATION,
-} from '../alert/alert';
+} from "../alert/alert";
 
 interface ExtendedScheduledEvent extends ScheduledEventBase {
   creatorEmail?: string;
@@ -21,8 +21,8 @@ interface ExtendedScheduledEvent extends ScheduledEventBase {
 }
 
 @Component({
-  selector: 'app-event',
-  templateUrl: './event.component.html',
+  selector: "app-event",
+  templateUrl: "./event.component.html",
 })
 export class EventComponent implements OnInit {
   public events: ExtendedScheduledEvent[] = [];
@@ -53,18 +53,18 @@ export class EventComponent implements OnInit {
     public rbacService: RbacService,
   ) {}
 
-  @ViewChild('wizard', { static: true }) wizard: NewScheduledEventComponent;
-  @ViewChild('deletemodal', { static: true }) deletemodal: ClrModal;
-  @ViewChild('alert') alert: AlertComponent;
+  @ViewChild("wizard", { static: true }) wizard: NewScheduledEventComponent;
+  @ViewChild("deletemodal", { static: true }) deletemodal: ClrModal;
+  @ViewChild("alert") alert: AlertComponent;
 
   ngOnInit() {
     // list permissions for the following ressources are required in order to edit scheduled events
     const authorizationRequests = Promise.all([
-      this.rbacService.Grants('scenarios', 'list'),
-      this.rbacService.Grants('courses', 'list'),
-      this.rbacService.Grants('environments', 'list'),
-      this.rbacService.Grants('scheduledevents', 'delete'),
-      this.rbacService.Grants('users', 'list'),
+      this.rbacService.Grants("scenarios", "list"),
+      this.rbacService.Grants("courses", "list"),
+      this.rbacService.Grants("environments", "list"),
+      this.rbacService.Grants("scheduledevents", "delete"),
+      this.rbacService.Grants("users", "list"),
     ]);
 
     authorizationRequests.then(
@@ -90,9 +90,9 @@ export class EventComponent implements OnInit {
   public doDelete() {
     this.deleteopen = false;
     this.seService.delete(this.deletingevent).subscribe({
-      next: (_reply: string) => {
+      next: () => {
         this.refresh();
-        const alertMsg = `Deleted scheduled event \"${this.deletingevent.event_name}\" successfully!`;
+        const alertMsg = `Deleted scheduled event "${this.deletingevent.event_name}" successfully!`;
         this.alert.success(alertMsg, false, DEFAULT_ALERT_SUCCESS_DURATION);
       },
       error: (reply: string) => {
@@ -115,7 +115,7 @@ export class EventComponent implements OnInit {
   }
 
   public refresh(force = false) {
-    this.seService.list('', force).subscribe((se) => {
+    this.seService.list("", force).subscribe((se) => {
       this.events = se;
       this.updateFields();
     });

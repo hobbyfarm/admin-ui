@@ -1,26 +1,20 @@
-import {
-  Directive,
-  ElementRef,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Directive, ElementRef, Input, OnChanges } from "@angular/core";
 
 @Directive({
-  selector: '[clrDisableSelection]',
+  selector: "[clrDisableSelection]",
 })
 export class ClarityDisableSelectionDirective implements OnChanges {
-  @Input('clrDisableSelection')
+  @Input("clrDisableSelection")
   disabled: boolean;
 
   constructor(private elementRef: ElementRef) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     const nativeRef = this.elementRef.nativeElement;
     if (this.disabled) {
-      nativeRef.classList.add('clr_disable_selection');
+      nativeRef.classList.add("clr_disable_selection");
     } else {
-      nativeRef.classList.remove('clr_disable_selection');
+      nativeRef.classList.remove("clr_disable_selection");
     }
   }
 }

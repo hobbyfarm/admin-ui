@@ -7,7 +7,8 @@ import {
   OnDestroy,
   Output,
   SimpleChanges,
-  ViewChild, OnChanges,
+  ViewChild,
+  OnChanges,
 } from '@angular/core';
 import 'prismjs';
 import 'prismjs/components/prism-yaml';

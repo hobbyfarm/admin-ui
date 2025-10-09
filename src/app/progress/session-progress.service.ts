@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Progress } from '../data/progress';
-import { environment } from 'src/environments/environment';
-import { ServerResponse } from '../data/serverresponse';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Injectable } from "@angular/core";
+import { Progress } from "../data/progress";
+import { environment } from "src/environments/environment";
+import { ServerResponse } from "../data/serverresponse";
+import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class SessionProgressService {
   constructor(
@@ -16,15 +16,15 @@ export class SessionProgressService {
 
   public getProgressColorClass(progress: Progress): string {
     if (progress.finished) {
-      return 'status-finished';
+      return "status-finished";
     }
     if (progress.current_step === 0) {
-      return 'status-provisioning';
+      return "status-provisioning";
     }
     if (progress.current_step === progress.total_step) {
-      return 'status-success';
+      return "status-success";
     }
-    return 'status-running';
+    return "status-running";
   }
 
   public getProgress(p: Progress) {
@@ -44,10 +44,10 @@ export class SessionProgressService {
   public terminateSession(p: Progress) {
     this.http
       .put<ServerResponse>(
-        environment.server + '/session/' + p.session + '/finished',
+        environment.server + "/session/" + p.session + "/finished",
         {},
       )
-      .subscribe((_s: ServerResponse) => {
+      .subscribe(() => {
         p.finished = true;
       });
   }
@@ -55,12 +55,12 @@ export class SessionProgressService {
   openTerminalWindow(p: Progress) {
     const url = this.router.serializeUrl(
       this.router.createUrlTree([
-        '/session',
+        "/session",
         p.session,
-        'steps',
+        "steps",
         Math.max(p.current_step - 1, 0),
       ]),
     );
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   }
 }

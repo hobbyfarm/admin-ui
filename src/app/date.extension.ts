@@ -1,7 +1,11 @@
-interface Date {
-  getWeek(): number;
-  getWeekYear(): number;
-  getNextMonday(): Date;
+export {};
+
+declare global {
+  interface Date {
+    getWeek(): number;
+    getWeekYear(): number;
+    getNextMonday(): Date;
+  }
 }
 
 Date.prototype.getNextMonday = function () {

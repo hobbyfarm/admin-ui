@@ -54,4 +54,5 @@ import 'zone.js'; // Included with Angular CLI.
 import 'brace';
 import 'brace/mode/markdown';
 
-(window as any).global = window;
+const w = window as unknown as { global: typeof window };
+w.global = window;

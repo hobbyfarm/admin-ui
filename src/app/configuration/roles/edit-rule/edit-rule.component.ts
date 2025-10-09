@@ -2,20 +2,17 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
   ViewChild,
-} from '@angular/core';
-import { ClrModal } from '@clr/angular';
-import { Rule } from 'src/app/data/role';
-import { RoleService } from 'src/app/data/role.service';
+} from "@angular/core";
+import { ClrModal } from "@clr/angular";
+import { Rule } from "src/app/data/role";
 
 @Component({
-  selector: 'edit-rule',
-  templateUrl: './edit-rule.component.html',
-  styleUrls: ['./edit-rule.component.scss'],
+  selector: "edit-rule",
+  templateUrl: "./edit-rule.component.html",
+  styleUrls: ["./edit-rule.component.scss"],
 })
 export class EditRuleComponent implements OnInit {
   public edit: boolean = false;
@@ -30,7 +27,7 @@ export class EditRuleComponent implements OnInit {
 
   constructor() {}
 
-  @ViewChild('modal') modal: ClrModal;
+  @ViewChild("modal") modal: ClrModal;
 
   ngOnInit(): void {}
 

@@ -1,29 +1,29 @@
-import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
-import { Chart, ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
-import DataLabelsPlugin, { Context } from 'chartjs-plugin-datalabels';
-import { Progress } from '../data/progress';
-import { ProgressService } from '../data/progress.service';
+import { Component, Input, OnChanges, OnInit, ViewChild } from "@angular/core";
+import { Chart, ChartConfiguration, ChartEvent } from "chart.js";
+import { BaseChartDirective } from "ng2-charts";
+import DataLabelsPlugin, { Context } from "chartjs-plugin-datalabels";
+import { Progress } from "../data/progress";
+import { ProgressService } from "../data/progress.service";
 import {
   AbstractControl,
   NonNullableFormBuilder,
   ValidatorFn,
   Validators,
-} from '@angular/forms';
-import { DlDateTimePickerChange } from 'angular-bootstrap-datetimepicker';
-import { ClrDatagridSortOrder, ClrSignpostContent } from '@clr/angular';
-import '../date.extension';
-import { ScheduledEvent } from '../data/scheduledevent';
-import { ChartDetailsFormGroup, isChartDetailsFormGroup } from '../data/forms';
-import { BarChartData } from '../data/barchartdata';
+} from "@angular/forms";
+import { DlDateTimePickerChange } from "angular-bootstrap-datetimepicker";
+import { ClrDatagridSortOrder, ClrSignpostContent } from "@clr/angular";
+import "../date.extension";
+import { ScheduledEvent } from "../data/scheduledevent";
+import { ChartDetailsFormGroup, isChartDetailsFormGroup } from "../data/forms";
+import { BarChartData } from "../data/barchartdata";
 
 // The number of milliseconds in one day
 const ONE_DAY = 1000 * 60 * 60 * 24;
 
 @Component({
-  selector: 'app-session-statistics',
-  templateUrl: './session-statistics.component.html',
-  styleUrls: ['./session-statistics.component.scss'],
+  selector: "app-session-statistics",
+  templateUrl: "./session-statistics.component.html",
+  styleUrls: ["./session-statistics.component.scss"],
 })
 export class SessionStatisticsComponent implements OnInit, OnChanges {
   // If no scheduledEvent is given, we display statistics about all progresses for a given time range
@@ -35,12 +35,12 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
 
   public progressesCache: Progress[] | null;
 
-  public startView: 'minute' | 'day' | 'month' | 'year' = 'day';
-  public minView: 'minute' | 'day' | 'month' | 'year' = 'day';
+  public startView: "minute" | "day" | "month" | "year" = "day";
+  public minView: "minute" | "day" | "month" | "year" = "day";
   public options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   };
   public startDate = new Date(Date.now() - 7 * ONE_DAY);
   public endDate: Date;
@@ -50,10 +50,10 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     datasets: [],
   };
   public barChartOptions: ChartConfiguration<
-    'bar',
+    "bar",
     number[],
     string
-  >['options'] = {
+  >["options"] = {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
     scales: {
@@ -68,23 +68,23 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     plugins: {
       legend: {
         display: true,
-        position: 'top',
+        position: "top",
       },
       datalabels: {
         // only display datalabels if != 0
         display: (context: Context) => {
           return context.dataset.data[context.dataIndex] != 0;
         },
-        anchor: 'end',
-        align: 'start',
+        anchor: "end",
+        align: "start",
       },
     },
   };
   public barChartPlugins = [
     DataLabelsPlugin,
     {
-      id: 'legendMargin',
-      beforeInit: function (chart: Chart<'bar', number[], string>) {
+      id: "legendMargin",
+      beforeInit: function (chart: Chart<"bar", number[], string>) {
         if (chart.legend) {
           // Get the reference to the original fit function
           const originalFit = chart.legend.fit;
@@ -118,7 +118,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       this.progressesCache = null; // Reset cache so data from the changed SE can be retreived
       this.scenariosWithSessionMap = new Map();
       this.totalSessionsPerScenario = new Map();
-      this.chartDetails.controls.scenarios.setValue(['*']);
+      this.chartDetails.controls.scenarios.setValue(["*"]);
       this.setDatesToScheduledEvent(
         this.scheduledEvent,
         this.chartDetails.controls.observationPeriod.value,
@@ -150,20 +150,20 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
 
     this.chartDetails = this._fb.group(
       {
-        observationPeriod: this._fb.control<'daily' | 'weekly' | 'monthly'>(
-          'daily',
+        observationPeriod: this._fb.control<"daily" | "weekly" | "monthly">(
+          "daily",
           Validators.required,
         ),
         scenarios: this._fb.control<string[]>(
-          ['*'],
+          ["*"],
           [Validators.required, Validators.minLength(1)],
         ),
         startDate: this._fb.control<string>(
-          this.startDate.toLocaleDateString('en-US', this.options),
+          this.startDate.toLocaleDateString("en-US", this.options),
           [Validators.required, this.validateStartDate()],
         ),
         endDate: this._fb.control<string>(
-          this.endDate.toLocaleDateString('en-US', this.options),
+          this.endDate.toLocaleDateString("en-US", this.options),
           Validators.required,
         ),
       },
@@ -173,14 +173,14 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     );
 
     if (this.scheduledEvent) {
-      this.setDatesToScheduledEvent(this.scheduledEvent, 'daily');
+      this.setDatesToScheduledEvent(this.scheduledEvent, "daily");
     }
 
-    this.updateLabels('daily');
-    this.updateData('daily');
+    this.updateLabels("daily");
+    this.updateData("daily");
 
     this.chartDetails.controls.observationPeriod.valueChanges.subscribe(
-      (obsPeriod: 'daily' | 'weekly' | 'monthly') => {
+      (obsPeriod: "daily" | "weekly" | "monthly") => {
         this.updateOnObservationChange(obsPeriod);
         this.updateLabels(obsPeriod);
         this.updateData(obsPeriod);
@@ -193,7 +193,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
         let updatedScenarios: string[] = scenarios;
         if (scenarios && scenarios.length >= 2) {
           updatedScenarios = scenarios.filter(
-            (scenario: string) => scenario !== '*',
+            (scenario: string) => scenario !== "*",
           );
         }
         this.chartDetails.controls.scenarios.setValue(updatedScenarios, {
@@ -205,15 +205,15 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   }
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
-  @ViewChild('startDateSignpost') startDateSignpost: ClrSignpostContent;
-  @ViewChild('endDateSignpost') endDateSignpost: ClrSignpostContent;
+  @ViewChild("startDateSignpost") startDateSignpost: ClrSignpostContent;
+  @ViewChild("endDateSignpost") endDateSignpost: ClrSignpostContent;
 
   public addAllScenarios(): void {
-    this.chartDetails.controls.scenarios.setValue(['*']);
+    this.chartDetails.controls.scenarios.setValue(["*"]);
   }
 
   public clearScenarios(): void {
-    this.chartDetails.controls.scenarios.setValue(['*']);
+    this.chartDetails.controls.scenarios.setValue(["*"]);
   }
 
   private validateStartDate(): ValidatorFn {
@@ -237,7 +237,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   } | null {
     if (!isChartDetailsFormGroup(fg)) {
       return {
-        controlTypeMismatch: 'Expected ChartDetailsFormGroup',
+        controlTypeMismatch: "Expected ChartDetailsFormGroup",
       };
     }
     // Check if Date is in the past
@@ -255,7 +255,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
 
   private setDatesToScheduledEvent(
     se: ScheduledEvent,
-    observationPeriod: 'daily' | 'weekly' | 'monthly',
+    observationPeriod: "daily" | "weekly" | "monthly",
   ) {
     const currentDate = new Date();
 
@@ -270,15 +270,15 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     }
 
     this.chartDetails.controls.endDate.setValue(
-      this.endDate.toLocaleDateString('en-US', this.options),
+      this.endDate.toLocaleDateString("en-US", this.options),
     );
     this.chartDetails.controls.startDate.setValue(
-      this.startDate.toLocaleDateString('en-US', this.options),
+      this.startDate.toLocaleDateString("en-US", this.options),
     );
     this.updateLabels(observationPeriod);
   }
 
-  private updateData(observationPeriod: 'daily' | 'weekly' | 'monthly') {
+  private updateData(observationPeriod: "daily" | "weekly" | "monthly") {
     if (this.scheduledEvent) {
       this.updateDataByScheduledEvent(observationPeriod);
     } else {
@@ -286,7 +286,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     }
   }
 
-  private updateDataByRange(observationPeriod: 'daily' | 'weekly' | 'monthly') {
+  private updateDataByRange(observationPeriod: "daily" | "weekly" | "monthly") {
     this.progressService
       .listByRange(this.startDate, this.endDate)
       .subscribe((progresses: Progress[]) => {
@@ -296,7 +296,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   }
 
   private updateDataByScheduledEvent(
-    observationPeriod: 'daily' | 'weekly' | 'monthly',
+    observationPeriod: "daily" | "weekly" | "monthly",
   ) {
     if (this.progressesCache) {
       this.processData(this.progressesCache, observationPeriod);
@@ -312,11 +312,11 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
 
   private processData(
     progresses: Progress[],
-    observationPeriod: 'daily' | 'weekly' | 'monthly',
+    observationPeriod: "daily" | "weekly" | "monthly",
   ) {
     this.setupScenariosWithSessions(progresses);
     this.prepareBarchartDatasets();
-    if (observationPeriod == 'weekly') {
+    if (observationPeriod == "weekly") {
       this.updateBarchartData(progresses, this.getWeekDataIndex);
     } else {
       this.updateBarchartData(progresses, this.getDayOrMonthDataIndex);
@@ -325,35 +325,35 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     this.chart?.update();
   }
 
-  private updateLabels(observationPeriod: 'daily' | 'weekly' | 'monthly') {
+  private updateLabels(observationPeriod: "daily" | "weekly" | "monthly") {
     switch (observationPeriod) {
-      case 'daily':
+      case "daily":
         this.updateDayLabels();
         break;
-      case 'weekly':
+      case "weekly":
         this.updateWeekLabels();
         break;
-      case 'monthly':
+      case "monthly":
         this.updateMonthLabels();
         break;
     }
   }
 
   private updateOnObservationChange(
-    observationPeriod: 'daily' | 'weekly' | 'monthly',
+    observationPeriod: "daily" | "weekly" | "monthly",
   ) {
-    if (observationPeriod != 'monthly') {
-      this.options = { year: 'numeric', month: 'long', day: 'numeric' };
+    if (observationPeriod != "monthly") {
+      this.options = { year: "numeric", month: "long", day: "numeric" };
       this.chartDetails.controls.startDate.setValue(
-        this.startDate.toLocaleDateString('en-US', this.options),
+        this.startDate.toLocaleDateString("en-US", this.options),
       );
       this.chartDetails.controls.endDate.setValue(
-        this.endDate.toLocaleDateString('en-US', this.options),
+        this.endDate.toLocaleDateString("en-US", this.options),
       );
-      this.startView = 'day';
-      this.minView = 'day';
+      this.startView = "day";
+      this.minView = "day";
     } else {
-      this.options = { year: 'numeric', month: 'long' };
+      this.options = { year: "numeric", month: "long" };
       this.startDate = new Date(
         this.startDate.getFullYear(),
         this.startDate.getMonth(),
@@ -365,22 +365,22 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
         0,
       );
       this.chartDetails.controls.startDate.setValue(
-        this.startDate.toLocaleDateString('en-US', this.options),
+        this.startDate.toLocaleDateString("en-US", this.options),
       );
       this.chartDetails.controls.endDate.setValue(
-        this.endDate.toLocaleDateString('en-US', this.options),
+        this.endDate.toLocaleDateString("en-US", this.options),
       );
-      this.startView = 'month';
-      this.minView = 'month';
+      this.startView = "month";
+      this.minView = "month";
     }
   }
 
   private updateStartDate(d: Date) {
     this.startDate = d;
     this.chartDetails.controls.startDate.setValue(
-      this.startDate.toLocaleDateString('en-US', this.options),
+      this.startDate.toLocaleDateString("en-US", this.options),
     );
-    const observationPeriod: 'daily' | 'weekly' | 'monthly' =
+    const observationPeriod: "daily" | "weekly" | "monthly" =
       this.chartDetails.controls.observationPeriod.value;
     this.updateLabels(observationPeriod);
     this.updateData(observationPeriod);
@@ -394,9 +394,9 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   }
 
   private updateEndDate(d: Date) {
-    const observationPeriod: 'daily' | 'weekly' | 'monthly' =
+    const observationPeriod: "daily" | "weekly" | "monthly" =
       this.chartDetails.controls.observationPeriod.value;
-    if (observationPeriod != 'monthly') {
+    if (observationPeriod != "monthly") {
       this.endDate = d;
     } else {
       this.endDate = new Date(d.getFullYear(), d.getMonth() + 1, 0);
@@ -405,7 +405,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     this.updateLabels(observationPeriod);
     this.updateData(observationPeriod);
     this.chartDetails.controls.endDate.setValue(
-      this.endDate.toLocaleDateString('en-US', this.options),
+      this.endDate.toLocaleDateString("en-US", this.options),
     );
   }
 
@@ -415,16 +415,16 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       this.endDateSignpost.close();
     }
   }
-
   // events
   public chartClicked({
     event,
     active,
   }: {
     event?: ChartEvent;
-    active?: {}[];
+    active?: unknown[];
   }): void {
-    // console.log(event, active);
+    void event;
+    void active;
   }
 
   public chartHovered({
@@ -432,9 +432,10 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     active,
   }: {
     event?: ChartEvent;
-    active?: {}[];
+    active?: unknown[];
   }): void {
-    // console.log(event, active);
+    void event;
+    void active;
   }
 
   private setupScenariosWithSessions(progressData: Progress[]) {
@@ -448,7 +449,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
     const selectedScenarios = this.chartDetails.controls.scenarios.value;
     return (
       !selectedScenarios ||
-      (selectedScenarios.length === 1 && selectedScenarios[0] === '*')
+      (selectedScenarios.length === 1 && selectedScenarios[0] === "*")
     );
   }
 
@@ -462,7 +463,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
             length: this.barChartData.labels.length,
           }).fill(0),
           label: this.getScenarioName(sWithSession),
-          stack: 'a',
+          stack: "a",
         });
       });
     } else if (selectedScenarios.length >= 1) {
@@ -472,7 +473,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
             length: this.barChartData.labels.length,
           }).fill(0),
           label: this.getScenarioName(sWithSession),
-          stack: 'a',
+          stack: "a",
         });
       });
     }
@@ -492,7 +493,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
   // ... because this function is used as a parameter within another function
   private getDayOrMonthDataIndex = (prog: Progress) => {
     const startDateString = new Date(prog.started).toLocaleDateString(
-      'en-US',
+      "en-US",
       this.options,
     );
     const index = this.barChartData.labels.indexOf(startDateString);
@@ -551,7 +552,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       labelDate.setDate(labelDate.getDate() + 1)
     ) {
       const labelDateString = labelDate.toLocaleDateString(
-        'en-US',
+        "en-US",
         this.options,
       );
       this.barChartData.labels.push(labelDateString);
@@ -586,7 +587,7 @@ export class SessionStatisticsComponent implements OnInit, OnChanges {
       labelDate.setMonth(labelDate.getMonth() + 1)
     ) {
       const labelDateString = labelDate.toLocaleDateString(
-        'en-US',
+        "en-US",
         this.options,
       );
       this.barChartData.labels.push(labelDateString);

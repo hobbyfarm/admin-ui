@@ -3,23 +3,24 @@ import {
   Component,
   Input,
   OnInit,
-  ViewChild, OnChanges,
-} from '@angular/core';
-import { Router } from '@angular/router';
-import { combineLatest, Observable, of, switchMap, tap } from 'rxjs';
-import { Progress } from 'src/app/data/progress';
-import { ProgressService } from 'src/app/data/progress.service';
-import { ScheduledEventBase } from 'src/app/data/scheduledevent';
-import { UserService } from 'src/app/data/user.service';
-import { VirtualMachine } from 'src/app/data/virtualmachine';
-import { VmService } from 'src/app/data/vm.service';
-import { VmSet } from 'src/app/data/vmset';
-import { VmSetService } from 'src/app/data/vmset.service';
-import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-confirmation.component';
-import { timeSince } from 'src/app/utils';
-import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
-import { ServerResponse } from 'src/app/data/serverresponse';
+  ViewChild,
+  OnChanges,
+} from "@angular/core";
+import { Router } from "@angular/router";
+import { combineLatest, of, switchMap } from "rxjs";
+import { Progress } from "src/app/data/progress";
+import { ProgressService } from "src/app/data/progress.service";
+import { ScheduledEventBase } from "src/app/data/scheduledevent";
+import { UserService } from "src/app/data/user.service";
+import { VirtualMachine } from "src/app/data/virtualmachine";
+import { VmService } from "src/app/data/vm.service";
+import { VmSet } from "src/app/data/vmset";
+import { VmSetService } from "src/app/data/vmset.service";
+import { DeleteConfirmationComponent } from "src/app/delete-confirmation/delete-confirmation.component";
+import { timeSince } from "src/app/utils";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "src/environments/environment";
+import { ServerResponse } from "src/app/data/serverresponse";
 
 interface dashboardVmSet extends VmSet {
   setVMs?: VirtualMachine[];
@@ -28,9 +29,9 @@ interface dashboardVmSet extends VmSet {
 }
 
 @Component({
-  selector: 'vm-dashboard',
-  templateUrl: './vm-dashboard.component.html',
-  styleUrls: ['./vm-dashboard.component.scss'],
+  selector: "vm-dashboard",
+  templateUrl: "./vm-dashboard.component.html",
+  styleUrls: ["./vm-dashboard.component.scss"],
 })
 export class VmDashboardComponent implements OnInit, OnChanges {
   @Input()
@@ -52,7 +53,7 @@ export class VmDashboardComponent implements OnInit, OnChanges {
   public selectedVM: VirtualMachine | undefined;
   public openPanels: Set<string> = new Set();
 
-  @ViewChild('deleteModal') deleteModal: DeleteConfirmationComponent;
+  @ViewChild("deleteModal") deleteModal: DeleteConfirmationComponent;
 
   ngOnInit(): void {
     this.getVmList();
@@ -77,7 +78,7 @@ export class VmDashboardComponent implements OnInit, OnChanges {
       const userMap = new Map(users.map((u) => [u.id, u.email]));
       this.vms = vmList.map((vm) => ({
         ...vm,
-        user: userMap.get(vm.user) ?? '-',
+        user: userMap.get(vm.user) ?? "-",
       }));
       this.vmSets = vmSet.map((set) => ({
         ...set,
@@ -85,14 +86,13 @@ export class VmDashboardComponent implements OnInit, OnChanges {
         stepOpen: this.openPanels.has(set.base_name),
         dynamic: false,
         available: this.vms.filter(
-          (vm) => vm.vm_set_id === set.id && vm.status == 'running',
+          (vm) => vm.vm_set_id === set.id && vm.status == "running",
         ).length,
       }));
       // dynamic machines have no associated vmSet
-      if (this.vms.filter((vm) => vm.vm_set_id == '').length > 0) {
-        const groupedVms: Map<string, VirtualMachine[]> = this.groupByEnvironment(
-          this.vms.filter((vm) => vm.vm_set_id == ''),
-        );
+      if (this.vms.filter((vm) => vm.vm_set_id == "").length > 0) {
+        const groupedVms: Map<string, VirtualMachine[]> =
+          this.groupByEnvironment(this.vms.filter((vm) => vm.vm_set_id == ""));
         groupedVms.forEach((element, environment) => {
           const vmSet: dashboardVmSet = {
             ...new VmSet(),
@@ -103,7 +103,7 @@ export class VmDashboardComponent implements OnInit, OnChanges {
           vmSet.setVMs = element;
           vmSet.count = element.length;
           vmSet.available = element.filter(
-            (vm) => vm.status == 'running',
+            (vm) => vm.status == "running",
           ).length;
           vmSet.environment = environment;
           this.vmSets.push(vmSet);
@@ -132,13 +132,13 @@ export class VmDashboardComponent implements OnInit, OnChanges {
         if (!progress) return; //Since a User can only have one active Session, navigate to the corresponding Step the User is currently at.
         const url = this.router.serializeUrl(
           this.router.createUrlTree([
-            '/session',
+            "/session",
             progress.session,
-            'steps',
+            "steps",
             Math.max(progress.current_step - 1, 0),
           ]),
         );
-        window.open(url, '_blank');
+        window.open(url, "_blank");
       });
   }
 
@@ -166,17 +166,17 @@ export class VmDashboardComponent implements OnInit, OnChanges {
     if (confirm) {
       this.http
         .delete<ServerResponse>(
-          environment.server + '/vm/' + this.selectedVM?.id,
+          environment.server + "/vm/" + this.selectedVM?.id,
         )
         .pipe(
           switchMap((s: ServerResponse) => {
             this.selectedVM = undefined;
-            return of(s.message == 'deleted successfully');
+            return of(s.message == "deleted successfully");
           }),
         )
         .subscribe({
-          next: (result) => console.log('Deleted:', result),
-          error: (err) => console.error('Error on VM deletion:', err),
+          next: (result) => console.log("Deleted:", result),
+          error: (err) => console.error("Error on VM deletion:", err),
         });
     } else {
       this.selectedVM = undefined;

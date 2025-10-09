@@ -27,7 +27,7 @@
               *clrDgItems="let u of users"
               [clrDgItem]="u"
               (click)="setSelectedUser(u)"
-              [class.isSingleSelected]="u == selectedUser"
+              [class.isSingleSelected]="u === selectedUser"
               class="userRow"
               [class.isMultiSelected]="selectedUsers.includes(u)"
             >

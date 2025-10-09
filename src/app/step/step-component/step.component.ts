@@ -7,41 +7,41 @@ import {
   ElementRef,
   AfterViewInit,
   OnDestroy,
-} from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Step } from '../../data/step';
-import { switchMap, concatMap, tap, map, toArray } from 'rxjs/operators';
-import { TerminalComponent } from '../terminal/terminal.component';
-import { ClrTabContent, ClrTab, ClrModal } from '@clr/angular';
-import { Scenario } from '../../data/scenario';
-import { Session } from '../../data/Session';
-import { from } from 'rxjs';
-import { VMClaim } from '../../data/vmclaim';
-import { VMClaimVM } from '../../data/vmclaimvm';
-import { VirtualMachine as VM } from '../../data/virtualmachine';
-import { CtrService } from '../../data/ctr.service';
-import { CodeExec } from '../../data/CodeExec';
-import { SessionService } from '../../data/session.service';
-import { ScenarioService } from '../../data/scenario.service';
-import { StepService } from '../../data/step.service';
-import { VMClaimService } from '../../data/vmclaim.service';
-import { VMService } from '../vm.service';
-import { ShellService } from '../../data/shell.service';
-import { atou } from '../../unicode';
-import { HfMarkdownRenderContext } from '../hf-markdown.component';
-import { UserService } from '../../data/user.service';
-import { CourseService } from '../../data/course.service';
+} from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Step } from "../../data/step";
+import { switchMap, concatMap, tap, map, toArray } from "rxjs/operators";
+import { TerminalComponent } from "../terminal/terminal.component";
+import { ClrTabContent, ClrTab, ClrModal } from "@clr/angular";
+import { Scenario } from "../../data/scenario";
+import { Session } from "../../data/Session";
+import { from } from "rxjs";
+import { VMClaim } from "../../data/vmclaim";
+import { VMClaimVM } from "../../data/vmclaimvm";
+import { VirtualMachine as VM } from "../../data/virtualmachine";
+import { CtrService } from "../../data/ctr.service";
+import { CodeExec } from "../../data/CodeExec";
+import { SessionService } from "../../data/session.service";
+import { ScenarioService } from "../../data/scenario.service";
+import { StepService } from "../../data/step.service";
+import { VMClaimService } from "../../data/vmclaim.service";
+import { VMService } from "../vm.service";
+import { ShellService } from "../../data/shell.service";
+import { atou } from "../../unicode";
+import { HfMarkdownRenderContext } from "../hf-markdown.component";
+import { UserService } from "../../data/user.service";
+import { CourseService } from "../../data/course.service";
 
 @Component({
-  selector: 'app-step',
-  templateUrl: 'step.component.html',
-  styleUrls: ['step.component.scss'],
+  selector: "app-step",
+  templateUrl: "step.component.html",
+  styleUrls: ["step.component.scss"],
 })
 export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   public scenario: Scenario = new Scenario();
   public step: Step = new Step();
   public stepnumber = 0;
-  public stepcontent = '';
+  public stepcontent = "";
   private shellStatus: Map<string, string> = new Map();
 
   public finishOpen = false;
@@ -51,24 +51,24 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   public sessionExpired = false;
   public vms: Map<string, VM> = new Map();
 
-  mdContext: HfMarkdownRenderContext = { vmInfo: {}, session: '' };
+  mdContext: HfMarkdownRenderContext = { vmInfo: {}, session: "" };
 
   public pauseOpen = false;
 
   public pauseLastUpdated: Date = new Date();
-  public pauseRemainingString = '';
-  public username: string = '';
-  public courseName: string = '';
+  public pauseRemainingString = "";
+  public username: string = "";
+  public courseName: string = "";
 
-  public checkInterval: any;
+  public checkInterval: number | null = null;
 
-  @ViewChildren('term') private terms: QueryList<TerminalComponent> =
+  @ViewChildren("term") private terms: QueryList<TerminalComponent> =
     new QueryList();
-  @ViewChildren('tabcontent') private tabContents: QueryList<ClrTabContent> =
+  @ViewChildren("tabcontent") private tabContents: QueryList<ClrTabContent> =
     new QueryList();
-  @ViewChildren('tab') private tabs: QueryList<ClrTab>;
-  @ViewChild('pausemodal', { static: true }) private pauseModal: ClrModal;
-  @ViewChild('contentdiv', { static: false }) private contentDiv: ElementRef;
+  @ViewChildren("tab") private tabs: QueryList<ClrTab>;
+  @ViewChild("pausemodal", { static: true }) private pauseModal: ClrModal;
+  @ViewChild("contentdiv", { static: false }) private contentDiv: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -84,11 +84,18 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     private courseService: CourseService,
   ) {}
 
+  private clearCheckInterval(): void {
+    if (this.checkInterval !== null) {
+      clearInterval(this.checkInterval);
+      this.checkInterval = null;
+    }
+  }
+
   handleStepContentClick(e: MouseEvent) {
     // Open all links in a new window
     if (e.target instanceof HTMLAnchorElement && e.target.href) {
       e.preventDefault();
-      window.open(e.target.href, '_blank');
+      window.open(e.target.href, "_blank");
     }
   }
 
@@ -106,14 +113,14 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     const { paramMap } = this.route.snapshot;
-    const sessionId = paramMap.get('session')!;
-    this.stepnumber = Number(paramMap.get('step') ?? 0);
+    const sessionId = paramMap.get("session")!;
+    this.stepnumber = Number(paramMap.get("step") ?? 0);
 
-    this.checkInterval = setInterval(() => {
+    this.checkInterval = window.setInterval(() => {
       this.ssService.getStatus(sessionId).subscribe({
         error: () => {
           this.sessionExpired = true;
-          clearInterval(this.checkInterval);
+          this.clearCheckInterval();
         },
       });
     }, 60000);
@@ -151,7 +158,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         next: (entries: (readonly [string, VM])[]) => {
           this.vms = new Map(entries);
 
-          const vmInfo: HfMarkdownRenderContext['vmInfo'] = {};
+          const vmInfo: HfMarkdownRenderContext["vmInfo"] = {};
           for (const [k, v] of this.vms) {
             vmInfo[k.toLowerCase()] = v;
           }
@@ -159,7 +166,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         error: () => {
           this.sessionExpired = true;
-          clearInterval(this.checkInterval);
+          this.clearCheckInterval();
         },
       });
 
@@ -190,13 +197,13 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
     this.terms.forEach((term) => {
       term.mutationObserver.disconnect();
     });
-    clearInterval(this.checkInterval);
+    this.clearCheckInterval();
   }
 
   goNext() {
     this.stepnumber += 1;
     this.router.navigateByUrl(
-      '/session/' + this.session.id + '/steps/' + this.stepnumber,
+      "/session/" + this.session.id + "/steps/" + this.stepnumber,
     );
     this._loadStep();
     this.contentDiv.nativeElement.scrollTop = 0;
@@ -230,7 +237,7 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   goPrevious() {
     this.stepnumber -= 1;
     this.router.navigateByUrl(
-      '/session/' + this.session.id + '/steps/' + this.stepnumber,
+      "/session/" + this.session.id + "/steps/" + this.stepnumber,
     );
     this._loadStep();
     this.contentDiv.nativeElement.scrollTop = 0;
@@ -242,10 +249,10 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
 
   actuallyFinish(force = false) {
     if (this.shouldKeepVmOnFinish && !force) {
-      this.router.navigateByUrl('/home');
+      this.router.navigateByUrl("/home");
     } else {
       this.ssService.finish(this.session.id).subscribe(() => {
-        this.router.navigateByUrl('/home');
+        this.router.navigateByUrl("/home");
       });
     }
   }
@@ -259,11 +266,11 @@ export class StepComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   actuallyClose() {
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl("/home");
   }
 
   isGuacamoleTerminal(protocol: string): boolean {
-    return protocol !== 'ssh';
+    return protocol !== "ssh";
   }
 
   public dragEnd() {

@@ -147,7 +147,10 @@ export class CourseService {
   }
 
   public listDynamicScenarios(categories: string[]) {
-    const params = new HttpParams().set('categories', JSON.stringify(categories));
+    const params = new HttpParams().set(
+      'categories',
+      JSON.stringify(categories),
+    );
     return this.gargAdmin.post('/previewDynamicScenarios', params).pipe(
       map((s: ServerResponse) => {
         const obj: string[] = JSON.parse(atou(s.content));

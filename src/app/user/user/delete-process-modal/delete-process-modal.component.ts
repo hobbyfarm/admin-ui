@@ -1,15 +1,14 @@
 import {
   Component,
-  OnInit,
   ViewChild,
   Output,
   EventEmitter,
   Input,
-} from '@angular/core';
-import { ClrModal } from '@clr/angular';
-import { ServerResponse } from 'src/app/data/serverresponse';
-import { User } from 'src/app/data/user';
-import { UserService } from 'src/app/data/user.service';
+} from "@angular/core";
+import { ClrModal } from "@clr/angular";
+import { ServerResponse } from "src/app/data/serverresponse";
+import { User } from "src/app/data/user";
+import { UserService } from "src/app/data/user.service";
 
 export interface deletionInformation {
   user: User;
@@ -18,11 +17,11 @@ export interface deletionInformation {
 }
 
 @Component({
-  selector: 'delete-process-modal',
-  templateUrl: './delete-process-modal.component.html',
-  styleUrls: ['./delete-process-modal.component.scss'],
+  selector: "delete-process-modal",
+  templateUrl: "./delete-process-modal.component.html",
+  styleUrls: ["./delete-process-modal.component.scss"],
 })
-export class DeleteProcessModalComponent implements OnInit {
+export class DeleteProcessModalComponent {
   @Output()
   public done: EventEmitter<boolean> = new EventEmitter();
 
@@ -35,9 +34,7 @@ export class DeleteProcessModalComponent implements OnInit {
 
   constructor(public userService: UserService) {}
 
-  @ViewChild('modal') modal: ClrModal;
-
-  ngOnInit(): void {}
+  @ViewChild("modal") modal: ClrModal;
 
   open(): void {
     this.modal.open();

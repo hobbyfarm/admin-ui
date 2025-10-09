@@ -1,23 +1,20 @@
-import { HttpClient } from '@angular/common/http';
 import {
   Component,
   EventEmitter,
   Input,
   Output,
   ViewChild,
-} from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { Progress } from '../../data/progress';
-import { ServerResponse } from '../../data/serverresponse';
-import { ProgressInfoComponent } from '../progress-info/progress-info.component';
-import { timeSince } from '../../utils';
-import { Router } from '@angular/router';
-import { GargantuaClientFactory } from 'src/app/data/gargantua.service';
+} from "@angular/core";
+import { Progress } from "../../data/progress";
+import { ProgressInfoComponent } from "../progress-info/progress-info.component";
+import { timeSince } from "../../utils";
+import { Router } from "@angular/router";
+import { GargantuaClientFactory } from "src/app/data/gargantua.service";
 
 @Component({
-  selector: 'progress-card',
-  templateUrl: './progress-card.component.html',
-  styleUrls: ['./progress-card.component.scss'],
+  selector: "progress-card",
+  templateUrl: "./progress-card.component.html",
+  styleUrls: ["./progress-card.component.scss"],
 })
 export class ProgressCardComponent {
   @Input()
@@ -27,15 +24,16 @@ export class ProgressCardComponent {
   public hideUsername: boolean;
 
   @Input()
-  public pause: Function;
+  @Input()
+  pause?: (pause: boolean) => void;
 
   @Output() nameClickedEvent = new EventEmitter<string>();
 
   public timeSince = timeSince;
 
-  private gargSessionScopedClient = this.gcf.scopedClient('/session');
+  private gargSessionScopedClient = this.gcf.scopedClient("/session");
 
-  @ViewChild('progressInfo') progressInfo: ProgressInfoComponent;
+  @ViewChild("progressInfo") progressInfo: ProgressInfoComponent;
 
   constructor(
     private gcf: GargantuaClientFactory,
@@ -45,7 +43,7 @@ export class ProgressCardComponent {
   public terminateSession() {
     this.gargSessionScopedClient
       .put(`/${this.progress.session}/finished`, {})
-      .subscribe((_s: ServerResponse) => {
+      .subscribe(() => {
         this.progress.finished = true;
       });
   }
@@ -57,13 +55,13 @@ export class ProgressCardComponent {
   openTerminalWindow() {
     const url = this.router.serializeUrl(
       this.router.createUrlTree([
-        '/session',
+        "/session",
         this.progress.session,
-        'steps',
+        "steps",
         Math.max(this.progress.current_step - 1, 0),
       ]),
     );
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   }
 
   public progressFilterName() {
@@ -90,15 +88,15 @@ export class ProgressCardComponent {
 
   public getProgressColorClass() {
     if (this.progress.finished) {
-      return 'status-finished';
+      return "status-finished";
     }
     if (this.progress.current_step == 0) {
-      return 'status-provisioning';
+      return "status-provisioning";
     }
     if (this.progress.current_step == this.progress.total_step) {
-      return 'status-success';
+      return "status-success";
     }
-    return 'status-running';
+    return "status-running";
   }
 
   public getUsername() {

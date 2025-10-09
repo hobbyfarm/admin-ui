@@ -8,10 +8,10 @@ import { FormArray, FormControl } from '@angular/forms';
 export class TypedArrayComponent<T extends string | number | boolean> {
   @Input() array: FormArray<FormControl<T>>;
   @Input() input: TypedInput;
-  @Output() change: EventEmitter<boolean> = new EventEmitter();
+  @Output() mapChange: EventEmitter<boolean> = new EventEmitter();
 
   inputChanged() {
-    this.change.emit(true);
+    this.mapChange.emit(true);
   }
 
   removeArrayElement(index: number) {

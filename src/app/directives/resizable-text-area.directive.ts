@@ -3,7 +3,8 @@ import {
   EventEmitter,
   HostListener,
   Output,
-  Renderer2, OnDestroy,
+  Renderer2,
+  OnDestroy,
 } from '@angular/core';
 
 @Directive({

@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserService } from 'src/app/data/user.service';
 import { User } from 'src/app/data/user';
-import { ServerResponse } from 'src/app/data/serverresponse';
 import { UserEmailFilter } from 'src/app/user-email-filter';
 import { UserAccesscodeFilter } from 'src/app/user-accescode-filter';
 import { DeleteProcessModalComponent } from './delete-process-modal/delete-process-modal.component';
@@ -37,7 +36,7 @@ export class UserComponent implements OnInit {
   ngOnInit() {
     this.rbacService
       .Grants('users', 'list')
-      .then(async (allowedGet: boolean) => {
+      .then(async () => {
         this.selectRbac = await this.rbacService.Grants('users', 'get');
         this.refresh();
         this.userService.list().subscribe((u: User[]) => {
@@ -51,7 +50,7 @@ export class UserComponent implements OnInit {
       next: (u: User[]) => {
         this.users = u;
       },
-      error: (_s: ServerResponse) => {
+      error: () => {
         // do something about failure
       },
     });

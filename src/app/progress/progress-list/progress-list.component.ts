@@ -4,12 +4,12 @@ import {
   Input,
   Output,
   ViewChild,
-} from '@angular/core';
-import { Progress } from '../../data/progress';
-import { ProgressInfoComponent } from '../progress-info/progress-info.component';
-import { timeSince } from '../../utils';
-import { SessionProgressService } from '../session-progress.service';
-import { ClrDatagridComparatorInterface } from '@clr/angular';
+} from "@angular/core";
+import { Progress } from "../../data/progress";
+import { ProgressInfoComponent } from "../progress-info/progress-info.component";
+import { timeSince } from "../../utils";
+import { SessionProgressService } from "../session-progress.service";
+import { ClrDatagridComparatorInterface } from "@clr/angular";
 
 export class DurationComparator
   implements ClrDatagridComparatorInterface<Progress>
@@ -28,9 +28,9 @@ export class DurationComparator
 }
 
 @Component({
-  selector: 'progress-list',
-  templateUrl: './progress-list.component.html',
-  styleUrls: ['./progress-list.component.scss'],
+  selector: "progress-list",
+  templateUrl: "./progress-list.component.html",
+  styleUrls: ["./progress-list.component.scss"],
 })
 export class ProgressListComponent {
   @Input()
@@ -39,14 +39,13 @@ export class ProgressListComponent {
   @Input()
   public hideUsername: boolean;
 
-  @Input()
-  public pause: Function;
+  @Input() pause?: (pause: boolean) => void;
 
   @Output() nameClickedEvent = new EventEmitter<string>();
 
   public timeSince = timeSince;
 
-  @ViewChild('progressInfo') progressInfo: ProgressInfoComponent;
+  @ViewChild("progressInfo") progressInfo: ProgressInfoComponent;
 
   constructor(private sessionProgressService: SessionProgressService) {}
 

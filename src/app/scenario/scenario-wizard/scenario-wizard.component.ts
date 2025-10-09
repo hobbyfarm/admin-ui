@@ -4,39 +4,38 @@ import {
   OnInit,
   Output,
   ViewChild,
-} from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ClrModal, ClrWizard, ClrWizardPage } from '@clr/angular';
-import { RbacService } from 'src/app/data/rbac.service';
-import { Scenario } from 'src/app/data/scenario';
-import { ScenarioService } from 'src/app/data/scenario.service';
-import { ServerResponse } from 'src/app/data/serverresponse';
-import { VMTemplate } from 'src/app/data/vmtemplate';
-import { VmtemplateService } from 'src/app/data/vmtemplate.service';
-import { KeepaliveValidator } from 'src/app/validators/keepalive.validator';
-import { StepsScenarioComponent } from '../steps-scenario/steps-scenario.component';
-import { HttpErrorResponse } from '@angular/common/http';
-import { CategoryFormGroup, ScenarioFormGroup } from 'src/app/data/forms';
-import { AlertDetails } from 'src/app/alert/alert';
-import { ClrAlertType } from 'src/app/clr-alert-type';
-import { VMTasks } from 'src/app/data/vm-tasks';
+} from "@angular/core";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { ClrModal, ClrWizard, ClrWizardPage } from "@clr/angular";
+import { RbacService } from "src/app/data/rbac.service";
+import { Scenario } from "src/app/data/scenario";
+import { ScenarioService } from "src/app/data/scenario.service";
+import { ServerResponse } from "src/app/data/serverresponse";
+import { VMTemplate } from "src/app/data/vmtemplate";
+import { VmtemplateService } from "src/app/data/vmtemplate.service";
+import { KeepaliveValidator } from "src/app/validators/keepalive.validator";
+import { StepsScenarioComponent } from "../steps-scenario/steps-scenario.component";
+import { HttpErrorResponse } from "@angular/common/http";
+import { CategoryFormGroup, ScenarioFormGroup } from "src/app/data/forms";
+import { AlertDetails } from "src/app/alert/alert";
+import { ClrAlertType } from "src/app/clr-alert-type";
+import { VMTasks } from "src/app/data/vm-tasks";
 
 interface ValidationError {
   message: string;
 }
 @Component({
-  selector: 'scenario-wizard',
-  templateUrl: './scenario-wizard.component.html',
-  styleUrls: ['./scenario-wizard.component.scss'],
+  selector: "scenario-wizard",
+  templateUrl: "./scenario-wizard.component.html",
+  styleUrls: ["./scenario-wizard.component.scss"],
 })
 export class ScenarioWizardComponent implements OnInit {
   @Output()
-  onWizardFinished: EventEmitter<AlertDetails> =
-    new EventEmitter<AlertDetails>();
+  wizardFinished: EventEmitter<AlertDetails> = new EventEmitter<AlertDetails>();
 
-  public wizardMode: 'create' | 'edit' = 'create';
-  public wizardTitle: 'Create new Scenario' | 'Edit Scenario' =
-    'Create new Scenario';
+  public wizardMode: "create" | "edit" = "create";
+  public wizardTitle: "Create new Scenario" | "Edit Scenario" =
+    "Create new Scenario";
 
   public _open: boolean = false;
   public selectRbac: boolean = false;
@@ -72,12 +71,12 @@ export class ScenarioWizardComponent implements OnInit {
     }
   }
 
-  @ViewChild('deletevmsetmodal', { static: true }) deleteVMSetModal: ClrModal;
-  @ViewChild('createvmmodal', { static: true }) createVMModal: ClrModal;
-  @ViewChild('stepsscenario', { static: true })
+  @ViewChild("deletevmsetmodal", { static: true }) deleteVMSetModal: ClrModal;
+  @ViewChild("createvmmodal", { static: true }) createVMModal: ClrModal;
+  @ViewChild("stepsscenario", { static: true })
   stepScenario: StepsScenarioComponent;
-  @ViewChild('taskPage') taskWizardPage: ClrWizardPage;
-  @ViewChild('finalizePage') finalizeWizardPage: ClrWizardPage;
+  @ViewChild("taskPage") taskWizardPage: ClrWizardPage;
+  @ViewChild("finalizePage") finalizeWizardPage: ClrWizardPage;
 
   constructor(
     public scenarioService: ScenarioService,
@@ -85,15 +84,15 @@ export class ScenarioWizardComponent implements OnInit {
     public rbacService: RbacService,
   ) {}
 
-  @ViewChild('wizard', { static: true }) wizard: ClrWizard;
+  @ViewChild("wizard", { static: true }) wizard: ClrWizard;
 
   public scenarioDetails: ScenarioFormGroup = new FormGroup(
     {
-      scenario_name: new FormControl<string>('', {
+      scenario_name: new FormControl<string>("", {
         validators: [Validators.required, Validators.minLength(4)],
         nonNullable: true,
       }),
-      scenario_description: new FormControl<string>('', {
+      scenario_description: new FormControl<string>("", {
         validators: [Validators.required, Validators.minLength(4)],
         nonNullable: true,
       }),
@@ -101,7 +100,7 @@ export class ScenarioWizardComponent implements OnInit {
         validators: Validators.required,
         nonNullable: true,
       }),
-      keepalive_unit: new FormControl<string>('m', {
+      keepalive_unit: new FormControl<string>("m", {
         validators: Validators.required,
         nonNullable: true,
       }),
@@ -109,7 +108,7 @@ export class ScenarioWizardComponent implements OnInit {
         validators: [
           Validators.required,
           Validators.min(1),
-          Validators.pattern('^[0-9]+$'),
+          Validators.pattern("^[0-9]+$"),
         ],
         nonNullable: true,
       }),
@@ -121,11 +120,11 @@ export class ScenarioWizardComponent implements OnInit {
     vm_name: FormControl<string>;
     vm_template: FormControl<string>;
   }> = new FormGroup({
-    vm_name: new FormControl<string>('', {
+    vm_name: new FormControl<string>("", {
       validators: [Validators.required, Validators.minLength(4)],
       nonNullable: true,
     }),
-    vm_template: new FormControl<string>('', {
+    vm_template: new FormControl<string>("", {
       validators: Validators.required,
       nonNullable: true,
     }),
@@ -144,12 +143,12 @@ export class ScenarioWizardComponent implements OnInit {
     // let's initialize our selected scenario to prevent TypeErrors in our HTML template
     this._initSelectedScenario();
     // "Get" Permission on scenarios is required to load step content
-    this.rbacService.Grants('scenarios', 'get').then((allowed: boolean) => {
+    this.rbacService.Grants("scenarios", "get").then((allowed: boolean) => {
       this.selectRbac = allowed;
     });
 
     this.rbacService
-      .Grants('virtualmachinesets', 'list')
+      .Grants("virtualmachinesets", "list")
       .then((listVmSets: boolean) => {
         if (listVmSets) {
           this.vmTemplateService.list().subscribe((v: VMTemplate[]) => {
@@ -186,7 +185,7 @@ export class ScenarioWizardComponent implements OnInit {
         this.taskWizardPage.hasError = true;
         this.validationErrors.push({
           message:
-            'One or more Tasks reference a Virtual Machnine Name, that does not exist',
+            "One or more Tasks reference a Virtual Machnine Name, that does not exist",
         });
       }
     });
@@ -203,7 +202,7 @@ export class ScenarioWizardComponent implements OnInit {
           this.taskWizardPage.hasError = true;
           this.validationErrors.push({
             message:
-              'Task ' + vmTask.vm_name + ': ' + taskName + ' is a Duplicate',
+              "Task " + vmTask.vm_name + ": " + taskName + " is a Duplicate",
           });
         }
       });
@@ -222,20 +221,20 @@ export class ScenarioWizardComponent implements OnInit {
           this.taskWizardPage.hasError = true;
           this.validationErrors.push({
             message:
-              'Task ' +
+              "Task " +
               vmTask.vm_name +
-              ': ' +
+              ": " +
               task.name +
-              ' is missing required information',
+              " is missing required information",
           });
         }
       });
     });
   }
 
-  open(wizardMode: 'create' | 'edit', scenario?: Scenario) {
+  open(wizardMode: "create" | "edit", scenario?: Scenario) {
     this.wizardMode = wizardMode;
-    if (this.wizardMode == 'create') {
+    if (this.wizardMode == "create") {
       this._createScenarioWizardfunction();
     } else {
       // this wizardMode == 'edit'
@@ -251,14 +250,14 @@ export class ScenarioWizardComponent implements OnInit {
   }
 
   finishScenario() {
-    if (this.wizardMode == 'create') this.saveCreatedScenario();
-    if (this.wizardMode == 'edit') this.saveUpdatedScenario();
+    if (this.wizardMode == "create") this.saveCreatedScenario();
+    if (this.wizardMode == "edit") this.saveUpdatedScenario();
   }
 
   saveCreatedScenario() {
     this.scenarioService.create(this.selectedscenario).subscribe({
       next: (s: Scenario) => {
-        this.onWizardFinished.emit({
+        this.wizardFinished.emit({
           type: ClrAlertType.Success,
           message: `Scenario ${s.name} created`,
           closable: true,
@@ -267,7 +266,7 @@ export class ScenarioWizardComponent implements OnInit {
       },
       error: (e: HttpErrorResponse) => {
         const errorMessage: string = e.message;
-        this.onWizardFinished.emit({
+        this.wizardFinished.emit({
           type: ClrAlertType.Danger,
           message: errorMessage,
           closable: true,
@@ -283,7 +282,7 @@ export class ScenarioWizardComponent implements OnInit {
       this.scenarioDetails.controls.keepalive_amount.value +
       this.scenarioDetails.controls.keepalive_unit.value;
     this.selectedscenario.pause_duration =
-      this.scenarioDetails.controls.pause_duration.value + 'h';
+      this.scenarioDetails.controls.pause_duration.value + "h";
     this.selectedscenario.name =
       this.scenarioDetails.controls.scenario_name.value;
     this.selectedscenario.description =
@@ -298,16 +297,16 @@ export class ScenarioWizardComponent implements OnInit {
     this.scenarioService
       .update(this.selectedscenario)
       .subscribe((s: ServerResponse) => {
-        if (s.type == 'updated') {
-          this.onWizardFinished.emit({
+        if (s.type == "updated") {
+          this.wizardFinished.emit({
             type: ClrAlertType.Success,
             message: `Scenario updated`,
             closable: true,
             duration: 3000,
           });
         } else {
-          const errorMsg = 'Unable to update scenario: ' + s.message;
-          this.onWizardFinished.emit({
+          const errorMsg = "Unable to update scenario: " + s.message;
+          this.wizardFinished.emit({
             type: ClrAlertType.Success,
             message: errorMsg,
             closable: true,
@@ -320,7 +319,7 @@ export class ScenarioWizardComponent implements OnInit {
     this.wizard.reset();
     this.scenarioDetails.reset({
       keepalive_amount: 10,
-      keepalive_unit: 'm',
+      keepalive_unit: "m",
       pause_duration: 1,
     });
     this.selectedscenario.virtualmachines = [];
@@ -330,11 +329,11 @@ export class ScenarioWizardComponent implements OnInit {
   }
   addCategory() {
     const categories: string[] | undefined =
-      this.newCategoryForm.controls.category.value?.split(',');
+      this.newCategoryForm.controls.category.value?.split(",");
     categories?.forEach((category) => {
-      category = category.replace(/\s/g, ''); //remove all whitespaces
+      category = category.replace(/\s/g, ""); //remove all whitespaces
       if (
-        category != '' &&
+        category != "" &&
         !this.selectedscenario.categories.includes(category)
       ) {
         this.selectedscenario.categories.push(category);
@@ -351,10 +350,10 @@ export class ScenarioWizardComponent implements OnInit {
   }
   addTag() {
     const tags: string[] | undefined =
-      this.newTagForm.controls.tag.value?.split(',');
+      this.newTagForm.controls.tag.value?.split(",");
     tags?.forEach((tag) => {
-      tag = tag.replace(/\s/g, ''); //remove all whitespaces
-      if (tag != '' && !this.selectedscenario.tags.includes(tag)) {
+      tag = tag.replace(/\s/g, ""); //remove all whitespaces
+      if (tag != "" && !this.selectedscenario.tags.includes(tag)) {
         this.selectedscenario.tags.push(tag);
       }
     });
@@ -374,7 +373,7 @@ export class ScenarioWizardComponent implements OnInit {
   selectedScenarioHasVM(): boolean {
     if (this.selectedscenario.virtualmachines.length > 0) {
       const validVMSet = this.selectedscenario.virtualmachines.filter(
-        (virtualmachine, i) => {
+        (virtualmachine) => {
           if (Object.keys(virtualmachine).length > 0) {
             return true;
           }
@@ -427,13 +426,13 @@ export class ScenarioWizardComponent implements OnInit {
   private _editScenarioWizardfunction(scenario?: Scenario) {
     if (!scenario) {
       // somehow scenario is undefined -> display an error alert
-      this.onWizardFinished.emit({
+      this.wizardFinished.emit({
         type: ClrAlertType.Danger,
         message:
-          'Could not edit scenario. The provided scenario is not defined.',
+          "Could not edit scenario. The provided scenario is not defined.",
       });
     }
-    this.wizardTitle = 'Edit Scenario';
+    this.wizardTitle = "Edit Scenario";
     this._editScenario(scenario);
   }
 
@@ -468,9 +467,9 @@ export class ScenarioWizardComponent implements OnInit {
           this.wizard.open();
         },
         error: () => {
-          this.onWizardFinished.emit({
+          this.wizardFinished.emit({
             type: ClrAlertType.Danger,
-            message: 'error editing scenario',
+            message: "error editing scenario",
             closable: true,
             duration: 3000,
           });
@@ -480,7 +479,7 @@ export class ScenarioWizardComponent implements OnInit {
   }
 
   private _createScenarioWizardfunction() {
-    this.wizardTitle = 'Create new Scenario';
+    this.wizardTitle = "Create new Scenario";
     this.resetScenarioForm();
     this._initSelectedScenario();
     this.wizard.open();
@@ -488,8 +487,8 @@ export class ScenarioWizardComponent implements OnInit {
 
   private _initSelectedScenario() {
     this.selectedscenario = new Scenario();
-    this.selectedscenario.id = '';
-    this.selectedscenario.name = '';
+    this.selectedscenario.id = "";
+    this.selectedscenario.name = "";
     this.selectedscenario.virtualmachines = [];
     this.selectedscenario.tags = [];
     this.selectedscenario.steps = [];

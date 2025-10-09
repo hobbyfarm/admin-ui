@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { ServerResponse } from './serverresponse';
-import { map, switchMap, tap, combineLatestAll } from 'rxjs/operators';
-import { BehaviorSubject, from, of } from 'rxjs';
-import { atou } from '../unicode';
-import { VMTemplateServiceConfiguration } from './vm-template-service-configuration';
-import { Protocol } from './protocol';
-import { GargantuaClientFactory } from './gargantua.service';
+import { Injectable } from "@angular/core";
+import { ServerResponse } from "./serverresponse";
+import { map, switchMap, tap, combineLatestAll } from "rxjs/operators";
+import { BehaviorSubject, of } from "rxjs";
+import { atou } from "../unicode";
+import { VMTemplateServiceConfiguration } from "./vm-template-service-configuration";
+import { Protocol } from "./protocol";
+import { GargantuaClientFactory } from "./gargantua.service";
 
 interface IVMTemplateServiceConfiguration {
   has_webinterface?: boolean;
@@ -23,14 +23,14 @@ interface IVMTemplateServiceConfiguration {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class PredefinedServiceService {
   private cachedList: VMTemplateServiceConfiguration[] = [];
   private bh: BehaviorSubject<VMTemplateServiceConfiguration[]> =
     new BehaviorSubject(this.cachedList);
   private fetchedList = false;
-  private gargAdmin = this.gcf.scopedClient('/a/predefinedservices');
+  private gargAdmin = this.gcf.scopedClient("/a/predefinedservices");
 
   constructor(private gcf: GargantuaClientFactory) {}
 
@@ -42,7 +42,7 @@ export class PredefinedServiceService {
     if (!force && this.fetchedList) {
       return of(this.cachedList);
     } else {
-      return this.gargAdmin.get('/list').pipe(
+      return this.gargAdmin.get("/list").pipe(
         switchMap((s: ServerResponse) => {
           const templateServiceConfig: IVMTemplateServiceConfiguration =
             JSON.parse(atou(s.content));

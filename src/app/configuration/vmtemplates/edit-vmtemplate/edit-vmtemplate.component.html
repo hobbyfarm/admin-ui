@@ -116,7 +116,7 @@
       </thead>
       <tbody formArrayName="mappings">
         @for (
-          m of configMap['controls'].mappings['controls'];
+          m of configMap["controls"].mappings["controls"];
           track m;
           let i = $index
         ) {
@@ -194,7 +194,7 @@
         @if (!!this.editTemplate) {
           <tr>
             <td>Name</td>
-            @if (template.name == uneditedTemplate.name) {
+            @if (template.name === uneditedTemplate.name) {
               <td>
                 {{ template.name }}
               </td>
@@ -209,7 +209,7 @@
           </tr>
           <tr>
             <td>Image</td>
-            @if (template.image == uneditedTemplate.image) {
+            @if (template.image === uneditedTemplate.image) {
               <td>
                 {{ template.image }}
               </td>
@@ -247,17 +247,19 @@
         @if (!!this.editTemplate) {
           <tr>
             <td>Base Price</td>
-            @if (template.cost_base_price == uneditedTemplate.cost_base_price) {
+            @if (
+              template.cost_base_price === uneditedTemplate.cost_base_price
+            ) {
               <td>
-                {{ template.cost_base_price ?? 'None' }}
+                {{ template.cost_base_price ?? "None" }}
               </td>
             } @else {
               <td>
                 <span class="del-elem arrow-after">{{
-                  uneditedTemplate.cost_base_price ?? 'None'
+                  uneditedTemplate.cost_base_price ?? "None"
                 }}</span>
                 <span class="add-elem">{{
-                  template.cost_base_price ?? 'None'
+                  template.cost_base_price ?? "None"
                 }}</span>
               </td>
             }
@@ -266,15 +268,15 @@
             <td>Time Unit</td>
             @if (template.cost_time_unit == uneditedTemplate.cost_time_unit) {
               <td>
-                {{ template.cost_time_unit ?? 'None' }}
+                {{ template.cost_time_unit ?? "None" }}
               </td>
             } @else {
               <td>
                 <span class="del-elem arrow-after">{{
-                  uneditedTemplate.cost_time_unit ?? 'None'
+                  uneditedTemplate.cost_time_unit ?? "None"
                 }}</span>
                 <span class="add-elem">{{
-                  template.cost_time_unit ?? 'None'
+                  template.cost_time_unit ?? "None"
                 }}</span>
               </td>
             }
@@ -282,11 +284,11 @@
         } @else {
           <tr>
             <td>Base Price</td>
-            <td>{{ template.cost_base_price ?? 'None' }}</td>
+            <td>{{ template.cost_base_price ?? "None" }}</td>
           </tr>
           <tr>
             <td>Time Unit</td>
-            <td>{{ template.cost_time_unit ?? 'None' }}</td>
+            <td>{{ template.cost_time_unit ?? "None" }}</td>
           </tr>
         }
       </tbody>
@@ -343,14 +345,14 @@
                           {{
                             interface.value.hasWebinterface
                               ? interface.value.port
-                              : '-'
+                              : "-"
                           }}
                         </td>
                         <td>
                           {{
                             interface.value.hasOwnTab
                               ? interface.value.hasOwnTab
-                              : '-'
+                              : "-"
                           }}
                         </td>
                       </tr>
@@ -367,7 +369,7 @@
                     {{ item.key }}
                   </td>
                 }
-                @if (item.value == uneditedTemplate.config_map[item.key]) {
+                @if (item.value === uneditedTemplate.config_map[item.key]) {
                   <td>
                     {{ item.value }}
                   </td>
@@ -380,7 +382,7 @@
                 <!-- view of edit value -->
                 @if (
                   uneditedTemplate.config_map.hasOwnProperty(item.key) &&
-                  item.value != uneditedTemplate.config_map[item.key]
+                  item.value !== uneditedTemplate.config_map[item.key]
                 ) {
                   <td>
                     <span class="del-elem arrow-after">{{

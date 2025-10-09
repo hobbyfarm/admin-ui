@@ -1,32 +1,32 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CourseService } from '../data/course.service';
-import { Course } from '../data/course';
-import { ScenarioService } from '../data/scenario.service';
-import { ServerResponse } from '../data/serverresponse';
-import { HttpErrorResponse } from '@angular/common/http';
-import { DeleteConfirmationComponent } from '../delete-confirmation/delete-confirmation.component';
-import { RbacService } from '../data/rbac.service';
-import { ClrDatagridSortOrder } from '@clr/angular';
-import { CourseWizardComponent } from './course-wizard/course-wizard.component';
-import { AlertComponent } from '../alert/alert.component';
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { CourseService } from "../data/course.service";
+import { Course } from "../data/course";
+import { ScenarioService } from "../data/scenario.service";
+import { ServerResponse } from "../data/serverresponse";
+import { HttpErrorResponse } from "@angular/common/http";
+import { DeleteConfirmationComponent } from "../delete-confirmation/delete-confirmation.component";
+import { RbacService } from "../data/rbac.service";
+import { ClrDatagridSortOrder } from "@clr/angular";
+import { CourseWizardComponent } from "./course-wizard/course-wizard.component";
+import { AlertComponent } from "../alert/alert.component";
 import {
   DEFAULT_ALERT_ERROR_DURATION,
   DEFAULT_ALERT_SUCCESS_DURATION,
-} from '../alert/alert';
+} from "../alert/alert";
 
 @Component({
-  selector: 'app-course',
-  templateUrl: './course.component.html',
-  styleUrls: ['./course.component.scss'],
+  selector: "app-course",
+  templateUrl: "./course.component.html",
+  styleUrls: ["./course.component.scss"],
 })
 export class CourseComponent implements OnInit {
   public courses: Course[] = [];
 
-  @ViewChild('addNewCourse') addNewCourse: CourseWizardComponent;
-  @ViewChild('editcourse') editCourseWizard: CourseWizardComponent;
-  @ViewChild('deleteConfirmation')
+  @ViewChild("addNewCourse") addNewCourse: CourseWizardComponent;
+  @ViewChild("editcourse") editCourseWizard: CourseWizardComponent;
+  @ViewChild("deleteConfirmation")
   deleteConfirmation: DeleteConfirmationComponent;
-  @ViewChild('alert') alert: AlertComponent;
+  @ViewChild("alert") alert: AlertComponent;
 
   public selectedCourse: Course | null = null;
 
@@ -46,10 +46,10 @@ export class CourseComponent implements OnInit {
 
   ngOnInit(): void {
     const authorizationRequests = Promise.all([
-      this.rbacService.Grants('courses', 'get'),
-      this.rbacService.Grants('courses', 'update'),
-      this.rbacService.Grants('scenarios', 'list'),
-      this.rbacService.Grants('courses', 'delete'),
+      this.rbacService.Grants("courses", "get"),
+      this.rbacService.Grants("courses", "update"),
+      this.rbacService.Grants("scenarios", "list"),
+      this.rbacService.Grants("courses", "delete"),
     ]);
 
     authorizationRequests.then(
@@ -77,7 +77,7 @@ export class CourseComponent implements OnInit {
         this.courses = cList;
       },
       error: () => {
-        const alertMsg = 'Failed to load courses!';
+        const alertMsg = "Failed to load courses!";
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
@@ -99,19 +99,19 @@ export class CourseComponent implements OnInit {
 
   deleteSelected(): void {
     if (!this.selectedCourse) {
-      const alertMsg = 'Error deleting object: Selected course is unavailable!';
+      const alertMsg = "Error deleting object: Selected course is unavailable!";
       this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       return;
     }
     this.courseService.delete(this.selectedCourse).subscribe({
-      next: (_s: ServerResponse) => {
-        const alertMsg = 'Course deleted!';
+      next: () => {
+        const alertMsg = "Course deleted!";
         this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();
         this.selectedCourse = null;
       },
       error: (e: HttpErrorResponse) => {
-        const alertMsg = 'Error deleting object: ' + e.message;
+        const alertMsg = "Error deleting object: " + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
     });
