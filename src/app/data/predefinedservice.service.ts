@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServerResponse } from './serverresponse';
 import { map, switchMap, tap, combineLatestAll } from 'rxjs/operators';
-import { BehaviorSubject, from, of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { atou } from '../unicode';
 import { VMTemplateServiceConfiguration } from './vm-template-service-configuration';
 import { Protocol } from './protocol';
@@ -42,35 +42,34 @@ export class PredefinedServiceService {
     if (!force && this.fetchedList) {
       return of(this.cachedList);
     } else {
-      return this.gargAdmin
-        .get('/list')
-        .pipe(
-          switchMap((s: ServerResponse) => {
-            const templateServiceConfig: IVMTemplateServiceConfiguration = JSON.parse(atou(s.content));
-            return of(templateServiceConfig);
-          }),
-          map((resp: IVMTemplateServiceConfiguration) => {
-            let parsedVmtsc = new VMTemplateServiceConfiguration(
-              resp.name,
-              resp.has_webinterface,
-              resp.port,
-              resp.path,
-              resp.protocol,
-              resp.has_tab,
-              resp.no_rewrite_root_path,
-              resp.rewrite_host_header,
-              resp.rewrite_origin_header,
-              resp.disallow_iframe,
-              resp.disable_authorization_header,
-              resp.cloud_config
-            );
-            return of(parsedVmtsc);
-          }),
-          combineLatestAll(),
-          tap((vmtsc: VMTemplateServiceConfiguration[]) => {
-            this.set(vmtsc);
-          })
-        );
+      return this.gargAdmin.get('/list').pipe(
+        switchMap((s: ServerResponse) => {
+          const templateServiceConfig: IVMTemplateServiceConfiguration =
+            JSON.parse(atou(s.content));
+          return of(templateServiceConfig);
+        }),
+        map((resp: IVMTemplateServiceConfiguration) => {
+          const parsedVmtsc = new VMTemplateServiceConfiguration(
+            resp.name,
+            resp.has_webinterface,
+            resp.port,
+            resp.path,
+            resp.protocol,
+            resp.has_tab,
+            resp.no_rewrite_root_path,
+            resp.rewrite_host_header,
+            resp.rewrite_origin_header,
+            resp.disallow_iframe,
+            resp.disable_authorization_header,
+            resp.cloud_config,
+          );
+          return of(parsedVmtsc);
+        }),
+        combineLatestAll(),
+        tap((vmtsc: VMTemplateServiceConfiguration[]) => {
+          this.set(vmtsc);
+        }),
+      );
     }
   }
 

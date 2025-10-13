@@ -1,6 +1,6 @@
 <clr-wizard #wiz [(clrWizardOpen)]="isOpen" [clrWizardSize]="'xl'">
   <clr-wizard-title>{{
-    mode === "create" ? "Create Quiz" : "Edit Quiz"
+    mode === 'create' ? 'Create Quiz' : 'Edit Quiz'
   }}</clr-wizard-title>
 
   <clr-wizard-page>
@@ -181,7 +181,7 @@
                 index as i;
                 trackBy: trackByIndex
               "
-              [title]="questionsFA.at(i)?.get('title')?.value || ''"
+              [title]="questionsFA.at(i).get('title')?.value || ''"
             >
               <td>
                 <cds-icon
@@ -197,22 +197,22 @@
               <!-- Weight (synced read-only) -->
               <td>
                 <span class="badge">{{
-                  questionsFA.at(i)?.get("weight")?.value
+                  questionsFA.at(i).get('weight')?.value
                 }}</span>
               </td>
 
               <!-- Type (synced read-only) -->
               <td>
                 {{
-                  questionsFA.at(i)?.get("type")?.value === "radio"
-                    ? "Single"
-                    : "Multiple"
+                  questionsFA.at(i).get('type')?.value === 'radio'
+                    ? 'Single'
+                    : 'Multiple'
                 }}
               </td>
 
               <!-- Answers count -->
               <td class="text-center">
-                {{ answersFA(i)?.length }}
+                {{ answersFA(i).length }}
               </td>
 
               <!-- Actions (Edit / Delete) -->
@@ -410,7 +410,7 @@
           [disabled]="form.invalid || saving()"
           (click)="save()"
         >
-          {{ mode === "create" ? "Create" : "Save" }}
+          {{ mode === 'create' ? 'Create' : 'Save' }}
         </button>
         <button type="button" class="btn btn-outline" (click)="close()">
           Cancel

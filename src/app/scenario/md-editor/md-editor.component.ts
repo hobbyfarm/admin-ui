@@ -56,23 +56,23 @@ export class MDEditorComponent implements OnChanges, AfterViewInit {
   }
 
   editorPreset(action: MDEditorAction) {
-    let cursorPosition: number = this.mdEditor.nativeElement.selectionStart;
+    const cursorPosition: number = this.mdEditor.nativeElement.selectionStart;
     let selectionEnd: number = this.mdEditor.nativeElement.selectionEnd;
-    let textBefore = this.mdEditor.nativeElement.value.substring(
+    const textBefore = this.mdEditor.nativeElement.value.substring(
       0,
-      cursorPosition
+      cursorPosition,
     );
-    let textAfter = this.mdEditor.nativeElement.value.substring(selectionEnd);
+    const textAfter = this.mdEditor.nativeElement.value.substring(selectionEnd);
     let textSelection = this.mdEditor.nativeElement.value.substring(
       cursorPosition,
-      selectionEnd
+      selectionEnd,
     );
     if (cursorPosition == selectionEnd) {
       // No text was selected, only cursor position is set
       textSelection = action.actionEmpty; // We set a default text
       selectionEnd += action.actionEmpty.length; // and move the selection so that the default text is selected
     }
-    let newText =
+    const newText =
       textBefore +
       action.actionBefore +
       textSelection +

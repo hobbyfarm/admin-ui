@@ -3,7 +3,11 @@
 <h3>Quizzes</h3>
 <div class="clr-row">
   <div class="clr-col">
-    <button class="btn btn-success" (click)="openNewQuizWizard()" *rbac="['quizes.create']">
+    <button
+      class="btn btn-success"
+      (click)="openNewQuizWizard()"
+      *rbac="['quizes.create']"
+    >
       <cds-icon shape="plus"></cds-icon> New Quiz
     </button>
   </div>
@@ -13,11 +17,15 @@
   <div class="clr-col">
     <clr-datagrid [clrDisableSelection]="!selectRbac">
       <clr-dg-column [clrDgField]="'id'">ID</clr-dg-column>
-      <clr-dg-column [clrDgField]="'title'" [clrDgSortOrder]="ascSort">Title</clr-dg-column>
+      <clr-dg-column [clrDgField]="'title'" [clrDgSortOrder]="ascSort"
+        >Title</clr-dg-column
+      >
       <clr-dg-column [clrDgField]="'issuer'">Issuer</clr-dg-column>
       <clr-dg-column [clrDgField]="'shuffle'">Shuffle</clr-dg-column>
       <clr-dg-column [clrDgField]="'pool_size'">Pool Size</clr-dg-column>
-      <clr-dg-column [clrDgField]="'success_threshold'">Threshold</clr-dg-column>
+      <clr-dg-column [clrDgField]="'success_threshold'"
+        >Threshold</clr-dg-column
+      >
 
       <clr-dg-row
         *clrDgItems="let quiz of quizzes"
@@ -32,7 +40,11 @@
                 Edit
               </button>
             }
-            <button class="action-item" (click)="confirmDelete(quiz)" *rbac="['quizes.delete']">
+            <button
+              class="action-item"
+              (click)="confirmDelete(quiz)"
+              *rbac="['quizes.delete']"
+            >
               Delete
             </button>
           </clr-dg-action-overflow>

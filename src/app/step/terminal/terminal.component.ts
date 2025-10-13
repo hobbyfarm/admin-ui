@@ -91,11 +91,7 @@ export class TerminalComponent implements OnChanges, AfterViewInit, OnDestroy {
     // for symplicity we are using type assertion to string here, avoiding to handle promises we're not expecting
     const token = this.jwtHelper.tokenGetter() as string;
     this.socket = new WebSocket(
-      this.endpoint +
-        '/shell/' +
-        this.vmid +
-        '/connect?auth=' +
-        token,
+      this.endpoint + '/shell/' + this.vmid + '/connect?auth=' + token,
     );
 
     // Check if current browser is firefox by useragent and use "duck-typing" as a fallback.

@@ -1,6 +1,6 @@
-@import "./theme.scss";
-@import "../node_modules/@clr/ui/src/main.scss";
-@import "../node_modules/@angular/cdk/overlay-prebuilt.css";
+@import './theme.scss';
+@import '../node_modules/@clr/ui/src/main.scss';
+@import '../node_modules/@angular/cdk/overlay-prebuilt.css';
 
 .row {
   @extend .clr-row;
@@ -37,7 +37,7 @@ clr-stack-view.compact {
   margin: 0 !important;
   z-index: 9999 !important;
   opacity: 0.8;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=80)';
   filter: alpha(opacity=80);
   pointer-events: none;
 }
@@ -58,7 +58,7 @@ clr-stack-view.compact {
 /* added to the source element while its mirror is dragged */
 .gu-transit {
   opacity: 0.2;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=20)';
   filter: alpha(opacity=20);
 }
 
@@ -76,7 +76,7 @@ clr-stack-view.compact {
 //     display: none;
 // }
 
-clr-datagrid.clr_disable_selection div.datagrid-row-master>div:first-child {
+clr-datagrid.clr_disable_selection div.datagrid-row-master > div:first-child {
   display: none;
 }
 

@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Scenario } from '../data/scenario';
 import { ScenarioService } from '../data/scenario.service';
 import { ClrDatagridSortOrder, ClrModal } from '@clr/angular';
-import { ServerResponse } from '../data/serverresponse';
 import { FilterScenariosComponent } from '../filter-scenarios/filter-scenarios.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ScenarioWizardComponent } from './scenario-wizard/scenario-wizard.component';
@@ -90,7 +89,7 @@ export class ScenarioComponent implements OnInit {
 
   cloneScenario(scenarioId: string) {
     this.scenarioService.clone(scenarioId).subscribe({
-      next: (_s: ServerResponse) => {
+      next: () => {
         const alertMsg = 'Scenario cloned';
         this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();
@@ -99,12 +98,12 @@ export class ScenarioComponent implements OnInit {
         const alertMsg = 'Error cloning scenario: ' + e.message;
         this.alert.danger(alertMsg, true, DEFAULT_ALERT_ERROR_DURATION);
       },
-    })
+    });
   }
 
   deleteScenario(scenarioId: string) {
     this.scenarioService.delete(scenarioId).subscribe({
-      next: (_s: ServerResponse) => {
+      next: () => {
         const alertMsg = 'Scenario deleted';
         this.alert.success(alertMsg, true, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();

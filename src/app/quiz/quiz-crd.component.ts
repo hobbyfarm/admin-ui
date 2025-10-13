@@ -26,7 +26,8 @@ export class QuizCrdComponent implements OnInit {
   public selectRbac = false;
 
   @ViewChild('alert') alert: AlertComponent;
-  @ViewChild('deleteConfirmation') deleteConfirmation: DeleteConfirmationComponent;
+  @ViewChild('deleteConfirmation')
+  deleteConfirmation: DeleteConfirmationComponent;
   @ViewChild('addNewQuiz', { static: false, read: QuizWizardComponent })
   addNewQuiz!: QuizWizardComponent;
 
@@ -35,7 +36,7 @@ export class QuizCrdComponent implements OnInit {
 
   constructor(
     private quizService: QuizService,
-    private rbacService: RbacService
+    private rbacService: RbacService,
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +73,8 @@ export class QuizCrdComponent implements OnInit {
     this.addNewQuiz.openForCreate();
   }
 
-  onQuizSaved(_: { id: string; quiz: Quiz }) {
+  onQuizSaved(_event: { id: string; quiz: Quiz }) {
+    void _event;
     this.refresh();
   }
 
@@ -91,13 +93,17 @@ export class QuizCrdComponent implements OnInit {
       this.alert.danger(
         'Error deleting quiz: none selected.',
         true,
-        DEFAULT_ALERT_ERROR_DURATION
+        DEFAULT_ALERT_ERROR_DURATION,
       );
       return;
     }
     this.quizService.delete(this.selectedQuiz.id!).subscribe({
       next: () => {
-        this.alert.success('Quiz deleted successfully!', true, DEFAULT_ALERT_SUCCESS_DURATION);
+        this.alert.success(
+          'Quiz deleted successfully!',
+          true,
+          DEFAULT_ALERT_SUCCESS_DURATION,
+        );
         this.selectedQuiz = null;
         this.refresh();
       },
@@ -105,7 +111,7 @@ export class QuizCrdComponent implements OnInit {
         this.alert.danger(
           'Error deleting quiz: ' + e.message,
           true,
-          DEFAULT_ALERT_ERROR_DURATION
+          DEFAULT_ALERT_ERROR_DURATION,
         );
       },
     });

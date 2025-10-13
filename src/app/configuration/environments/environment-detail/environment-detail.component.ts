@@ -23,7 +23,7 @@ export class EnvironmentDetailComponent implements OnInit {
   constructor(
     public environmentService: EnvironmentService,
     public rbacService: RbacService,
-    public vmTemplateService: VmtemplateService
+    public vmTemplateService: VmtemplateService,
   ) {
     this.rbacService
       .Grants('virtualmachinetemplates', 'list')
@@ -35,8 +35,8 @@ export class EnvironmentDetailComponent implements OnInit {
           .list()
           .subscribe((list: VMTemplate[]) =>
             list.forEach((v) =>
-              this.virtualMachineTemplateList.set(v.id, v.name)
-            )
+              this.virtualMachineTemplateList.set(v.id, v.name),
+            ),
           );
       });
   }
@@ -47,7 +47,7 @@ export class EnvironmentDetailComponent implements OnInit {
     this.environmentService.get(this.id).subscribe((e: Environment) => {
       // initialize two-way binding variables for stack block state
       const templateMappingsCount: number = Object.keys(
-        e.template_mapping
+        e.template_mapping,
       ).length;
       for (let i = 0; i < templateMappingsCount; ++i) {
         this.stackBoxExpanded.push(false);
@@ -74,8 +74,8 @@ export class EnvironmentDetailComponent implements OnInit {
     }
   }
 
-  isEmpty(object: Object) {
-    return Object.keys(object).length == 0;
+  isEmpty(object: Record<string, unknown>): boolean {
+    return Object.keys(object).length === 0;
   }
 
   getLimit(vmt: string) {
@@ -85,7 +85,8 @@ export class EnvironmentDetailComponent implements OnInit {
     return this.currentEnvironment.count_capacity[vmt] ?? 0;
   }
 
-  getVirtualMachineTemplateName(template: any) {
-    return this.virtualMachineTemplateList.get(template as string) ?? template;
+  getVirtualMachineTemplateName(template: unknown): string {
+    const key = String(template ?? '');
+    return this.virtualMachineTemplateList.get(key) ?? key;
   }
 }

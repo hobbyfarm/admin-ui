@@ -138,7 +138,7 @@
           >
         </clr-input-container>
       </form>
-      @if (wizardMode == "edit") {
+      @if (wizardMode === 'edit') {
         <a
           [routerLink]="['/scenario', selectedscenario.id, 'printable']"
           target="_blank"
@@ -256,7 +256,7 @@
   </clr-wizard-page>
 
   <clr-wizard-page
-    [clrWizardPageNextDisabled]="selectedscenario.steps.length == 0"
+    [clrWizardPageNextDisabled]="selectedscenario.steps.length === 0"
     *rbac="['scenarios.update']"
   >
     <ng-template clrPageTitle>Steps</ng-template>

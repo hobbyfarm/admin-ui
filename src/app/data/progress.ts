@@ -1,26 +1,26 @@
 export class Progress {
-    id: string;
-    session: string;
-    user: string;
-    scenario: string;
-    course: string;
-    current_step: number;
-    max_step: number;
-    total_step: number;
-    finished: boolean
-    last_update: Date;
-    started: Date;
-    steps: ProgressStep[];
-    username: string;
-    scenario_name: string;
-    course_name: string;
+  id: string;
+  session: string;
+  user: string;
+  scenario: string;
+  course: string;
+  current_step: number;
+  max_step: number;
+  total_step: number;
+  finished: boolean;
+  last_update: Date;
+  started: Date;
+  steps: ProgressStep[];
+  username: string;
+  scenario_name: string;
+  course_name: string;
 }
 
 export class ProgressStep {
-    step: number;
-    timestamp: Date;
+  step: number;
+  timestamp: Date;
 }
 
 export class ProgressCount {
-    count_map: {}
+  count_map: Record<string, number>;
 }

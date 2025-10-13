@@ -4,15 +4,15 @@ import { TypedInput } from './TypedInput';
 import { FormArray, FormControl } from '@angular/forms';
 
 @Component({
-  template: ''
+  template: '',
 })
 export class TypedMapComponent<T extends string | number | boolean> {
   @Input() map: FormArray<GenericKeyValueGroup<T>>;
   @Input() input: TypedInput;
-  @Output() change: EventEmitter<boolean> = new EventEmitter();
+  @Output() mapChange: EventEmitter<boolean> = new EventEmitter();
 
   inputChanged() {
-    this.change.emit(true);
+    this.mapChange.emit(true);
   }
 
   removeArrayElement(index: number) {
@@ -22,7 +22,7 @@ export class TypedMapComponent<T extends string | number | boolean> {
 
   getMapFormControl<T extends string | number | boolean>(
     ctrl: GenericKeyValueGroup<T>,
-    controlName: 'key' | 'value'
+    controlName: 'key' | 'value',
   ): FormControl<T> | FormControl<string> {
     return ctrl.controls[controlName];
   }

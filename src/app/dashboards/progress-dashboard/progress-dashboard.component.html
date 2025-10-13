@@ -66,7 +66,9 @@
             name="userFilter"
             [(ngModel)]="userFilter"
             (ngModelChange)="filter()"
-            [disabled]="filteredProgress.length == 0 && userFilter.length == 0"
+            [disabled]="
+              filteredProgress.length === 0 && userFilter.length === 0
+            "
           />
           <span class="clr-subtext">Filter by username</span>
           <clr-dropdown>
@@ -75,9 +77,9 @@
               clrDropdownTrigger
               [disabled]="scenarioList.size < 2"
             >
-              @if (this.scenarioFilterList.size == 0) {
+              @if (this.scenarioFilterList.size === 0) {
                 <span>Filter scenario(s)</span>
-              } @else if (this.scenarioFilterList.size == 1) {
+              } @else if (this.scenarioFilterList.size === 1) {
                 <span>1 Scenario selected</span>
               } @else if (this.scenarioFilterList.size > 1) {
                 <span
@@ -132,7 +134,7 @@
       <interval-timer (intervalElapsed)="refresh()"></interval-timer>
     </div>
   </div>
-  @if (progressViewModeControl.value === "cardView") {
+  @if (progressViewModeControl.value === 'cardView') {
     <div class="clr-row">
       @if (currentProgress && currentProgress.length > 0) {
         @for (p of filteredProgress; track p) {
@@ -152,7 +154,7 @@
       }
     </div>
   }
-  @if (progressViewModeControl.value === "listView") {
+  @if (progressViewModeControl.value === 'listView') {
     <div class="clr-row">
       <ng-container>
         @if (currentProgress && currentProgress.length > 0) {

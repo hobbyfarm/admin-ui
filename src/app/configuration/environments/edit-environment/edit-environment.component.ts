@@ -19,7 +19,6 @@ import { Environment } from 'src/app/data/environment';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { EnvironmentService } from 'src/app/data/environment.service';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
-import { ServerResponse } from 'src/app/data/serverresponse';
 import { RbacService } from 'src/app/data/rbac.service';
 import { GenericKeyValueGroup } from 'src/app/data/forms';
 
@@ -109,7 +108,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       ws_endpoint: this._fb.control<string>(env ? env.ws_endpoint : '', [
         Validators.required,
         Validators.pattern(
-          /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/,
+          /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
         ),
       ]),
     });
@@ -178,15 +177,13 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
           templateKeys[i],
           Validators.required,
         ),
-        count: this._fb.control<number>(
-          env.count_capacity[templateKeys[i]],
-          [Validators.required, Validators.pattern(/-?\d+/)],
-        ),
+        count: this._fb.control<number>(env.count_capacity[templateKeys[i]], [
+          Validators.required,
+          Validators.pattern(/-?\d+/),
+        ]),
         params: this._fb.array<GenericKeyValueGroup<string>>([]),
       });
-      const paramKeys = Object.keys(
-        env.template_mapping[templateKeys[i]],
-      );
+      const paramKeys = Object.keys(env.template_mapping[templateKeys[i]]);
       for (let j = 0; j < paramKeys.length; j++) {
         const newParam: GenericKeyValueGroup<string> = this._fb.group({
           key: this._fb.control<string>(paramKeys[j], Validators.required),
@@ -209,20 +206,14 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
       mappings: this._fb.array<FromToGroup>([]),
     });
     for (let i = 0; i < ipKeys.length; i++) {
-      this.newIpMapping(
-        ipKeys[i],
-        env.ip_translation_map[ipKeys[i]],
-      );
+      this.newIpMapping(ipKeys[i], env.ip_translation_map[ipKeys[i]]);
     }
   }
 
   public fixNullValues(env: Environment) {
-    env = {
-      ...env,
-      ip_translation_map: env.ip_translation_map ?? {},
-      template_mapping: env.template_mapping ?? {},
-      environment_specifics: env.environment_specifics ?? {},
-    };
+    env.ip_translation_map ??= {};
+    env.template_mapping ??= {};
+    env.environment_specifics ??= {};
   }
 
   ngOnChanges() {
@@ -255,7 +246,7 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
 
   public getValidVMTemplates() {
     let vmtList = this.VMTemplates;
-    let selectedVMTs: string[] = [];
+    const selectedVMTs: string[] = [];
     for (let i = 0; i < this.templateMappings.controls.templates.length; i++) {
       // i = index of template
       selectedVMTs.push(
@@ -455,11 +446,11 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
   public saveEnvironment() {
     if (this.updateEnv) {
       this.env.name = this.updateEnv.name;
-      this.envService.update(this.env).subscribe((s: ServerResponse) => {
+      this.envService.update(this.env).subscribe(() => {
         this.event.next(true);
       });
     } else {
-      this.envService.add(this.env).subscribe((s: ServerResponse) => {
+      this.envService.add(this.env).subscribe(() => {
         this.event.next(true);
       });
       this.env = new Environment();
@@ -477,11 +468,15 @@ export class EditEnvironmentComponent implements OnInit, OnChanges {
     return list ? list.includes(scenario) : false;
   }
 
-  getVirtualMachineTemplateName(template: any) {
-    return this.virtualMachineTemplateList.get(template as string) ?? template;
+  getVirtualMachineTemplateName(template: unknown): string {
+    const key = String(template ?? '');
+    return this.virtualMachineTemplateList.get(key) ?? key;
   }
 
   isVMTemplateInUneditedEnv(template: string) {
-    return this.uneditedEnv.template_mapping.hasOwnProperty(template);
+    return Object.prototype.hasOwnProperty.call(
+      this.uneditedEnv.template_mapping,
+      template,
+    );
   }
 }

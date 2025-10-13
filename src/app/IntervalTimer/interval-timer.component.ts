@@ -1,16 +1,21 @@
-import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
-
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 
 @Component({
   selector: 'interval-timer',
   templateUrl: './interval-timer.component.html',
-  styleUrls: ['./interval-timer.component.scss']
+  styleUrls: ['./interval-timer.component.scss'],
 })
-export class IntervalTimer implements OnInit, OnDestroy {
-
+export class IntervalTimerComponent implements OnInit, OnDestroy {
   // Output to emit an Event everytime the Timer reaches 0
   @Output()
-  intervalElapsed: EventEmitter<void> = new EventEmitter()
+  intervalElapsed: EventEmitter<void> = new EventEmitter();
 
   // Optional parameter to define the interval times that are needed in the parent Component. This overwrites the default of 10, 30, 60, 120 and 300 seconds if provided
   @Input()
@@ -18,47 +23,49 @@ export class IntervalTimer implements OnInit, OnDestroy {
 
   // Optional parameter to provide another label for the Timer Component than "Refresh Rate"
   @Input()
-  label: string = "Refresh Rate";
+  label: string = 'Refresh Rate';
 
-  public callInterval: any;
+  public callInterval: ReturnType<typeof setInterval> | null = null;
   public currentCallDelay: number;
   public circleVisible: boolean = true;
-  public delayOptions: Generator; 
+  public delayOptions: Generator;
 
-
-  ngOnInit(): void {    
-    function* cycle<T>(array: T[]){
+  ngOnInit(): void {
+    function* cycle<T>(array: T[]) {
       while (true) yield* array;
-    } 
-    this.delayOptions = cycle(this.delayOptionsArray) 
+    }
+    this.delayOptions = cycle(this.delayOptionsArray);
     this.changeDelay();
   }
 
   onTimerClick() {
     this.changeDelay();
-    this.intervalElapsed.emit()
+    this.intervalElapsed.emit();
   }
-
 
   changeDelay() {
     //Set next value of the interval array as call delay
     this.currentCallDelay = this.delayOptions.next().value;
-  
-    clearInterval(this.callInterval);
 
+    if (this.callInterval !== null) {
+      clearInterval(this.callInterval);
+      this.callInterval = null;
+    }
     this.callInterval = setInterval(() => {
       this.intervalElapsed.emit();
-     } , this.currentCallDelay * 1000);
+    }, this.currentCallDelay * 1000);
 
-     //Reload the Circle to refresh the Animation
+    //Reload the Circle to refresh the Animation
     this.circleVisible = false;
-    setTimeout(() => {      
+    setTimeout(() => {
       this.circleVisible = true;
-    },0);
+    }, 0);
   }
 
-  ngOnDestroy(): void {    
-      clearInterval(this.callInterval)
+  ngOnDestroy(): void {
+    if (this.callInterval !== null) {
+      clearInterval(this.callInterval);
+      this.callInterval = null;
+    }
   }
-
 }

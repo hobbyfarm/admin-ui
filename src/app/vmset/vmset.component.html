@@ -38,16 +38,16 @@
       }
       @if (updateRbac) {
         <clr-stack-block>
-          <clr-stack-label
-            ><button
+          <clr-stack-label>
+            <button
               class="btn btn-sm btn-link btn-link-stack"
               (click)="openAddVm(i)"
-              [disabled]="!(allowedAddVm | async)"
+              [disabled]="(allowedAddVm | async) !== true"
             >
               New VM
             </button>
           </clr-stack-label>
-          @if (!(allowedAddVm | async)) {
+          @if ((allowedAddVm | async) !== true) {
             <clr-stack-content>
               <clr-alert
                 [clrAlertType]="'info'"

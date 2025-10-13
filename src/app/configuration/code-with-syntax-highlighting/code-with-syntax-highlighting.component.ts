@@ -8,15 +8,20 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
+  OnChanges,
 } from '@angular/core';
 import 'prismjs';
 import 'prismjs/components/prism-yaml';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-regex';
 
-declare var Prism: any;
+declare const Prism: {
+  highlight(code: string, grammar: unknown, language: string): string;
+  languages: Record<string, unknown>;
+};
 
-export enum supportedLanguages { //To allow for more Languages the prism Components have to be imported also. For a list of all Supported Languages see: https://prismjs.com/#supported-languages
+export enum supportedLanguages {
+  //To allow for more Languages the prism Components have to be imported also. For a list of all Supported Languages see: https://prismjs.com/#supported-languages
   YAML = 'language-yaml',
   BASH = 'language-bash',
   REGEX = 'language-regex',
@@ -28,18 +33,18 @@ export enum supportedLanguages { //To allow for more Languages the prism Compone
   styleUrls: ['./code-with-syntax-highlighting.component.scss'],
 })
 export class CodeWithSyntaxHighlightingComponent
-  implements AfterViewInit, OnDestroy
+  implements AfterViewInit, OnDestroy, OnChanges
 {
-  @Input('textValue') set textValue(value: string) {
+  @Input() set textValue(value: string) {
     this._textValue = value;
-    this.count++
+    this.count++;
     if (!this.resizeable) {
       this.previousScrollHeight = 0;
       this.setStyleValues();
     }
   }
 
-  count: number = 0
+  count: number = 0;
 
   _textValue: string = '';
 
@@ -85,7 +90,7 @@ export class CodeWithSyntaxHighlightingComponent
   private initialized: boolean = false; // Prevent Errors when Parent sets the text before initialization, i.e. in a clarity accordeon element.
 
   ngAfterViewInit() {
-    this.initialized = true
+    this.initialized = true;
     this.setStyleValues();
     this.lang = this.language.split('-')[1];
     this.setHighlightedText(this._textValue);
@@ -93,7 +98,7 @@ export class CodeWithSyntaxHighlightingComponent
   }
 
   setStyleValues() {
-    if (!!this.initialized) {
+    if (this.initialized) {
       this.codeEditor.nativeElement.style.outline = this.outline;
       this.codeEditor.nativeElement.style.height = this.height;
       this.codeEditor.nativeElement.style.width = this.width;
@@ -110,20 +115,20 @@ export class CodeWithSyntaxHighlightingComponent
     this.highlightedText = Prism.highlight(
       textValue,
       Prism.languages[this.lang],
-      this.lang
+      this.lang,
     );
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (!!changes.textValue) {
+    if (changes.textValue) {
       this._textValue = changes.textValue.currentValue;
       this.setHighlightedText(changes.textValue.currentValue);
     }
   }
 
   onValueChange(event) {
-    this.count++
-    let newText: string = event.target.value;
+    this.count++;
+    const newText: string = event.target.value;
     this.textChanged.emit(newText);
   }
 
@@ -135,7 +140,7 @@ export class CodeWithSyntaxHighlightingComponent
   }
 
   resizeEvent(event) {
-    let newHeight = event.height + 'px';
+    const newHeight = event.height + 'px';
     this.codeEditor.nativeElement.style.height = newHeight;
     this.codeBlock.nativeElement.style.height = newHeight;
     this.textarea.nativeElement.style.height = newHeight;

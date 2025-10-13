@@ -163,7 +163,7 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
       );
     });
     const filename = currentScheduledEvent.event_name + '_OTACs.csv';
-    var element = document.createElement('a');
+    const element = document.createElement('a');
     element.setAttribute(
       'href',
       'data:text/plain;charset=utf-8,' + encodeURIComponent(otacCSV),

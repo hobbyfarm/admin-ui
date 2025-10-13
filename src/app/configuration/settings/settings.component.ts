@@ -29,7 +29,7 @@ export class SettingsComponent implements OnInit {
   scopesLoading = true;
 
   readonly FormGroupType = FormGroupType; // Reference to TypedInputTypes enum for template use
-  public progress_view_mode: ProgressViewMode = "cardView"
+  public progress_view_mode: ProgressViewMode = 'cardView';
 
   @ViewChild('alert') alert: AlertComponent;
 

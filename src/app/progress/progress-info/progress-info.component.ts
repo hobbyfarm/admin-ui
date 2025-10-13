@@ -16,26 +16,25 @@ export class ProgressInfoComponent {
   public progress: Progress = new Progress();
 
   @Input()
-  public pause: Function;
+  pause?: (pause: boolean) => void;
 
   public timeSince = timeSince;
 
-  @ViewChild("infoModal") infoModal: ClrModal;
+  @ViewChild('infoModal') infoModal: ClrModal;
 
   public openModal(): void {
     this.infoModal.open();
-    this.pause(true);
+    this.pause?.(true);
   }
 
   get open() {
     return this.infoOpen;
   }
-  
+
   set open(value: boolean) {
     this.infoOpen = value;
     if (!this.infoOpen) {
-      this.pause(false);
+      this.pause?.(false);
     }
   }
-
 }

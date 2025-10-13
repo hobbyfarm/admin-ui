@@ -11,25 +11,26 @@ import { timeSince } from '../../utils';
 import { SessionProgressService } from '../session-progress.service';
 import { ClrDatagridComparatorInterface } from '@clr/angular';
 
-export class DurationComparator implements ClrDatagridComparatorInterface<Progress> {
+export class DurationComparator
+  implements ClrDatagridComparatorInterface<Progress>
+{
   compare(a: Progress, b: Progress): number {
-
     const durationA = a.finished
-    ? a.last_update.getTime() - a.started.getTime()
-    : Date.now() - a.started.getTime();
+      ? a.last_update.getTime() - a.started.getTime()
+      : Date.now() - a.started.getTime();
 
     const durationB = b.finished
-    ? b.last_update.getTime() - b.started.getTime() 
-    : Date.now() - b.started.getTime(); 
+      ? b.last_update.getTime() - b.started.getTime()
+      : Date.now() - b.started.getTime();
 
-  return durationA - durationB;
+    return durationA - durationB;
   }
 }
 
 @Component({
   selector: 'progress-list',
   templateUrl: './progress-list.component.html',
-  styleUrls: ['./progress-list.component.scss']
+  styleUrls: ['./progress-list.component.scss'],
 })
 export class ProgressListComponent {
   @Input()
@@ -38,8 +39,7 @@ export class ProgressListComponent {
   @Input()
   public hideUsername: boolean;
 
-  @Input()
-  public pause: Function;
+  @Input() pause?: (pause: boolean) => void;
 
   @Output() nameClickedEvent = new EventEmitter<string>();
 
@@ -47,9 +47,7 @@ export class ProgressListComponent {
 
   @ViewChild('progressInfo') progressInfo: ProgressInfoComponent;
 
-  constructor(
-    private sessionProgressService: SessionProgressService
-  ) {}
+  constructor(private sessionProgressService: SessionProgressService) {}
 
   public terminateSession(p: Progress) {
     return this.sessionProgressService.terminateSession(p);
@@ -81,7 +79,4 @@ export class ProgressListComponent {
   public getUsername(p: Progress) {
     return this.hideUsername ? p.user : p.username;
   }
-
-
 }
-

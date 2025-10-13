@@ -5,8 +5,11 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard  {
-  constructor(private router: Router, private helper: JwtHelperService) {}
+export class AuthGuard {
+  constructor(
+    private router: Router,
+    private helper: JwtHelperService,
+  ) {}
 
   canActivate() {
     const token = this.helper.tokenGetter();

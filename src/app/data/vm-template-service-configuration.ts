@@ -14,7 +14,7 @@ export class VMTemplateServiceConfiguration {
   public rewriteOriginHeader?: boolean;
   public disallowIFrame?: boolean;
   public disableAuthorizationHeader?: boolean;
-  public cloudConfigMap?: Record<string, Object>;
+  public cloudConfigMap?: Record<string, unknown>;
   public cloudConfigString?: string;
 
   constructor(

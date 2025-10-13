@@ -1,47 +1,47 @@
 clr-input-container.table-input {
-    margin-top: 0 !important;
+  margin-top: 0 !important;
 }
 
 clr-dg-row-detail {
-    padding-top: 0;
+  padding-top: 0;
 
-    table {
-        margin-top: 0;
-        background-color: transparent;
-        width: auto
-    }
+  table {
+    margin-top: 0;
+    background-color: transparent;
+    width: auto;
+  }
 }
 
 clr-alert.bottom {
-    position: absolute;
-    bottom: 3rem;
+  position: absolute;
+  bottom: 3rem;
 }
 
 .quickset-endtime-form {
-    padding-top: 0;
-    padding-left: 0;
+  padding-top: 0;
+  padding-left: 0;
 }
 
-.del-elem {    
-    color:red; 
-    font-weight: bold;        
+.del-elem {
+  color: red;
+  font-weight: bold;
 }
 
-.arrow-after::after {   
-    color:black;    
-    content: ' \1F862 ';     
-    vertical-align: middle;   
+.arrow-after::after {
+  color: black;
+  content: ' \1F862 ';
+  vertical-align: middle;
 }
 
-.add-elem {    
-    color:green; 
-    font-weight: bold;
+.add-elem {
+  color: green;
+  font-weight: bold;
 }
 
-[class*=" no-margin-top"] {
-    margin-top: 0;
+[class*=' no-margin-top'] {
+  margin-top: 0;
 }
 
-[class*=" padding-left"] {
-    padding-left: .6rem;
+[class*=' padding-left'] {
+  padding-left: 0.6rem;
 }

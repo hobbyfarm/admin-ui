@@ -50,7 +50,7 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
   }
 
   public create(se: ScheduledEvent) {
-    var params = new HttpParams()
+    let params = new HttpParams()
       .set('name', se.event_name)
       .set('description', se.description)
       .set(
@@ -85,7 +85,7 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
   }
 
   public update(se: ScheduledEvent) {
-    var params = new HttpParams()
+    let params = new HttpParams()
       .set('name', se.event_name)
       .set('description', se.description)
       .set(
@@ -131,11 +131,11 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
   }
 
   public addOtacs(seId: string, count: number, duration: string = '') {
-    var params = new HttpParams().set('max_duration', duration);
+    const params = new HttpParams().set('max_duration', duration);
 
     return this.garg.post(`/${seId}/otacs/add/${count}`, params).pipe(
       switchMap((s: ServerResponse) => {
-        let se = JSON.parse(atou(s.content));
+        const se = JSON.parse(atou(s.content));
         return of(se);
       }),
     );
@@ -148,7 +148,7 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
   public listOtacs(seId: string) {
     return this.garg.get(`/${seId}/otacs/list`).pipe(
       switchMap((s: ServerResponse) => {
-        let se = JSON.parse(atou(s.content));
+        const se = JSON.parse(atou(s.content));
         return of(se);
       }),
     );

@@ -3,7 +3,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ClrDatagridSortOrder } from '@clr/angular';
 import { AlertComponent } from 'src/app/alert/alert.component';
 import { RbacService } from 'src/app/data/rbac.service';
-import { ServerResponse } from 'src/app/data/serverresponse';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { DeleteConfirmationComponent } from 'src/app/delete-confirmation/delete-confirmation.component';
@@ -78,7 +77,7 @@ export class VmtemplatesComponent implements OnInit {
 
   public doDelete() {
     this.vmTemplateService.delete(this.deleteTemplate.id).subscribe({
-      next: (s: ServerResponse) => {
+      next: () => {
         const alertMsg = 'Deleted virtual machine template';
         this.alert.success(alertMsg, false, DEFAULT_ALERT_SUCCESS_DURATION);
         this.refresh();

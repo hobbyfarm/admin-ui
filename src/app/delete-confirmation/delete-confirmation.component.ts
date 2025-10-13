@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  Output,
+  EventEmitter,
+  Input,
+} from '@angular/core';
 import { ClrModal } from '@clr/angular';
 
 @Component({
@@ -12,14 +18,11 @@ export class DeleteConfirmationComponent {
   public delete: EventEmitter<boolean> = new EventEmitter();
 
   @Input()
-  public message: String = "Are you sure you wish to delete this object?"
+  public message: string = 'Are you sure you wish to delete this object?';
 
-  constructor() { }
+  constructor() {}
 
-  @ViewChild("modal") modal: ClrModal;
-
-  ngOnInit(): void {
-  }
+  @ViewChild('modal') modal: ClrModal;
 
   public open(): void {
     this.modal.open();
@@ -31,7 +34,7 @@ export class DeleteConfirmationComponent {
   }
 
   doCancel(): void {
-    this.delete.emit(false); 
+    this.delete.emit(false);
     this.modal.close();
   }
 }

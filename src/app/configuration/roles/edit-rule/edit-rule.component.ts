@@ -1,14 +1,19 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { ClrModal } from '@clr/angular';
 import { Rule } from 'src/app/data/role';
-import { RoleService } from 'src/app/data/role.service';
 
 @Component({
   selector: 'edit-rule',
   templateUrl: './edit-rule.component.html',
-  styleUrls: ['./edit-rule.component.scss']
+  styleUrls: ['./edit-rule.component.scss'],
 })
-export class EditRuleComponent implements OnInit {
+export class EditRuleComponent {
   public edit: boolean = false;
   public modalOpen: boolean = false;
   public formValid: boolean = false;
@@ -19,14 +24,11 @@ export class EditRuleComponent implements OnInit {
   @Output()
   public saved: EventEmitter<boolean> = new EventEmitter();
 
-  constructor() { }
+  constructor() {}
 
-  @ViewChild("modal") modal: ClrModal
+  @ViewChild('modal') modal: ClrModal;
 
-  ngOnInit(): void {
-  }
-
-  public open(edit: boolean = false): void {
+  public open(): void {
     this.modal.open();
   }
 
@@ -34,5 +36,4 @@ export class EditRuleComponent implements OnInit {
     this.saved.next(true);
     this.modal.close();
   }
-
 }

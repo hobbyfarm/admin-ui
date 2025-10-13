@@ -9,9 +9,11 @@ import { TypedInputRepresentation } from '../typed-form/TypedInput';
 import { TypedInputType } from '../typed-form/TypedInput';
 import { of } from 'rxjs';
 
+type SettingsValueType = TypedInput['value'];
+
 export class PreparedSettings {
   name: string;
-  value: any;
+  value: SettingsValueType;
   scope: string;
   weight: number;
   group: string;
@@ -74,7 +76,7 @@ export class TypedSettingsService {
 
   public get(scope: string, setting: string) {
     if (this.cachedTypedInputList && this.cachedTypedInputList.has(scope)) {
-      let scopedSettings = this.cachedTypedInputList.get(scope)!;
+      const scopedSettings = this.cachedTypedInputList.get(scope)!;
       if (scopedSettings.has(setting)) {
         return of(scopedSettings.get(setting) ?? ({} as TypedInput));
       } else {
@@ -83,7 +85,7 @@ export class TypedSettingsService {
     } else {
       return this.list(scope).pipe(
         tap((typedInputs: TypedInput[]) => {
-          let m: Map<string, TypedInput> = new Map();
+          const m: Map<string, TypedInput> = new Map();
           typedInputs.forEach((typedSetting) => {
             m.set(typedSetting.id, typedSetting);
           });
@@ -95,7 +97,7 @@ export class TypedSettingsService {
               return typedInput.id === setting;
             }) ?? ({} as TypedInput)
           );
-        })
+        }),
       );
     }
   }
@@ -108,7 +110,7 @@ export class TypedSettingsService {
           return [];
         }
         return this.buildTypedInputList(pList);
-      })
+      }),
     );
   }
 
@@ -122,17 +124,17 @@ export class TypedSettingsService {
       map(extractResponseContent),
       map((pList: PreparedScope[]) => {
         return pList ?? [];
-      })
+      }),
     );
   }
 
   private buildTypedInputList(pList: PreparedSettings[]) {
-    let settings: TypedInput[] = [];
+    const settings: TypedInput[] = [];
 
     pList.forEach((preparedSetting: PreparedSettings) => {
       const typedInputRepresentationIndex =
         this.typedInputRepresentationStringList.indexOf(
-          preparedSetting.valueType
+          preparedSetting.valueType,
         );
       const representation: TypedInputRepresentation =
         this.typedInputRepresentationList[
@@ -142,12 +144,14 @@ export class TypedSettingsService {
         ];
 
       const typedInputTypeIndex = this.typedInputDataTypeStringList.indexOf(
-        preparedSetting.dataType
+        preparedSetting.dataType,
       );
       const inputType: TypedInputType =
         this.typedInputDataTypeList[
           typedInputTypeIndex == -1 ? 0 : typedInputTypeIndex
         ];
+
+      const value = preparedSetting.value as SettingsValueType;
 
       const setting = new TypedInput({
         id: preparedSetting.name,
@@ -170,7 +174,7 @@ export class TypedSettingsService {
           default: preparedSetting.default,
           uniqueItems: preparedSetting.uniqueItems,
         } as InputValidation,
-        value: preparedSetting.value,
+        value,
         weight: preparedSetting.weight,
       });
 
@@ -180,17 +184,25 @@ export class TypedSettingsService {
   }
 
   private buildPreparedSettingsList(inputs: TypedInput[]) {
-    let preparedSettings: Partial<PreparedSettings>[] = [];
+    const preparedSettings: Partial<PreparedSettings>[] = [];
     inputs.forEach((input: TypedInput) => {
       // Maps will not be converted correctly with JSON.stringify, we have to convert them to an Object.
       if (input.isMap(input.value)) {
-        let jsonObject = {};
-        for (const key in input.value) {
-          if (input.value.hasOwnProperty(key)) {
-            jsonObject[key] = input.value[key];
-          }
+        const v = input.value as unknown;
+        let jsonObject: Record<string, unknown>;
+        if (v instanceof Map) {
+          jsonObject = Object.fromEntries(v as Map<string, unknown>);
+        } else {
+          const obj = v as Record<string, unknown>;
+          jsonObject = Object.keys(obj).reduce<Record<string, unknown>>(
+            (acc, k) => {
+              acc[k] = obj[k];
+              return acc;
+            },
+            {},
+          );
         }
-        input.value = jsonObject;
+        input.value = jsonObject as SettingsValueType;
       }
 
       const setting = {

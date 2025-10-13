@@ -38,10 +38,13 @@ export class TaskFormComponent implements OnInit {
       taskCommand: new FormControl(this.editTask.command, [
         Validators.required,
       ]),
-      taskExpectedOutput: new FormControl(this.editTask.expected_output_value, []),
+      taskExpectedOutput: new FormControl(
+        this.editTask.expected_output_value,
+        [],
+      ),
       taskExpectedReurncode: new FormControl(
         this.editTask.expected_return_code,
-        []
+        [],
       ),
       taskReturnType: new FormControl(ReturnType[this.editTask.return_type], [
         Validators.required,

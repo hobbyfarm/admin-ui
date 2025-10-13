@@ -79,10 +79,10 @@ export class CourseService {
     }
   }
 
-  public getCourseById(id: String) {
+  public getCourseById(id: string) {
     return this.garg.get(`/${id}`).pipe(
       map((s: ServerResponse) => {
-        let response: Course = JSON.parse(atou(s.content));
+        const response: Course = JSON.parse(atou(s.content));
         response.name = atou(response.name);
         response.description = atou(response.description);
         return response;
@@ -100,11 +100,11 @@ export class CourseService {
   }
 
   public create(c: Course) {
-    var scenarioArray: string[] = [];
+    const scenarioArray: string[] = [];
     c.scenarios.forEach((s: Scenario) => {
       scenarioArray.push(s.id);
     });
-    var params = new HttpParams()
+    const params = new HttpParams()
       .set('name', utoa(c.name))
       .set('description', utoa(c.description))
       .set('keepalive_duration', c.keepalive_duration ?? '')
@@ -121,11 +121,11 @@ export class CourseService {
   }
 
   public update(c: Course) {
-    var scenarioArray: string[] = [];
+    const scenarioArray: string[] = [];
     c.scenarios.forEach((s: Scenario) => {
       scenarioArray.push(s.id);
     });
-    var params = new HttpParams()
+    const params = new HttpParams()
       .set('name', utoa(c.name))
       .set('description', utoa(c.description))
       .set('keepalive_duration', c.keepalive_duration ?? '')
@@ -146,11 +146,14 @@ export class CourseService {
     return this.gargAdmin.delete(`/${c.id}`);
   }
 
-  public listDynamicScenarios(categories: String[]) {
-    var params = new HttpParams().set('categories', JSON.stringify(categories));
+  public listDynamicScenarios(categories: string[]) {
+    const params = new HttpParams().set(
+      'categories',
+      JSON.stringify(categories),
+    );
     return this.gargAdmin.post('/previewDynamicScenarios', params).pipe(
       map((s: ServerResponse) => {
-        let obj: String[] = JSON.parse(atou(s.content));
+        const obj: string[] = JSON.parse(atou(s.content));
         return obj;
       }),
     );
@@ -177,8 +180,10 @@ export class CourseService {
     tempCourse.header_image_path = c.header_image_path;
 
     tempCourse.virtualmachines = c.virtualmachines.map(
-      (v: Object) =>
-        Object.fromEntries(Object.entries(v)) as Record<string, string>,
+      (v: Record<string, unknown>) =>
+        Object.fromEntries(
+          Object.entries(v).map(([k, val]) => [k, String(val ?? '')]),
+        ) as Record<string, string>,
     );
 
     if (scenarios.length > 0) {

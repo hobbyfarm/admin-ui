@@ -20,7 +20,7 @@ export class VmSetService {
       }),
     );
   }
-  public getVMSetByScheduledEvent(id: String) {
+  public getVMSetByScheduledEvent(id: string) {
     return this.gargAdmin.get(`/${id}`).pipe(
       switchMap((s: ServerResponse) => {
         return of(JSON.parse(atou(s.content)));

@@ -60,7 +60,7 @@ export class NewRoleComponent implements OnInit {
 
     this.role.rules = [this.rule];
 
-    this.roleService.create(this.role).subscribe((a: any) => {
+    this.roleService.create(this.role).subscribe(() => {
       this.saved.next(true);
       this.modal.close();
     });

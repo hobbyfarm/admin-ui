@@ -41,7 +41,7 @@ export class EditAccessCodesComponent implements OnChanges {
   }
 
   deleteAccessCode(a: string) {
-    var acIndex = this.user.access_codes.findIndex((v: string) => {
+    const acIndex = this.user.access_codes.findIndex((v: string) => {
       return v == a;
     });
 
@@ -50,7 +50,7 @@ export class EditAccessCodesComponent implements OnChanges {
     this.userService
       .saveUser(this.user.id, '', '', this.user.access_codes)
       .subscribe({
-        next: (_s: ServerResponse) => {
+        next: () => {
           const alertText = 'Access code deleted';
           this.alert.success(alertText, false, DEFAULT_ALERT_SUCCESS_DURATION);
         },
@@ -69,7 +69,7 @@ export class EditAccessCodesComponent implements OnChanges {
     this.userService
       .saveUser(this.user.id, '', '', this.user.access_codes)
       .subscribe({
-        next: (_s: ServerResponse) => {
+        next: () => {
           const alertText = 'Access code saved';
           this.alert.success(alertText, false, DEFAULT_ALERT_SUCCESS_DURATION);
         },

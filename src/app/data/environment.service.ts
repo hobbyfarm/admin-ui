@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { ServerResponse } from './serverresponse';
@@ -29,20 +28,20 @@ export class EnvironmentService {
   }
 
   public available(env: string, start: Date, end: Date) {
-    var startString = formatDate(
+    const startString = formatDate(
       start,
       'E LLL dd HH:mm:ss UTC yyyy',
       'en-US',
       'UTC',
     );
-    var endString = formatDate(
+    const endString = formatDate(
       end,
       'E LLL dd HH:mm:ss UTC yyyy',
       'en-US',
       'UTC',
     );
 
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('start', startString)
       .set('end', endString);
 
@@ -56,7 +55,7 @@ export class EnvironmentService {
   }
 
   public add(env: Environment) {
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('display_name', env.display_name)
       .set('dnssuffix', env.dnssuffix)
       .set('provider', env.provider)
@@ -70,7 +69,7 @@ export class EnvironmentService {
   }
 
   public update(env: Environment) {
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('display_name', env.display_name)
       .set('dnssuffix', env.dnssuffix)
       .set('provider', env.provider)

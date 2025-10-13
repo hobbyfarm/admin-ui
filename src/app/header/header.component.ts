@@ -47,7 +47,7 @@ export class HeaderComponent implements OnInit {
       ClarityIcons.addIcons(['logo', obj]);
     });
     if (this.config.favicon) {
-      let fi = <HTMLLinkElement>document.querySelector('#favicon');
+      const fi = <HTMLLinkElement>document.querySelector('#favicon');
       fi.href = this.config.favicon;
     }
     this.titleService.setTitle(this.title);

@@ -22,7 +22,6 @@ import { CloudInitConfig } from 'src/app/data/cloud-init-config';
 import { EitherAllOrNoneValidator } from '../../../validators/eitherallornone.validator';
 import { FloatValidator } from '../../../validators/float.validator';
 import { GenericKeyValueGroup } from 'src/app/data/forms';
-import { ServerResponse } from 'src/app/data/serverresponse';
 import { VMTemplateServiceConfiguration } from 'src/app/data/vm-template-service-configuration';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { VmtemplateService } from 'src/app/data/vmtemplate.service';
@@ -87,7 +86,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   private _build() {
     this.buildConfigMap();
-    this.buildCostDetails()
+    this.buildCostDetails();
     this.buildTemplateDetails();
   }
 
@@ -116,8 +115,10 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
         ),
       },
       {
-        validators: [EitherAllOrNoneValidator(['cost_base_price', 'cost_time_unit'])],
-      }
+        validators: [
+          EitherAllOrNoneValidator(['cost_base_price', 'cost_time_unit']),
+        ],
+      },
     );
   }
 
@@ -134,8 +135,8 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
 
   private buildVMServices(configMapData?: string) {
     if (configMapData) {
-      let temp = JSON.parse(configMapData);
-      let resultMap = new Map();
+      const temp = JSON.parse(configMapData);
+      const resultMap = new Map();
       temp.forEach((entry) => {
         entry.cloudConfigMap = new Map(Object.entries(entry['cloudConfigMap'])); // Convert Object to map
         entry['id'] = entry['id'] ?? uuid.v4(); //Catch old entries, that do not have an ID
@@ -148,7 +149,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   public prepareConfigMap(vmTemplate: VMTemplate) {
     // differs from buildConfigMap() in that we are copying existing values
     // into the form
-    let configKeys = Object.keys(vmTemplate.config_map).filter(
+    const configKeys = Object.keys(vmTemplate.config_map).filter(
       (elem) => elem !== this.cloudConfigKey && elem != this.vmServiceKey,
     );
     this.cloudConfig.vmServices = this.buildVMServices(
@@ -191,14 +192,15 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
   }
 
   public copyCostDetails() {
-    this.template.cost_base_price = this.costDetails.controls.cost_base_price.value
+    this.template.cost_base_price = this.costDetails.controls.cost_base_price
+      .value
       ? this.costDetails.controls.cost_base_price.value
       : undefined;
-    this.template.cost_time_unit = this.costDetails.controls.cost_time_unit.value
+    this.template.cost_time_unit = this.costDetails.controls.cost_time_unit
+      .value
       ? this.costDetails.controls.cost_time_unit.value
       : undefined;
   }
-
 
   public copyConfigMap() {
     this.template.config_map = {};
@@ -209,18 +211,18 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     }
     this.template.config_map[this.cloudConfigKey] =
       this.cloudConfig.cloudConfigYaml;
-    let tempArray: VMTemplateServiceConfiguration[] = [];
+    const tempArray: VMTemplateServiceConfiguration[] = [];
     this.cloudConfig.vmServices.forEach(
       (vmService: VMTemplateServiceConfiguration) => {
         tempArray.push(vmService);
       },
     );
-    let jsonString = JSON.stringify(tempArray);
+    const jsonString = JSON.stringify(tempArray);
     this.template.config_map[this.vmServiceKey] = jsonString;
   }
   public copyTemplate() {
     this.copyConfigMap();
-    this.copyCostDetails()
+    this.copyCostDetails();
     this.copyTemplateDetails();
   }
 
@@ -229,7 +231,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
     if (this.editTemplate) {
       this.template.id = this.editTemplate.id;
       this.vmTemplateService.update(this.template).subscribe({
-        next: (_s: ServerResponse) => {
+        next: () => {
           const alertMsg = 'VM Template saved';
           this.alert.success(alertMsg, false, 1000);
           this.event.next(true);
@@ -246,7 +248,7 @@ export class EditVmtemplateComponent implements OnInit, OnChanges {
       });
     } else {
       this.vmTemplateService.create(this.template).subscribe({
-        next: (_s: ServerResponse) => {
+        next: () => {
           const alertMsg = 'VM Template saved';
           this.alert.success(alertMsg, false, 1000);
           this.event.next(true);

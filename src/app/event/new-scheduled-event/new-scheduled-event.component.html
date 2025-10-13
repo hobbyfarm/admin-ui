@@ -162,7 +162,7 @@
       <div class="clr-row">
         <div class="clr-col">
           Start Time:
-          {{ se.start_time ? (se.start_time | date: "long") : "" }} <br />
+          {{ se.start_time ? (se.start_time | date: 'long') : '' }} <br />
           <clr-signpost>
             <button class="btn btn-link" clrSignpostTrigger>
               Set Start Time
@@ -186,7 +186,7 @@
       </div>
       <div class="clr-row">
         <div class="clr-col">
-          End Time: {{ se.end_time ? (se.end_time | date: "long") : "" }}
+          End Time: {{ se.end_time ? (se.end_time | date: 'long') : '' }}
           <br />
           <clr-signpost>
             <button class="btn btn-link" clrSignpostTrigger>
@@ -313,7 +313,7 @@
     </clr-wizard-page>
     <clr-wizard-page
       [clrWizardPageNextDisabled]="
-        selectedcourses.length == 0 && selectedscenarios.length == 0
+        selectedcourses.length === 0 && selectedscenarios.length === 0
       "
     >
       <ng-template clrPageTitle>Select Scenario(s)</ng-template>
@@ -334,7 +334,7 @@
           <clr-dg-cell>{{ s.description }}</clr-dg-cell>
         </clr-dg-row>
       </clr-datagrid>
-      @if (selectedcourses.length == 0 && selectedscenarios.length == 0) {
+      @if (selectedcourses.length === 0 && selectedscenarios.length === 0) {
         <clr-alert
           [clrAlertSizeSmall]="true"
           [clrAlertType]="'warning'"
@@ -352,7 +352,7 @@
     <clr-wizard-page
       (clrWizardPageOnLoad)="checkEnvironments()"
       [clrWizardPageNextDisabled]="
-        !noVirtualMachinesNeeded && selectedEnvironments.length == 0
+        !noVirtualMachinesNeeded && selectedEnvironments.length === 0
       "
     >
       <ng-template clrPageTitle>Select Environment(s)</ng-template>
@@ -389,7 +389,7 @@
       @if (
         !checkingEnvironments &&
         !noEnvironmentsAvailable &&
-        unavailableVMTs.length == 0
+        unavailableVMTs.length === 0
       ) {
         <clr-datagrid [(clrDgSelected)]="selectedEnvironments">
           <clr-dg-column>
@@ -453,7 +453,7 @@
             </thead>
             <tbody [formGroup]="simpleModeVmCounts">
               @for (
-                fc of simpleModeVmCounts["controls"].envs["controls"].slice(
+                fc of simpleModeVmCounts['controls'].envs['controls'].slice(
                   0,
                   selectedEnvironments.length
                 );
@@ -496,7 +496,7 @@
             </tbody>
           </table>
           <br />
-          @if (invalidSimpleEnvironments.length != 0) {
+          @if (invalidSimpleEnvironments.length !== 0) {
             <i
               >The following environments are incompatible with simple mode:
             </i>
@@ -537,7 +537,7 @@
               </tr>
             </thead>
             <tbody [formGroup]="vmCounts">
-              @for (groupName of controls(""); track groupName) {
+              @for (groupName of controls(''); track groupName) {
                 <ng-container [formGroupName]="groupName">
                   @for (controlName of controls(groupName); track controlName) {
                     <tr>
@@ -605,11 +605,11 @@
             </tr>
             <tr>
               <td>Start Time</td>
-              <td>{{ se.start_time | date: "long" }}</td>
+              <td>{{ se.start_time | date: 'long' }}</td>
             </tr>
             <tr>
               <td>End Time</td>
-              <td>{{ se.end_time | date: "long" }}</td>
+              <td>{{ se.end_time | date: 'long' }}</td>
             </tr>
             <tr>
               <td>Courses</td>
@@ -679,7 +679,7 @@
           <tbody>
             <tr>
               <td>Name</td>
-              @if (se.event_name == uneditedScheduledEvent.event_name) {
+              @if (se.event_name === uneditedScheduledEvent.event_name) {
                 <td>
                   {{ se.event_name }}
                 </td>
@@ -694,7 +694,7 @@
             </tr>
             <tr>
               <td>Description</td>
-              @if (se.description == uneditedScheduledEvent.description) {
+              @if (se.description === uneditedScheduledEvent.description) {
                 <td>
                   {{ se.description }}
                 </td>
@@ -709,7 +709,7 @@
             </tr>
             <tr>
               <td>Access code</td>
-              @if (se.access_code == uneditedScheduledEvent.access_code) {
+              @if (se.access_code === uneditedScheduledEvent.access_code) {
                 <td>
                   {{ se.access_code }}
                 </td>
@@ -725,7 +725,7 @@
             <tr>
               <td>Restricted Bind</td>
               @if (
-                !!se.disable_restriction ==
+                !!se.disable_restriction ===
                 !!uneditedScheduledEvent.disable_restriction
               ) {
                 <td>
@@ -742,7 +742,7 @@
             </tr>
             <tr>
               <td>On demand</td>
-              @if (se.on_demand == uneditedScheduledEvent.on_demand) {
+              @if (se.on_demand === uneditedScheduledEvent.on_demand) {
                 <td>
                   {{ se.on_demand }}
                 </td>
@@ -759,15 +759,15 @@
               <td>Start Time</td>
               @if (!isStartDateAsEditedCheck()) {
                 <td>
-                  {{ se.start_time | date: "long" }}
+                  {{ se.start_time | date: 'long' }}
                 </td>
               } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
-                    uneditedScheduledEvent.start_time | date: "long"
+                    uneditedScheduledEvent.start_time | date: 'long'
                   }}</span>
                   <span class="add-elem">{{
-                    se.start_time | date: "long"
+                    se.start_time | date: 'long'
                   }}</span>
                 </td>
               }
@@ -776,14 +776,14 @@
               <td>End Time</td>
               @if (!isEndDateAsEditedCheck()) {
                 <td>
-                  {{ se.end_time | date: "long" }}
+                  {{ se.end_time | date: 'long' }}
                 </td>
               } @else {
                 <td>
                   <span class="del-elem arrow-after">{{
-                    uneditedScheduledEvent.end_time | date: "long"
+                    uneditedScheduledEvent.end_time | date: 'long'
                   }}</span>
-                  <span class="add-elem">{{ se.end_time | date: "long" }}</span>
+                  <span class="add-elem">{{ se.end_time | date: 'long' }}</span>
                 </td>
               }
             </tr>
@@ -863,7 +863,7 @@
                       <span class="label">
                         {{ getVirtualMachineTemplateName(q.key) }}&nbsp;
                         @if (
-                          getUneditedScheduledEventVMCount(i.key, q.key) ==
+                          getUneditedScheduledEventVMCount(i.key, q.key) ===
                           q.value
                         ) {
                           <span>

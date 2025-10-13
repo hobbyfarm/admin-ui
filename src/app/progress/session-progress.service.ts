@@ -47,7 +47,7 @@ export class SessionProgressService {
         environment.server + '/session/' + p.session + '/finished',
         {},
       )
-      .subscribe((_s: ServerResponse) => {
+      .subscribe(() => {
         p.finished = true;
       });
   }

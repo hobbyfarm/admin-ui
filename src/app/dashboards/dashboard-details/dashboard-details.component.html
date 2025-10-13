@@ -19,7 +19,7 @@
       </ng-container>
       <ng-container *rbac="['scheduledevents.get']">
         Until
-        {{ selectedEvent.end_time | date: "MMM d, y, HH:mm" }}
+        {{ selectedEvent.end_time | date: 'MMM d, y, HH:mm' }}
       </ng-container>
       <ng-container *rbac="['scheduledevents.get', 'users.list']">
         <span>&#8226; Created by {{ selectedEvent.creatorEmail }} </span>
@@ -77,15 +77,14 @@
           </ng-template>
         </clr-tab>
       }
-        <clr-tab>
-          <button clrTabLink>Costs</button>
-          <ng-template [(clrIfActive)]="costDashboardActive">
-            <clr-tab-content *clrIfActive>
-              <cost-dashboard [selectedEvent]="selectedEvent">
-              </cost-dashboard>
-            </clr-tab-content>
-          </ng-template>
-        </clr-tab>
+      <clr-tab>
+        <button clrTabLink>Costs</button>
+        <ng-template [(clrIfActive)]="costDashboardActive">
+          <clr-tab-content *clrIfActive>
+            <cost-dashboard [selectedEvent]="selectedEvent"> </cost-dashboard>
+          </clr-tab-content>
+        </ng-template>
+      </clr-tab>
     </clr-tabs>
   </div>
 }

@@ -221,10 +221,12 @@ export function isGenericFormControl(
   );
 }
 
-export function isGenericFormArray(control: any): control is GenericFormArray {
+export function isGenericFormArray(
+  control: unknown,
+): control is GenericFormArray {
   return (
     control instanceof FormArray &&
-    control.controls.every(
+    (control as FormArray).controls.every(
       (ctrl) =>
         ctrl instanceof FormControl &&
         (typeof ctrl.value === 'string' ||

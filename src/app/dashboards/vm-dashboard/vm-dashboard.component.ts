@@ -1,6 +1,13 @@
-import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+  OnChanges,
+} from '@angular/core';
 import { Router } from '@angular/router';
-import { combineLatest, Observable, of, switchMap, tap } from 'rxjs';
+import { combineLatest, of, switchMap } from 'rxjs';
 import { Progress } from 'src/app/data/progress';
 import { ProgressService } from 'src/app/data/progress.service';
 import { ScheduledEventBase } from 'src/app/data/scheduledevent';
@@ -26,7 +33,7 @@ interface dashboardVmSet extends VmSet {
   templateUrl: './vm-dashboard.component.html',
   styleUrls: ['./vm-dashboard.component.scss'],
 })
-export class VmDashboardComponent implements OnInit {
+export class VmDashboardComponent implements OnInit, OnChanges {
   @Input()
   selectedEvent: ScheduledEventBase;
 
@@ -38,14 +45,13 @@ export class VmDashboardComponent implements OnInit {
     private router: Router,
     private cd: ChangeDetectorRef,
     public http: HttpClient,
-    
   ) {}
 
   public vms: VirtualMachine[] = [];
   public vmSets: dashboardVmSet[] = [];
 
   public selectedVM: VirtualMachine | undefined;
-  public openPanels: Set<String> = new Set();
+  public openPanels: Set<string> = new Set();
 
   @ViewChild('deleteModal') deleteModal: DeleteConfirmationComponent;
 
@@ -80,16 +86,15 @@ export class VmDashboardComponent implements OnInit {
         stepOpen: this.openPanels.has(set.base_name),
         dynamic: false,
         available: this.vms.filter(
-          (vm) => vm.vm_set_id === set.id && vm.status == 'running'
+          (vm) => vm.vm_set_id === set.id && vm.status == 'running',
         ).length,
       }));
       // dynamic machines have no associated vmSet
       if (this.vms.filter((vm) => vm.vm_set_id == '').length > 0) {
-        let groupedVms: Map<string, VirtualMachine[]> = this.groupByEnvironment(
-          this.vms.filter((vm) => vm.vm_set_id == '')
-        );
+        const groupedVms: Map<string, VirtualMachine[]> =
+          this.groupByEnvironment(this.vms.filter((vm) => vm.vm_set_id == ''));
         groupedVms.forEach((element, environment) => {
-          let vmSet: dashboardVmSet = {
+          const vmSet: dashboardVmSet = {
             ...new VmSet(),
             base_name: environment,
             stepOpen: this.openPanels.has(environment),
@@ -98,7 +103,7 @@ export class VmDashboardComponent implements OnInit {
           vmSet.setVMs = element;
           vmSet.count = element.length;
           vmSet.available = element.filter(
-            (vm) => vm.status == 'running'
+            (vm) => vm.status == 'running',
           ).length;
           vmSet.environment = environment;
           this.vmSets.push(vmSet);
@@ -110,7 +115,7 @@ export class VmDashboardComponent implements OnInit {
 
   getVmAge(vm: VirtualMachine): string {
     return timeSince(new Date(vm.creation_timestamp), new Date(), 2);
-}
+  }
 
   openUsersTerminal(vm: VirtualMachine) {
     if (!vm.user) return;
@@ -119,7 +124,7 @@ export class VmDashboardComponent implements OnInit {
       userId = users.filter((user) => user.email === vm.user)[0]?.id;
     });
     if (!userId) return;
-    var progress: Progress; //If there is a valid User ID, get all active Progresses of that user.
+    let progress: Progress; //If there is a valid User ID, get all active Progresses of that user.
     this.progressService
       .listByScheduledEvent(this.selectedEvent.id, false)
       .subscribe((progressList) => {
@@ -131,21 +136,21 @@ export class VmDashboardComponent implements OnInit {
             progress.session,
             'steps',
             Math.max(progress.current_step - 1, 0),
-          ])
+          ]),
         );
         window.open(url, '_blank');
       });
   }
 
   groupByEnvironment(vms: VirtualMachine[]) {
-    let envMap = new Map<string, VirtualMachine[]>();
+    const envMap = new Map<string, VirtualMachine[]>();
     vms.forEach((element) => {
       const envVms = envMap.get(element.environment_id);
       if (envVms) {
         envVms.push(element);
         envMap.set(element.environment_id, envVms);
       } else {
-        let envVms: VirtualMachine[] = [element];
+        const envVms: VirtualMachine[] = [element];
         envMap.set(element.environment_id, envVms);
       }
     });
@@ -159,19 +164,21 @@ export class VmDashboardComponent implements OnInit {
 
   handleDelete(confirm: boolean): void {
     if (confirm) {
-      this.http.delete<ServerResponse>(environment.server + "/vm/" + this.selectedVM?.id)
-      .pipe(
-            switchMap((s: ServerResponse) => {
-              this.selectedVM = undefined;
-              return of(s.message == "deleted successfully")
-            })
-          )
-          .subscribe({
-        next: (result) => console.log("Deleted:", result),
-        error: (err) => console.error("Error on VM deletion:", err)
-      });
-    }
-    else{
+      this.http
+        .delete<ServerResponse>(
+          environment.server + '/vm/' + this.selectedVM?.id,
+        )
+        .pipe(
+          switchMap((s: ServerResponse) => {
+            this.selectedVM = undefined;
+            return of(s.message == 'deleted successfully');
+          }),
+        )
+        .subscribe({
+          next: (result) => console.log('Deleted:', result),
+          error: (err) => console.error('Error on VM deletion:', err),
+        });
+    } else {
       this.selectedVM = undefined;
     }
   }

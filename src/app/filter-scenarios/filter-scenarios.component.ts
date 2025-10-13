@@ -27,12 +27,11 @@ export class FilterScenariosComponent implements OnInit {
   public categoryFilterForm = new FormGroup({
     categoryControl: new FormControl<string[] | null>([]),
   });
-  event: any;
 
   constructor(
     public scenarioService: ScenarioService,
     public rbacService: RbacService,
-    public vmTemplateService: VmtemplateService
+    public vmTemplateService: VmtemplateService,
   ) {}
 
   emitScenarios(values: Scenario[]) {
@@ -43,7 +42,7 @@ export class FilterScenariosComponent implements OnInit {
     this.categoryFilterForm.reset({ categoryControl: [] });
   }
 
-  reloadScenarios(){
+  reloadScenarios() {
     this.scenarioService.list(true).subscribe((s: Scenario[]) => {
       this.scenarios = s;
       this.clearCategoryFilter();
@@ -57,7 +56,7 @@ export class FilterScenariosComponent implements OnInit {
       return;
     }
 
-    let sc: Scenario[] = [];
+    const sc: Scenario[] = [];
 
     if (this.selectedCategories.includes('__none__')) {
       this.scenarios.forEach((s) => {
@@ -69,8 +68,8 @@ export class FilterScenariosComponent implements OnInit {
     }
 
     this.scenarios.forEach((s) => {
-      let matches = s.categories.filter((element) =>
-        this.selectedCategories.includes(element)
+      const matches = s.categories.filter((element) =>
+        this.selectedCategories.includes(element),
       );
       if (matches.length > 0) {
         sc.push(s);
@@ -80,7 +79,7 @@ export class FilterScenariosComponent implements OnInit {
     this.filteredScenarios = sc;
   }
   calculateCategories() {
-    let c = new Set<string>();
+    const c = new Set<string>();
     this.scenarios.forEach((s) => {
       s.categories.forEach((category) => c.add(category));
     });

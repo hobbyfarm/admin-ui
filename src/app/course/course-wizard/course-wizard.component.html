@@ -79,11 +79,11 @@
     ></vmset>
   </clr-wizard-page>
 
-  @if (wizardCourse == "edit") {
+  @if (wizardCourse === 'edit') {
     <clr-wizard-page
       (clrWizardPageNext)="saveCourseWizard()"
       [clrWizardPageNextDisabled]="
-        dragScenarios.length == 0 && editCategories.length == 0
+        dragScenarios.length === 0 && editCategories.length === 0
       "
     >
       <ng-template clrPageTitle>Scenarios</ng-template>
@@ -157,7 +157,7 @@
         </clr-datagrid>
       }
     </clr-wizard-page>
-  } @else if (wizardCourse == "create") {
+  } @else if (wizardCourse === 'create') {
     <clr-wizard-page (clrWizardPageNext)="saveCourseWizard()">
       <ng-template clrPageTitle>Scenarios</ng-template>
       @if (listScenarios) {
@@ -234,7 +234,7 @@
   @if (showDynamicScenario()) {
     <clr-wizard-page
       [clrWizardPageNextDisabled]="
-        dragScenarios.length == 0 && editCategories.length == 0
+        dragScenarios.length === 0 && editCategories.length === 0
       "
     >
       <ng-template clrPageTitle>Dynamic Scenario</ng-template>
@@ -393,10 +393,10 @@
         <tbody>
           <tr>
             <td>Name</td>
-            @if (wizardCourse == "create") {
+            @if (wizardCourse === 'create') {
               <td>{{ course.name }}</td>
-            } @else if (wizardCourse == "edit") {
-              @if (selectedCourse.name == editSelectedCourse.name) {
+            } @else if (wizardCourse === 'edit') {
+              @if (selectedCourse.name === editSelectedCourse.name) {
                 <td>
                   {{ selectedCourse.name }}
                 </td>
@@ -411,11 +411,11 @@
           </tr>
           <tr>
             <td>Description</td>
-            @if (wizardCourse == "create") {
+            @if (wizardCourse === 'create') {
               <td>{{ course.description }}</td>
-            } @else if (wizardCourse == "edit") {
+            } @else if (wizardCourse === 'edit') {
               @if (
-                selectedCourse.description == editSelectedCourse.description
+                selectedCourse.description === editSelectedCourse.description
               ) {
                 <td>
                   {{ selectedCourse.description }}
@@ -433,11 +433,11 @@
           </tr>
           <tr>
             <td>Keepalive Duration</td>
-            @if (wizardCourse == "create") {
+            @if (wizardCourse === 'create') {
               <td>{{ course.keepalive_duration }}</td>
-            } @else if (wizardCourse == "edit") {
+            } @else if (wizardCourse === 'edit') {
               @if (
-                selectedCourse.keepalive_duration ==
+                selectedCourse.keepalive_duration ===
                 editSelectedCourse.keepalive_duration
               ) {
                 <td>
@@ -458,11 +458,11 @@
           </tr>
           <tr>
             <td>Pause Duration</td>
-            @if (wizardCourse == "create") {
+            @if (wizardCourse === 'create') {
               <td>{{ course.pause_duration }}</td>
-            } @else if (wizardCourse == "edit") {
+            } @else if (wizardCourse === 'edit') {
               @if (
-                selectedCourse.pause_duration ==
+                selectedCourse.pause_duration ===
                 editSelectedCourse.pause_duration
               ) {
                 <td>
@@ -483,23 +483,23 @@
           </tr>
           <tr>
             <td>Learnpath</td>
-            @if (wizardCourse == "create") {
-              <td>{{ course.is_learnpath ? "yes" : "no" }}</td>
-            } @else if (wizardCourse == "edit") {
+            @if (wizardCourse === 'create') {
+              <td>{{ course.is_learnpath ? 'yes' : 'no' }}</td>
+            } @else if (wizardCourse === 'edit') {
               @if (
-                selectedCourse.is_learnpath == editSelectedCourse.is_learnpath
+                selectedCourse.is_learnpath === editSelectedCourse.is_learnpath
               ) {
                 <td>
-                  {{ selectedCourse.is_learnpath ? "yes" : "no" }}
+                  {{ selectedCourse.is_learnpath ? 'yes' : 'no' }}
                 </td>
               } @else {
                 <td>
                   <span class="del-elem">{{
-                    selectedCourse.is_learnpath ? "yes" : "no"
+                    selectedCourse.is_learnpath ? 'yes' : 'no'
                   }}</span>
                   <cds-icon shape="arrow" direction="right"></cds-icon>
                   <span class="add-elem">{{
-                    editSelectedCourse.is_learnpath ? "yes" : "no"
+                    editSelectedCourse.is_learnpath ? 'yes' : 'no'
                   }}</span>
                 </td>
               }
@@ -508,21 +508,23 @@
 
           <tr>
             <td>Shown in Catalog</td>
-            @if (wizardCourse == "create") {
-              <td>{{ course.in_catalog ? "yes" : "no" }}</td>
-            } @else if (wizardCourse == "edit") {
-              @if (selectedCourse.in_catalog == editSelectedCourse.in_catalog) {
+            @if (wizardCourse === 'create') {
+              <td>{{ course.in_catalog ? 'yes' : 'no' }}</td>
+            } @else if (wizardCourse === 'edit') {
+              @if (
+                selectedCourse.in_catalog === editSelectedCourse.in_catalog
+              ) {
                 <td>
-                  {{ selectedCourse.in_catalog ? "yes" : "no" }}
+                  {{ selectedCourse.in_catalog ? 'yes' : 'no' }}
                 </td>
               } @else {
                 <td>
                   <span class="del-elem">{{
-                    selectedCourse.in_catalog ? "yes" : "no"
+                    selectedCourse.in_catalog ? 'yes' : 'no'
                   }}</span>
                   <cds-icon shape="arrow" direction="right"></cds-icon>
                   <span class="add-elem">{{
-                    editSelectedCourse.in_catalog ? "yes" : "no"
+                    editSelectedCourse.in_catalog ? 'yes' : 'no'
                   }}</span>
                 </td>
               }
@@ -553,11 +555,11 @@
           <tr>
             <td>Dynamic Scenario</td>
             <td>
-              @if (wizardCourse == "create") {
+              @if (wizardCourse === 'create') {
                 @for (categorie of selectedCourse.categories; track categorie) {
                   <span class="label">{{ categorie }} </span>
                 }
-              } @else if (wizardCourse == "edit") {
+              } @else if (wizardCourse === 'edit') {
                 @for (
                   category of editSelectedCourse.categories;
                   track category
@@ -584,10 +586,10 @@
             @for (q of showVM(i.value) | keyvalue; track q) {
               <tr>
                 <!-- view of unedit value -->
-                @if (getSelectedCourseVM(i.key, q.key) != 0) {
+                @if (getSelectedCourseVM(i.key, q.key) !== 0) {
                   <td>{{ q.key }}</td>
                 }
-                @if (getSelectedCourseVM(i.key, q.key) == q.value) {
+                @if (getSelectedCourseVM(i.key, q.key) === q.value) {
                   <td>{{ q.value }}</td>
                 }
                 <!-- view of new key -->
@@ -606,7 +608,7 @@
           @for (i of selectedCourse.virtualmachines | keyvalue; track i) {
             @for (q of showVM(i.value) | keyvalue; track q) {
               <tr>
-                @if (getEditSelectedCourseVM(i.key, q.key) != q.value) {
+                @if (getEditSelectedCourseVM(i.key, q.key) !== q.value) {
                   <td class="del-elem">{{ q.key }}</td>
                   <td class="del-elem">{{ q.value }}</td>
                 }

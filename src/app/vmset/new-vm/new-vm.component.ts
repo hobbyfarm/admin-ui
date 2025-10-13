@@ -17,6 +17,8 @@ import { VmtemplateService } from 'src/app/data/vmtemplate.service';
 import { VMTemplate } from 'src/app/data/vmtemplate';
 import { ClrModal } from '@clr/angular';
 
+type VmRecord = Record<string, string>;
+
 @Component({
   selector: 'new-vm',
   templateUrl: './new-vm.component.html',
@@ -26,7 +28,7 @@ export class NewVmComponent implements OnChanges {
   public vmtemplates: VMTemplate[] = [];
 
   @Input()
-  public vms: {}[] = []; // because JSONifying Maps is hard
+  public vms: VmRecord[] = []; // because JSONifying Maps is hard
 
   @Input()
   public listVms: boolean;
@@ -85,7 +87,10 @@ export class NewVmComponent implements OnChanges {
     return (control: AbstractControl<string>) => {
       const vmName = control.value;
       const isNotUnique =
-        vmName && this.vms.some((vmSet: {}) => vmSet.hasOwnProperty(vmName));
+        !!vmName &&
+        this.vms.some((vmSet: VmRecord) =>
+          Object.prototype.hasOwnProperty.call(vmSet, vmName),
+        );
       if (isNotUnique) {
         return {
           notUnique: true,

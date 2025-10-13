@@ -1,6 +1,6 @@
 export enum FormControlStatus {
-    Valid = 'VALID',
-    Invalid = 'INVALID',
-    Pending = 'PENDING',
-    Disabled = 'DISABLED'
+  Valid = 'VALID',
+  Invalid = 'INVALID',
+  Pending = 'PENDING',
+  Disabled = 'DISABLED',
 }

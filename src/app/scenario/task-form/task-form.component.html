@@ -66,7 +66,7 @@
     >
   </clr-select-container>
 
-  @if (isOfReturnType(["Return Text", "Return Code and Text"])) {
+  @if (isOfReturnType(['Return Text', 'Return Code and Text'])) {
     <clr-textarea-container>
       <label>Expected Output</label>
       <textarea
@@ -79,8 +79,7 @@
         >Expected Output is required</clr-control-error
       >
     </clr-textarea-container>
-
-  } @else if (isOfReturnType(["Match Regex"])) {
+  } @else if (isOfReturnType(['Match Regex'])) {
     <clr-control-container class="codeInput">
       <label>Regex to match</label>
       <app-code-with-syntax-highlighting
@@ -97,7 +96,7 @@
     </clr-control-container>
   }
 
-  @if (isOfReturnType(["Return Code", "Return Code and Text"])) {
+  @if (isOfReturnType(['Return Code', 'Return Code and Text'])) {
     <clr-input-container>
       <label>Expected Returncode</label>
       <input

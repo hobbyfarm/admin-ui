@@ -254,17 +254,15 @@ export class TypedInput {
   }) {
     const mapControls: GenericKeyValueGroup<T>[] = [];
     if (value) {
-      for (const key in value) {
-        if (value.hasOwnProperty(key)) {
-          const mapControl = new FormGroup({
-            key: new FormControl<string>(key, {
-              validators: [Validators.required, UniqueKeyValidator],
-              nonNullable: true,
-            }),
-            value: this.getTypedInputFormControl(value[key]) as FormControl<T>,
-          });
-          mapControls.push(mapControl);
-        }
+      for (const key of Object.keys(value)) {
+        const mapControl = new FormGroup({
+          key: new FormControl<string>(key, {
+            validators: [Validators.required, UniqueKeyValidator],
+            nonNullable: true,
+          }),
+          value: this.getTypedInputFormControl(value[key]) as FormControl<T>,
+        });
+        mapControls.push(mapControl);
       }
     }
     return new FormArray<GenericKeyValueGroup<T>>(mapControls);
@@ -299,10 +297,10 @@ export class TypedInput {
   getTypedInputRawMap<T extends string | number | boolean>(
     fa: FormArray<GenericKeyValueGroup<T>>,
   ) {
-    let result: { [key: string]: T } = {};
+    const result: { [key: string]: T } = {};
     fa.controls.forEach((group: GenericKeyValueGroup<T>) => {
-      let key = group.controls['key'].value;
-      let value: T = this.getTypedInputScalarValue(
+      const key = group.controls['key'].value;
+      const value: T = this.getTypedInputScalarValue(
         group.controls['value'].value,
       ) as T;
       result[key] = value;
@@ -319,29 +317,35 @@ export class TypedInput {
 
   parseScalarValue(value: string): string | number | boolean {
     switch (this.type) {
-      case TypedInputType.BOOLEAN:
+      case TypedInputType.BOOLEAN: {
         const parsedBool = /^true$/i.test(value);
         return parsedBool;
-      case TypedInputType.FLOAT:
+      }
+      case TypedInputType.FLOAT: {
         const parsedFloat = +value;
-        if (isNaN(parsedFloat)) {
-          return 0.0;
-        }
-        return parsedFloat;
-      case TypedInputType.INTEGER:
+        return isNaN(parsedFloat) ? 0.0 : parsedFloat;
+      }
+      case TypedInputType.INTEGER: {
         const parsedInt = parseInt(value, 10);
-        if (isNaN(parsedInt)) {
-          return 0;
-        }
-        return parsedInt;
-      case TypedInputType.STRING:
+        return isNaN(parsedInt) ? 0 : parsedInt;
+      }
+      case TypedInputType.STRING: {
         return value;
+      }
+      default: {
+        return value;
+      }
     }
   }
 
-  private enumValueValidator(enumValues: any[]): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      return enumValues.includes(this.parseScalarValue(control.value))
+  private enumValueValidator<T extends string | number | boolean>(
+    enumValues: readonly T[],
+  ): ValidatorFn {
+    return (
+      control: AbstractControl<string | number | boolean | null>,
+    ): ValidationErrors | null => {
+      const value = this.parseScalarValue(String(control.value)) as T;
+      return enumValues.includes(value)
         ? null
         : { invalidenumvalue: { value: control.value } };
     };

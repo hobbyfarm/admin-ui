@@ -7,7 +7,9 @@ import { ScheduledEventBase } from 'src/app/data/scheduledevent';
   selector: 'event-status-filter',
   templateUrl: './event-status-filter.component.html',
 })
-export class EventStatusFilterComponent implements ClrDatagridFilterInterface<ScheduledEventBase, boolean> {
+export class EventStatusFilterComponent
+  implements ClrDatagridFilterInterface<ScheduledEventBase, boolean>
+{
   enabled: boolean = true;
 
   constructor(filterContainer: ClrDatagridFilter) {

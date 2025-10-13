@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import { RbacService } from '../data/rbac.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -6,11 +6,11 @@ import { ActivatedRoute, Router } from '@angular/router';
   selector: 'app-content',
   templateUrl: './content.component.html',
 })
-export class ContentComponent implements OnInit {
+export class ContentComponent implements OnInit, OnChanges {
   constructor(
     public rbacService: RbacService,
     private route: Router,
-    private activateRoute: ActivatedRoute
+    private activateRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {

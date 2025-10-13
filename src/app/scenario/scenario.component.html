@@ -42,7 +42,13 @@
             >
               Delete
             </button>
-            <button class="action-item" (click)="cloneScenario(s.id)" *rbac="['scenarios.get', 'scenarios.create']; op: 'AND'">Clone</button>
+            <button
+              class="action-item"
+              (click)="cloneScenario(s.id)"
+              *rbac="['scenarios.get', 'scenarios.create']; op: 'AND'"
+            >
+              Clone
+            </button>
           </clr-dg-action-overflow>
         }
         <clr-dg-cell>{{ s.id }}</clr-dg-cell>
@@ -59,7 +65,7 @@
 
 <scenario-wizard
   #scenariowizard
-  (onWizardFinished)="refreshAndDisplayAlert($event)"
+  (wizardFinished)="refreshAndDisplayAlert($event)"
 ></scenario-wizard>
 <clr-modal #deletescenariomodal [(clrModalOpen)]="deleteScenarioSetOpen">
   <h3 class="modal-title">Delete Scenario</h3>

@@ -1,15 +1,15 @@
 #single-column-block ::ng-deep .stack-block-label {
-    max-width: 100%;
-    flex-basis: 100%;
+  max-width: 100%;
+  flex-basis: 100%;
 }
 
 #single-column-block ::ng-deep .stack-view-key {
-    min-width: 100%;
-    // max-width: 100%;
-    // flex-basis: 100%;
-    // flex: 0 0 100%;
+  min-width: 100%;
+  // max-width: 100%;
+  // flex-basis: 100%;
+  // flex: 0 0 100%;
 }
 
 #single-column-block ::ng-deep .stack-block-content {
-    display: none;
+  display: none;
 }

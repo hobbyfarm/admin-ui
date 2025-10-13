@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   ViewChild,
   Output,
   EventEmitter,
@@ -22,7 +21,7 @@ export interface deletionInformation {
   templateUrl: './delete-process-modal.component.html',
   styleUrls: ['./delete-process-modal.component.scss'],
 })
-export class DeleteProcessModalComponent implements OnInit {
+export class DeleteProcessModalComponent {
   @Output()
   public done: EventEmitter<boolean> = new EventEmitter();
 
@@ -36,8 +35,6 @@ export class DeleteProcessModalComponent implements OnInit {
   constructor(public userService: UserService) {}
 
   @ViewChild('modal') modal: ClrModal;
-
-  ngOnInit(): void {}
 
   open(): void {
     this.modal.open();

@@ -19,7 +19,7 @@ export class AppConfigService {
     const headers = new HttpHeaders();
     headers.set('Accept', '*');
     return lastValueFrom(
-      this.http.get(logoPath, { headers, responseType: 'text' })
+      this.http.get(logoPath, { headers, responseType: 'text' }),
     );
   }
 
