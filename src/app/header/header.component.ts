@@ -104,6 +104,7 @@ export class HeaderComponent implements OnInit {
           theme = 'system',
           progress_view_mode = 'cardView',
           currency_symbol = '$',
+          refresh_timer_interval = 10,
         }) => {
           this.settingsForm.setValue({
             terminal_theme,
@@ -111,6 +112,7 @@ export class HeaderComponent implements OnInit {
             theme,
             progress_view_mode,
             currency_symbol,
+            refresh_timer_interval,
           });
 
           this.fetchingSettings = false;
