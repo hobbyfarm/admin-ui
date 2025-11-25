@@ -78,6 +78,7 @@ export type SettingFormGroup = FormGroup<{
   theme: FormControl<'dark' | 'light' | 'system'>;
   progress_view_mode: FormControl<ProgressViewMode>;
   currency_symbol: FormControl<string>;
+  refresh_timer_interval: FormControl<number>;
 }>;
 
 // This object type maps VMTemplate names to the number of requested VMs

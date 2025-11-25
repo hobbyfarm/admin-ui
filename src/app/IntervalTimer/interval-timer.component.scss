@@ -12,7 +12,7 @@
 }
 
 .countdown-number {
-  color: black;
+  color: var(--clr-forms-label-color);
   display: inline-block;
   line-height: 40px;
 }

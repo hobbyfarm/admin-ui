@@ -24,6 +24,7 @@ export interface Settings {
   theme: 'dark' | 'light' | 'system';
   progress_view_mode: ProgressViewMode;
   currency_symbol: string;
+  refresh_timer_interval: number;
 }
 
 /**
@@ -55,6 +56,9 @@ export class SettingsService {
     currency_symbol: new FormControl<string>('$', {
       nonNullable: true,
     }),
+    refresh_timer_interval: new FormControl<number>(10, {
+      nonNullable: true,
+    }),
   });
 
   fetch() {
@@ -69,6 +73,7 @@ export class SettingsService {
               theme: 'system',
               progress_view_mode: 'cardView',
               currency_symbol: '$',
+              refresh_timer_interval: 10,
             } as Settings),
       ),
       tap((s: Settings) => {

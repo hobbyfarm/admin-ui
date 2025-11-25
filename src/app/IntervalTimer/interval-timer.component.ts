@@ -6,6 +6,8 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
+import { Settings, SettingsService } from '../data/settings.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'interval-timer',
@@ -29,24 +31,36 @@ export class IntervalTimerComponent implements OnInit, OnDestroy {
   public currentCallDelay: number;
   public circleVisible: boolean = true;
   public delayOptions: Generator;
+  private settingsSubscription: Subscription;
+
+  constructor(private settingsService: SettingsService) {}
 
   ngOnInit(): void {
     function* cycle<T>(array: T[]) {
       while (true) yield* array;
     }
     this.delayOptions = cycle(this.delayOptionsArray);
-    this.changeDelay();
+    this.settingsSubscription = this.settingsService.settings$.subscribe(
+      (settings: Settings) => {
+        this.currentCallDelay = settings.refresh_timer_interval;
+        this.changeDelay(false);
+      },
+    );
   }
 
   onTimerClick() {
     this.changeDelay();
     this.intervalElapsed.emit();
+    this.settingsService
+      .update({ refresh_timer_interval: this.currentCallDelay })
+      .subscribe();
   }
 
-  changeDelay() {
+  changeDelay(incrementInterval: boolean = true) {
     //Set next value of the interval array as call delay
-    this.currentCallDelay = this.delayOptions.next().value;
-
+    if (incrementInterval) {
+      this.currentCallDelay = this.delayOptions.next().value;
+    }
     if (this.callInterval !== null) {
       clearInterval(this.callInterval);
       this.callInterval = null;
@@ -63,6 +77,7 @@ export class IntervalTimerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.settingsSubscription.unsubscribe();
     if (this.callInterval !== null) {
       clearInterval(this.callInterval);
       this.callInterval = null;
