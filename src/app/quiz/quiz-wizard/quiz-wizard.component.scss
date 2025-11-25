@@ -23,3 +23,18 @@
   padding: 0.75rem;
   border-radius: 0.5rem;
 }
+
+.quiz-footer-with-alert {
+  flex-direction: column;
+  width: 100%;
+}
+
+.quiz-footer-alert {
+  margin-bottom: 0.5rem; 
+}
+
+.quiz-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

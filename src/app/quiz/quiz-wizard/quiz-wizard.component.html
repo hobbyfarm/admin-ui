@@ -1,6 +1,6 @@
 <clr-wizard #wiz [(clrWizardOpen)]="isOpen" [clrWizardSize]="'xl'">
   <clr-wizard-title>{{
-    mode === 'create' ? 'Create Quiz' : 'Edit Quiz'
+    mode === "create" ? "Create Quiz" : "Edit Quiz"
   }}</clr-wizard-title>
 
   <clr-wizard-page>
@@ -121,24 +121,26 @@
 
     <ng-template clrPageButtons>
       <div class="clr-wizard-footer">
-        <button type="button" class="btn btn-outline" (click)="close()">
-          Cancel
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          [disabled]="
-            form.controls.title.invalid ||
-            (form.controls.issue_certificates.value &&
-              form.controls.issuer.invalid) ||
-            form.controls.max_attempts.invalid ||
-            form.controls.success_threshold.invalid ||
-            form.controls.pool_size.invalid
-          "
-          (click)="wiz.next()"
-        >
-          Next
-        </button>
+        <div class="quiz-buttons">
+          <button type="button" class="btn btn-outline" (click)="close()">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="
+              form.controls.title.invalid ||
+              (form.controls.issue_certificates.value &&
+                form.controls.issuer.invalid) ||
+              form.controls.max_attempts.invalid ||
+              form.controls.success_threshold.invalid ||
+              form.controls.pool_size.invalid
+            "
+            (click)="wiz.next()"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </ng-template>
   </clr-wizard-page>
@@ -197,16 +199,16 @@
               <!-- Weight (synced read-only) -->
               <td>
                 <span class="badge">{{
-                  questionsFA.at(i).get('weight')?.value
+                  questionsFA.at(i).get("weight")?.value
                 }}</span>
               </td>
 
               <!-- Type (synced read-only) -->
               <td>
                 {{
-                  questionsFA.at(i).get('type')?.value === 'radio'
-                    ? 'Single'
-                    : 'Multiple'
+                  questionsFA.at(i).get("type")?.value === "radio"
+                    ? "Single"
+                    : "Multiple"
                 }}
               </td>
 
@@ -399,22 +401,33 @@
     </clr-modal>
 
     <!-- Footer for Questions step -->
+
     <ng-template clrPageButtons>
-      <div class="clr-wizard-footer">
-        <button type="button" class="btn btn-outline" (click)="wiz.previous()">
-          Back
-        </button>
-        <button
-          type="button"
-          class="btn btn-success"
-          [disabled]="form.invalid || saving()"
-          (click)="save()"
-        >
-          {{ mode === 'create' ? 'Create' : 'Save' }}
-        </button>
-        <button type="button" class="btn btn-outline" (click)="close()">
-          Cancel
-        </button>
+      <div class="clr-wizard-footer quiz-footer-with-alert">
+        <div class="quiz-footer-alert">
+          <alert #alertCmp></alert>
+        </div>
+
+        <div class="quiz-buttons">
+          <button
+            type="button"
+            class="btn btn-outline"
+            (click)="wiz.previous()"
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            class="btn btn-success"
+            [disabled]="form.invalid || saving()"
+            (click)="save()"
+          >
+            {{ mode === "create" ? "Create" : "Save" }}
+          </button>
+          <button type="button" class="btn btn-outline" (click)="close()">
+            Cancel
+          </button>
+        </div>
       </div>
     </ng-template>
   </clr-wizard-page>
