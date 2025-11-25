@@ -30,6 +30,10 @@ import {
 import { Validation } from '../Validation';
 import { QuestionType } from '../QuestionType';
 import { AnswerFG, QuestionFG, QuizFG } from '../QuizFormGroup';
+import { AlertComponent } from 'src/app/alert/alert.component';
+import { HttpErrorResponse } from '@angular/common/http';
+
+type QuestionBackup = ReturnType<QuestionFG['getRawValue']>;
 
 @Component({
   selector: 'app-quiz-wizard',
@@ -38,6 +42,7 @@ import { AnswerFG, QuestionFG, QuizFG } from '../QuizFormGroup';
 })
 export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('wiz', { static: false }) wiz!: ClrWizard;
+  @ViewChild('alertCmp') alert!: AlertComponent;
 
   @Input() createTrigger = 0;
   @Input() editTrigger = 0;
@@ -58,6 +63,7 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
 
   quizQuestions: { key: string; ctrl: QuestionFG }[] = [];
   questionAnswers: { key: string }[] = [];
+  private questionBackup: QuestionBackup | null = null;
 
   issuerSub?: Subscription;
   issuerCache = '';
@@ -330,12 +336,30 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   openQuestionModal(i: number): void {
     this.editIdx = i;
     this.rebuildAnswers(i);
+
+    const fg = this.questionsFA.at(i);
+    this.questionBackup = fg.getRawValue();
+
     this.questionModalOpen = true;
   }
+
   closeQuestionModal(): void {
     this.editIdx = null;
     this.questionAnswers = [];
     this.questionModalOpen = false;
+    this.questionBackup = null;
+  }
+
+  cancelQuestionModal(): void {
+    if (this.editIdx !== null && this.questionBackup) {
+      const fg = this.questionsFA.at(this.editIdx);
+      fg.reset(this.questionBackup);
+    }
+
+    this.editIdx = null;
+    this.questionAnswers = [];
+    this.questionModalOpen = false;
+    this.questionBackup = null;
   }
 
   addAnswer(qIdx: number): void {
@@ -362,6 +386,12 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
   async save(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.alert?.warning(
+        'Please check the form – some fields are invalid.',
+        true,
+        5000,
+      );
+
       return;
     }
     this.saving.set(true);
@@ -393,23 +423,64 @@ export class QuizWizardComponent implements OnInit, OnChanges, OnDestroy {
       this.qs
         .create(payload)
         .pipe(finalize(() => this.saving.set(false)))
-        .subscribe((id: string) => {
-          this.saved.emit({ id, quiz: payload });
-          this.close();
+        .subscribe({
+          next: (id: string) => {
+            this.alert?.success('Quiz created successfully.', true, 5000);
+            this.saved.emit({ id, quiz: payload });
+            this.close();
+          },
+          error: (err) => {
+            const msg = this.getServerMessage(err) ?? 'Failed to create quiz.';
+            this.alert?.danger(msg, true);
+          },
         });
     } else {
       const id = this.extractId(this.quizToEdit);
       if (!id) {
         this.saving.set(false);
+        this.alert?.danger('Could not determine quiz ID for update.', true);
         return;
       }
       this.qs
         .update(id, payload)
         .pipe(finalize(() => this.saving.set(false)))
-        .subscribe(() => {
-          this.saved.emit({ id, quiz: payload });
-          this.close();
+        .subscribe({
+          next: () => {
+            this.alert?.success('Quiz updated successfully.', true, 5000);
+            this.saved.emit({ id, quiz: payload });
+            this.close();
+          },
+          error: (err) => {
+            const msg = this.getServerMessage(err) ?? 'Failed to update quiz.';
+            this.alert?.danger(msg, true);
+          },
         });
     }
+  }
+  private getServerMessage(
+    error: HttpErrorResponse | string | null | undefined,
+  ): string | null {
+    if (!error) return null;
+
+    if (typeof error === 'string') return error;
+
+    const inner = error.error;
+
+    if (typeof inner === 'string') {
+      return inner;
+    }
+
+    if (inner && typeof inner === 'object') {
+      const maybeMessage = (inner as { message?: unknown }).message;
+      if (typeof maybeMessage === 'string') {
+        return maybeMessage;
+      }
+    }
+
+    if (typeof error.message === 'string') {
+      return error.message;
+    }
+
+    return null;
   }
 }

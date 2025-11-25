@@ -121,24 +121,26 @@
 
     <ng-template clrPageButtons>
       <div class="clr-wizard-footer">
-        <button type="button" class="btn btn-outline" (click)="close()">
-          Cancel
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary"
-          [disabled]="
-            form.controls.title.invalid ||
-            (form.controls.issue_certificates.value &&
-              form.controls.issuer.invalid) ||
-            form.controls.max_attempts.invalid ||
-            form.controls.success_threshold.invalid ||
-            form.controls.pool_size.invalid
-          "
-          (click)="wiz.next()"
-        >
-          Next
-        </button>
+        <div class="quiz-buttons">
+          <button type="button" class="btn btn-outline" (click)="close()">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="
+              form.controls.title.invalid ||
+              (form.controls.issue_certificates.value &&
+                form.controls.issuer.invalid) ||
+              form.controls.max_attempts.invalid ||
+              form.controls.success_threshold.invalid ||
+              form.controls.pool_size.invalid
+            "
+            (click)="wiz.next()"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </ng-template>
   </clr-wizard-page>
@@ -359,7 +361,7 @@
                       ></cds-icon>
                     </td>
                     <td>
-                      <clr-input-container class="m-0">
+                      <clr-input-container>
                         <input clrInput formControlName="title" />
                       </clr-input-container>
                     </td>
@@ -386,35 +388,54 @@
           </ng-container>
         </div>
       </div>
-
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-outline"
-          (click)="closeQuestionModal()"
-        >
-          Close
-        </button>
+        <div class="quiz-buttons">
+          <button
+            type="button"
+            class="btn btn-outline"
+            (click)="cancelQuestionModal()"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-success"
+            (click)="closeQuestionModal()"
+          >
+            Save
+          </button>
+        </div>
       </div>
     </clr-modal>
 
     <!-- Footer for Questions step -->
+
     <ng-template clrPageButtons>
-      <div class="clr-wizard-footer">
-        <button type="button" class="btn btn-outline" (click)="wiz.previous()">
-          Back
-        </button>
-        <button
-          type="button"
-          class="btn btn-success"
-          [disabled]="form.invalid || saving()"
-          (click)="save()"
-        >
-          {{ mode === 'create' ? 'Create' : 'Save' }}
-        </button>
-        <button type="button" class="btn btn-outline" (click)="close()">
-          Cancel
-        </button>
+      <div class="clr-wizard-footer quiz-footer-with-alert">
+        <div class="quiz-footer-alert">
+          <alert #alertCmp></alert>
+        </div>
+
+        <div class="quiz-buttons">
+          <button type="button" class="btn btn-outline" (click)="close()">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline"
+            (click)="wiz.previous()"
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            class="btn btn-success"
+            [disabled]="form.invalid || saving()"
+            (click)="save()"
+          >
+            {{ mode === 'create' ? 'Create' : 'Save' }}
+          </button>
+        </div>
       </div>
     </ng-template>
   </clr-wizard-page>
