@@ -30,11 +30,20 @@
 }
 
 .quiz-footer-alert {
-  margin-bottom: 0.5rem; 
+  margin-bottom: 0.5rem;
 }
 
 .quiz-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
+}
+
+.table-compact th,
+.table-compact td {
+  vertical-align: middle;
+}
+
+.table-compact .clr-form-control {
+  margin-top: 0;
 }
