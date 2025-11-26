@@ -32,9 +32,7 @@ class CustomEncoder implements HttpParameterCodec {
   }
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class ScenarioService {
   private cachedScenarioList: Scenario[] = [];
   private fetchedList = false;
@@ -60,16 +58,7 @@ export class ScenarioService {
       this.startedFetchedList = true;
       return this.gargAdmin.get('/list').pipe(
         map((s: ServerResponse) => {
-          const obj: Scenario[] = JSON.parse(atou(s.content)); // this doesn't encode a map though
-          // so now we need to go vmset-by-vmset and build maps
-          obj.forEach((s: Scenario) => {
-            s.virtualmachines = s.virtualmachines.map(
-              (v) =>
-                new Map<string, string>(
-                  Object.entries(v as Record<string, string>),
-                ),
-            ) as unknown as typeof s.virtualmachines;
-          });
+          const obj: Scenario[] = JSON.parse(atou(s.content));
           return obj;
         }),
 
