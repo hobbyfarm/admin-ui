@@ -13,9 +13,6 @@ concurrency:
   group: 'ci'
   cancel-in-progress: true
 
-env:
-  app_image: hobbyfarm/admin-ui
-
 jobs:
   build:
     name: Build
@@ -48,4 +45,4 @@ jobs:
       # TODO: lint, sonar, tests
       - name: Create container image
         run: |
-          docker build -f .github/workflows/Dockerfile-ci -t hobbyfarm/admin-ui:${GIT_COMMIT_SHORT_HASH:-dev} .
+          docker build -f .github/workflows/Dockerfile-ci -t ${GITHUB_REPOSITORY,,}:${GIT_COMMIT_SHORT_HASH:-dev} .
