@@ -6,7 +6,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { Settings, SettingsService } from '../data/settings.service';
+import { SettingsService } from '../data/settings.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -21,7 +21,7 @@ export class IntervalTimerComponent implements OnInit, OnDestroy {
 
   // Optional parameter to define the interval times that are needed in the parent Component. This overwrites the default of 10, 30, 60, 120 and 300 seconds if provided
   @Input()
-  delayOptionsArray: number[] = [10, 30, 60, 120, 300];
+  delayOptions: number[] = [10, 30, 60, 120, 300];
 
   // Optional parameter to provide another label for the Timer Component than "Refresh Rate"
   @Input()
@@ -30,50 +30,67 @@ export class IntervalTimerComponent implements OnInit, OnDestroy {
   public callInterval: ReturnType<typeof setInterval> | null = null;
   public currentCallDelay: number;
   public circleVisible: boolean = true;
-  public delayOptions: Generator;
   private settingsSubscription: Subscription;
+  private defaultInterval: number = 30;
 
   constructor(private settingsService: SettingsService) {}
 
   ngOnInit(): void {
-    function* cycle<T>(array: T[]) {
-      while (true) yield* array;
-    }
-    this.delayOptions = cycle(this.delayOptionsArray);
     this.settingsSubscription = this.settingsService.settings$.subscribe(
-      (settings: Settings) => {
-        this.currentCallDelay = settings.refresh_timer_interval;
-        this.changeDelay(false);
+      ({ refresh_timer_interval }) => {
+        this.currentCallDelay = this.settingsDelayOrDefault(
+          refresh_timer_interval,
+        );
+        this.startTimer();
       },
     );
   }
 
-  onTimerClick() {
+  onTimerClick(): void {
     this.changeDelay();
     this.intervalElapsed.emit();
+
     this.settingsService
       .update({ refresh_timer_interval: this.currentCallDelay })
       .subscribe();
   }
 
-  changeDelay(incrementInterval: boolean = true) {
-    //Set next value of the interval array as call delay
-    if (incrementInterval) {
-      this.currentCallDelay = this.delayOptions.next().value;
-    }
-    if (this.callInterval !== null) {
-      clearInterval(this.callInterval);
-      this.callInterval = null;
-    }
-    this.callInterval = setInterval(() => {
-      this.intervalElapsed.emit();
-    }, this.currentCallDelay * 1000);
+  changeDelay(): void {
+    this.currentCallDelay = this.nextHigherOrFirst(this.currentCallDelay);
+    this.startTimer();
+  }
 
-    //Reload the Circle to refresh the Animation
+  private startTimer(): void {
+    if (this.callInterval) {
+      clearInterval(this.callInterval);
+    }
+
+    this.callInterval = setInterval(
+      () => this.intervalElapsed.emit(),
+      this.currentCallDelay * 1000,
+    );
+
+    // Restart animation
     this.circleVisible = false;
-    setTimeout(() => {
-      this.circleVisible = true;
-    }, 0);
+    setTimeout(() => (this.circleVisible = true));
+  }
+
+  private settingsDelayOrDefault(value?: number): number {
+    if (value && value > 0) {
+      return Math.max(value, this.minInterval);
+    }
+
+    return this.defaultInterval;
+  }
+
+  private nextHigherOrFirst(current: number): number {
+    const sorted = [...this.delayOptions].sort((a, b) => a - b);
+
+    return sorted.find((v) => v > current) ?? sorted[0];
+  }
+
+  private get minInterval(): number {
+    return Math.min(...this.delayOptions);
   }
 
   ngOnDestroy(): void {
