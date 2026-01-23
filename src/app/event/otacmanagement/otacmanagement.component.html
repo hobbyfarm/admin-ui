@@ -85,7 +85,9 @@
             </clr-dg-cell>
             <clr-dg-cell>{{ otac.name }}</clr-dg-cell>
             <clr-dg-cell>{{ otac.userEmail }}</clr-dg-cell>
-            <clr-dg-cell>{{ otac.redeemed_timestamp }}</clr-dg-cell>
+            <clr-dg-cell>{{
+              otac.redeemed_timestamp | date: 'MMMM d, y, HH:mm:ss z'
+            }}</clr-dg-cell>
             @if (hasMaxDuration(otac)) {
               <clr-dg-cell
                 ><cds-icon shape="clock"></cds-icon>
