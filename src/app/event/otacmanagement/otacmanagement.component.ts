@@ -159,7 +159,7 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
         userCSVpart = `${otacUser}, ${this.getUsername(otacUser)}`;
       }
       otacCSV = otacCSV.concat(
-        `${otac.name}, ${userCSVpart}, ${otac.redeemed_timestamp}, ${otac.max_duration}, ${otac.status}\n`,
+        `${otac.name}, ${userCSVpart || ''}, ${otac.redeemed_timestamp?.toISOString() || ''}, ${otac.max_duration || ''}, ${otac.status || ''}\n`,
       );
     });
     const filename = currentScheduledEvent.event_name + '_OTACs.csv';
@@ -196,7 +196,7 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
     if (!otac.user || !otac.redeemed_timestamp || !otac.max_duration) {
       return false;
     }
-    const redeemedTimestamp = Date.parse(otac.redeemed_timestamp);
+    const redeemedTimestamp = otac.redeemed_timestamp.getTime();
     const duration = parse(otac.max_duration);
     if (!duration) {
       // duration could not be parsed and therefore does not seem to represent a valid duration string

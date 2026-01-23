@@ -14,7 +14,7 @@ interface dashboardUsers extends User {
   progresses?: Progress[];
   uniqueScenarios?: number;
   otac?: OTAC;
-  started?: string;
+  started?: Date;
   status?: string;
 }
 
@@ -52,7 +52,7 @@ export class UsersDashboardComponent implements OnInit, OnChanges {
         `${userData.id || ''},` + // ID column
           `${userData.email || ''},` + // Email column
           `${userData.otac?.name || ''},` + // OTAC name column
-          `${userData.started || ''},` + // Started column
+          `${userData.started?.toISOString() || ''},` + // Started column
           `${userData.progresses?.length || 0},` + // Progress count column
           `${userData.uniqueScenarios || 0},` + // Unique scenarios column
           `${userData.status || ''}\n`, // Status column and newline
@@ -109,7 +109,9 @@ export class UsersDashboardComponent implements OnInit, OnChanges {
           const safeOtacs = otacs || []; // Default to empty array if null
           // Map OTACs to users
           const otacMap = new Map<string, OTAC>(
-            safeOtacs.map((otac) => [otac.user, otac]),
+            safeOtacs
+              .filter((o): o is OTAC & { user: string } => !!o.user)
+              .map((o) => [o.user, o]),
           );
 
           // Group progresses by user ID
@@ -212,7 +214,7 @@ export class UsersDashboardComponent implements OnInit, OnChanges {
       return false;
     }
 
-    const redeemedTimestamp = Date.parse(otac.redeemed_timestamp);
+    const redeemedTimestamp = otac.redeemed_timestamp.getTime();
     const duration = parse(otac.max_duration);
     if (!duration) {
       return false;

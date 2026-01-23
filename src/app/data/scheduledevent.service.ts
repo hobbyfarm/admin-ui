@@ -14,6 +14,7 @@ import {
   GargantuaClientFactory,
   ListableResourceClient,
 } from './gargantua.service';
+import { OTAC } from './otac.type';
 
 @Injectable({
   providedIn: 'root',
@@ -150,6 +151,16 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
       switchMap((s: ServerResponse) => {
         const se = JSON.parse(atou(s.content));
         return of(se);
+      }),
+      map((otac: OTAC[]) => {
+        otac.map((iOTAC: OTAC) => {
+          if (iOTAC.redeemed_timestamp) {
+            iOTAC.redeemed_timestamp = new Date(iOTAC.redeemed_timestamp);
+          } else {
+            iOTAC.redeemed_timestamp = undefined;
+          }
+        });
+        return otac;
       }),
     );
   }
