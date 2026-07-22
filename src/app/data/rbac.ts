@@ -26,6 +26,7 @@ export const resources: Resource[] = [
   'scopes',
   'settings',
   'quizes',
+  'quizevaluations',
 ];
 
 export type Resource =
@@ -47,6 +48,7 @@ export type Resource =
   | 'scopes'
   | 'settings'
   | 'quizes'
+  | 'quizevaluations'
   | '*';
 export const isResource = (x: unknown): x is Resource =>
   typeof x === 'string' &&

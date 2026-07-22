@@ -40,6 +40,20 @@ export interface Quiz {
   questions: QuizQuestion[];
 }
 
+export interface QuizEvaluationAttempt {
+  timestamp?: string;
+  score: number;
+  pass: boolean;
+}
+
+export interface QuizEvaluation {
+  id: string;
+  quiz: string;
+  user: string;
+  scenario: string;
+  attempts: QuizEvaluationAttempt[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -73,6 +87,12 @@ export class QuizService {
 
   get(id: string) {
     return this.gargAdmin.get(`/${id}`).pipe(map(extractResponseContent));
+  }
+
+  listEvaluations(): Observable<QuizEvaluation[]> {
+    return this.gargAdmin
+      .get<ServerResponse>('/evaluation/list')
+      .pipe(map(extractResponseContent));
   }
 
   create(quiz: Quiz): Observable<string> {
