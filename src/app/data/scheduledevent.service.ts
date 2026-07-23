@@ -149,18 +149,18 @@ export class ScheduledeventService extends ListableResourceClient<ScheduledEvent
   public listOtacs(seId: string) {
     return this.garg.get(`/${seId}/otacs/list`).pipe(
       switchMap((s: ServerResponse) => {
-        const se = JSON.parse(atou(s.content));
-        return of(se);
+        const otacs: OTAC[] | null = JSON.parse(atou(s.content));
+        return of(otacs ?? []);
       }),
-      map((otac: OTAC[]) => {
-        otac.map((iOTAC: OTAC) => {
+      map((otacs: OTAC[]) => {
+        otacs.forEach((iOTAC: OTAC) => {
           if (iOTAC.redeemed_timestamp) {
             iOTAC.redeemed_timestamp = new Date(iOTAC.redeemed_timestamp);
           } else {
             iOTAC.redeemed_timestamp = undefined;
           }
         });
-        return otac;
+        return otacs;
       }),
     );
   }
