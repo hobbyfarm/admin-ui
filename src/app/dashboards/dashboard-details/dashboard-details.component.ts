@@ -23,6 +23,7 @@ export class DashboardDetailsComponent implements OnInit, OnDestroy {
 
   public rbacSuccessSessions: boolean = false;
   public rbacSuccessVms: boolean = false;
+  public rbacSuccessUsers: boolean = false;
 
   private eventId: string;
   private eventSubscription: Subscription;
@@ -71,6 +72,22 @@ export class DashboardDetailsComponent implements OnInit, OnDestroy {
       ['list', 'get'],
     ).then((rbacCheck: boolean) => {
       this.rbacSuccessVms = rbacCheck;
+    });
+
+    this.setRbacCheck(
+      [
+        'scheduledevents',
+        'sessions',
+        'progresses',
+        'users',
+        'courses',
+        'scenarios',
+        'quizes',
+        'quizevaluations',
+      ],
+      ['list', 'get'],
+    ).then((rbacCheck: boolean) => {
+      this.rbacSuccessUsers = rbacCheck;
     });
   }
 

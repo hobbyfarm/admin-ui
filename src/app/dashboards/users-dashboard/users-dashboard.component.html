@@ -15,6 +15,9 @@
     <clr-dg-column [clrDgSortBy]="'uniqueScenarios'"
       >Unique Scenarios</clr-dg-column
     >
+    <clr-dg-column>Quiz Names</clr-dg-column>
+    <clr-dg-column>Score (%)</clr-dg-column>
+    <clr-dg-column [clrDgSortBy]="'passedQuizzes'">Quiz Results</clr-dg-column>
     <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
 
     <clr-dg-row *clrDgItems="let user of dashboardUsers">
@@ -34,6 +37,48 @@
         {{ user.progresses?.length ?? 0 }}
       </clr-dg-cell>
       <clr-dg-cell>{{ user.uniqueScenarios }}</clr-dg-cell>
+      <clr-dg-cell>
+        @for (result of user.quizResults; track result.key) {
+          <span
+            class="label"
+            title="{{ result.title }} in {{ result.scenarioName }}"
+            >{{ result.title }}</span
+          >
+        } @empty {
+          -
+        }
+      </clr-dg-cell>
+      <clr-dg-cell>
+        @for (result of user.quizResults; track result.key) {
+          <span
+            class="label"
+            title="{{ result.title }} in {{ result.scenarioName }}"
+          >
+            @if (result.score === undefined) {
+              -
+            } @else {
+              {{ result.score }}/100
+            }
+          </span>
+        } @empty {
+          -
+        }
+      </clr-dg-cell>
+      <clr-dg-cell>
+        @if (user.quizResultStatus === 'not-applicable') {
+          -
+        } @else if (user.quizResultStatus === 'not-started') {
+          <span class="badge badge-gray">NOT STARTED</span>
+        } @else if (user.quizResultStatus === 'failed') {
+          <span class="badge badge-danger">NO PASS</span>
+        } @else if (user.quizResultStatus === 'passed') {
+          <span class="badge badge-success">PASS</span>
+        } @else {
+          <span class="badge badge-info">
+            {{ user.passedQuizzes }}/{{ user.totalQuizzes }}
+          </span>
+        }
+      </clr-dg-cell>
       <clr-dg-cell>
         @if (user.status === 'completed') {
           <span class="badge badge-success">COMPLETED</span>
