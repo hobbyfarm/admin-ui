@@ -158,8 +158,13 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
       if (otacUser) {
         userCSVpart = `${otacUser}, ${this.getUsername(otacUser)}`;
       }
+      const redeemedStr = otac.redeemed_timestamp
+        ? otac.redeemed_timestamp instanceof Date
+          ? otac.redeemed_timestamp.toISOString()
+          : otac.redeemed_timestamp
+        : '';
       otacCSV = otacCSV.concat(
-        `${otac.name}, ${userCSVpart || ''}, ${otac.redeemed_timestamp?.toISOString() || ''}, ${otac.max_duration || ''}, ${otac.status || ''}\n`,
+        `${otac.name}, ${userCSVpart || ''}, ${redeemedStr}, ${otac.max_duration || ''}, ${otac.status || ''}\n`,
       );
     });
     const filename = currentScheduledEvent.event_name + '_OTACs.csv';
