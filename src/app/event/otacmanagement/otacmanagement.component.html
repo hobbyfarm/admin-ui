@@ -70,7 +70,7 @@
           <clr-dg-column>Claimed at</clr-dg-column>
           <clr-dg-column>Max. Duration</clr-dg-column>
           <clr-dg-column *rbac="['scheduledevents.update']"
-            >Delete</clr-dg-column
+            >Actions</clr-dg-column
           >
 
           <clr-dg-row *clrDgItems="let otac of otacs">
@@ -99,7 +99,14 @@
             <clr-dg-cell *rbac="['scheduledevents.update']">
               <button
                 type="button"
-                class="btn btn-warning-outline"
+                class="btn btn-sm btn-info-outline"
+                (click)="openEditModal(otac)"
+              >
+                Update Duration
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-warning-outline"
                 (click)="deleteOtac(otac)"
               >
                 Delete
@@ -112,6 +119,7 @@
       </div>
     }
   </div>
+
   <div class="modal-footer">
     @if (currentScheduledEvent) {
       <button
@@ -124,6 +132,80 @@
     }
     <button type="button" class="btn btn-flat-primary" (click)="close()">
       Close
+    </button>
+  </div>
+</clr-modal>
+
+<!-- Update Duration Modal - OUTSIDE main modal to avoid nesting issues -->
+<clr-modal [(clrModalOpen)]="editModalOpen" [clrModalClosable]="false">
+  <h3 class="modal-title">Update OTAC Maximum Duration</h3>
+  <div class="modal-body">
+    @if (editingOtacId) {
+      <p>
+        Updating maximum duration for OTAC: <strong>{{ editingOtacId }}</strong>
+      </p>
+    }
+    <form clrForm [formGroup]="editDurationForm">
+      <clr-input-container>
+        <label class="form-label">New Maximum Duration</label>
+        <input
+          formControlName="duration"
+          type="text"
+          clrInput
+          placeholder="e.g. 1d, 24h, 60m"
+          title="Duration"
+        />
+        <clr-control-error
+          >Input must be a valid duration consisting of a number followed by
+          (d,h,m).</clr-control-error
+        >
+      </clr-input-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="cancelEdit()">
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="!editDurationForm.valid"
+      (click)="updateOtacDuration()"
+    >
+      Update
+    </button>
+  </div>
+</clr-modal>
+
+<!-- Delete Confirmation Modal - OUTSIDE main modal to avoid nesting issues -->
+<clr-modal
+  [(clrModalOpen)]="deleteConfirmationModalOpen"
+  [clrModalClosable]="false"
+>
+  <h3 class="modal-title">Delete OTAC</h3>
+  <div class="modal-body">
+    @if (deleteConfirmationOtac) {
+      <p>
+        Are you sure you want to delete the OTAC
+        <strong>{{ deleteConfirmationOtac.name }}</strong
+        >?
+      </p>
+      @if (deleteConfirmationOtac.user) {
+        <p class="alert alert-warning">
+          <cds-icon shape="warning-standard"></cds-icon>
+          This OTAC has been claimed by
+          <strong>{{ deleteConfirmationOtac.userEmail }}</strong
+          >. Deleting it will remove their access.
+        </p>
+      }
+    }
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="cancelDelete()">
+      Cancel
+    </button>
+    <button type="button" class="btn btn-danger" (click)="confirmDeleteOtac()">
+      Delete
     </button>
   </div>
 </clr-modal>

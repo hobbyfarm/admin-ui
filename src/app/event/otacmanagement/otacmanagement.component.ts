@@ -67,6 +67,22 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
 
   descSort = ClrDatagridSortOrder.DESC;
 
+  // Edit Modal State
+  editModalOpen = false;
+  editingOtacId: string | null = null;
+  editDurationForm: FormGroup<{
+    duration: FormControl<string>;
+  }> = new FormGroup({
+    duration: new FormControl<string>('', {
+      validators: [Validators.pattern(/^(\d+[dhm]){1}$/)],
+      nonNullable: true,
+    }),
+  });
+
+  // Delete Confirmation State
+  deleteConfirmationOtac: iOTAC | null = null;
+  deleteConfirmationModalOpen = false;
+
   constructor(
     private seService: ScheduledeventService,
     private userService: UserService,
@@ -131,16 +147,80 @@ export class OTACManagementComponent implements OnInit, OnDestroy {
   }
 
   deleteOtac(otac: iOTAC) {
-    if (!this.currentScheduledEvent) {
+    this.deleteConfirmationOtac = otac;
+    this.deleteConfirmationModalOpen = true;
+  }
+
+  confirmDeleteOtac() {
+    if (!this.deleteConfirmationOtac || !this.currentScheduledEvent) {
       return;
     }
+    const otacToDelete = this.deleteConfirmationOtac;
     this.seService
-      .deleteOtac(this.currentScheduledEvent.id, otac.name)
+      .deleteOtac(this.currentScheduledEvent.id, otacToDelete.name)
       .subscribe((res: ServerResponse) => {
         if (res.status == 200) {
-          this.otacs.splice(this.otacs.indexOf(otac), 1);
+          this.otacs.splice(this.otacs.indexOf(otacToDelete), 1);
+          this.deleteConfirmationModalOpen = false;
+          this.deleteConfirmationOtac = null;
         }
       });
+  }
+
+  cancelDelete() {
+    this.deleteConfirmationModalOpen = false;
+    this.deleteConfirmationOtac = null;
+  }
+
+  openEditModal(otac: iOTAC) {
+    this.editingOtacId = otac.name;
+    this.editDurationForm.controls.duration.setValue(otac.max_duration || '');
+    this.editModalOpen = true;
+  }
+
+  updateOtacDuration() {
+    if (
+      !this.editingOtacId ||
+      !this.currentScheduledEvent ||
+      !this.editDurationForm.valid
+    ) {
+      return;
+    }
+    const newDuration = this.editDurationForm.controls.duration.value;
+    this.seService
+      .updateOtac(
+        this.currentScheduledEvent.id,
+        this.editingOtacId,
+        newDuration,
+      )
+      .subscribe({
+        next: (updatedOtac: OTAC) => {
+          const index = this.otacs.findIndex(
+            (o) => o.name === this.editingOtacId,
+          );
+          if (index >= 0) {
+            this.otacs[index] = this.addUserinformation(updatedOtac);
+          }
+          this.editModalOpen = false;
+          this.editingOtacId = null;
+          this.editDurationForm.reset();
+          this.alertText = 'OTAC duration updated successfully';
+          this.alertType = ClrAlertType.Success;
+          this.toggleAlertState();
+        },
+        error: (error) => {
+          console.error('Error updating OTAC duration:', error);
+          this.alertText = 'Failed to update OTAC duration';
+          this.alertType = ClrAlertType.Danger;
+          this.toggleAlertState();
+        },
+      });
+  }
+
+  cancelEdit() {
+    this.editModalOpen = false;
+    this.editingOtacId = null;
+    this.editDurationForm.reset();
   }
 
   getOverallInfo() {
