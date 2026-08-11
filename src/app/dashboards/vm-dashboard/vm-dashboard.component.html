@@ -28,7 +28,25 @@
           <clr-accordion-content *clrIfExpanded>
             <div class="clr-row">
               <div class="clr-col">
-                <clr-datagrid>
+                <div class="vm-bulk-actions">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-secondary btn-danger-outline"
+                    [disabled]="
+                      !hasSelectedVMs(set) || isBulkDeleteLoading(set)
+                    "
+                    (click)="openBulkDeleteConfirmation(set)"
+                  >
+                    @if (isBulkDeleteLoading(set)) {
+                      <span class="spinner spinner-inline"></span>
+                    }
+                    Delete selected
+                  </button>
+                </div>
+                <clr-datagrid
+                  [(clrDgSelected)]="set.selectedVMs"
+                  (clrDgSelectedChange)="updateSelectedVMs(set, $event)"
+                >
                   <clr-dg-column [clrDgField]="'status'">Status</clr-dg-column>
                   <clr-dg-column [clrDgField]="'public_ip'">IP</clr-dg-column>
                   <clr-dg-column [clrDgField]="'vm_template_id'"
@@ -47,7 +65,10 @@
                   >
                   <clr-dg-column [clrDgField]="'age'">Age</clr-dg-column>
 
-                  <clr-dg-row *clrDgItems="let vm of set.setVMs ?? []">
+                  <clr-dg-row
+                    *clrDgItems="let vm of set.setVMs ?? []"
+                    [clrDgItem]="vm"
+                  >
                     <clr-dg-action-overflow class="datagrid-row-actions">
                       <button
                         class="action-item"
@@ -116,7 +137,7 @@
 </div>
 <delete-confirmation
   #deleteModal
-  [message]="'Are you sure you want to delete this VM?'"
+  [message]="deleteMessage"
   (delete)="handleDelete($event)"
 >
 </delete-confirmation>
